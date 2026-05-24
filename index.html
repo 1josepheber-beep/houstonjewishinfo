@@ -735,7 +735,9 @@
     background: none;
     border: none;
     z-index: 300;
-    flex-shrink: 0;
+    position: absolute;
+    top: 8px;
+    right: 8px;
   }
   .hamburger span {
     display: block;
@@ -854,24 +856,30 @@
     #strip-parasha { font-size: 10px !important; }
     #shabbat-strip .portal span[style*="text-transform:uppercase"] { display: none !important; }
 
-    /* Masthead — clean top bar */
-    .masthead { padding: 0; position: relative; }
+    /* Masthead — centered layout, hamburger top right */
+    .masthead { position: relative; padding: 12px 0 0; }
     .masthead-inner {
       display: flex !important;
-      flex-direction: row !important;
+      flex-direction: column !important;
       align-items: center !important;
-      justify-content: space-between !important;
-      padding: 10px 12px !important;
-      gap: 8px !important;
+      justify-content: center !important;
+      padding: 0 48px 10px !important;
+      gap: 6px !important;
+      text-align: center;
     }
-    .masthead-side { display: flex !important; width: auto !important; }
-    .masthead-side img { height: 40px !important; width: auto !important; }
-    .masthead-side .social-links { display: none !important; }
+    .masthead-side {
+      display: flex !important;
+      flex-direction: column !important;
+      align-items: center !important;
+      width: auto !important;
+    }
+    .masthead-side img { height: 60px !important; width: auto !important; }
+    .masthead-side .social-links { display: flex !important; justify-content: center; margin-top: 4px; }
     .masthead-side.right { display: none !important; }
-    .masthead-logo { flex: 1; text-align: center; }
-    .masthead-title { font-size: 20px !important; line-height: 1.2; }
-    .masthead-tagline { display: none; }
-    .masthead-date { font-size: 10px; }
+    .masthead-logo { text-align: center; width: 100%; }
+    .masthead-title { font-size: 28px !important; line-height: 1.2; }
+    .masthead-tagline { display: block !important; font-size: 11px; }
+    .masthead-date { font-size: 10px; text-align: center; }
 
     /* Show hamburger */
     .hamburger { display: flex !important; }
