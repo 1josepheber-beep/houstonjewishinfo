@@ -946,35 +946,7 @@
   </div>
 </header>
 
-<!-- SHABBAT STRIP -->
-<div id="shabbat-strip" style="background:var(--cream);color:#fff;padding:0;">
-  <div class="portal" style="padding:0;">
-  <div style="background:var(--navy);border-radius:0 0 6px 6px;border-bottom:2px solid var(--gold);padding:8px 16px;display:flex;align-items:center;justify-content:center;gap:24px;flex-wrap:wrap;">
-    <div style="display:flex;align-items:center;gap:8px;">
-      <span style="font-size:16px;">🕯️</span>
-      <div>
-        <span style="font-family:sans-serif;font-size:9px;letter-spacing:.1em;text-transform:uppercase;opacity:.7;">Candle Lighting &nbsp;</span>
-        <span id="strip-candles" style="font-family:sans-serif;font-size:13px;font-weight:700;">–</span>
-        <span id="strip-candles-date" style="font-family:sans-serif;font-size:11px;opacity:.75;margin-left:4px;"></span>
-      </div>
-    </div>
-    <div style="width:1px;height:20px;background:rgba(255,255,255,.25);flex-shrink:0;"></div>
-    <div style="display:flex;align-items:center;gap:8px;">
-      <span style="font-size:16px;">✨</span>
-      <div>
-        <span style="font-family:sans-serif;font-size:9px;letter-spacing:.1em;text-transform:uppercase;opacity:.7;">Havdalah &nbsp;</span>
-        <span id="strip-havdalah" style="font-family:sans-serif;font-size:13px;font-weight:700;">–</span>
-        <span id="strip-havdalah-date" style="font-family:sans-serif;font-size:11px;opacity:.75;margin-left:4px;"></span>
-      </div>
-    </div>
-    <div style="width:1px;height:20px;background:rgba(255,255,255,.25);flex-shrink:0;"></div>
-    <div style="display:flex;align-items:center;gap:6px;">
-      <span style="font-size:14px;">📖</span>
-      <span id="strip-parasha" style="font-family:sans-serif;font-size:11px;opacity:.85;"></span>
-    </div>
-  </div>
-  </div>
-</div>
+
 
 <!-- PAGE HERO -->
 <div class="page-hero">
@@ -1075,33 +1047,7 @@
     document.getElementById('today-date').textContent = days[now.getDay()] + ', ' + months[now.getMonth()] + ' ' + now.getDate() + ', ' + now.getFullYear();
   })();
 
-  // Shabbat times
-  (function() {
-    fetch('https://www.hebcal.com/shabbat?cfg=json&geonameid=4699066&m=50&b=18')
-      .then(function(r) { return r.json(); })
-      .then(function(data) {
-        var candles = null, havdalah = null, parasha = null;
-        data.items.forEach(function(item) {
-          if (item.category === 'candles') candles = item;
-          if (item.category === 'havdalah') havdalah = item;
-          if (item.category === 'parashat') parasha = item;
-        });
-        function formatTime(d) {
-          var dt = new Date(d); var h = dt.getHours(); var m = dt.getMinutes();
-          var ap = h >= 12 ? 'PM' : 'AM'; h = h % 12 || 12;
-          return h + ':' + (m < 10 ? '0' : '') + m + ' ' + ap;
-        }
-        function formatDate(d) {
-          var dt = new Date(d);
-          var days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-          var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-          return days[dt.getDay()] + ', ' + months[dt.getMonth()] + ' ' + dt.getDate();
-        }
-        if (candles) { document.getElementById('strip-candles').textContent = formatTime(candles.date); document.getElementById('strip-candles-date').textContent = formatDate(candles.date); }
-        if (havdalah) { document.getElementById('strip-havdalah').textContent = formatTime(havdalah.date); document.getElementById('strip-havdalah-date').textContent = formatDate(havdalah.date); }
-        if (parasha) { document.getElementById('strip-parasha').textContent = parasha.title; }
-      }).catch(function() {});
-  })();
+
 
   // Filter
   function filterEvents(cat, btn) {
