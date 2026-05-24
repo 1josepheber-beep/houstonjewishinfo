@@ -1270,6 +1270,7 @@
         <option value="catering">Catering &amp; Events</option>
         <option value="community-org">Community Organizations</option>
         <option value="security">Security Services</option>
+        <option value="marketing">Marketing &amp; Digital</option>
       </select>
     </div>
 
@@ -1281,9 +1282,10 @@
       <button class="cat-pill" onclick="setCat('catering', this)">🍽️ Catering &amp; Events</button>
       <button class="cat-pill" onclick="setCat('community-org', this)">🏛️ Community Organizations</button>
       <button class="cat-pill" onclick="setCat('security', this)">🛡️ Security</button>
+      <button class="cat-pill" onclick="setCat('marketing', this)">📱 Marketing</button>
     </div>
 
-    <div class="results-bar">Showing <strong id="biz-count">23</strong> listings</div>
+    <div class="results-bar">Showing <strong id="biz-count">24</strong> listings</div>
 
     <div class="biz-grid" id="biz-grid">
 
@@ -1720,6 +1722,25 @@
         </div>
       </div>
 
+      <!-- AVIACION DIGITAL -->
+      <div class="biz-card" data-cat="marketing" data-name="Aviacion Digital">
+        <div class="biz-card-top">
+          <div>
+            <div class="biz-category">Marketing &amp; Digital</div>
+            <div class="biz-name">Aviacion Digital</div>
+          </div>
+          <span class="biz-badge badge-friendly">Digital Agency</span>
+        </div>
+        <div class="biz-detail">📍 4660 Beechnut St, Suite 200, Houston, TX 77096</div>
+        <div class="biz-detail">📞 (832) 538-2929</div>
+        <div class="biz-detail">📧 <a href="mailto:info@avacion.com" style="color:var(--gold);">info@avacion.com</a></div>
+        <div class="biz-desc">Digital marketing agency focused on understanding your goals before recommending solutions. Good marketing starts with listening, not selling you a package. Services include digital strategy, web, and growth marketing for businesses of all sizes.</div>
+        <div class="biz-card-footer">
+          <span style="font-family:sans-serif;font-size:11px;color:var(--muted);">Digital Strategy · Web · Growth Marketing</span>
+          <a href="https://avacion.com" target="_blank" class="biz-website">Visit Website →</a>
+        </div>
+      </div>
+
     </div><!-- end biz-grid -->
 
     <!-- SUBMIT CTA -->
@@ -1832,6 +1853,12 @@
         <div class="service-count" style="color:#1e4d9b;font-weight:700;">Ranger Guard · (832) 501-3331</div>
         <div class="service-arrow">Armed · Unarmed · Mobile Patrol →</div>
       </div>
+      <div class="service-card" onclick="openService('marketing')">
+        <div class="service-icon">📱</div>
+        <div class="service-name">Marketing &amp; Digital</div>
+        <div class="service-count">1 provider</div>
+        <div class="service-arrow">View Providers →</div>
+      </div>
       <div class="service-card" onclick="window.open('https://www.houstonchaverim.org','_blank')" style="border-color:#c0391b;">
         <div class="service-icon">🚗</div>
         <div class="service-name">Houston Chaverim</div>
@@ -1858,6 +1885,26 @@
           Be the first to list your service — submissions are reviewed and published by HJI within 1–2 business days.
           <br><br>
           <button class="hero-submit-btn" onclick="openModal('modal-submit-biz')" style="margin:0 auto;">+ Submit Your Service</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- MARKETING — expanded static listings shown when marketing tile is clicked -->
+    <div class="service-listings" id="marketing-listings" style="display:none;">
+      <div class="service-listings-header">
+        <span>📱 Marketing &amp; Digital Providers</span>
+        <button class="service-close-btn" onclick="document.getElementById('marketing-listings').style.display='none'">×</button>
+      </div>
+      <div class="service-listing-item" style="border-radius:0 0 6px 6px;">
+        <div>
+          <div class="sli-name">Aviacion Digital</div>
+          <div class="sli-meta">4660 Beechnut St, Suite 200, Houston, TX 77096 &nbsp;·&nbsp; Digital Marketing Agency</div>
+          <div class="sli-meta" style="margin-top:4px;">Digital strategy, web, and growth marketing. Good marketing starts with understanding your goals, not selling you a package.</div>
+          <div class="sli-meta" style="margin-top:3px;">📧 <a href="mailto:info@avacion.com" style="color:var(--gold);">info@avacion.com</a></div>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;">
+          <span class="sli-phone">(832) 538-2929</span>
+          <a href="https://avacion.com" target="_blank" class="biz-website" style="font-size:10px;">Visit Website →</a>
         </div>
       </div>
     </div>
@@ -2385,18 +2432,28 @@
     therapy: 'Therapy & Counseling', tutoring: 'Tutoring',
     plumbing: 'Plumbing', electric: 'Electrician', hvac: 'HVAC',
     funeral: 'Funeral Home', travel: 'Travel Agency',
-    insurance: 'Insurance', catering: 'Catering & Events'
+    insurance: 'Insurance', catering: 'Catering & Events',
+    marketing: 'Marketing & Digital'
   };
 
   function openService(type) {
+    // Hide all expanded panels first
+    document.getElementById('funeral-listings').style.display = 'none';
+    document.getElementById('marketing-listings').style.display = 'none';
+    document.getElementById('service-listings').classList.remove('open');
+
     if (type === 'funeral') {
-      document.getElementById('service-listings').classList.remove('open');
       var fl = document.getElementById('funeral-listings');
-      fl.style.display = fl.style.display === 'none' ? 'block' : 'none';
-      if (fl.style.display === 'block') fl.scrollIntoView({behavior:'smooth', block:'start'});
+      fl.style.display = 'block';
+      fl.scrollIntoView({behavior:'smooth', block:'start'});
       return;
     }
-    document.getElementById('funeral-listings').style.display = 'none';
+    if (type === 'marketing') {
+      var ml = document.getElementById('marketing-listings');
+      ml.style.display = 'block';
+      ml.scrollIntoView({behavior:'smooth', block:'start'});
+      return;
+    }
     document.getElementById('service-listings-title').textContent = serviceLabels[type] + ' Providers';
     document.getElementById('service-listings').classList.add('open');
     document.getElementById('service-listings').scrollIntoView({behavior:'smooth', block:'start'});
@@ -2405,6 +2462,7 @@
   function closeService() {
     document.getElementById('service-listings').classList.remove('open');
     document.getElementById('funeral-listings').style.display = 'none';
+    document.getElementById('marketing-listings').style.display = 'none';
   }
 
   // Modals
