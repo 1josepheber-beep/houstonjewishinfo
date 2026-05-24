@@ -907,6 +907,33 @@
     .syn-grid { grid-template-columns: 1fr; }
     .page-hero h1 { font-size: 26px; }
   }
+
+  /* ── NAV SCROLL WRAPPER ── */
+  .nav-wrapper {
+    position: relative;
+    display: flex;
+    align-items: stretch;
+  }
+  .nav-arrow {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    width: 16px;
+    flex-shrink: 0;
+    background: transparent;
+    color: var(--navy);
+    font-size: 11px;
+    cursor: pointer;
+    border: none;
+    padding: 0;
+    z-index: 10;
+    opacity: 0.6;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .nav-arrow:hover { opacity: 1; }
+  @media (max-width: 768px) {
+    .nav-arrow { display: flex; }
+  }
 </style>
 </head>
 <body>
@@ -965,6 +992,8 @@
         <a href="classifieds.html">Classifieds</a>
         <a href="contact.html">Contact / Submit</a>
       </nav>
+        <button class="nav-arrow right" aria-label="Scroll nav right">&#8250;</button>
+      </div>
     </div>
   </div>
 </header>
@@ -1284,6 +1313,22 @@
       alert('Sorry, there was an error submitting your form. Please try again.');
     });
   }
-</script>
+
+  // Nav scroll arrows
+  (function() {
+    var nav = document.getElementById('main-nav');
+    if (!nav) return;
+    var leftBtn = document.querySelector('.nav-arrow.left');
+    var rightBtn = document.querySelector('.nav-arrow.right');
+    if (!leftBtn || !rightBtn) return;
+    var scrollAmt = 100;
+    leftBtn.addEventListener('click', function() {
+      nav.scrollBy({ left: -scrollAmt, behavior: 'smooth' });
+    });
+    rightBtn.addEventListener('click', function() {
+      nav.scrollBy({ left: scrollAmt, behavior: 'smooth' });
+    });
+  })();
+  </script>
 </body>
 </html>
