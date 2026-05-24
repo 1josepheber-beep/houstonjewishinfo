@@ -1227,6 +1227,7 @@
         <a href="business.html" class="active">Business Directory</a>
         <a href="synagogues.html">Synagogues</a>
         <a href="schools.html">Schools</a>
+        <a href="charities.html">Charities</a>
         <a href="classifieds.html">Classifieds</a>
         <a href="contact.html">Contact / Submit</a>
       </nav>
@@ -1273,6 +1274,7 @@
         <option value="community-org">Community Organizations</option>
         <option value="security">Security Services</option>
         <option value="marketing">Marketing &amp; Digital</option>
+        <option value="trades">Trades</option>
       </select>
     </div>
 
@@ -1285,9 +1287,10 @@
       <button class="cat-pill" onclick="setCat('community-org', this)">🏛️ Community Organizations</button>
       <button class="cat-pill" onclick="setCat('security', this)">🛡️ Security</button>
       <button class="cat-pill" onclick="setCat('marketing', this)">📱 Marketing</button>
+      <button class="cat-pill" onclick="setCat('trades', this)">🔌 Trades</button>
     </div>
 
-    <div class="results-bar">Showing <strong id="biz-count">24</strong> listings</div>
+    <div class="results-bar">Showing <strong id="biz-count">25</strong> listings</div>
 
     <div class="biz-grid" id="biz-grid">
 
@@ -1743,6 +1746,25 @@
         </div>
       </div>
 
+      <!-- LUMENOR LLC -->
+      <div class="biz-card" data-cat="trades" data-name="Lumenor LLC">
+        <div class="biz-card-top">
+          <div>
+            <div class="biz-category">Electrician</div>
+            <div class="biz-name">Lumenor LLC</div>
+          </div>
+          <span class="biz-badge badge-jewish">Jewish-Owned</span>
+        </div>
+        <div class="biz-detail">📍 7809 W Belfort Ave, Houston, TX</div>
+        <div class="biz-detail">📞 (346) 670-7330</div>
+        <div class="biz-detail">📧 <a href="mailto:lumenorllc@gmail.com" style="color:var(--gold);">lumenorllc@gmail.com</a></div>
+        <div class="biz-desc">Professional electrical services for residential and commercial clients in the Greater Houston area. Contact Binyamin Shaw for a quote.</div>
+        <div class="biz-card-footer">
+          <span style="font-family:sans-serif;font-size:11px;color:var(--muted);">Residential &amp; Commercial · Licensed</span>
+          <a href="https://www.lumenor.net" target="_blank" class="biz-website">Visit Website →</a>
+        </div>
+      </div>
+
     </div><!-- end biz-grid -->
 
     <!-- SUBMIT CTA -->
@@ -1810,7 +1832,7 @@
       <div class="service-card" onclick="openService('electric')">
         <div class="service-icon">⚡</div>
         <div class="service-name">Electrician</div>
-        <div class="service-count">Submit your listing</div>
+        <div class="service-count">1 provider</div>
         <div class="service-arrow">View Providers →</div>
       </div>
       <div class="service-card" onclick="openService('hvac')">
@@ -1887,6 +1909,26 @@
           Be the first to list your service — submissions are reviewed and published by HJI within 1–2 business days.
           <br><br>
           <button class="hero-submit-btn" onclick="openModal('modal-submit-biz')" style="margin:0 auto;">+ Submit Your Service</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ELECTRICIAN — expanded static listings -->
+    <div class="service-listings" id="electric-listings" style="display:none;">
+      <div class="service-listings-header">
+        <span>⚡ Electrician Providers</span>
+        <button class="service-close-btn" onclick="document.getElementById('electric-listings').style.display='none'">×</button>
+      </div>
+      <div class="service-listing-item" style="border-radius:0 0 6px 6px;">
+        <div>
+          <div class="sli-name">Lumenor LLC</div>
+          <div class="sli-meta">7809 W Belfort Ave, Houston, TX &nbsp;·&nbsp; Jewish-Owned &nbsp;·&nbsp; Binyamin Shaw</div>
+          <div class="sli-meta" style="margin-top:4px;">Professional electrical services for residential and commercial clients across Greater Houston.</div>
+          <div class="sli-meta" style="margin-top:3px;">📧 <a href="mailto:lumenorllc@gmail.com" style="color:var(--gold);">lumenorllc@gmail.com</a></div>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;">
+          <span class="sli-phone">(346) 670-7330</span>
+          <a href="https://www.lumenor.net" target="_blank" class="biz-website" style="font-size:10px;">Visit Website →</a>
         </div>
       </div>
     </div>
@@ -2456,6 +2498,12 @@
       ml.scrollIntoView({behavior:'smooth', block:'start'});
       return;
     }
+    if (type === 'electric') {
+      var el = document.getElementById('electric-listings');
+      el.style.display = 'block';
+      el.scrollIntoView({behavior:'smooth', block:'start'});
+      return;
+    }
     document.getElementById('service-listings-title').textContent = serviceLabels[type] + ' Providers';
     document.getElementById('service-listings').classList.add('open');
     document.getElementById('service-listings').scrollIntoView({behavior:'smooth', block:'start'});
@@ -2465,6 +2513,7 @@
     document.getElementById('service-listings').classList.remove('open');
     document.getElementById('funeral-listings').style.display = 'none';
     document.getElementById('marketing-listings').style.display = 'none';
+    document.getElementById('electric-listings').style.display = 'none';
   }
 
   // Modals
