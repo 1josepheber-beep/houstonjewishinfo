@@ -821,6 +821,9 @@
     text-align: center;
   }
 
+  /* Hide mobile ad strip on desktop */
+  #mobile-ad-strip { display: none; }
+
   /* ── TABLET (max 900px) ── */
   @media (max-width: 900px) {
     .main-grid { grid-template-columns: 1fr; gap: 16px; padding: 12px 0 24px; }
@@ -836,6 +839,9 @@
 
     /* Portal */
     .portal { padding: 0 12px; }
+
+    /* Mobile ad strip */
+    #mobile-ad-strip { display: block !important; }
 
     /* Shabbat strip on mobile — single compact line */
     #shabbat-strip { padding: 5px 0 !important; }
@@ -892,6 +898,8 @@
     /* HIDE both sidebars completely on mobile */
     .sidebar-left { display: none !important; }
     .sidebar-right { display: none !important; }
+    aside.sidebar-right { display: none !important; }
+    .main-grid > aside { display: none !important; }
 
     /* Main grid — just the news, full width */
     .main-grid {
@@ -1226,6 +1234,7 @@
 </div>
 
 
+
 <!-- ============================================================
      PAGE HEADER
      ============================================================ -->
@@ -1299,6 +1308,7 @@
   </div>
   </div>
 </div>
+
 
 
 <!-- ============================================================
@@ -1433,6 +1443,28 @@
 
       <!-- NEWS ARTICLES -->
 
+      <!-- MOBILE AD STRIP — shown below Shabbat strip on mobile -->
+<div id="mobile-ad-strip" style="display:none;">
+  <div class="portal" style="padding:0;">
+    <!-- AD STRIP SLOT 1 — Brian Gavin Diamonds -->
+    <a href="https://www.briangavindiamonds.com" target="_blank" id="ad-strip-1"
+       style="display:flex;align-items:center;justify-content:space-between;
+              background:#1a1208;padding:8px 14px;text-decoration:none;
+              border-bottom:1px solid #3a2a18;">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <span style="font-size:16px;">💎</span>
+        <div>
+          <div style="font-family:serif;font-size:13px;color:#c8a882;line-height:1.2;">Brian Gavin Diamonds</div>
+          <div style="font-family:sans-serif;font-size:9px;color:rgba(200,168,130,0.7);letter-spacing:.06em;text-transform:uppercase;">Super Ideal Cut · Houston</div>
+        </div>
+      </div>
+      <div style="background:#c8a882;color:#1a1208;font-family:sans-serif;font-size:9px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:5px 12px;border-radius:3px;white-space:nowrap;">
+        Shop Now →
+      </div>
+    </a>
+    <!-- ADD MORE AD STRIP SLOTS HERE — copy the <a> block above -->
+  </div>
+</div>
             <!-- ARTICLE 1: Featured large card — MHLV Dance Recital -->
       <article class="article-card">
         <div class="article-banner" style="padding:0;overflow:hidden;">
