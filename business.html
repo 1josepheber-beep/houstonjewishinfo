@@ -1269,6 +1269,7 @@
         <option value="books-gifts">Books &amp; Gifts</option>
         <option value="catering">Catering &amp; Events</option>
         <option value="community-org">Community Organizations</option>
+        <option value="security">Security Services</option>
       </select>
     </div>
 
@@ -1279,9 +1280,10 @@
       <button class="cat-pill" onclick="setCat('books-gifts', this)">📚 Books &amp; Gifts</button>
       <button class="cat-pill" onclick="setCat('catering', this)">🍽️ Catering &amp; Events</button>
       <button class="cat-pill" onclick="setCat('community-org', this)">🏛️ Community Organizations</button>
+      <button class="cat-pill" onclick="setCat('security', this)">🛡️ Security</button>
     </div>
 
-    <div class="results-bar">Showing <strong id="biz-count">22</strong> listings</div>
+    <div class="results-bar">Showing <strong id="biz-count">23</strong> listings</div>
 
     <div class="biz-grid" id="biz-grid">
 
@@ -1699,6 +1701,25 @@
         </div>
       </div>
 
+      <!-- RANGER GUARD -->
+      <div class="biz-card" data-cat="security" data-name="Ranger Guard and Investigations">
+        <div class="biz-card-top">
+          <div>
+            <div class="biz-category">Security Services</div>
+            <div class="biz-name">Ranger Guard and Investigations</div>
+          </div>
+          <span class="biz-badge badge-friendly">Texas-Owned</span>
+        </div>
+        <div class="biz-detail">📍 4660 Beechnut St, Suite 200, Houston, TX 77096</div>
+        <div class="biz-detail">📞 (832) 501-3331</div>
+        <div class="biz-detail">📧 <a href="mailto:support@rangerguard.net" style="color:var(--gold);">support@rangerguard.net</a></div>
+        <div class="biz-desc">Texas-owned and operated security company serving Houston, Dallas, San Antonio, and Austin. Founded by a senior security executive with 15 years experience in the Israeli secret service. Services include armed &amp; unarmed security, mobile patrol, loss prevention, gate guards, and special events. Available 24/7.</div>
+        <div class="biz-card-footer">
+          <span style="font-family:sans-serif;font-size:11px;color:var(--muted);">24/7 · Armed &amp; Unarmed · Special Events</span>
+          <a href="https://rangerguard.net" target="_blank" class="biz-website">Visit Website →</a>
+        </div>
+      </div>
+
     </div><!-- end biz-grid -->
 
     <!-- SUBMIT CTA -->
@@ -1804,6 +1825,12 @@
         <div class="service-name">Jewish Family Service</div>
         <div class="service-count">Mental health · Employment · Chaplaincy &amp; more</div>
         <div class="service-arrow">Visit Website →</div>
+      </div>
+      <div class="service-card" onclick="window.open('https://rangerguard.net','_blank')" style="border-color:#1e4d9b;">
+        <div class="service-icon">🛡️</div>
+        <div class="service-name">Security Services</div>
+        <div class="service-count" style="color:#1e4d9b;font-weight:700;">Ranger Guard · (832) 501-3331</div>
+        <div class="service-arrow">Armed · Unarmed · Mobile Patrol →</div>
       </div>
       <div class="service-card" onclick="window.open('https://www.houstonchaverim.org','_blank')" style="border-color:#c0391b;">
         <div class="service-icon">🚗</div>
