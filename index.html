@@ -1045,6 +1045,33 @@
   @media (max-width: 600px) {
     .article-grid-2 { grid-template-columns: 1fr; }
   }
+
+  /* ── NAV SCROLL WRAPPER ── */
+  .nav-wrapper {
+    position: relative;
+    display: flex;
+    align-items: stretch;
+  }
+  .nav-arrow {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    width: 16px;
+    flex-shrink: 0;
+    background: transparent;
+    color: var(--navy);
+    font-size: 11px;
+    cursor: pointer;
+    border: none;
+    padding: 0;
+    z-index: 10;
+    opacity: 0.6;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .nav-arrow:hover { opacity: 1; }
+  @media (max-width: 768px) {
+    .nav-arrow { display: flex; }
+  }
 </style>
 </head>
 <body style="-webkit-tap-highlight-color: transparent;">
@@ -1273,7 +1300,9 @@
       <button class="hamburger" id="hamburger-btn" aria-label="Toggle navigation" onclick="openMobileMenu()">
         <span></span><span></span><span></span>
       </button>
-      <nav class="nav-bar" id="main-nav" aria-label="Main navigation">
+      <div class="nav-wrapper">
+        <button class="nav-arrow left" aria-label="Scroll nav left">&#8249;</button>
+        <nav class="nav-bar" id="main-nav" aria-label="Main navigation">
         <a href="index.html" class="active">Home</a>
         <a href="mazaltov.html">Mazal Tov</a>
         <a href="events.html">Events</a>
@@ -1283,6 +1312,8 @@
         <a href="classifieds.html">Classifieds</a>
         <a href="contact.html">Contact / Submit</a>
       </nav>
+        <button class="nav-arrow right" aria-label="Scroll nav right">&#8250;</button>
+      </div>
     </div>
   </div>
 </header>
