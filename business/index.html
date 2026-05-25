@@ -1422,6 +1422,12 @@
         <div class="service-count">1 provider</div>
         <div class="service-arrow">View Providers →</div>
       </div>
+      <div class="service-card" onclick="openService('construction')">
+        <div class="service-icon">🏗️</div>
+        <div class="service-name">Construction</div>
+        <div class="service-count">Submit your listing</div>
+        <div class="service-arrow">View Providers →</div>
+      </div>
       <div class="service-card" onclick="window.open('https://www.houstonchaverim.org','_blank')" style="border-color:#c0391b;">
         <div class="service-icon">🚗</div>
         <div class="service-name">Houston Chaverim</div>
@@ -2104,7 +2110,8 @@ var serviceLabels = {
   funeral:'Funeral Home', travel:'Travel Agency',
   insurance:'Insurance', catering:'Catering & Events',
   marketing:'Marketing & Digital', security:'Security Services',
-  jfs:'Jewish Family Service'
+  jfs:'Jewish Family Service',
+  construction:'Construction'
 };
 
 function openService(type) {
