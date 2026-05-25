@@ -1954,31 +1954,9 @@
   }
 
   // Browse businesses — search + category filter
-  function filterBiz() {
-    var query = document.getElementById('biz-search').value.toLowerCase();
-    var cat = document.getElementById('biz-cat-select').value;
-    document.querySelectorAll('.cat-pill').forEach(function(p) { p.classList.remove('active'); });
-    document.querySelector('.cat-pill').classList.add('active');
-    var cards = document.querySelectorAll('.biz-card');
-    var count = 0;
-    cards.forEach(function(card) {
-      var nameMatch = card.dataset.name.toLowerCase().includes(query);
-      var catMatch = cat === 'all' || card.dataset.cat === cat;
-      if (nameMatch && catMatch) { card.style.display = ''; count++; }
-      else { card.style.display = 'none'; }
-    });
-    document.getElementById('biz-count').textContent = count;
-  }
 
-  function setCat(cat, btn) {
-    document.querySelectorAll('.cat-pill').forEach(function(p) { p.classList.remove('active'); });
-    btn.classList.add('active');
-    document.getElementById('biz-cat-select').value = cat;
-    document.getElementById('biz-search').value = '';
-    filterBiz();
-    // Re-apply active pill
-    btn.classList.add('active');
-  }
+
+
 
   // Service finder
   var serviceLabels = {
@@ -1991,41 +1969,9 @@
     marketing: 'Marketing & Digital'
   };
 
-  function openService(type) {
-    // Hide all expanded panels first
-    document.getElementById('funeral-listings').style.display = 'none';
-    document.getElementById('marketing-listings').style.display = 'none';
-    document.getElementById('service-listings').classList.remove('open');
+  
 
-    if (type === 'funeral') {
-      var fl = document.getElementById('funeral-listings');
-      fl.style.display = 'block';
-      fl.scrollIntoView({behavior:'smooth', block:'start'});
-      return;
-    }
-    if (type === 'marketing') {
-      var ml = document.getElementById('marketing-listings');
-      ml.style.display = 'block';
-      ml.scrollIntoView({behavior:'smooth', block:'start'});
-      return;
-    }
-    if (type === 'electric') {
-      var el = document.getElementById('electric-listings');
-      el.style.display = 'block';
-      el.scrollIntoView({behavior:'smooth', block:'start'});
-      return;
-    }
-    document.getElementById('service-listings-title').textContent = serviceLabels[type] + ' Providers';
-    document.getElementById('service-listings').classList.add('open');
-    document.getElementById('service-listings').scrollIntoView({behavior:'smooth', block:'start'});
-  }
-
-  function closeService() {
-    document.getElementById('service-listings').classList.remove('open');
-    document.getElementById('funeral-listings').style.display = 'none';
-    document.getElementById('marketing-listings').style.display = 'none';
-    document.getElementById('electric-listings').style.display = 'none';
-  }
+  
 
   // Modals
   function openModal(id) { document.getElementById(id).classList.add('open'); document.body.style.overflow = 'hidden'; }
