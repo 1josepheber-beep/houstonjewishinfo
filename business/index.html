@@ -1428,6 +1428,12 @@
         <div class="service-count">Submit your listing</div>
         <div class="service-arrow">View Providers →</div>
       </div>
+      <div class="service-card" onclick="openService('24hour')">
+        <div class="service-icon">🕐</div>
+        <div class="service-name">24 Hour Services</div>
+        <div class="service-count">Submit your listing</div>
+        <div class="service-arrow">View Providers →</div>
+      </div>
       <div class="service-card" onclick="window.open('https://www.houstonchaverim.org','_blank')" style="border-color:#c0391b;">
         <div class="service-icon">🚗</div>
         <div class="service-name">Houston Chaverim</div>
@@ -2066,9 +2072,34 @@ function renderBizGrid(cat) {
     : allBizListings.filter(function(i) { return i._cat === cat; });
   document.getElementById('biz-count').textContent = filtered.length;
   if(filtered.length === 0) {
-    grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:40px;font-family:sans-serif;color:var(--muted);">' +
-      (allBizListings.length === 0 ? 'Loading failed. Please refresh the page.' : 'No listings in this category yet.') +
-      '</div>';
+    var serviceMap = {
+      'legal':'legal', 'financial':'financial', 'realestate':'realestate',
+      'medical':'medical', 'therapy':'therapy', 'tutoring':'tutoring',
+      'plumbing':'plumbing', 'trades':'electric', 'hvac':'hvac',
+      'funeral':'funeral', 'travel':'travel', 'insurance':'insurance',
+      'catering':'catering', 'marketing':'marketing', 'security':'security'
+    };
+    var catIcons = {
+      'legal':'⚖️','financial':'💼','realestate':'🏠','medical':'🏥',
+      'therapy':'🧠','tutoring':'📖','plumbing':'🔧','trades':'⚡',
+      'hvac':'❄️','funeral':'🕯️','travel':'✈️','insurance':'🛡️',
+      'catering':'🍽️','marketing':'📱','security':'🔒'
+    };
+    var serviceType = serviceMap[cat];
+    var icon = catIcons[cat] || '🔍';
+    var catLabel = document.getElementById('biz-cat-select').options[document.getElementById('biz-cat-select').selectedIndex].text;
+    if(allBizListings.length === 0) {
+      grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:40px;font-family:sans-serif;color:var(--muted);">Loading failed. Please refresh the page.</div>';
+    } else if(serviceType) {
+      grid.innerHTML = '<div style="grid-column:1/-1;background:var(--white);border:1px solid var(--border);border-radius:8px;padding:32px 24px;text-align:center;">' +
+        '<div style="font-size:32px;margin-bottom:12px;">' + icon + '</div>' +
+        '<div style="font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:var(--navy);margin-bottom:8px;">No browse listings for ' + catLabel + ' yet</div>' +
+        '<div style="font-family:sans-serif;font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:16px;">Looking for a ' + catLabel + ' professional?<br>We have providers listed under <strong>Find a Service</strong>.</div>' +
+        '<button onclick="switchToService('' + serviceType + '')" style="display:inline-flex;align-items:center;gap:6px;font-family:sans-serif;font-size:12px;font-weight:700;padding:9px 18px;border-radius:4px;background:var(--navy);color:#fff;border:none;cursor:pointer;">Go to Find a Service → ' + catLabel + '</button>' +
+        '</div>';
+    } else {
+      grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:40px;font-family:sans-serif;color:var(--muted);">No listings in this category yet.</div>';
+    }
     return;
   }
   grid.innerHTML = filtered.map(buildBizCard).join('');
@@ -2111,7 +2142,8 @@ var serviceLabels = {
   insurance:'Insurance', catering:'Catering & Events',
   marketing:'Marketing & Digital', security:'Security Services',
   jfs:'Jewish Family Service',
-  construction:'Construction'
+  construction:'Construction',
+  '24hour':'24 Hour Services'
 };
 
 function openService(type) {
@@ -2153,7 +2185,18 @@ function openService(type) {
 }
 
 function showServiceProviders(type, bodyEl) {
-  var providers = (serviceCache && serviceCache[type]) || [];
+  var providers = [];
+  if(serviceCache) {
+    Object.keys(serviceCache).forEach(function(cat) {
+      serviceCache[cat].forEach(function(p) {
+        var cats = (p.category||'').split(',').map(function(c){return c.trim().toLowerCase();});
+        if(cats.indexOf(type) > -1) {
+          var alreadyAdded = providers.some(function(x){return x.name===p.name;});
+          if(!alreadyAdded) providers.push(p);
+        }
+      });
+    });
+  }
   if(providers.length === 0) {
     bodyEl.innerHTML = '<div class="placeholder-card" style="border-radius:0 0 6px 6px;">' +
       '<strong>No listings yet for this category</strong>' +
@@ -2176,6 +2219,16 @@ function showServiceProviders(type, bodyEl) {
       (website ? '<a href="'+website+'" target="_blank" class="biz-website" style="font-size:10px;">Visit Website →</a>' : '') +
       '</div></div>';
   }).join('');
+}
+
+function switchToService(type) {
+  var tabs = document.querySelectorAll('.main-tab');
+  var serviceBtn = null;
+  tabs.forEach(function(b) {
+    if(b.getAttribute('onclick') && b.getAttribute('onclick').indexOf('services') > -1) serviceBtn = b;
+  });
+  if(serviceBtn) switchTab('services', serviceBtn);
+  setTimeout(function() { openService(type); }, 100);
 }
 
 function closeService() {
