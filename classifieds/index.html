@@ -1214,7 +1214,7 @@
         badge: badge,
         title: row.title,
         desc: (row.organization || '') + (row.type ? ' · ' + row.type : ''),
-        price: row.category || '',
+        price: row.pay ? '💰 ' + row.pay : (row.category || ''),
         meta: contact,
         phone: row.phone || '',
         email: row.email || ''
