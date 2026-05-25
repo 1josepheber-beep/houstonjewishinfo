@@ -1492,43 +1492,15 @@
       </div>
     </div>
 
-    <!-- FUNERAL HOMES — expanded static listings shown when funeral tile is clicked -->
-    <div class="service-listings" id="funeral-listings" style="display:none;">
+    <!-- SERVICE LISTINGS DYNAMIC — powered by Google Sheets -->
+    <div class="service-listings" id="service-listings-dynamic" style="display:none;">
       <div class="service-listings-header">
-        <span>🕯️ Funeral Home Providers</span>
-        <button class="service-close-btn" onclick="document.getElementById('funeral-listings').style.display='none'">×</button>
+        <span id="service-listings-title-dynamic">Providers</span>
+        <button class="service-close-btn" onclick="closeService()">×</button>
       </div>
-      <div class="service-listing-item">
-        <div>
-          <div class="sli-name">Houston Jewish Funerals</div>
-          <div class="sli-meta">5455 Dashwood St, Suite 700, Bellaire, TX 77401 &nbsp;·&nbsp; Jewish-owned &amp; operated &nbsp;·&nbsp; Available 24/7</div>
-          <div class="sli-meta" style="margin-top:4px;">Full Jewish funeral services, veteran services, pre-planning, grief support, and obituaries. Serving Houston families with Jewish heritage and traditions.</div>
-        </div>
-        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;">
-          <span class="sli-phone">(713) 666-0257</span>
-          <a href="https://www.houstonjewishfunerals.com" target="_blank" class="biz-website" style="font-size:10px;">Visit Website →</a>
-        </div>
-      </div>
-      <div class="service-listing-item">
-        <div>
-          <div class="sli-name">Levy Funeral Directors</div>
-          <div class="sli-meta">4539 Bissonnet, Bellaire, TX 77401 &nbsp;·&nbsp; Est. 1938 &nbsp;·&nbsp; Available 24/7 &nbsp;·&nbsp; 4.9★ (147 reviews)</div>
-          <div class="sli-meta" style="margin-top:4px;">Oldest Jewish funeral home in Bellaire. Expert in Orthodox, Conservative, and Reform traditions. Tahara room, shomer dormitory, green burial options, and veteran services. Pre-planning available.</div>
-        </div>
-        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;">
-          <span class="sli-phone">(713) 660-6633</span>
-          <a href="https://www.dignitymemorial.com/funeral-homes/texas/bellaire/levy-funeral-directors/4923" target="_blank" class="biz-website" style="font-size:10px;">Visit Website →</a>
-        </div>
-      </div>
-      <div class="service-listing-item" style="border-radius:0 0 6px 6px;">
-        <div>
-          <div class="sli-name">Waldman Funeral Care</div>
-          <div class="sli-meta">Houston, TX &nbsp;·&nbsp; Independent Jewish funeral establishment &nbsp;·&nbsp; Available 24/7 &nbsp;·&nbsp; Est. 2013</div>
-          <div class="sli-meta" style="margin-top:4px;">Compassionate, personalized Jewish funeral care. Specializes in green and environmentally conscious burial options. Director Syd Waldman meets families wherever they are comfortable — anytime, anywhere.</div>
-        </div>
-        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;">
-          <span class="sli-phone">Via website</span>
-          <a href="https://www.waldmanfuneralcare.com" target="_blank" class="biz-website" style="font-size:10px;">Visit Website →</a>
+      <div id="service-listings-body-dynamic">
+        <div class="placeholder-card" style="border-radius:0 0 6px 6px;">
+          <strong>Loading...</strong>
         </div>
       </div>
     </div>
