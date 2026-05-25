@@ -1147,7 +1147,7 @@
 
   function fetchSheet(tabName, callback) {
     var url = 'https://docs.google.com/spreadsheets/d/' + SHEET_ID +
-      '/gviz/tq?tqx=out:json&headers=1&sheet=' + tabName;
+      '/gviz/tq?tqx=out:json&headers=1';
     fetch(url)
       .then(function(r) { return r.text(); })
       .then(function(text) {
@@ -1161,7 +1161,7 @@
             });
             return obj;
           }).filter(function(r) {
-            return r.title && (r.status === 'hiring' || r.status === 'seeking' || r.status === 'active');
+            var s = (r.status || '').toLowerCase().trim(); return r.title && (s === 'hiring' || s === 'seeking' || s === 'active');
           });
           callback(rows);
         } catch(e) { callback([]); }
@@ -1202,7 +1202,7 @@
   // Load Jobs tab
   fetchSheet('Jobs', function(rows) {
     rows.forEach(function(row) {
-      var cat = row.status === 'hiring' ? 'jobs-avail' : 'jobs-seek';
+      var s = (row.status || '').toLowerCase().trim(); var cat = s === 'hiring' ? 'jobs-avail' : 'jobs-seek';
       var badge = cat === 'jobs-avail'
         ? '<span class="listing-cat-badge cat-jobs-avail">💼 Jobs Available</span>'
         : '<span class="listing-cat-badge cat-jobs-seek">🔍 Job Seeking</span>';
