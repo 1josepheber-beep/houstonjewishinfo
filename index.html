@@ -1873,11 +1873,16 @@
           if (cat === 'nonprofit' || cat === 'office') tagClass += ' orange';
           else if (cat === 'food service' || cat === 'trades') tagClass += ' green';
 
+          var contact = '';
+          if (data.phone) contact += '<a href="tel:' + data.phone + '" style="display:block;font-family:sans-serif;font-size:11px;color:var(--navy);margin-top:4px;">📞 ' + data.phone + '</a>';
+          if (data.email) contact += '<a href="mailto:' + data.email + '" style="display:block;font-family:sans-serif;font-size:11px;color:var(--gold);margin-top:2px;">✉️ ' + data.email + '</a>';
+
           var card = '<div class="job-card">' +
             '<div class="job-card-title">' + data.title + '</div>' +
             '<div class="job-card-meta">' + (data.organization || '') +
             (data.type ? ' &nbsp;·&nbsp; ' + data.type : '') + '</div>' +
             '<span class="' + tagClass + '">' + (data.category || '') + '</span>' +
+            contact +
             '</div>';
 
           var status = (data.status || '').toLowerCase().trim();
