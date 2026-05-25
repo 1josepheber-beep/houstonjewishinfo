@@ -1179,8 +1179,9 @@
       '<div class="listing-left">' +
       item.badge +
       '<div class="listing-title">' + item.title + '</div>' +
-      (item.desc ? '<div class="listing-desc">' + item.desc + '</div>' : '') +
-      (item.meta ? '<div class="listing-meta">' + item.meta + '</div>' : '') +
+      (item.desc ? '<div class="listing-desc" style="color:var(--muted);">' + item.desc + '</div>' : '') +
+      (item.description ? '<div class="listing-desc" style="margin-top:6px;color:#444;">' + item.description + '</div>' : '') +
+      (item.meta ? '<div class="listing-meta" style="margin-top:8px;">' + item.meta + '</div>' : '') +
       '</div>' +
       '<div class="listing-right">' +
       (item.price ? '<div class="listing-price">' + item.price + '</div>' : '') +
@@ -1214,6 +1215,7 @@
         badge: badge,
         title: row.title,
         desc: (row.organization || '') + (row.type ? ' · ' + row.type : ''),
+        description: row.description || '',
         price: row.pay ? '💰 ' + row.pay : (row.category || ''),
         meta: contact,
         phone: row.phone || '',
