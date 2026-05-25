@@ -1,6 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-LQFZ69SZRS"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-LQFZ69SZRS');
+</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Classifieds — Houston Jewish Info</title>
@@ -1114,54 +1122,100 @@
     document.getElementById('today-date').textContent=days[now.getDay()]+', '+months[now.getMonth()]+' '+now.getDate()+', '+now.getFullYear();
   })();
 
-  // Load listings from Google Sheets
-  var allListings = [];
-
+  // ── CLASSIFIEDS — Google Sheets (all tabs) ──
   var SHEET_ID = '1in7Ac7zknqyR9neWKOCAjOAG4jXCIVTJQfU6jJ72CV8';
+  var allListings = [];
+  var tabsLoaded = 0;
 
-  var tabConfig = {
-    'Jobs': {
-      hiring: 'jobs-avail',
-      seeking: 'jobs-seek',
-      badge: function(status) {
-        return status === 'hiring'
-          ? '<span class="listing-cat-badge cat-jobs-avail">💼 Jobs Available</span>'
-          : '<span class="listing-cat-badge cat-jobs-seek">🔍 Job Seeking</span>';
-      },
-      buildCard: function(row) {
-        var contact = '';
-        if (row.phone) contact += '<span>📞 ' + row.phone + '</span>';
-        if (row.email) contact += '<span>✉️ ' + row.email + '</span>';
-        return {
-          cat: row.status === 'hiring' ? 'jobs-avail' : 'jobs-seek',
-          title: row.title || '',
-          desc: (row.organization || '') + (row.type ? ' · ' + row.type : ''),
-          price: row.category || '',
-          meta: contact,
-          phone: row.phone || '',
-          email: row.email || ''
-        };
+  // Map: sheet tab name → classifieds category + badge
+  var classifiedTabs = [
+    {
+      tab: 'Jobs', 
+      buildItems: function(rows) {
+        return rows.filter(function(r) {
+          var s = (r.status || '').toLowerCase().trim();
+          return r.title && (s === 'hiring' || s === 'seeking');
+        }).map(function(r) {
+          var s = (r.status || '').toLowerCase().trim();
+          var cat = s === 'hiring' ? 'jobs-avail' : 'jobs-seek';
+          var badge = cat === 'jobs-avail'
+            ? '<span class="listing-cat-badge cat-jobs-avail">💼 Jobs Available</span>'
+            : '<span class="listing-cat-badge cat-jobs-seek">🔍 Job Seeking</span>';
+          var contact = '';
+          if (r.phone) contact += '<span>📞 ' + r.phone + '</span>';
+          if (r.email) contact += '<span>✉️ ' + r.email + '</span>';
+          return {
+            cat: cat, badge: badge,
+            title: r.title || '',
+            desc: (r.organization || '') + (r.type ? ' · ' + r.type : ''),
+            description: r.description || '',
+            price: r.pay ? '💰 ' + r.pay : '',
+            meta: contact,
+            phone: r.phone || '', email: r.email || ''
+          };
+        });
+      }
+    },
+    {
+      tab: 'Classifieds',
+      buildItems: function(rows) {
+        return rows.filter(function(r) {
+          return r.title && (r.status || '').toLowerCase().trim() === 'active';
+        }).map(function(r) {
+          var cat = (r.category || 'other').toLowerCase().replace(/\s+/g,'-');
+          var catMap = {
+            'for-sale': {cls:'cat-for-sale', label:'🏷️ For Sale'},
+            'forsale':  {cls:'cat-for-sale', label:'🏷️ For Sale'},
+            'for-rent': {cls:'cat-for-rent', label:'🏠 For Rent'},
+            'forrent':  {cls:'cat-for-rent', label:'🏠 For Rent'},
+            'babysitting': {cls:'cat-babysitting', label:'👶 Babysitting'},
+            'childcare':   {cls:'cat-babysitting', label:'👶 Babysitting'},
+            'free':        {cls:'cat-other', label:'📦 Free / Giveaway'},
+            'free-giveaway':{cls:'cat-other', label:'📦 Free / Giveaway'},
+            'services':    {cls:'cat-other', label:'🤝 Services Offered'},
+            'services-offered':{cls:'cat-other', label:'🤝 Services Offered'},
+          };
+          var cm = catMap[cat] || {cls:'cat-other', label:'📣 ' + (r.category || 'Other')};
+          // Normalize cat for filter
+          var filterCat = cat.includes('sale') ? 'for-sale'
+            : cat.includes('rent') ? 'for-rent'
+            : cat.includes('baby') || cat.includes('child') ? 'babysitting'
+            : cat.includes('free') ? 'other'
+            : cat.includes('service') ? 'other'
+            : 'other';
+          var badge = '<span class="listing-cat-badge ' + cm.cls + '">' + cm.label + '</span>';
+          var contact = '';
+          if (r.phone) contact += '<span>📞 ' + r.phone + '</span>';
+          if (r.email) contact += '<span>✉️ ' + r.email + '</span>';
+          return {
+            cat: filterCat, badge: badge,
+            title: r.title || '',
+            desc: r.location ? '📍 ' + r.location : '',
+            description: r.description || '',
+            price: r.price ? '💰 ' + r.price : (r['price / rate'] ? '💰 ' + r['price / rate'] : ''),
+            meta: contact,
+            phone: r.phone || '', email: r.email || ''
+          };
+        });
       }
     }
-  };
+  ];
 
-  function fetchSheet(tabName, callback) {
+  function fetchSheetTab(tabName, callback) {
     var url = 'https://docs.google.com/spreadsheets/d/' + SHEET_ID +
-      '/gviz/tq?tqx=out:json&headers=1';
+      '/gviz/tq?tqx=out:json&headers=1&sheet=' + tabName;
     fetch(url)
       .then(function(r) { return r.text(); })
       .then(function(text) {
         try {
           var json = JSON.parse(text.substring(47, text.length - 2));
-          var cols = json.table.cols.map(function(c) { return c.label.toLowerCase(); });
-          var rows = json.table.rows.map(function(row) {
+          var cols = json.table.cols.map(function(c) { return (c.label || '').toLowerCase().trim(); });
+          var rows = (json.table.rows || []).map(function(row) {
             var obj = {};
             cols.forEach(function(col, i) {
-              obj[col] = row.c[i] ? (row.c[i].v || '') : '';
+              obj[col] = row.c && row.c[i] ? (row.c[i].v || '') : '';
             });
             return obj;
-          }).filter(function(r) {
-            var s = (r.status || '').toLowerCase().trim(); return r.title && (s === 'hiring' || s === 'seeking' || s === 'active');
           });
           callback(rows);
         } catch(e) { callback([]); }
@@ -1173,7 +1227,7 @@
     var contactBtn = '';
     if (item.email) contactBtn = '<a href="mailto:' + item.email + '" class="listing-contact-btn">Contact →</a>';
     else if (item.phone) contactBtn = '<a href="tel:' + item.phone + '" class="listing-contact-btn">Contact →</a>';
-    else contactBtn = '<span class="listing-contact-btn" style="opacity:.5;">No contact</span>';
+    else contactBtn = '<span class="listing-contact-btn" style="opacity:.5;">No contact info</span>';
 
     return '<div class="listing-card" data-cat="' + item.cat + '">' +
       '<div class="listing-left">' +
@@ -1191,39 +1245,26 @@
 
   function renderListings(cat) {
     var filtered = cat === 'all' ? allListings : allListings.filter(function(l) { return l.cat === cat; });
-    var container = document.getElementById('listings-list');
     document.getElementById('listing-count').textContent = filtered.length;
+    var container = document.getElementById('listings-list');
     if (filtered.length === 0) {
-      container.innerHTML = '<div style="text-align:center;font-family:sans-serif;font-size:13px;color:var(--muted);padding:40px;background:var(--white);border:2px dashed var(--border);border-radius:8px;"><strong style="display:block;font-size:16px;color:var(--navy);margin-bottom:6px;font-family:Playfair Display,serif;">No listings yet</strong>Be the first to post in this category!</div>';
+      container.innerHTML = '<div style="text-align:center;font-family:sans-serif;font-size:13px;color:var(--muted);padding:40px;background:var(--white);border:2px dashed var(--border);border-radius:8px;"><strong style="display:block;font-size:16px;color:var(--navy);margin-bottom:6px;font-family:Playfair Display,serif;">No listings yet</strong>Be the first to post!</div>';
       return;
     }
     container.innerHTML = filtered.map(buildListingCard).join('');
   }
 
-  // Load Jobs tab
-  fetchSheet('Jobs', function(rows) {
-    rows.forEach(function(row) {
-      var s = (row.status || '').toLowerCase().trim(); var cat = s === 'hiring' ? 'jobs-avail' : 'jobs-seek';
-      var badge = cat === 'jobs-avail'
-        ? '<span class="listing-cat-badge cat-jobs-avail">💼 Jobs Available</span>'
-        : '<span class="listing-cat-badge cat-jobs-seek">🔍 Job Seeking</span>';
-      var contact = '';
-      if (row.phone) contact += '<span>📞 ' + row.phone + '</span>';
-      if (row.email) contact += '<span>✉️ ' + row.email + '</span>';
-      allListings.push({
-        cat: cat,
-        badge: badge,
-        title: row.title,
-        desc: (row.organization || '') + (row.type ? ' · ' + row.type : ''),
-        description: row.description || '',
-        price: row.pay ? '💰 ' + row.pay : (row.category || ''),
-        meta: contact,
-        phone: row.phone || '',
-        email: row.email || ''
-      });
+  // Load all tabs
+  classifiedTabs.forEach(function(tabConfig) {
+    fetchSheetTab(tabConfig.tab, function(rows) {
+      var items = tabConfig.buildItems(rows);
+      allListings = allListings.concat(items);
+      tabsLoaded++;
+      if (tabsLoaded === classifiedTabs.length) {
+        document.getElementById('listings-loading').style.display = 'none';
+        renderListings('all');
+      }
     });
-    document.getElementById('listings-loading').style.display = 'none';
-    renderListings('all');
   });
 
   // Filter
