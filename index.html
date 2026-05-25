@@ -1408,37 +1408,16 @@
 
       <!-- HIRING listings — edit or add .job-card items here -->
       <div id="jobs-hire">
-        <div class="job-card">
-          <div class="job-card-title">Hebrew School Teacher</div>
-          <div class="job-card-meta">Congregation Beth Yeshurun &nbsp;·&nbsp; Part-time</div>
-          <span class="job-card-tag">Education</span>
+        <div id="hiring-cards">
+          <div style="font-family:sans-serif;font-size:12px;color:var(--muted);text-align:center;padding:12px;">Loading...</div>
         </div>
-        <div class="job-card">
-          <div class="job-card-title">Executive Director</div>
-          <div class="job-card-meta">Jewish Family Service &nbsp;·&nbsp; Full-time</div>
-          <span class="job-card-tag orange">Nonprofit</span>
-        </div>
-        <div class="job-card">
-          <div class="job-card-title">Kosher Kitchen Manager</div>
-          <div class="job-card-meta">JCC Houston &nbsp;·&nbsp; Full-time</div>
-          <span class="job-card-tag green">Food Service</span>
-        </div>
-        <!-- ADD MORE HIRING CARDS HERE -->
       </div>
 
       <!-- JOB SEEKERS listings — edit or add .job-card items here -->
       <div id="jobs-seek" style="display:none">
-        <div class="job-card">
-          <div class="job-card-title">Cantor / Music Director</div>
-          <div class="job-card-meta">10 yrs exp &nbsp;·&nbsp; Available now</div>
-          <span class="job-card-tag">Synagogue</span>
+        <div id="seeking-cards">
+          <div style="font-family:sans-serif;font-size:12px;color:var(--muted);text-align:center;padding:12px;">Loading...</div>
         </div>
-        <div class="job-card">
-          <div class="job-card-title">Nonprofit Admin &amp; Grants</div>
-          <div class="job-card-meta">Bilingual EN/HE &nbsp;·&nbsp; Part-time</div>
-          <span class="job-card-tag orange">Office</span>
-        </div>
-        <!-- ADD MORE SEEKER CARDS HERE -->
       </div>
 
       <button class="sidebar-btn" onclick="openModal('modal-job')">+ Post a Listing</button>
@@ -1864,6 +1843,60 @@
       document.getElementById('weather-temp').textContent = '--°F';
       document.getElementById('weather-desc').textContent = 'Unavailable';
     });
+
+  // Jobs Board — Google Sheets
+  (function() {
+    var url = 'https://docs.google.com/spreadsheets/d/1in7Ac7zknqyR9neWKOCAjOAG4jXCIVTJQfU6jJ72CV8/gviz/tq?tqx=out:json';
+    fetch(url)
+      .then(function(r) { return r.text(); })
+      .then(function(text) {
+        // Strip Google's wrapper
+        var json = JSON.parse(text.substring(47, text.length - 2));
+        var rows = json.table.rows;
+        var cols = json.table.cols.map(function(c) { return c.label.toLowerCase(); });
+
+        var hiringCards = '';
+        var seekingCards = '';
+
+        rows.forEach(function(row) {
+          var data = {};
+          cols.forEach(function(col, i) {
+            data[col] = row.c[i] ? (row.c[i].v || '') : '';
+          });
+
+          // Skip empty rows
+          if (!data.title) return;
+
+          // Pick tag color based on category
+          var tagClass = 'job-card-tag';
+          var cat = (data.category || '').toLowerCase();
+          if (cat === 'nonprofit' || cat === 'office') tagClass += ' orange';
+          else if (cat === 'food service' || cat === 'trades') tagClass += ' green';
+
+          var card = '<div class="job-card">' +
+            '<div class="job-card-title">' + data.title + '</div>' +
+            '<div class="job-card-meta">' + (data.organization || '') +
+            (data.type ? ' &nbsp;·&nbsp; ' + data.type : '') + '</div>' +
+            '<span class="' + tagClass + '">' + (data.category || '') + '</span>' +
+            '</div>';
+
+          var status = (data.status || '').toLowerCase().trim();
+          if (status === 'hiring') hiringCards += card;
+          else if (status === 'seeking') seekingCards += card;
+        });
+
+        document.getElementById('hiring-cards').innerHTML = hiringCards ||
+          '<div style="font-family:sans-serif;font-size:12px;color:var(--muted);text-align:center;padding:12px;">No listings yet.</div>';
+        document.getElementById('seeking-cards').innerHTML = seekingCards ||
+          '<div style="font-family:sans-serif;font-size:12px;color:var(--muted);text-align:center;padding:12px;">No listings yet.</div>';
+      })
+      .catch(function() {
+        document.getElementById('hiring-cards').innerHTML =
+          '<div style="font-family:sans-serif;font-size:12px;color:var(--muted);text-align:center;padding:12px;">Could not load listings.</div>';
+        document.getElementById('seeking-cards').innerHTML =
+          '<div style="font-family:sans-serif;font-size:12px;color:var(--muted);text-align:center;padding:12px;">Could not load listings.</div>';
+      });
+  })();
 
   // Mobile menu
   function openMobileMenu() {
