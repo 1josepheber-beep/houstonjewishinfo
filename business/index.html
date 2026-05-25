@@ -2050,7 +2050,10 @@
         var cols = json.table.cols.map(function(c){return(c.label||'').toLowerCase().trim();});
         var rows = (json.table.rows||[]).map(function(row){
           var obj={};
-          cols.forEach(function(col,i){obj[col]=row.c&&row.c[i]?(row.c[i].v||''):'';});
+          cols.forEach(function(col,i){
+            obj[col] = (row.c && row.c[i] && row.c[i].v !== null && row.c[i].v !== undefined)
+              ? String(row.c[i].v) : '';
+          });
           obj.cat=cat; return obj;
         }).filter(function(r){return r.name&&(r.status||'').toLowerCase().trim()==='active';});
         allBizListings=allBizListings.concat(rows);
@@ -2140,7 +2143,10 @@
         var cols=json.table.cols.map(function(c){return(c.label||'').toLowerCase().trim();});
         var rows=(json.table.rows||[]).map(function(row){
           var obj={};
-          cols.forEach(function(col,i){obj[col]=row.c&&row.c[i]?(row.c[i].v||''):'';});
+          cols.forEach(function(col,i){
+            obj[col] = (row.c && row.c[i] && row.c[i].v !== null && row.c[i].v !== undefined)
+              ? String(row.c[i].v) : '';
+          });
           return obj;
         }).filter(function(r){return r.name&&(r.status||'').toLowerCase().trim()==='active';});
         rows.forEach(function(r){
