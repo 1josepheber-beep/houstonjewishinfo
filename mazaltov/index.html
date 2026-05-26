@@ -61,22 +61,54 @@
         }
 
         document.getElementById('mt-grid').innerHTML = rows.map(function(r) {
-          var type = (r.type||'').toLowerCase().trim();
-          var emoji = typeEmojis[type] || '🎉';
-          var banner = typeBanners[type] || 'linear-gradient(135deg,#1e4d9b,#3a70c0)';
-          var typeLabel = r.type || 'Simcha';
-          // Capitalize first letter of each word
-          typeLabel = typeLabel.replace(/\b\w/g, function(c) { return c.toUpperCase(); });
+          var rawType = (r.type||'').toLowerCase().trim();
+          // Normalize type to CSS class key
+          var cssType = rawType.replace(/\s+/g,'-');
+          // emoji map
+          var emoji = typeEmojis[rawType] || '🎉';
+          // Capitalize type label
+          var typeLabel = (r.type||'Simcha').replace(/\b\w/g,function(c){return c.toUpperCase();});
+
+          // Build headline based on type like the old cards
+          var headline = '';
+          var names = '';
+          if(rawType === 'engagement') {
+            headline = 'Mazal Tov on the Engagement of';
+            names = r.name;
+          } else if(rawType === 'wedding') {
+            headline = 'Mazal Tov on the Wedding of';
+            names = r.name;
+          } else if(rawType === 'birth') {
+            headline = 'Mazal Tov to ' + r.name;
+            names = r.message ? r.message : '';
+          } else if(rawType === 'bar mitzvah') {
+            headline = 'Mazal Tov to ' + r.name;
+            names = 'On his Bar Mitzvah';
+          } else if(rawType === 'bat mitzvah') {
+            headline = 'Mazal Tov to ' + r.name;
+            names = 'On her Bat Mitzvah';
+          } else if(rawType === 'anniversary') {
+            headline = 'Mazal Tov to ' + r.name;
+            names = 'On their Anniversary';
+          } else if(rawType === 'graduation') {
+            headline = 'Mazal Tov to ' + r.name;
+            names = 'On their Graduation';
+          } else {
+            headline = 'Mazal Tov to ' + r.name;
+            names = r.message || '';
+          }
 
           return '<div class="mt-card">' +
-            '<div class="mt-card-banner" style="background:' + banner + ';height:8px;"></div>' +
+            '<div class="mt-card-banner ' + cssType + '"></div>' +
             '<div class="mt-card-body">' +
-            '<div class="mt-type-badge">' + emoji + ' ' + typeLabel + '</div>' +
-            '<div class="mt-name">' + r.name + '</div>' +
-            (r.date ? '<div class="mt-meta">📅 ' + r.date + '</div>' : '') +
-            (r.city ? '<div class="mt-meta">📍 ' + r.city + '</div>' : '') +
-            (r.message ? '<div class="mt-message">' + r.message + '</div>' : '') +
-            '<div class="mt-congrats">Mazal Tov! 🎊</div>' +
+            '<span class="mt-category cat-' + cssType + '">' + typeLabel + '</span>' +
+            '<span class="mt-emoji">' + emoji + '</span>' +
+            '<div class="mt-headline">' + headline + '</div>' +
+            (names ? '<div class="mt-names">' + names + '</div>' : '') +
+            '<div class="mt-meta">' +
+            (r.date ? '<span>📅 ' + r.date + '</span>' : '') +
+            (r.city ? '<span>📍 ' + r.city + '</span>' : '') +
+            '</div>' +
             '</div></div>';
         }).join('');
       })
@@ -860,6 +892,10 @@
   .mt-card-banner.birth      { background:linear-gradient(90deg,#2a7a2a,#70b870); }
   .mt-card-banner.bar-mitzvah { background:linear-gradient(90deg,#6a2a9a,#b07ad0); }
   .mt-card-banner.anniversary { background:linear-gradient(90deg,#c0391b,#e07050); }
+  .mt-card-banner.bat-mitzvah { background:linear-gradient(90deg,#1e4d9b,#7a99cc); }
+  .mt-card-banner.graduation  { background:linear-gradient(90deg,#2a7a2a,#70b870); }
+  .cat-bat-mitzvah { background:#eef3fb; color:#1e4d9b; }
+  .cat-graduation  { background:#edf7ed; color:#2a7a2a; }
 
   .mt-card-body { padding:22px 28px; }
 
