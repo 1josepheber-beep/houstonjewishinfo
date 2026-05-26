@@ -886,6 +886,41 @@
   @media (max-width: 768px) {
     .nav-arrow { display: flex; }
   }
+
+  /* ── LIGHTBOX ── */
+  .lightbox-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.92);
+    z-index: 2000;
+    align-items: center;
+    justify-content: center;
+    cursor: zoom-out;
+  }
+  .lightbox-overlay.open { display: flex; }
+  .lightbox-overlay img {
+    max-width: 90vw;
+    max-height: 90vh;
+    object-fit: contain;
+    border-radius: 4px;
+    box-shadow: 0 8px 40px rgba(0,0,0,.6);
+    cursor: default;
+  }
+  .lightbox-close {
+    position: fixed;
+    top: 16px; right: 20px;
+    font-size: 32px;
+    color: #fff;
+    cursor: pointer;
+    line-height: 1;
+    opacity: .8;
+    transition: opacity .15s;
+    background: none;
+    border: none;
+  }
+  .lightbox-close:hover { opacity: 1; }
+  .event-card-img img { cursor: zoom-in; }
 </style>
 </head>
 <body style="-webkit-tap-highlight-color:transparent;">
@@ -1055,7 +1090,7 @@
     var catKey=getCatKey(ev.category);
     var color=catColors[catKey]||'#555';
     var imgHtml=ev.imageurl
-      ?'<img src="'+ev.imageurl+'" alt="'+ev.title+'" style="width:100%;height:100%;object-fit:cover;object-position:top;display:block;">'
+      ?'<img src="'+ev.imageurl+'" alt="'+ev.title+'" onclick="openLightbox(''+ev.imageurl+'',''+ev.title+'')" style="width:100%;height:100%;object-fit:cover;object-position:top;display:block;cursor:zoom-in;" title="Click to enlarge">'
       :'<div class="event-card-img-placeholder" style="background:linear-gradient(135deg,#1a2744,#2a407a);color:#fff;">'+(catEmojis[catKey]||'📋')+'</div>';
     var btnText=(ev.buttontext||ev['button text']||'').trim();
     var btnHtml='';
@@ -1163,6 +1198,27 @@
   }
   initCalendar();
   loadEvents();
+
+  // Lightbox
+  function openLightbox(src, alt) {
+    document.getElementById('lightbox-img').src = src;
+    document.getElementById('lightbox-img').alt = alt || '';
+    document.getElementById('lightbox').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeLightbox() {
+    document.getElementById('lightbox').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+  document.addEventListener('keydown', function(e) {
+    if(e.key === 'Escape') closeLightbox();
+  });
 </script>
+
+<!-- LIGHTBOX -->
+<div class="lightbox-overlay" id="lightbox" onclick="closeLightbox()">
+  <button class="lightbox-close" onclick="closeLightbox()">×</button>
+  <img id="lightbox-img" src="" alt="" onclick="event.stopPropagation()">
+</div>
 </body>
 </html>
