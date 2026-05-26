@@ -1008,12 +1008,18 @@
   <div style="font-family:sans-serif;font-size:12px;color:var(--muted);margin-bottom:12px;">
     Showing <strong id="event-count">0</strong> events
   </div>
-  <div class="filter-bar">
-    <button class="filter-btn active" onclick="filterEvents('all',this)">All</button>
-    <button class="filter-btn" onclick="filterEvents('arts',this)">🎭 Arts & Culture</button>
-    <button class="filter-btn" onclick="filterEvents('community',this)">🤝 Community</button>
-    <button class="filter-btn" onclick="filterEvents('holiday',this)">✡️ Holiday</button>
-    <button class="filter-btn" onclick="filterEvents('fundraiser',this)">💛 Fundraiser</button>
+  <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:20px;">
+    <div class="filter-bar" style="margin-bottom:0;">
+      <button class="filter-btn active" onclick="filterEvents('all',this)">All</button>
+      <button class="filter-btn" onclick="filterEvents('arts',this)">🎭 Arts & Culture</button>
+      <button class="filter-btn" onclick="filterEvents('community',this)">🤝 Community</button>
+      <button class="filter-btn" onclick="filterEvents('holiday',this)">✡️ Holiday</button>
+      <button class="filter-btn" onclick="filterEvents('fundraiser',this)">💛 Fundraiser</button>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center;">
+      <button id="btn-list-view" onclick="setView('list')" style="font-family:sans-serif;font-size:11px;font-weight:700;padding:7px 16px;border-radius:4px;background:var(--navy);color:#fff;border:none;cursor:pointer;display:flex;align-items:center;gap:5px;">☰ List View</button>
+      <button id="btn-cal-view" onclick="setView('calendar')" style="font-family:sans-serif;font-size:11px;font-weight:700;padding:7px 16px;border-radius:4px;background:transparent;color:var(--navy);border:2px solid var(--navy);cursor:pointer;display:flex;align-items:center;gap:5px;">📅 Calendar View</button>
+    </div>
   </div>
 
   <div class="events-list" id="events-list">
