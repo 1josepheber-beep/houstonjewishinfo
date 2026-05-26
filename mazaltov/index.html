@@ -8,6 +8,86 @@
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
   gtag('config', 'G-LQFZ69SZRS');
+  // ── MAZAL TOV — Google Sheets ──
+  var MT_SHEET_ID = '1in7Ac7zknqyR9neWKOCAjOAG4jXCIVTJQfU6jJ72CV8';
+  var typeEmojis = {
+    'engagement': '💍',
+    'wedding': '💒',
+    'birth': '👶',
+    'bar mitzvah': '🎉',
+    'bat mitzvah': '🎊',
+    'anniversary': '💝',
+    'graduation': '🎓'
+  };
+  var typeBanners = {
+    'engagement': 'linear-gradient(135deg,#c0391b,#e05030)',
+    'wedding': 'linear-gradient(135deg,#1e4d9b,#3a70c0)',
+    'birth': 'linear-gradient(135deg,#6a1fa0,#9b50d0)',
+    'bar mitzvah': 'linear-gradient(135deg,#c0391b,#e07050)',
+    'bat mitzvah': 'linear-gradient(135deg,#1e4d9b,#5080c0)',
+    'anniversary': 'linear-gradient(135deg,#c0391b,#e05030)',
+    'graduation': 'linear-gradient(135deg,#2a7a2a,#50a050)'
+  };
+
+  function safeValMT(cell) {
+    if(!cell || cell.v === null || cell.v === undefined) return '';
+    return String(cell.v);
+  }
+
+  function loadMazalTov() {
+    var url = 'https://docs.google.com/spreadsheets/d/' + MT_SHEET_ID +
+      '/gviz/tq?tqx=out:json&headers=1&sheet=MazalTov';
+    fetch(url)
+      .then(function(r) { return r.text(); })
+      .then(function(text) {
+        var json = JSON.parse(text.substring(47, text.length - 2));
+        var cols = json.table.cols.map(function(c) { return (c.label||'').toLowerCase().trim(); });
+        var rows = (json.table.rows||[]).map(function(row) {
+          var obj = {};
+          cols.forEach(function(col, i) { obj[col] = safeValMT(row.c ? row.c[i] : null); });
+          return obj;
+        }).filter(function(r) {
+          return r.name && (r.status||'').toLowerCase().trim() === 'active';
+        }).reverse();
+
+        var loader = document.getElementById('mt-loading');
+        if(loader) loader.style.display = 'none';
+        document.getElementById('mt-count').textContent = rows.length;
+
+        if(rows.length === 0) {
+          document.getElementById('mt-grid').innerHTML =
+            '<div style="text-align:center;font-family:sans-serif;font-size:13px;color:var(--muted);padding:40px;grid-column:1/-1;">No announcements yet. Be the first to share your simcha!</div>';
+          return;
+        }
+
+        document.getElementById('mt-grid').innerHTML = rows.map(function(r) {
+          var type = (r.type||'').toLowerCase().trim();
+          var emoji = typeEmojis[type] || '🎉';
+          var banner = typeBanners[type] || 'linear-gradient(135deg,#1e4d9b,#3a70c0)';
+          var typeLabel = r.type || 'Simcha';
+          // Capitalize first letter of each word
+          typeLabel = typeLabel.replace(/\b\w/g, function(c) { return c.toUpperCase(); });
+
+          return '<div class="mt-card">' +
+            '<div class="mt-card-banner" style="background:' + banner + ';height:8px;"></div>' +
+            '<div class="mt-card-body">' +
+            '<div class="mt-type-badge">' + emoji + ' ' + typeLabel + '</div>' +
+            '<div class="mt-name">' + r.name + '</div>' +
+            (r.date ? '<div class="mt-meta">📅 ' + r.date + '</div>' : '') +
+            (r.city ? '<div class="mt-meta">📍 ' + r.city + '</div>' : '') +
+            (r.message ? '<div class="mt-message">' + r.message + '</div>' : '') +
+            '<div class="mt-congrats">Mazal Tov! 🎊</div>' +
+            '</div></div>';
+        }).join('');
+      })
+      .catch(function(e) {
+        console.error('MazalTov load error:', e);
+        var loader = document.getElementById('mt-loading');
+        if(loader) loader.textContent = 'Could not load announcements. Please refresh.';
+      });
+  }
+  loadMazalTov();
+
 </script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -1067,39 +1147,12 @@
     <button class="filter-btn" onclick="filterMT('anniversary',this)">💝 Anniversaries</button>
   </div>
 
-  <div class="results-bar">Showing <strong id="mt-count">2</strong> announcements</div>
+  <div class="results-bar">Showing <strong id="mt-count">0</strong> announcements</div>
 
   <div class="mt-grid" id="mt-grid">
-
-    <!-- ENGAGEMENT: Ezriel Litvintchouk & Sonya Ginzburg -->
-    <div class="mt-card" data-type="engagement">
-      <div class="mt-card-banner engagement"></div>
-      <div class="mt-card-body">
-        <span class="mt-emoji">💍</span>
-        <span class="mt-category cat-engagement">Engagement</span>
-        <div class="mt-headline">Mazal Tov on the Engagement of</div>
-        <div class="mt-names">Ezriel Litvintchouk — Houston, Texas<br>to<br>Sonya Ginzburg — Los Angeles, CA</div>
-        <div class="mt-meta">
-          <span>📍 Houston, TX</span>
-        </div>
-      </div>
+    <div id="mt-loading" style="text-align:center;font-family:sans-serif;font-size:13px;color:var(--muted);padding:40px;grid-column:1/-1;">
+      Loading announcements...
     </div>
-
-
-    <!-- BIRTH: Marinovsky -->
-    <div class="mt-card" data-type="birth">
-      <div class="mt-card-banner birth"></div>
-      <div class="mt-card-body">
-        <span class="mt-emoji">👶</span>
-        <span class="mt-category cat-birth">Birth</span>
-        <div class="mt-headline">Mazal Tov to Illana &amp; Shmaya Marinovsky</div>
-        <div class="mt-names">On the birth of a baby girl 🎀</div>
-        <div class="mt-meta">
-          <span>📅 May 12, 2026</span>
-        </div>
-      </div>
-    </div>
-
   </div><!-- end mt-grid -->
 
   <!-- SUBMIT CTA -->
