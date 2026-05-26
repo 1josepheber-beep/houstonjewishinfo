@@ -2099,6 +2099,12 @@ bizTabKeys.forEach(function(cat) {
 function filterBiz() {
   var query = (document.getElementById('biz-search').value||'').toLowerCase();
   var cat = document.getElementById('biz-cat-select').value;
+  if(query === '') {
+    // No search query — use renderBizGrid so nudge shows for empty categories
+    renderBizGrid(cat);
+    return;
+  }
+  // Has search query — filter across all listings
   var filtered = allBizListings.filter(function(item) {
     var nameMatch = (item.name||'').toLowerCase().indexOf(query) > -1 ||
                     (item.description||'').toLowerCase().indexOf(query) > -1;
@@ -2106,7 +2112,11 @@ function filterBiz() {
     return nameMatch && catMatch;
   });
   document.getElementById('biz-count').textContent = filtered.length;
-  document.getElementById('biz-grid').innerHTML = filtered.map(buildBizCard).join('');
+  if(filtered.length === 0) {
+    document.getElementById('biz-grid').innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:40px;font-family:sans-serif;color:var(--muted);">No results found for \"' + query + '\".</div>';
+  } else {
+    document.getElementById('biz-grid').innerHTML = filtered.map(buildBizCard).join('');
+  }
 }
 
 function setCat(cat, btn) {
