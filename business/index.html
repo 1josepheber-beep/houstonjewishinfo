@@ -2096,6 +2096,43 @@ bizTabKeys.forEach(function(cat) {
   fetchBizTab(bizTabMap[cat], cat);
 });
 
+// Pre-load Services sheet on page load to show counts immediately
+function preloadServiceCounts() {
+  fetch('https://docs.google.com/spreadsheets/d/' + SHEET_ID + '/gviz/tq?tqx=out:json&headers=1&sheet=Services')
+    .then(function(r){return r.text();})
+    .then(function(text){
+      var json = JSON.parse(text.substring(47, text.length - 2));
+      var cols = json.table.cols.map(function(c){return(c.label||'').toLowerCase().trim();});
+      serviceCache = {};
+      (json.table.rows||[]).forEach(function(row){
+        var obj = {};
+        cols.forEach(function(col,i){obj[col]=safeVal(row.c?row.c[i]:null);});
+        if(!obj.name||obj.status.toLowerCase().trim()!=='active') return;
+        var cats = (obj.category||'').split(',').map(function(c){return c.trim().toLowerCase();});
+        cats.forEach(function(cat){
+          if(!serviceCache[cat]) serviceCache[cat] = [];
+          serviceCache[cat].push(obj);
+        });
+      });
+      // Update all tile counts
+      document.querySelectorAll('.service-card').forEach(function(card){
+        var onclick = card.getAttribute('onclick')||'';
+        var match = onclick.match(/openService\('([^']+)'\)/);
+        if(match){
+          var type = match[1];
+          var providers = serviceCache[type]||[];
+          var countEl = card.querySelector('.service-count');
+          if(countEl){
+            countEl.textContent = providers.length > 0
+              ? providers.length + (providers.length===1?' provider':' providers')
+              : 'Submit your listing';
+          }
+        }
+      });
+    }).catch(function(e){console.error('Service preload error:',e);});
+}
+preloadServiceCounts();
+
 function filterBiz() {
   var query = (document.getElementById('biz-search').value||'').toLowerCase();
   var cat = document.getElementById('biz-cat-select').value;
