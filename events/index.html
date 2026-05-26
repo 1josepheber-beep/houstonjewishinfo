@@ -1014,7 +1014,12 @@
   var monthNames=['January','February','March','April','May','June','July','August','September','October','November','December'];
   var catColors={'arts':'#c0391b','community':'#1e4d9b','holiday':'#2a7a2a','fundraiser':'#6a2a9a','education':'#c0831b','other':'#555'};
   var catEmojis={'arts':'🎭','community':'🤝','holiday':'✡️','fundraiser':'💛','education':'📚','other':'📋'};
-  function safeValEv(c){if(!c||c.v===null||c.v===undefined)return '';return String(c.v);}
+  function safeValEv(c){
+    if(!c||c.v===null||c.v===undefined) return '';
+    // Use formatted value 'f' for dates/times if available
+    if(c.f) return c.f;
+    return String(c.v);
+  }
   function getCatKey(cat){
     cat=(cat||'').toLowerCase();
     if(cat.indexOf('art')>-1||cat.indexOf('cultur')>-1||cat.indexOf('danc')>-1) return 'arts';
