@@ -1422,6 +1422,12 @@
         <div class="service-count">1 provider</div>
         <div class="service-arrow">View Providers →</div>
       </div>
+      <div class="service-card" onclick="openService('24hour')">
+        <div class="service-icon">🕐</div>
+        <div class="service-name">24 Hour Services</div>
+        <div class="service-count">Submit your listing</div>
+        <div class="service-arrow">View Providers →</div>
+      </div>
       <div class="service-card" onclick="openService('construction')">
         <div class="service-icon">🏗️</div>
         <div class="service-name">Construction</div>
@@ -2066,9 +2072,20 @@ function renderBizGrid(cat) {
     : allBizListings.filter(function(i) { return i._cat === cat; });
   document.getElementById('biz-count').textContent = filtered.length;
   if(filtered.length === 0) {
-    grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:40px;font-family:sans-serif;color:var(--muted);">' +
-      (allBizListings.length === 0 ? 'Loading failed. Please refresh the page.' : 'No listings in this category yet.') +
-      '</div>';
+    var serviceFinderMap = {'catering':'catering','security':'security','marketing':'marketing','trades':'electric'};
+    var serviceType = serviceFinderMap[cat];
+    var sel = document.getElementById('biz-cat-select');
+    var catLabel = sel ? sel.options[sel.selectedIndex].text : cat;
+    if(allBizListings.length === 0) {
+      grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:40px;font-family:sans-serif;color:var(--muted);">Loading failed. Please refresh.</div>';
+    } else if(serviceType) {
+      grid.innerHTML = '<div style="grid-column:1/-1;background:var(--white);border:1px solid var(--border);border-radius:8px;padding:32px 24px;text-align:center;">' +
+        '<div style="font-family:Playfair Display,serif;font-size:18px;font-weight:700;color:var(--navy);margin-bottom:8px;">No browse listings for ' + catLabel + ' yet</div>' +
+        '<div style="font-family:sans-serif;font-size:13px;color:#888;line-height:1.6;margin-bottom:16px;">Looking for a ' + catLabel + ' professional? We have providers listed under <strong>Find a Service</strong>.</div>' +
+        '<button data-svc="' + serviceType + '" class="svc-nudge-btn" style="font-family:sans-serif;font-size:12px;font-weight:700;padding:9px 18px;border-radius:4px;background:var(--navy);color:#fff;border:none;cursor:pointer;">Go to Find a Service &rarr; ' + catLabel + '</button></div>';
+    } else {
+      grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:40px;font-family:sans-serif;color:var(--muted);">No listings in this category yet.</div>';
+    }
     return;
   }
   grid.innerHTML = filtered.map(buildBizCard).join('');
@@ -2111,7 +2128,8 @@ var serviceLabels = {
   insurance:'Insurance', catering:'Catering & Events',
   marketing:'Marketing & Digital', security:'Security Services',
   jfs:'Jewish Family Service',
-  construction:'Construction'
+  construction:'Construction',
+  '24hour':'24 Hour Services'
 };
 
 function openService(type) {
@@ -2140,9 +2158,24 @@ function openService(type) {
         var obj = {};
         cols.forEach(function(col, i) { obj[col] = safeVal(row.c ? row.c[i] : null); });
         if(!obj.name || obj.status.toLowerCase().trim() !== 'active') return;
-        var cat = (obj.category||'').toLowerCase().trim();
-        if(!serviceCache[cat]) serviceCache[cat] = [];
-        serviceCache[cat].push(obj);
+        var cats = (obj.category||'').split(',').map(function(c){return c.trim().toLowerCase();});
+        cats.forEach(function(cat){
+          if(!serviceCache[cat]) serviceCache[cat] = [];
+          serviceCache[cat].push(obj);
+        });
+      });
+      // Update tile counts dynamically
+      document.querySelectorAll('.service-card').forEach(function(card) {
+        var onclick = card.getAttribute('onclick') || '';
+        var match = onclick.match(/openService\('([^']+)'\)/);
+        if(match) {
+          var type = match[1];
+          var providers = serviceCache[type] || [];
+          var countEl = card.querySelector('.service-count');
+          if(countEl && providers.length > 0) {
+            countEl.textContent = providers.length + (providers.length === 1 ? ' provider' : ' providers');
+          }
+        }
       });
       showServiceProviders(type, bodyEl);
     })
@@ -2182,6 +2215,21 @@ function closeService() {
   var panel = document.getElementById('service-listings-dynamic');
   if(panel) panel.style.display = 'none';
 }
+function switchToService(type) {
+  document.querySelectorAll('.main-tab').forEach(function(b) {
+    if(b.getAttribute('onclick') && b.getAttribute('onclick').indexOf('services') > -1) {
+      switchTab('services', b);
+    }
+  });
+  setTimeout(function() { openService(type); }, 150);
+}
+
+// Event delegation for nudge buttons
+document.addEventListener('click', function(e) {
+  if(e.target && e.target.classList.contains('svc-nudge-btn')) {
+    switchToService(e.target.getAttribute('data-svc'));
+  }
+});
 </script>
 </body>
 </html>
