@@ -1090,7 +1090,7 @@
     var catKey=getCatKey(ev.category);
     var color=catColors[catKey]||'#555';
     var imgHtml=ev.imageurl
-      ?'<img src="'+ev.imageurl+'" alt="'+ev.title+'" onclick="openLightbox(''+ev.imageurl+'',''+ev.title+'')" style="width:100%;height:100%;object-fit:cover;object-position:top;display:block;cursor:zoom-in;" title="Click to enlarge">'
+      ?'<img src="'+ev.imageurl+'" alt="'+ev.title+'" class="lightbox-trigger" data-src="'+ev.imageurl+'" data-alt="'+ev.title+'" style="width:100%;height:100%;object-fit:cover;object-position:top;display:block;cursor:zoom-in;" title="Click to enlarge">'
       :'<div class="event-card-img-placeholder" style="background:linear-gradient(135deg,#1a2744,#2a407a);color:#fff;">'+(catEmojis[catKey]||'📋')+'</div>';
     var btnText=(ev.buttontext||ev['button text']||'').trim();
     var btnHtml='';
@@ -1212,6 +1212,13 @@
   }
   document.addEventListener('keydown', function(e) {
     if(e.key === 'Escape') closeLightbox();
+  });
+
+  // Event delegation for lightbox image clicks
+  document.addEventListener('click', function(e) {
+    if(e.target && e.target.classList.contains('lightbox-trigger')) {
+      openLightbox(e.target.getAttribute('data-src'), e.target.getAttribute('data-alt'));
+    }
   });
 </script>
 
