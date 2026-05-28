@@ -627,12 +627,11 @@ function loadListings(){
     .then(function(r){ return r.text(); })
     .then(function(text){
       var json=JSON.parse(text.substring(47,text.length-2));
-      // If the RealEstate tab doesn't exist, Google returns the first sheet.
-      // Check that the columns match what we expect for real estate listings.
+      // Only show data if this is actually the RealEstate sheet.
+      // Jobs sheet won't have bedrooms/bathrooms/sqft columns.
       var cols=json.table.cols.map(function(c){ return (c.label||'').toLowerCase().trim(); });
-      var isRealEstateSheet=cols.some(function(c){ return c==='type'||c==='price'||c==='bedrooms'||c==='address'; });
+      var isRealEstateSheet=cols.some(function(c){ return c==='bedrooms'||c==='bathrooms'||c==='sqft'; });
       if(!isRealEstateSheet){
-        // Wrong sheet loaded — show empty state
         allListings=[];
         renderListings();
         return;
