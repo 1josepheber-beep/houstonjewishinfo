@@ -163,6 +163,9 @@
   .nav-bar a:last-child { border-right: none; }
   .nav-bar a:hover { background: #e8e4dc; }
   .nav-bar a.active { background: var(--navy); color: var(--white); }
+  .nav-arrow { display: none; align-items: center; justify-content: center; width: 16px; flex-shrink: 0; background: transparent; color: var(--navy); font-size: 11px; cursor: pointer; border: none; padding: 0; opacity: .6; }
+  .nav-arrow:hover { opacity: 1; }
+  @media (max-width: 768px) { .nav-arrow { display: flex; } }
 
   /* ============================================================
      MAIN 3-COLUMN GRID
@@ -984,7 +987,7 @@
         <a href="/mazaltov">Mazal Tov</a>
         <a href="/events">Events</a>
         <a href="/business">Business Directory</a>
-        <a href="/jobs" class="active">Jobs</a>
+        <a href="https://jobs.houstonjewishinfo.com" class="active">Jobs</a>
         <a href="/real-estate">Real Estate</a>
         <a href="/synagogues">Synagogues</a>
         <a href="/schools">Schools</a>
