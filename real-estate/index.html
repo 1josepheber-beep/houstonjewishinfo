@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Real Estate — Houston Jewish Info</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,400&display=swap" rel="stylesheet">
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-LQFZ69SZRS"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-LQFZ69SZRS');
+</script>
+<style>
+  :root {
+    --navy:   #1a2744;
+    --gold:   #c9933a;
+    --cream:  #faf8f3;
+    --ink:    #1c1c1c;
+    --muted:  #6b6b6b;
+    --border: #e0dbd0;
+    --red:    #b83030;
+    --white:  #ffffff;
+    --green:  #2a6b2a;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body { background: var(--cream); color: var(--ink); font-family: 'Source Serif 4', Georgia, serif; font-size: 16px; line-height: 1.6; -webkit-tap-highlight-color: transparent; }
+  a { color: inherit; text-decoration: none; }
+  a:hover { color: var(--gold); }
+  img { max-width: 100%; height: auto; display: block; }
+  button { cursor: pointer; }
+
+  /* ── LAYOUT ── */
+  .portal { max-width: 1140px; margin: 0 auto; padding: 0 16px; }
+
+  /* ── MASTHEAD ── */
+  .masthead { border-bottom: 3px double var(--navy); padding: 16px 0 10px; background: var(--cream); }
+  .masthead-inner { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 8px; }
+  .masthead-logo { display: flex; flex-direction: column; align-items: center; flex: 1; text-align: center; }
+  .masthead-date { font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); font-family: sans-serif; margin-bottom: 4px; }
+  .masthead-title { font-family: 'Playfair Display', Georgia, serif; font-size: 52px; font-weight: 900; color: var(--navy); line-height: 1; letter-spacing: -2px; }
+  .masthead-tagline { font-size: 13px; font-style: italic; color: var(--muted); margin-top: 4px; }
+  .masthead-side { width: 140px; font-family: sans-serif; font-size: 11px; color: var(--muted); }
+  .masthead-side.right { text-align: right; }
+  .social-links { display: flex; gap: 8px; justify-content: flex-end; margin-bottom: 6px; }
+  .social-links a { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; border: 1px solid var(--border); border-radius: 50%; font-size: 12px; color: var(--navy); transition: background .15s; }
+  .social-links a:hover { background: var(--navy); color: #fff; border-color: var(--navy); }
+
+  /* ── NAV ── */
+  .nav-bar { display: flex; align-items: stretch; border-top: 2px solid var(--navy); border-bottom: 2px solid var(--navy); margin-top: 8px; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; flex: 1; width: 100%; }
+  .nav-bar::-webkit-scrollbar { display: none; }
+  .nav-bar a { font-family: sans-serif; font-size: 10.5px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; color: var(--navy); padding: 9px 10px; white-space: nowrap; border-right: 1px solid var(--border); transition: background .15s, color .15s; display: flex; align-items: center; flex: 1; justify-content: center; }
+  .nav-bar a:last-child { border-right: none; }
+  .nav-bar a:hover { background: #e8e4dc; }
+  .nav-bar a.active { background: var(--navy); color: var(--white); }
+  .nav-wrapper { position: relative; display: flex; align-items: stretch; width: 100%; }
+  .nav-arrow { display: none; align-items: center; justify-content: center; width: 16px; flex-shrink: 0; background: transparent; color: var(--navy); font-size: 11px; cursor: pointer; border: none; padding: 0; z-index: 10; opacity: .6; }
+  .nav-arrow:hover { opacity: 1; }
+
+  /* ── HAMBURGER ── */
+  .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; padding: 8px; background: none; border: none; z-index: 300; position: absolute; top: 8px; right: 8px; }
+  .hamburger span { display: block; width: 24px; height: 2px; background: var(--navy); border-radius: 2px; transition: all .3s; }
+  .hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+  .hamburger.open span:nth-child(2) { opacity: 0; }
+  .hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+  /* ── MOBILE MENU ── */
+  .mobile-menu-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.45); z-index: 400; }
+  .mobile-menu-overlay.open { display: block; }
+  .mobile-menu { position: fixed; top: 0; right: -280px; width: 280px; height: 100%; background: var(--white); z-index: 500; box-shadow: -4px 0 20px rgba(0,0,0,.2); transition: right .3s ease; overflow-y: auto; display: flex; flex-direction: column; }
+  .mobile-menu.open { right: 0; }
+  .mobile-menu-head { background: var(--navy); padding: 20px 18px 16px; display: flex; align-items: center; justify-content: space-between; }
+  .mobile-menu-title { font-family: 'Playfair Display', serif; font-size: 18px; font-weight: 700; color: #fff; }
+  .mobile-menu-close { background: none; border: none; color: #fff; font-size: 24px; cursor: pointer; line-height: 1; padding: 4px; }
+  .mobile-menu-links { padding: 8px 0; flex: 1; }
+  .mobile-menu-links a { display: block; padding: 15px 20px; font-family: sans-serif; font-size: 14px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: var(--navy); border-bottom: 1px solid var(--border); text-decoration: none; transition: background .15s; }
+  .mobile-menu-links a:hover { background: #eef3fb; }
+  .mobile-menu-links a.active { color: var(--gold); }
+  .mobile-menu-footer { padding: 16px 20px; border-top: 1px solid var(--border); font-family: sans-serif; font-size: 11px; color: var(--muted); text-align: center; }
+
+  /* ── SHABBAT STRIP ── */
+  #shabbat-strip { background: var(--cream); color: #fff; padding: 0; }
+
+  /* ── HERO ── */
+  .re-hero { background: linear-gradient(135deg, #1a2744 0%, #2a407a 100%); color: #fff; padding: 28px 0 22px; border-bottom: 3px solid var(--gold); }
+  .re-hero-inner { display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap; }
+  .re-hero h1 { font-family: 'Playfair Display', serif; font-size: 36px; font-weight: 900; margin-bottom: 6px; }
+  .re-hero p { font-family: sans-serif; font-size: 14px; opacity: .85; margin-bottom: 16px; }
+  .re-search-bar { display: flex; gap: 10px; flex-wrap: wrap; background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.2); border-radius: 8px; padding: 12px 16px; }
+  .re-search-input { flex: 1; min-width: 200px; font-family: sans-serif; font-size: 14px; background: transparent; border: none; outline: none; color: #fff; }
+  .re-search-input::placeholder { color: rgba(255,255,255,.6); }
+  .re-search-btn { font-family: sans-serif; font-size: 12px; font-weight: 700; padding: 8px 18px; border-radius: 4px; background: var(--gold); color: #fff; border: none; cursor: pointer; }
+  .hero-list-btn { font-family: sans-serif; font-size: 13px; font-weight: 700; padding: 12px 22px; border-radius: 6px; background: var(--gold); color: #fff; border: none; cursor: pointer; white-space: nowrap; transition: background .15s; letter-spacing: .04em; }
+  .hero-list-btn:hover { background: #a87828; }
+
+  /* ── LAYOUT ── */
+  .re-layout { display: grid; grid-template-columns: 220px 1fr; gap: 24px; padding-top: 24px; align-items: start; }
+
+  /* ── FILTERS ── */
+  .re-filters { background: var(--white); border: 1px solid var(--border); border-radius: 8px; padding: 16px; position: sticky; top: 20px; }
+  .filter-head { font-family: sans-serif; font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--navy); margin-bottom: 14px; padding-bottom: 8px; border-bottom: 2px solid var(--gold); }
+  .filter-section-title { font-family: sans-serif; font-size: 10px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; margin-top: 14px; }
+  .filter-section-title:first-of-type { margin-top: 0; }
+  .filter-check { display: flex; align-items: center; gap: 8px; font-family: sans-serif; font-size: 12px; color: var(--ink); margin-bottom: 6px; cursor: pointer; }
+  .filter-check input { accent-color: var(--navy); cursor: pointer; }
+  .filter-reset { width: 100%; margin-top: 14px; font-family: sans-serif; font-size: 11px; font-weight: 700; padding: 8px; border-radius: 4px; background: var(--navy); color: #fff; border: none; cursor: pointer; }
+  .filter-reset:hover { background: #163a75; }
+
+  /* ── TABS ── */
+  .re-tabs { display: flex; gap: 0; margin-bottom: 16px; border-bottom: 2px solid var(--border); }
+  .re-tab { font-family: sans-serif; font-size: 12px; font-weight: 700; padding: 10px 20px; cursor: pointer; background: none; border: none; color: var(--muted); border-bottom: 3px solid transparent; margin-bottom: -2px; transition: all .15s; letter-spacing: .04em; text-transform: uppercase; }
+  .re-tab.active { color: var(--navy); border-bottom-color: var(--navy); }
+  .re-tab:hover:not(.active) { color: var(--navy); background: #f0f4fc; }
+
+  /* ── LISTING CARDS ── */
+  .re-grid { display: flex; flex-direction: column; gap: 14px; }
+  .re-card { background: var(--white); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; display: grid; grid-template-columns: 220px 1fr; transition: box-shadow .2s, border-color .2s; }
+  .re-card:hover { box-shadow: 0 4px 18px rgba(0,0,0,.1); border-color: var(--navy); }
+  .re-card-img { background: #d0d8e8; display: flex; align-items: center; justify-content: center; font-size: 48px; min-height: 160px; }
+  .re-card-body { padding: 18px 20px; display: flex; flex-direction: column; justify-content: space-between; }
+  .re-card-top { }
+  .re-card-type { font-family: sans-serif; font-size: 10px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; margin-bottom: 4px; }
+  .re-card-type.sale { color: var(--navy); }
+  .re-card-type.rent { color: var(--green); }
+  .re-card-title { font-family: 'Playfair Display', serif; font-size: 18px; font-weight: 700; color: var(--navy); margin-bottom: 4px; line-height: 1.3; }
+  .re-card-price { font-family: sans-serif; font-size: 20px; font-weight: 900; color: var(--gold); margin-bottom: 8px; }
+  .re-card-specs { display: flex; gap: 14px; font-family: sans-serif; font-size: 12px; color: var(--muted); margin-bottom: 8px; flex-wrap: wrap; }
+  .re-card-spec { display: flex; align-items: center; gap: 4px; }
+  .re-card-tags { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 10px; }
+  .re-tag { font-family: sans-serif; font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 20px; letter-spacing: .04em; text-transform: uppercase; background: #eef3fb; color: #1e4d9b; }
+  .re-tag.kosher { background: #fff8e6; color: #9a6200; }
+  .re-tag.shabbat { background: #f0ebff; color: #6a2a9a; }
+  .re-tag.jewish { background: #edf7ed; color: #2a7a2a; }
+  .re-card-desc { font-size: 13px; color: #555; line-height: 1.6; margin-bottom: 10px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .re-card-contact { display: flex; gap: 14px; font-family: sans-serif; font-size: 11px; flex-wrap: wrap; }
+  .re-card-contact a { color: var(--gold); transition: color .15s; }
+  .re-card-contact a:hover { color: var(--navy); }
+
+  /* ── LISTING COUNT ── */
+  .re-count { font-family: sans-serif; font-size: 12px; color: var(--muted); margin-bottom: 12px; }
+
+  /* ── EMPTY STATE ── */
+  .re-empty { text-align: center; padding: 48px 24px; background: var(--white); border: 2px dashed var(--border); border-radius: 8px; }
+  .re-empty strong { display: block; font-family: 'Playfair Display', serif; font-size: 18px; color: var(--navy); margin-bottom: 6px; }
+  .re-empty span { font-family: sans-serif; font-size: 13px; color: var(--muted); }
+
+  /* ── SUBMIT CTA ── */
+  .list-cta { background: var(--navy); color: #fff; border-radius: 8px; padding: 24px 28px; margin-top: 28px; display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap; }
+  .list-cta-text h3 { font-family: 'Playfair Display', serif; font-size: 20px; margin-bottom: 4px; }
+  .list-cta-text p { font-family: sans-serif; font-size: 13px; opacity: .8; }
+  .list-cta-fee { font-family: sans-serif; font-size: 28px; font-weight: 900; color: var(--gold); }
+  .list-cta-fee small { font-size: 13px; opacity: .75; display: block; margin-top: -2px; }
+  .list-cta-btn { font-family: sans-serif; font-size: 13px; font-weight: 700; padding: 12px 24px; border-radius: 6px; background: var(--gold); color: #fff; border: none; cursor: pointer; letter-spacing: .04em; transition: background .15s; white-space: nowrap; }
+  .list-cta-btn:hover { background: #a87828; }
+
+  /* ── MODAL ── */
+  .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.55); z-index: 1000; align-items: center; justify-content: center; padding: 20px; overflow-y: auto; }
+  .modal-overlay.open { display: flex; }
+  .modal { background: var(--white); border-radius: 10px; padding: 32px 36px; max-width: 600px; width: 100%; max-height: 92vh; overflow-y: auto; position: relative; }
+  .modal-title { font-family: 'Playfair Display', serif; font-size: 24px; color: var(--navy); margin-bottom: 4px; }
+  .modal-sub { font-size: 13px; color: var(--muted); margin-bottom: 6px; font-family: sans-serif; }
+  .fee-badge { display: inline-block; background: var(--gold); color: #fff; font-family: sans-serif; font-size: 13px; font-weight: 700; padding: 4px 14px; border-radius: 20px; margin-bottom: 20px; }
+  .modal-close { position: absolute; top: 14px; right: 16px; font-size: 24px; background: none; border: none; color: var(--muted); cursor: pointer; line-height: 1; }
+  .modal-close:hover { color: var(--navy); }
+  .form-group { margin-bottom: 14px; }
+  .form-label { display: block; font-family: sans-serif; font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--navy); margin-bottom: 5px; }
+  .form-input, .form-select, .form-textarea { width: 100%; padding: 9px 12px; border: 1px solid var(--border); border-radius: 4px; font-family: 'Source Serif 4', serif; font-size: 14px; color: var(--ink); background: var(--white); transition: border-color .15s; outline: none; }
+  .form-input:focus, .form-select:focus, .form-textarea:focus { border-color: var(--navy); }
+  .form-textarea { resize: vertical; min-height: 90px; }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .form-row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+  .amenity-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+  .amenity-check { display: flex; align-items: center; gap: 8px; font-family: sans-serif; font-size: 12px; color: var(--ink); cursor: pointer; }
+  .amenity-check input { accent-color: var(--navy); }
+
+  /* ── PAYMENT SECTION ── */
+  .payment-section { background: #f8f4ec; border: 1px solid var(--gold); border-radius: 8px; padding: 16px 18px; margin-bottom: 16px; }
+  .payment-section h4 { font-family: sans-serif; font-size: 13px; font-weight: 700; color: var(--navy); margin-bottom: 8px; }
+  .payment-methods { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 8px; }
+  .pay-btn { font-family: sans-serif; font-size: 12px; font-weight: 700; padding: 8px 16px; border-radius: 4px; border: 2px solid; cursor: pointer; transition: all .15s; }
+  .pay-btn.paypal { background: #0070ba; color: #fff; border-color: #0070ba; }
+  .pay-btn.paypal:hover { background: #005a94; }
+  .pay-btn.venmo { background: #3d95ce; color: #fff; border-color: #3d95ce; }
+  .pay-btn.venmo:hover { background: #2d7ab0; }
+  .pay-btn.zelle { background: #6d1ed4; color: #fff; border-color: #6d1ed4; }
+  .pay-btn.zelle:hover { background: #5a19af; }
+  .payment-note { font-family: sans-serif; font-size: 11px; color: var(--muted); line-height: 1.5; }
+
+  .btn-primary { background: var(--navy); color: var(--white); border: none; font-family: sans-serif; font-size: 12px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; padding: 13px 24px; border-radius: 4px; cursor: pointer; transition: background .15s; width: 100%; margin-top: 6px; }
+  .btn-primary:hover { background: #263d6e; }
+
+  .success-msg { display: none; text-align: center; padding: 24px 0; }
+  .success-msg .check { font-size: 48px; margin-bottom: 12px; }
+  .success-msg p { font-family: sans-serif; font-size: 15px; color: var(--navy); font-weight: 600; }
+  .success-msg small { color: var(--muted); font-size: 12px; display: block; margin-top: 6px; }
+
+  /* ── FOOTER ── */
+  footer { border-top: 3px double var(--navy); padding: 16px 0; text-align: center; font-family: sans-serif; font-size: 11px; color: var(--muted); letter-spacing: .04em; }
+  footer a { color: var(--muted); margin: 0 8px; transition: color .15s; }
+  footer a:hover { color: var(--navy); }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 900px) {
+    .re-layout { grid-template-columns: 1fr; gap: 16px; }
+    .re-filters { position: static; display: grid; grid-template-columns: 1fr 1fr; gap: 0 16px; }
+    .filter-section-title { grid-column: 1/-1; }
+    .filter-reset { grid-column: 1/-1; }
+  }
+  @media (max-width: 768px) {
+    .hamburger { display: flex !important; }
+    .nav-arrow { display: flex; }
+    .masthead { position: relative; padding: 12px 0 0; }
+    .masthead-inner { flex-direction: column !important; align-items: center !important; padding: 0 48px 10px !important; gap: 6px !important; text-align: center; }
+    .masthead-side { display: none !important; }
+    .masthead-title { font-size: 28px !important; }
+    .re-card { grid-template-columns: 1fr; }
+    .re-card-img { min-height: 120px; }
+    .re-hero-inner { flex-direction: column; }
+    .re-hero h1 { font-size: 26px; }
+    .list-cta { flex-direction: column; text-align: center; }
+    .form-row, .form-row-3 { grid-template-columns: 1fr; }
+    .modal { padding: 20px 16px; }
+    .re-tabs { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    .re-tab { white-space: nowrap; font-size: 11px; padding: 8px 14px; }
+    .payment-methods { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+
+<!-- LIST A PROPERTY MODAL -->
+<div class="modal-overlay" id="modal-listing">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('modal-listing')">×</button>
+    <div id="listing-form-wrap">
+      <div class="modal-title">List Your Property</div>
+      <div class="modal-sub">Reach Houston's Jewish community — reviewed and posted within 1–2 business days.</div>
+      <div class="fee-badge">💰 $15 Listing Fee</div>
+
+      <!-- TYPE -->
+      <div class="form-group">
+        <label class="form-label">Listing Type *</label>
+        <select class="form-select" id="listing-type">
+          <option value="">Select...</option>
+          <option>For Sale</option>
+          <option>For Rent</option>
+          <option>For Sale or Rent</option>
+        </select>
+      </div>
+
+      <!-- TITLE & PRICE -->
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Property Title *</label>
+          <input type="text" class="form-input" placeholder="e.g. 3BR/2BA Townhome in Meyerland">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Price / Rent *</label>
+          <input type="text" class="form-input" placeholder="e.g. $425,000 or $2,200/mo">
+        </div>
+      </div>
+
+      <!-- ADDRESS -->
+      <div class="form-group">
+        <label class="form-label">Address / Neighborhood *</label>
+        <input type="text" class="form-input" placeholder="Street address or neighborhood (e.g. Meyerland)">
+      </div>
+
+      <!-- SPECS -->
+      <div class="form-row-3">
+        <div class="form-group">
+          <label class="form-label">Bedrooms</label>
+          <select class="form-select">
+            <option value="">–</option>
+            <option>Studio</option>
+            <option>1</option>
+            <option>2</option>
+            <option>3</option>
+            <option>4</option>
+            <option>5+</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Bathrooms</label>
+          <select class="form-select">
+            <option value="">–</option>
+            <option>1</option>
+            <option>1.5</option>
+            <option>2</option>
+            <option>2.5</option>
+            <option>3+</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Sq Ft</label>
+          <input type="text" class="form-input" placeholder="e.g. 1,850">
+        </div>
+      </div>
+
+      <!-- PROPERTY TYPE -->
+      <div class="form-group">
+        <label class="form-label">Property Type</label>
+        <select class="form-select">
+          <option value="">Select...</option>
+          <option>Single Family Home</option>
+          <option>Townhome / Condo</option>
+          <option>Apartment</option>
+          <option>Duplex</option>
+          <option>Commercial</option>
+          <option>Land / Lot</option>
+          <option>Other</option>
+        </select>
+      </div>
+
+      <!-- AMENITIES -->
+      <div class="form-group">
+        <label class="form-label">Amenities & Features</label>
+        <div class="amenity-grid">
+          <label class="amenity-check"><input type="checkbox"> 🍽️ Kosher Kitchen</label>
+          <label class="amenity-check"><input type="checkbox"> ✡️ Near Synagogue</label>
+          <label class="amenity-check"><input type="checkbox"> 🕯️ Jewish Neighborhood</label>
+          <label class="amenity-check"><input type="checkbox"> 🏊 Pool</label>
+          <label class="amenity-check"><input type="checkbox"> 🚗 Garage</label>
+          <label class="amenity-check"><input type="checkbox"> 🌿 Yard / Garden</label>
+          <label class="amenity-check"><input type="checkbox"> ❄️ Central A/C</label>
+          <label class="amenity-check"><input type="checkbox"> 🐾 Pet Friendly</label>
+          <label class="amenity-check"><input type="checkbox"> ♿ Accessible</label>
+          <label class="amenity-check"><input type="checkbox"> 🏫 Near Jewish School</label>
+          <label class="amenity-check"><input type="checkbox"> 🔒 Gated Community</label>
+          <label class="amenity-check"><input type="checkbox"> 💡 Updated Kitchen</label>
+        </div>
+      </div>
+
+      <!-- DESCRIPTION -->
+      <div class="form-group">
+        <label class="form-label">Description *</label>
+        <textarea class="form-textarea" placeholder="Describe the property — highlights, condition, special features, what's included, move-in date, etc."></textarea>
+      </div>
+
+      <!-- PHOTO LINK -->
+      <div class="form-group">
+        <label class="form-label">Photo Link (optional)</label>
+        <input type="url" class="form-input" placeholder="Link to photos (Google Drive, Zillow, etc.)">
+      </div>
+
+      <!-- CONTACT -->
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Your Name *</label>
+          <input type="text" class="form-input" placeholder="Contact name">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Email *</label>
+          <input type="email" class="form-input" placeholder="you@example.com">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Phone (optional)</label>
+        <input type="tel" class="form-input" placeholder="(713) 000-0000">
+      </div>
+
+      <!-- PAYMENT -->
+      <div class="payment-section">
+        <h4>💳 $15 Listing Fee — Pay Now</h4>
+        <div class="payment-methods">
+          <!-- Replace the href values below with your actual PayPal / Venmo / Zelle links -->
+          <a href="https://paypal.me/YOURPAYPALHANDLE/15" target="_blank" class="pay-btn paypal">Pay with PayPal</a>
+          <a href="https://venmo.com/YOURVENMOHANDLE" target="_blank" class="pay-btn venmo">Pay with Venmo</a>
+          <a href="https://zellepay.com" target="_blank" class="pay-btn zelle">Pay with Zelle</a>
+        </div>
+        <p class="payment-note">After paying, include your confirmation number or screenshot in the description above, or email it to <strong>info@houstonjewishinfo.com</strong>. Your listing goes live once payment is confirmed.</p>
+      </div>
+
+      <button class="btn-primary" onclick="submitListing()">Submit Listing →</button>
+    </div>
+    <div class="success-msg" id="listing-success">
+      <div class="check">✅</div>
+      <p>Your listing has been submitted!</p>
+      <small>We'll review it and publish within 1–2 business days after payment confirmation.</small>
+    </div>
+  </div>
+</div>
+
+<!-- HEADER -->
+<header>
+  <div class="portal">
+    <div class="masthead">
+      <div class="masthead-inner">
+        <div class="masthead-side" style="display:flex;flex-direction:column;align-items:flex-start;gap:6px;">
+          <a href="/" title="Go to Home Page" style="display:inline-block;">
+            <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGAAAABgCAYAAADimHc4AAAABmJLR0QA/wD/AP+gvaeTAAAAOklEQVR4nO3BMQEAAADCoPVP7WsIoAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAeAMBxAABGAABJQAAAABJRU5ErkJggg==" alt="HJI" style="height:64px;width:auto;">
+          </a>
+          <div class="social-links" style="justify-content:flex-start;">
+            <a href="#" title="Facebook">f</a>
+            <a href="#" title="Instagram">in</a>
+            <a href="#" title="Twitter/X">𝕏</a>
+          </div>
+        </div>
+        <div class="masthead-logo">
+          <div class="masthead-date" id="today-date"></div>
+          <div class="masthead-title">Houston Jewish Info</div>
+          <div class="masthead-tagline">Your Houston Jewish Community Hub</div>
+        </div>
+        <div class="masthead-side right">
+          <div style="margin-bottom:6px">Get stories in your inbox</div>
+          <a href="#" style="font-family:sans-serif;font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--navy);border:1px solid var(--navy);padding:5px 10px;border-radius:3px;display:inline-block">Subscribe →</a>
+        </div>
+      </div>
+      <button class="hamburger" id="hamburger-btn" aria-label="Toggle navigation" onclick="openMobileMenu()">
+        <span></span><span></span><span></span>
+      </button>
+      <div class="nav-wrapper">
+        <button class="nav-arrow left" aria-label="Scroll nav left">&#8249;</button>
+        <nav class="nav-bar" id="main-nav" aria-label="Main navigation">
+          <a href="/">Home</a>
+          <a href="/mazaltov">Mazal Tov</a>
+          <a href="/events">Events</a>
+          <a href="/business">Business Directory</a>
+          <a href="https://jobs.houstonjewishinfo.com" target="_blank">Jobs</a>
+          <a href="/classifieds" class="active">Real Estate</a>
+          <a href="/synagogues">Synagogues</a>
+          <a href="/schools">Schools</a>
+          <a href="/charities">Charities</a>
+          <a href="/contact">Contact / Submit</a>
+        </nav>
+        <button class="nav-arrow right" aria-label="Scroll nav right">&#8250;</button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- SHABBAT STRIP -->
+<div id="shabbat-strip" style="background:var(--cream);color:#fff;padding:0;">
+  <div class="portal" style="padding:0;">
+    <div style="background:var(--navy);border-radius:0 0 6px 6px;border-bottom:2px solid var(--gold);padding:8px 16px;display:flex;align-items:center;justify-content:center;gap:24px;flex-wrap:wrap;">
+      <div style="display:flex;align-items:center;gap:8px;">
+        <span style="font-size:16px;">🕯️</span>
+        <div>
+          <span style="font-family:sans-serif;font-size:9px;letter-spacing:.1em;text-transform:uppercase;opacity:.7;">Candle Lighting &nbsp;</span>
+          <span id="strip-candles" style="font-family:sans-serif;font-size:13px;font-weight:700;">–</span>
+          <span id="strip-candles-date" style="font-family:sans-serif;font-size:11px;opacity:.75;margin-left:4px;"></span>
+        </div>
+      </div>
+      <div style="width:1px;height:20px;background:rgba(255,255,255,.25);flex-shrink:0;"></div>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <span style="font-size:16px;">✨</span>
+        <div>
+          <span style="font-family:sans-serif;font-size:9px;letter-spacing:.1em;text-transform:uppercase;opacity:.7;">Havdalah &nbsp;</span>
+          <span id="strip-havdalah" style="font-family:sans-serif;font-size:13px;font-weight:700;">–</span>
+          <span id="strip-havdalah-date" style="font-family:sans-serif;font-size:11px;opacity:.75;margin-left:4px;"></span>
+        </div>
+      </div>
+      <div style="width:1px;height:20px;background:rgba(255,255,255,.25);flex-shrink:0;"></div>
+      <div style="display:flex;align-items:center;gap:6px;">
+        <span style="font-size:14px;">📖</span>
+        <span id="strip-parasha" style="font-family:sans-serif;font-size:11px;opacity:.85;"></span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- HERO -->
+<div class="re-hero">
+  <div class="portal">
+    <div class="re-hero-inner">
+      <div>
+        <h1>🏠 Houston Jewish Real Estate</h1>
+        <p>Homes for sale and rent in the Greater Houston Jewish community</p>
+        <div class="re-search-bar">
+          <input class="re-search-input" id="re-search" type="text" placeholder="Search by neighborhood, price, features..." oninput="renderListings()">
+          <button class="re-search-btn" onclick="renderListings()">Search</button>
+        </div>
+      </div>
+      <button class="hero-list-btn" onclick="openModal('modal-listing')">+ List a Property — $15</button>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="portal" style="padding-top:0;">
+  <div class="re-layout">
+
+    <!-- FILTERS -->
+    <aside class="re-filters">
+      <div class="filter-head">🔎 Filter Listings</div>
+
+      <div class="filter-section-title">Listing Type</div>
+      <label class="filter-check"><input type="checkbox" value="sale" onchange="renderListings()" checked> 🏡 For Sale</label>
+      <label class="filter-check"><input type="checkbox" value="rent" onchange="renderListings()" checked> 🔑 For Rent</label>
+
+      <div class="filter-section-title">Features</div>
+      <label class="filter-check"><input type="checkbox" value="kosher" onchange="renderListings()"> 🍽️ Kosher Kitchen</label>
+      <label class="filter-check"><input type="checkbox" value="synagogue" onchange="renderListings()"> ✡️ Near Synagogue</label>
+      <label class="filter-check"><input type="checkbox" value="pool" onchange="renderListings()"> 🏊 Pool</label>
+      <label class="filter-check"><input type="checkbox" value="garage" onchange="renderListings()"> 🚗 Garage</label>
+
+      <button class="filter-reset" onclick="resetFilters()">Reset Filters</button>
+    </aside>
+
+    <!-- LISTINGS -->
+    <div>
+      <div class="re-tabs">
+        <button class="re-tab active" id="tab-all" onclick="switchTab('all',this)">All Listings</button>
+        <button class="re-tab" id="tab-sale" onclick="switchTab('sale',this)">🏡 For Sale</button>
+        <button class="re-tab" id="tab-rent" onclick="switchTab('rent',this)">🔑 For Rent</button>
+      </div>
+
+      <div class="re-count" id="re-count">Loading...</div>
+      <div class="re-grid" id="re-grid">
+        <div class="re-empty"><strong>Loading listings...</strong><span>Fetching from Google Sheets</span></div>
+      </div>
+
+      <!-- SUBMIT CTA -->
+      <div class="list-cta">
+        <div class="list-cta-text">
+          <h3>Have a property to list?</h3>
+          <p>Reach Houston's Jewish community — sale or rental listings welcome.</p>
+        </div>
+        <div class="list-cta-fee">$15 <small>per listing</small></div>
+        <button class="list-cta-btn" onclick="openModal('modal-listing')">+ Post a Listing →</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="portal">
+    <div style="margin-bottom:6px">
+      © 2026 Houston Jewish Info &nbsp;|&nbsp;
+      <a href="/contact">Contact Us</a>
+      <a href="/contact">Submit a Story</a>
+      <a href="#">Advertise</a>
+      <a href="#">Privacy Policy</a>
+    </div>
+    <div style="font-size:10px">Serving the Houston Jewish community with pride 🌟</div>
+  </div>
+</footer>
+
+<!-- MOBILE MENU -->
+<div class="mobile-menu-overlay" id="mob-overlay" onclick="closeMobileMenu()"></div>
+<div class="mobile-menu" id="mob-menu">
+  <div class="mobile-menu-head">
+    <div class="mobile-menu-title">Houston Jewish Info</div>
+    <button class="mobile-menu-close" onclick="closeMobileMenu()">×</button>
+  </div>
+  <div class="mobile-menu-links">
+    <a href="/">🏠 Home</a>
+    <a href="/mazaltov">🎉 Mazal Tov</a>
+    <a href="/events">📅 Events</a>
+    <a href="/business">🏢 Business Directory</a>
+    <a href="https://jobs.houstonjewishinfo.com" target="_blank">💼 Jobs</a>
+    <a href="/classifieds" class="active">🏡 Real Estate</a>
+    <a href="/synagogues">✡️ Synagogues</a>
+    <a href="/schools">🏫 Schools</a>
+    <a href="/charities">💛 Charities</a>
+    <a href="/contact">📬 Contact / Submit</a>
+  </div>
+  <div class="mobile-menu-footer">© 2026 Houston Jewish Info<br>Serving the Houston Jewish community 🌟</div>
+</div>
+
+<script>
+// ── DATE ──
+(function(){
+  var d=new Date(),days=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'],
+  months=['January','February','March','April','May','June','July','August','September','October','November','December'],
+  el=document.getElementById('today-date');
+  if(el) el.textContent=days[d.getDay()]+', '+months[d.getMonth()]+' '+d.getDate()+', '+d.getFullYear();
+})();
+
+// ── MODAL ──
+function openModal(id){ document.getElementById(id).classList.add('open'); document.body.style.overflow='hidden'; }
+function closeModal(id){ document.getElementById(id).classList.remove('open'); document.body.style.overflow=''; }
+document.querySelectorAll('.modal-overlay').forEach(function(o){
+  o.addEventListener('click',function(e){ if(e.target===o) closeModal(o.id); });
+});
+document.addEventListener('keydown',function(e){ if(e.key==='Escape') document.querySelectorAll('.modal-overlay.open').forEach(function(m){ closeModal(m.id); }); });
+
+// ── MOBILE MENU ──
+function openMobileMenu(){ document.getElementById('mob-menu').classList.add('open'); document.getElementById('mob-overlay').classList.add('open'); document.getElementById('hamburger-btn').classList.add('open'); document.body.style.overflow='hidden'; }
+function closeMobileMenu(){ document.getElementById('mob-menu').classList.remove('open'); document.getElementById('mob-overlay').classList.remove('open'); document.getElementById('hamburger-btn').classList.remove('open'); document.body.style.overflow=''; }
+document.addEventListener('keydown',function(e){ if(e.key==='Escape') closeMobileMenu(); });
+
+// ── NAV ARROWS ──
+(function(){
+  var nav=document.getElementById('main-nav');
+  if(!nav) return;
+  var l=document.querySelector('.nav-arrow.left'), r=document.querySelector('.nav-arrow.right');
+  if(l) l.addEventListener('click',function(){ nav.scrollBy({left:-100,behavior:'smooth'}); });
+  if(r) r.addEventListener('click',function(){ nav.scrollBy({left:100,behavior:'smooth'}); });
+})();
+
+// ── SHABBAT ──
+(function(){
+  fetch('https://www.hebcal.com/shabbat?cfg=json&geonameid=4699066&m=50&b=18')
+    .then(function(r){ return r.json(); })
+    .then(function(data){
+      var candles=null, havdalah=null, parasha=null;
+      data.items.forEach(function(item){
+        if(item.category==='candles') candles=item;
+        if(item.category==='havdalah') havdalah=item;
+        if(item.category==='parashat') parasha=item;
+      });
+      function ft(ds){ var d=new Date(ds), h=d.getHours(), m=d.getMinutes(), ap=h>=12?'PM':'AM'; h=h%12||12; return h+':'+(m<10?'0':'')+m+' '+ap; }
+      function fd(ds){ var d=new Date(ds), days=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'], months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']; return days[d.getDay()]+', '+months[d.getMonth()]+' '+d.getDate(); }
+      if(candles){ document.getElementById('strip-candles').textContent=ft(candles.date); document.getElementById('strip-candles-date').textContent=fd(candles.date); }
+      if(havdalah){ document.getElementById('strip-havdalah').textContent=ft(havdalah.date); document.getElementById('strip-havdalah-date').textContent=fd(havdalah.date); }
+      if(parasha) document.getElementById('strip-parasha').textContent=parasha.title;
+    }).catch(function(){ document.getElementById('strip-candles').textContent='–'; });
+})();
+
+// ── LISTINGS ──
+var SHEET_ID = '1in7Ac7zknqyR9neWKOCAjOAG4jXCIVTJQfU6jJ72CV8';
+var allListings = [];
+var currentTab = 'all';
+
+function safeVal(cell){ if(!cell||cell.v===null||cell.v===undefined) return ''; return String(cell.v); }
+
+function loadListings(){
+  fetch('https://docs.google.com/spreadsheets/d/'+SHEET_ID+'/gviz/tq?tqx=out:json&headers=1&sheet=RealEstate')
+    .then(function(r){ return r.text(); })
+    .then(function(text){
+      var json=JSON.parse(text.substring(47,text.length-2));
+      var cols=json.table.cols.map(function(c){ return (c.label||'').toLowerCase().trim(); });
+      allListings=(json.table.rows||[]).map(function(row){
+        var obj={}; cols.forEach(function(col,i){ obj[col]=safeVal(row.c?row.c[i]:null); }); return obj;
+      }).filter(function(r){ return r.title||r.address; }).reverse();
+      renderListings();
+    }).catch(function(){
+      document.getElementById('re-grid').innerHTML='<div class="re-empty"><strong>Could not load listings</strong><span>Please refresh the page</span></div>';
+      document.getElementById('re-count').textContent='';
+    });
+}
+
+function getChecked(){
+  var vals=[];
+  document.querySelectorAll('.re-filters input[type=checkbox]:checked').forEach(function(el){ vals.push(el.value); });
+  return vals;
+}
+
+function buildCard(l){
+  var type=(l.type||l.listingtype||'').toLowerCase();
+  var isSale=type.indexOf('sale')>-1, isRent=type.indexOf('rent')>-1;
+  var typeLabel=isSale&&isRent?'For Sale or Rent':isSale?'For Sale':'For Rent';
+  var typeClass=isRent&&!isSale?'rent':'sale';
+  var tags='';
+  var amenities=(l.amenities||l.features||'').toLowerCase();
+  if(amenities.indexOf('kosher')>-1) tags+='<span class="re-tag kosher">🍽️ Kosher Kitchen</span>';
+  if(amenities.indexOf('synagogue')>-1||amenities.indexOf('shul')>-1) tags+='<span class="re-tag shabbat">✡️ Near Synagogue</span>';
+  if(amenities.indexOf('jewish')>-1) tags+='<span class="re-tag jewish">🕯️ Jewish Neighborhood</span>';
+  if(amenities.indexOf('pool')>-1) tags+='<span class="re-tag">🏊 Pool</span>';
+  if(amenities.indexOf('garage')>-1) tags+='<span class="re-tag">🚗 Garage</span>';
+  var specs='';
+  if(l.bedrooms||l.beds) specs+='<span class="re-card-spec">🛏 '+(l.bedrooms||l.beds)+' bd</span>';
+  if(l.bathrooms||l.baths) specs+='<span class="re-card-spec">🚿 '+(l.bathrooms||l.baths)+' ba</span>';
+  if(l.sqft||l['sq ft']||l.squarefeet) specs+='<span class="re-card-spec">📐 '+(l.sqft||l['sq ft']||l.squarefeet)+' sqft</span>';
+  var contact='';
+  if(l.phone) contact+='<a href="tel:'+l.phone+'">📞 '+l.phone+'</a>';
+  if(l.email) contact+='<a href="mailto:'+l.email+'">✉️ '+l.email+'</a>';
+  return '<div class="re-card">'+
+    '<div class="re-card-img">🏠</div>'+
+    '<div class="re-card-body">'+
+      '<div class="re-card-top">'+
+        '<div class="re-card-type '+typeClass+'">'+typeLabel+'</div>'+
+        '<div class="re-card-title">'+(l.title||l.address||'Property')+'</div>'+
+        (l.price?'<div class="re-card-price">'+l.price+'</div>':'')+
+        (specs?'<div class="re-card-specs">'+specs+'</div>':'')+
+        (tags?'<div class="re-card-tags">'+tags+'</div>':'')+
+        (l.description?'<div class="re-card-desc">'+l.description+'</div>':'')+
+      '</div>'+
+      (contact?'<div class="re-card-contact">'+contact+'</div>':'')+
+    '</div>'+
+  '</div>';
+}
+
+function renderListings(){
+  var query=(document.getElementById('re-search').value||'').toLowerCase();
+  var checked=getChecked();
+  var showSale=checked.indexOf('sale')>-1;
+  var showRent=checked.indexOf('rent')>-1;
+  var featureFilters=['kosher','synagogue','pool','garage'].filter(function(f){ return checked.indexOf(f)>-1; });
+
+  var filtered=allListings.filter(function(l){
+    var type=(l.type||l.listingtype||'').toLowerCase();
+    var isSale=type.indexOf('sale')>-1, isRent=type.indexOf('rent')>-1;
+    if(currentTab==='sale'&&!isSale) return false;
+    if(currentTab==='rent'&&!isRent) return false;
+    if(!showSale&&!showRent) return false;
+    if(isSale&&!isRent&&!showSale) return false;
+    if(isRent&&!isSale&&!showRent) return false;
+    var amenities=(l.amenities||l.features||'').toLowerCase();
+    if(featureFilters.length>0){
+      var match=featureFilters.every(function(f){
+        if(f==='kosher') return amenities.indexOf('kosher')>-1;
+        if(f==='synagogue') return amenities.indexOf('synagogue')>-1||amenities.indexOf('shul')>-1;
+        if(f==='pool') return amenities.indexOf('pool')>-1;
+        if(f==='garage') return amenities.indexOf('garage')>-1;
+        return false;
+      });
+      if(!match) return false;
+    }
+    if(query){
+      var searchable=((l.title||'')+(l.address||'')+(l.description||'')+(l.price||'')+(l.amenities||l.features||'')).toLowerCase();
+      if(searchable.indexOf(query)===-1) return false;
+    }
+    return true;
+  });
+
+  document.getElementById('re-count').textContent='Showing '+filtered.length+' listing'+(filtered.length===1?'':'s');
+  document.getElementById('re-grid').innerHTML=filtered.length===0
+    ?'<div class="re-empty"><strong>No listings found</strong><span>Try adjusting your filters, or be the first to list!</span></div>'
+    :filtered.map(buildCard).join('');
+}
+
+function switchTab(tab,btn){
+  currentTab=tab;
+  document.querySelectorAll('.re-tab').forEach(function(b){ b.classList.remove('active'); });
+  btn.classList.add('active');
+  renderListings();
+}
+
+function resetFilters(){
+  document.querySelectorAll('.re-filters input[type=checkbox]').forEach(function(el){ el.checked=(el.value==='sale'||el.value==='rent'); });
+  document.getElementById('re-search').value='';
+  currentTab='all';
+  document.querySelectorAll('.re-tab').forEach(function(b){ b.classList.remove('active'); });
+  document.getElementById('tab-all').classList.add('active');
+  renderListings();
+}
+
+function submitListing(){
+  // Basic validation
+  var type=document.getElementById('listing-type').value;
+  if(!type){ alert('Please select a listing type.'); return; }
+  document.getElementById('listing-form-wrap').style.display='none';
+  document.getElementById('listing-success').style.display='block';
+}
+
+loadListings();
+</script>
+</body>
+</html>
