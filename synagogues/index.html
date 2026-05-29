@@ -1129,7 +1129,7 @@
       var dn=DENOM[key]||DENOM['other'];
       var img=imgURL(d.image);
       var imgBlock=img
-        ? '<div class="syn-card-img" style="padding:0;overflow:hidden;"><img src="'+attr(img)+'" alt="'+attr(d.name)+'" style="width:100%;height:100%;object-fit:cover;display:block;"></div>'
+        ? '<div class="syn-card-img" style="padding:0;overflow:hidden;"><img src="'+attr(img)+'" alt="'+attr(d.name)+'" loading="lazy" decoding="async" style="width:100%;height:100%;object-fit:cover;display:block;"></div>'
         : '<div class="syn-card-img" style="background:linear-gradient(135deg,'+dn.grad+');">\uD83D\uDD4D</div>';
       var web=String(d.website||'').trim();
       var webLine=web ? '<div class="syn-detail"><span class="syn-detail-icon">\uD83C\uDF10</span> <a href="'+attr(web)+'" target="_blank">'+esc(webDisplay(web))+'</a></div>' : '';
