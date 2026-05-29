@@ -1908,7 +1908,10 @@
 
   // Jobs Board — Google Sheets
   (function() {
-    var url = 'https://docs.google.com/spreadsheets/d/1in7Ac7zknqyR9neWKOCAjOAG4jXCIVTJQfU6jJ72CV8/gviz/tq?tqx=out:json&headers=1';
+    var JOBS_SHEET_ID  = '1in7Ac7zknqyR9neWKOCAjOAG4jXCIVTJQfU6jJ72CV8';
+    var JOBS_SHEET_TAB = 'Jobs'; // <-- must match your jobs tab name EXACTLY (case-sensitive)
+    var url = 'https://docs.google.com/spreadsheets/d/' + JOBS_SHEET_ID +
+              '/gviz/tq?tqx=out:json&sheet=' + encodeURIComponent(JOBS_SHEET_TAB) + '&headers=1';
     fetch(url)
       .then(function(r) { return r.text(); })
       .then(function(text) {
