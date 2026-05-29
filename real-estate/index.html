@@ -415,7 +415,7 @@
           <a href="/mazaltov">Mazal Tov</a>
           <a href="/events">Events</a>
           <a href="/business">Business Directory</a>
-          <a href="https://jobs.houstonjewishinfo.com">Jobs</a>
+          <a href="/jobs">Jobs</a>
           <a href="/real-estate" class="active">Real Estate</a>
           <a href="/synagogues">Synagogues</a>
           <a href="/schools">Schools</a>
@@ -519,7 +519,7 @@
     <a href="/mazaltov">🎉 Mazal Tov</a>
     <a href="/events">📅 Events</a>
     <a href="/business">🏢 Business Directory</a>
-    <a href="https://jobs.houstonjewishinfo.com">💼 Jobs</a>
+    <a href="/jobs">💼 Jobs</a>
     <a href="/real-estate" class="active">🏡 Real Estate</a>
     <a href="/synagogues">✡️ Synagogues</a>
     <a href="/schools">🏫 Schools</a>
@@ -706,7 +706,6 @@ loadListings();
   if(!nav) return;
   var elLeft = active.offsetLeft;
   var elRight = elLeft + active.offsetWidth;
-  // Skip scroll if tab is already fully in view
   if(elLeft >= nav.scrollLeft && elRight <= nav.scrollLeft + nav.offsetWidth) return;
   nav.scrollLeft = elLeft - (nav.offsetWidth / 2) + (active.offsetWidth / 2);
 })();

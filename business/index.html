@@ -1242,7 +1242,7 @@
         <a href="/mazaltov">Mazal Tov</a>
         <a href="/events">Events</a>
         <a href="/business" class="active">Business Directory</a>
-        <a href="https://jobs.houstonjewishinfo.com">Jobs</a>
+        <a href="/jobs">Jobs</a>
         <a href="/real-estate">Real Estate</a>
         <a href="/synagogues">Synagogues</a>
         <a href="/schools">Schools</a>
@@ -2305,7 +2305,6 @@ document.addEventListener('click', function(e) {
   if(!nav) return;
   var elLeft = active.offsetLeft;
   var elRight = elLeft + active.offsetWidth;
-  // Skip scroll if tab is already fully in view
   if(elLeft >= nav.scrollLeft && elRight <= nav.scrollLeft + nav.offsetWidth) return;
   nav.scrollLeft = elLeft - (nav.offsetWidth / 2) + (active.offsetWidth / 2);
 })();
