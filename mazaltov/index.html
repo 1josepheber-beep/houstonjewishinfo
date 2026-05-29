@@ -1045,7 +1045,7 @@
   .sidebar-section-head {
     font-family: 'Playfair Display', serif; font-size: 13px; font-weight: 700;
     letter-spacing: .06em; text-transform: uppercase; color: var(--navy);
-    border-bottom: 2px solid var(--gold); padding-bottom: 5px; margin-bottom: 12px; text-align: center;
+    border-bottom: 2px solid var(--gold); padding-bottom: 5px; margin-bottom: 12px;
   }
 
   @media (max-width: 800px) {
@@ -1256,66 +1256,31 @@
 
       <div class="sidebar-section-head">Advertise</div>
 
-      
-
-      <!-- AD mazaltov-1 — managed via Ads sheet (placeholder shows until sold) -->
-      <div class="ad-managed" data-ad-slot="mazaltov-1">
-        <div class="ad-slot">
-          <div class="ad-label">Advertisement</div>
-          <div class="ad-placeholder" style="height:250px;">
-            <span>Your Ad Here</span>
-            <small style="font-weight:400;font-size:9px;">Book this space</small>
-          </div>
-          <a class="ad-cta" onclick="openModal('modal-ad')">Book this space →</a>
+      <div class="ad-slot">
+        <div class="ad-label">Advertisement</div>
+        <div class="ad-placeholder" style="height:250px;">
+          <span>Your Ad Here</span>
+          <small style="font-weight:400;font-size:9px;">300 × 250</small>
         </div>
+        <a class="ad-cta" onclick="openModal('modal-ad')">Book this space →</a>
       </div>
 
-      <!-- AD mazaltov-2 — managed via Ads sheet (placeholder shows until sold) -->
-      <div class="ad-managed" data-ad-slot="mazaltov-2">
-        <div class="ad-slot">
-          <div class="ad-label">Advertisement</div>
-          <div class="ad-placeholder" style="height:250px;">
-            <span>Your Ad Here</span>
-            <small style="font-weight:400;font-size:9px;">Book this space</small>
-          </div>
-          <a class="ad-cta" onclick="openModal('modal-ad')">Book this space →</a>
+      <div class="ad-slot">
+        <div class="ad-label">Sponsored</div>
+        <div class="ad-placeholder" style="height:150px;">
+          <span>Local Business</span>
+          <small style="font-weight:400;font-size:9px;">300 × 150</small>
         </div>
+        <a class="ad-cta" onclick="openModal('modal-ad')">Book this space →</a>
       </div>
 
-      <!-- AD mazaltov-3 — managed via Ads sheet (placeholder shows until sold) -->
-      <div class="ad-managed" data-ad-slot="mazaltov-3">
-        <div class="ad-slot">
-          <div class="ad-label">Advertisement</div>
-          <div class="ad-placeholder" style="height:150px;">
-            <span>Your Ad Here</span>
-            <small style="font-weight:400;font-size:9px;">Book this space</small>
-          </div>
-          <a class="ad-cta" onclick="openModal('modal-ad')">Book this space →</a>
+      <div class="ad-slot">
+        <div class="ad-label">Community Sponsor</div>
+        <div class="ad-placeholder" style="height:100px;">
+          <span>Your Business</span>
+          <small style="font-weight:400;font-size:9px;">300 × 100</small>
         </div>
-      </div>
-
-      <!-- AD mazaltov-4 — managed via Ads sheet (placeholder shows until sold) -->
-      <div class="ad-managed" data-ad-slot="mazaltov-4">
-        <div class="ad-slot">
-          <div class="ad-label">Advertisement</div>
-          <div class="ad-placeholder" style="height:150px;">
-            <span>Your Ad Here</span>
-            <small style="font-weight:400;font-size:9px;">Book this space</small>
-          </div>
-          <a class="ad-cta" onclick="openModal('modal-ad')">Book this space →</a>
-        </div>
-      </div>
-
-      <!-- AD mazaltov-5 — managed via Ads sheet (placeholder shows until sold) -->
-      <div class="ad-managed" data-ad-slot="mazaltov-5">
-        <div class="ad-slot">
-          <div class="ad-label">Advertisement</div>
-          <div class="ad-placeholder" style="height:100px;">
-            <span>Your Ad Here</span>
-            <small style="font-weight:400;font-size:9px;">Book this space</small>
-          </div>
-          <a class="ad-cta" onclick="openModal('modal-ad')">Book this space →</a>
-        </div>
+        <a class="ad-cta" onclick="openModal('modal-ad')">Book this space →</a>
       </div>
 
     </aside><!-- end mt-sidebar -->
@@ -1443,40 +1408,6 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape')closeMobileM
   if(elLeft>=nav.scrollLeft&&elRight<=nav.scrollLeft+nav.offsetWidth)return;
   nav.scrollLeft=elLeft-(nav.offsetWidth/2)+(active.offsetWidth/2);
 })();
-</script>
-<script>
-  // Ads — Google Sheets driven (same "Ads" tab used across the site)
-  (function() {
-    var AD_SHEET_ID = '1in7Ac7zknqyR9neWKOCAjOAG4jXCIVTJQfU6jJ72CV8';
-    var url = 'https://docs.google.com/spreadsheets/d/' + AD_SHEET_ID +
-              '/gviz/tq?tqx=out:json&headers=1&sheet=Ads';
-    fetch(url)
-      .then(function(r) { return r.text(); })
-      .then(function(text) {
-        var json = JSON.parse(text.substring(47, text.length - 2));
-        var cols = json.table.cols.map(function(c) { return (c.label || '').toLowerCase().trim(); });
-        var slots = {};
-        (json.table.rows || []).forEach(function(row) {
-          var d = {};
-          cols.forEach(function(col, i) { d[col] = (row.c && row.c[i]) ? (row.c[i].v || '') : ''; });
-          var slot = (d.placement || '').toLowerCase().trim();
-          if (!slot) return;
-          if (!slots[slot]) slots[slot] = { active: null };
-          if ((d.status || '').toLowerCase().trim() === 'active' && d.imageurl && !slots[slot].active) slots[slot].active = d;
-        });
-        document.querySelectorAll('[data-ad-slot]').forEach(function(el) {
-          var info = slots[el.getAttribute('data-ad-slot').toLowerCase().trim()];
-          if (info && info.active) {   // sold -> show the ad; otherwise keep the "Book this space" placeholder
-            var d = info.active;
-            var alt = String(d.advertiser || 'Advertisement').replace(/"/g, '&quot;');
-            el.innerHTML = '<a href="' + (d.linkurl || '#') + '" target="_blank" rel="noopener" aria-label="' + alt + '" ' +
-                           'style="display:block;margin:0 0 16px;border:1px solid #c9933a;border-radius:4px;overflow:hidden;text-decoration:none;">' +
-                           '<img src="' + d.imageurl + '" alt="' + alt + '" style="width:100%;height:auto;display:block;"></a>';
-          }
-        });
-      })
-      .catch(function() { /* leave placeholders on error */ });
-  })();
 </script>
 </body>
 </html>
