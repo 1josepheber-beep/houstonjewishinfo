@@ -1152,6 +1152,8 @@
   }
 
   .nav-bar { margin-top: 0 !important; }
+  /* Center masthead title — balance logo on left with invisible spacer on right */
+  .masthead-inner::after { content: ''; width: 140px; flex-shrink: 0; }
 </style>
 </head>
 <body style="-webkit-tap-highlight-color: transparent;">
