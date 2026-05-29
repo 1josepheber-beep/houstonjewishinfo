@@ -296,25 +296,25 @@
       <div class="form-row">
         <div class="form-group">
           <label class="form-label">Property Title *</label>
-          <input type="text" class="form-input" placeholder="e.g. 3BR/2BA Townhome in Meyerland">
+          <input type="text" class="form-input" id="re-title" placeholder="e.g. 3BR/2BA Townhome in Meyerland">
         </div>
         <div class="form-group">
           <label class="form-label">Price / Rent *</label>
-          <input type="text" class="form-input" placeholder="e.g. $425,000 or $2,200/mo">
+          <input type="text" class="form-input" id="re-price" placeholder="e.g. $425,000 or $2,200/mo">
         </div>
       </div>
 
       <!-- ADDRESS -->
       <div class="form-group">
         <label class="form-label">Address / Neighborhood *</label>
-        <input type="text" class="form-input" placeholder="Street address or neighborhood (e.g. Meyerland)">
+        <input type="text" class="form-input" id="re-address" placeholder="Street address or neighborhood (e.g. Meyerland)">
       </div>
 
       <!-- SPECS -->
       <div class="form-row-3">
         <div class="form-group">
           <label class="form-label">Bedrooms</label>
-          <select class="form-select">
+          <select class="form-select" id="re-beds">
             <option value="">–</option>
             <option>Studio</option>
             <option>1</option>
@@ -326,7 +326,7 @@
         </div>
         <div class="form-group">
           <label class="form-label">Bathrooms</label>
-          <select class="form-select">
+          <select class="form-select" id="re-baths">
             <option value="">–</option>
             <option>1</option>
             <option>1.5</option>
@@ -337,14 +337,14 @@
         </div>
         <div class="form-group">
           <label class="form-label">Sq Ft</label>
-          <input type="text" class="form-input" placeholder="e.g. 1,850">
+          <input type="text" class="form-input" id="re-sqft" placeholder="e.g. 1,850">
         </div>
       </div>
 
       <!-- PROPERTY TYPE -->
       <div class="form-group">
         <label class="form-label">Property Type</label>
-        <select class="form-select">
+        <select class="form-select" id="re-ptype">
           <option value="">Select...</option>
           <option>Single Family Home</option>
           <option>Townhome / Condo</option>
@@ -360,47 +360,47 @@
       <div class="form-group">
         <label class="form-label">Amenities & Features</label>
         <div class="amenity-grid">
-          <label class="amenity-check"><input type="checkbox"> 🍽️ Kosher Kitchen</label>
-          <label class="amenity-check"><input type="checkbox"> ✡️ Near Synagogue</label>
-          <label class="amenity-check"><input type="checkbox"> 🕯️ Jewish Neighborhood</label>
-          <label class="amenity-check"><input type="checkbox"> 🏊 Pool</label>
-          <label class="amenity-check"><input type="checkbox"> 🚗 Garage</label>
-          <label class="amenity-check"><input type="checkbox"> 🌿 Yard / Garden</label>
-          <label class="amenity-check"><input type="checkbox"> ❄️ Central A/C</label>
-          <label class="amenity-check"><input type="checkbox"> 🐾 Pet Friendly</label>
-          <label class="amenity-check"><input type="checkbox"> ♿ Accessible</label>
-          <label class="amenity-check"><input type="checkbox"> 🏫 Near Jewish School</label>
-          <label class="amenity-check"><input type="checkbox"> 🔒 Gated Community</label>
-          <label class="amenity-check"><input type="checkbox"> 💡 Updated Kitchen</label>
+          <label class="amenity-check"><input type="checkbox" class="re-amenity" value="🍽️ Kosher Kitchen"> 🍽️ Kosher Kitchen</label>
+          <label class="amenity-check"><input type="checkbox" class="re-amenity" value="✡️ Near Synagogue"> ✡️ Near Synagogue</label>
+          <label class="amenity-check"><input type="checkbox" class="re-amenity" value="🕯️ Jewish Neighborhood"> 🕯️ Jewish Neighborhood</label>
+          <label class="amenity-check"><input type="checkbox" class="re-amenity" value="🏊 Pool"> 🏊 Pool</label>
+          <label class="amenity-check"><input type="checkbox" class="re-amenity" value="🚗 Garage"> 🚗 Garage</label>
+          <label class="amenity-check"><input type="checkbox" class="re-amenity" value="🌿 Yard / Garden"> 🌿 Yard / Garden</label>
+          <label class="amenity-check"><input type="checkbox" class="re-amenity" value="❄️ Central A/C"> ❄️ Central A/C</label>
+          <label class="amenity-check"><input type="checkbox" class="re-amenity" value="🐾 Pet Friendly"> 🐾 Pet Friendly</label>
+          <label class="amenity-check"><input type="checkbox" class="re-amenity" value="♿ Accessible"> ♿ Accessible</label>
+          <label class="amenity-check"><input type="checkbox" class="re-amenity" value="🏫 Near Jewish School"> 🏫 Near Jewish School</label>
+          <label class="amenity-check"><input type="checkbox" class="re-amenity" value="🔒 Gated Community"> 🔒 Gated Community</label>
+          <label class="amenity-check"><input type="checkbox" class="re-amenity" value="💡 Updated Kitchen"> 💡 Updated Kitchen</label>
         </div>
       </div>
 
       <!-- DESCRIPTION -->
       <div class="form-group">
         <label class="form-label">Description *</label>
-        <textarea class="form-textarea" placeholder="Describe the property — highlights, condition, special features, what's included, move-in date, etc."></textarea>
+        <textarea class="form-textarea" id="re-desc" placeholder="Describe the property — highlights, condition, special features, what's included, move-in date, etc."></textarea>
       </div>
 
       <!-- PHOTO LINK -->
       <div class="form-group">
         <label class="form-label">Photo Link (optional)</label>
-        <input type="url" class="form-input" placeholder="Link to photos (Google Drive, Zillow, etc.)">
+        <input type="url" class="form-input" id="re-photo" placeholder="Link to photos (Google Drive, Zillow, etc.)">
       </div>
 
       <!-- CONTACT -->
       <div class="form-row">
         <div class="form-group">
           <label class="form-label">Your Name *</label>
-          <input type="text" class="form-input" placeholder="Contact name">
+          <input type="text" class="form-input" id="re-name" placeholder="Contact name">
         </div>
         <div class="form-group">
           <label class="form-label">Email *</label>
-          <input type="email" class="form-input" placeholder="you@example.com">
+          <input type="email" class="form-input" id="re-email" placeholder="you@example.com">
         </div>
       </div>
       <div class="form-group">
         <label class="form-label">Phone (optional)</label>
-        <input type="tel" class="form-input" placeholder="(713) 000-0000">
+        <input type="tel" class="form-input" id="re-phone" placeholder="(713) 000-0000">
       </div>
 
       <!-- PAYMENT -->
@@ -723,11 +723,37 @@ function resetFilters(){
 }
 
 function submitListing(){
-  // Basic validation
-  var type=document.getElementById('listing-type').value;
+  var g=function(id){var el=document.getElementById(id);return el?(''+el.value).trim():'';};
+  var type=g('listing-type'), title=g('re-title'), price=g('re-price'),
+      address=g('re-address'), desc=g('re-desc'), name=g('re-name'), email=g('re-email');
   if(!type){ alert('Please select a listing type.'); return; }
-  document.getElementById('listing-form-wrap').style.display='none';
-  document.getElementById('listing-success').style.display='block';
+  if(!title||!price||!address||!desc||!name||!email){ alert('Please fill in all required fields (marked with *).'); return; }
+  var amenities=[];
+  document.querySelectorAll('.re-amenity:checked').forEach(function(cb){ amenities.push(cb.value); });
+  var data={
+    'Listing Type':type, 'Title':title, 'Price / Rent':price, 'Address / Neighborhood':address,
+    'Bedrooms':g('re-beds'), 'Bathrooms':g('re-baths'), 'Sq Ft':g('re-sqft'),
+    'Property Type':g('re-ptype'), 'Amenities':amenities.join(', '),
+    'Description':desc, 'Photo Link':g('re-photo'),
+    'Name':name, 'Email':email, 'Phone':g('re-phone'),
+    '_subject':'HJI Real Estate Listing: '+title, '_replyto':email
+  };
+  var btn=document.querySelector('#listing-form-wrap .btn-primary');
+  if(btn){ btn.disabled=true; btn.textContent='Submitting\u2026'; }
+  fetch('https://formspree.io/f/xkoevogn',{
+    method:'POST',
+    headers:{'Content-Type':'application/json','Accept':'application/json'},
+    body:JSON.stringify(data)
+  })
+  .then(function(r){ if(!r.ok) throw new Error('bad response'); return r.json(); })
+  .then(function(){
+    document.getElementById('listing-form-wrap').style.display='none';
+    document.getElementById('listing-success').style.display='block';
+  })
+  .catch(function(){
+    alert('Sorry, there was a problem submitting your listing. Please try again, or email info@houstonjewishinfo.com.');
+    if(btn){ btn.disabled=false; btn.textContent='Submit Listing \u2192'; }
+  });
 }
 
 loadListings();
