@@ -658,6 +658,10 @@
   }
   .form-textarea { resize: vertical; min-height: 80px; }
   .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .form-row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+  .amenity-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 4px; }
+  .amenity-check { display: flex; align-items: center; gap: 8px; font-family: sans-serif; font-size: 12px; color: var(--ink); cursor: pointer; }
+  .amenity-check input { accent-color: var(--navy); }
   .btn-primary {
     background: var(--navy);
     color: var(--white);
@@ -725,7 +729,7 @@
   @media (max-width: 600px) {
     .story-grid { grid-template-columns: 1fr; }
     .lead-headline { font-size: 24px; }
-    .form-row { grid-template-columns: 1fr; }
+    .form-row, .form-row-3 { grid-template-columns: 1fr; }
   }
 
   .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; padding: 8px; background: none; border: none; z-index: 300; position: absolute; top: 8px; right: 8px; }
@@ -1205,30 +1209,66 @@
             <div class="form-header-sub">Homes for sale or rent in the Houston Jewish community — $15 listing fee</div>
           </div>
         </div>
-        <div class="form-body" id="realestate-wrap">
+                <div class="form-body" id="realestate-wrap">
           <div class="form-group">
             <label class="form-label">Listing Type *</label>
-            <select name="category" class="form-select">
-              <option>🏡 For Sale</option>
-              <option>🔑 For Rent</option>
-              <option>🏡 For Sale or Rent</option>
+            <select name="Listing Type" class="form-select">
+              <option value="">Select...</option>
+              <option>For Sale</option>
+              <option>For Rent</option>
+              <option>For Sale or Rent</option>
             </select>
           </div>
-          <div class="form-group"><label class="form-label">Property Title *</label><input type="text" name="title" class="form-input" placeholder="e.g. 3BR/2BA Home in Meyerland"></div>
           <div class="form-row">
-            <div class="form-group"><label class="form-label">Price / Rent *</label><input type="text" name="price" class="form-input" placeholder="e.g. $425,000 or $2,200/mo"></div>
-            <div class="form-group"><label class="form-label">Address / Neighborhood *</label><input type="text" name="location" class="form-input" placeholder="e.g. Meyerland"></div>
+            <div class="form-group"><label class="form-label">Property Title *</label><input type="text" name="Title" class="form-input" placeholder="e.g. 3BR/2BA Townhome in Meyerland"></div>
+            <div class="form-group"><label class="form-label">Price / Rent *</label><input type="text" name="Price / Rent" class="form-input" placeholder="e.g. $425,000 or $2,200/mo"></div>
           </div>
-          <div class="form-row">
-            <div class="form-group"><label class="form-label">Bedrooms</label><input type="text" name="bedrooms" class="form-input" placeholder="e.g. 3"></div>
-            <div class="form-group"><label class="form-label">Bathrooms</label><input type="text" name="bathrooms" class="form-input" placeholder="e.g. 2"></div>
+          <div class="form-group"><label class="form-label">Address / Neighborhood *</label><input type="text" name="Address / Neighborhood" class="form-input" placeholder="Street address or neighborhood (e.g. Meyerland)"></div>
+          <div class="form-row-3">
+            <div class="form-group">
+              <label class="form-label">Bedrooms</label>
+              <select name="Bedrooms" class="form-select">
+                <option value="">–</option><option>Studio</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5+</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Bathrooms</label>
+              <select name="Bathrooms" class="form-select">
+                <option value="">–</option><option>1</option><option>1.5</option><option>2</option><option>2.5</option><option>3+</option>
+              </select>
+            </div>
+            <div class="form-group"><label class="form-label">Sq Ft</label><input type="text" name="Sq Ft" class="form-input" placeholder="e.g. 1,850"></div>
           </div>
-          <div class="form-group"><label class="form-label">Description *</label><textarea name="description" class="form-textarea" placeholder="Describe the property — highlights, condition, special features, amenities (kosher kitchen, near synagogue, pool, etc.), move-in date..."></textarea></div>
+          <div class="form-group">
+            <label class="form-label">Property Type</label>
+            <select name="Property Type" class="form-select">
+              <option value="">Select...</option><option>Single Family Home</option><option>Townhome / Condo</option><option>Apartment</option><option>Duplex</option><option>Commercial</option><option>Land / Lot</option><option>Other</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Amenities &amp; Features</label>
+            <div class="amenity-grid">
+              <label class="amenity-check"><input type="checkbox" name="amenities" value="Kosher Kitchen"> 🍽️ Kosher Kitchen</label>
+              <label class="amenity-check"><input type="checkbox" name="amenities" value="Near Synagogue"> ✡️ Near Synagogue</label>
+              <label class="amenity-check"><input type="checkbox" name="amenities" value="Jewish Neighborhood"> 🕯️ Jewish Neighborhood</label>
+              <label class="amenity-check"><input type="checkbox" name="amenities" value="Pool"> 🏊 Pool</label>
+              <label class="amenity-check"><input type="checkbox" name="amenities" value="Garage"> 🚗 Garage</label>
+              <label class="amenity-check"><input type="checkbox" name="amenities" value="Yard / Garden"> 🌿 Yard / Garden</label>
+              <label class="amenity-check"><input type="checkbox" name="amenities" value="Central A/C"> ❄️ Central A/C</label>
+              <label class="amenity-check"><input type="checkbox" name="amenities" value="Pet Friendly"> 🐾 Pet Friendly</label>
+              <label class="amenity-check"><input type="checkbox" name="amenities" value="Accessible"> ♿ Accessible</label>
+              <label class="amenity-check"><input type="checkbox" name="amenities" value="Near Jewish School"> 🏫 Near Jewish School</label>
+              <label class="amenity-check"><input type="checkbox" name="amenities" value="Gated Community"> 🔒 Gated Community</label>
+              <label class="amenity-check"><input type="checkbox" name="amenities" value="Updated Kitchen"> 💡 Updated Kitchen</label>
+            </div>
+          </div>
+          <div class="form-group"><label class="form-label">Description *</label><textarea name="Description" class="form-textarea" placeholder="Describe the property — highlights, condition, special features, what's included, move-in date, etc."></textarea></div>
+          <div class="form-group"><label class="form-label">Photo Link (optional)</label><input type="url" name="Photo Link" class="form-input" placeholder="Link to photos (Google Drive, Zillow, etc.)"></div>
           <div class="form-row">
             <div class="form-group"><label class="form-label">Your Name *</label><input type="text" name="name" class="form-input" placeholder="Contact name"></div>
-            <div class="form-group"><label class="form-label">Phone</label><input type="tel" name="phone" class="form-input" placeholder="(713) 000-0000"></div>
+            <div class="form-group"><label class="form-label">Email *</label><input type="email" name="email" class="form-input" placeholder="you@example.com"></div>
           </div>
-          <div class="form-group"><label class="form-label">Email *</label><input type="email" name="email" class="form-input" placeholder="you@example.com"></div>
+          <div class="form-group"><label class="form-label">Phone (optional)</label><input type="tel" name="phone" class="form-input" placeholder="(713) 000-0000"></div>
           <button class="btn-primary" onclick="submitForm('realestate-wrap','realestate-ok','Real Estate Listing')">Submit Listing →</button>
         </div>
         <div class="form-success" id="realestate-ok">
@@ -1331,19 +1371,31 @@
     var data = { _subject: 'HJI Submission: ' + subject };
     inputs.forEach(function(el) {
       var key = el.name || el.placeholder;
-      if (key) data[key] = el.value;
+      if (!key) return;
+      if (el.type === 'checkbox') {
+        if (el.checked) data[key] = data[key] ? data[key] + ', ' + el.value : el.value;
+      } else {
+        data[key] = el.value;
+      }
     });
+    if (data.email) data._replyto = data.email;
+    var btn = wrap.querySelector('.btn-primary');
+    var btnText = btn ? btn.textContent : '';
+    if (btn) { btn.disabled = true; btn.textContent = 'Submitting\u2026'; }
     fetch('https://formspree.io/f/xkoevogn', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
       body: JSON.stringify(data)
     })
-    .then(function(r) { return r.json(); })
+    .then(function(r) { if (!r.ok) throw new Error('bad response'); return r.json(); })
     .then(function() {
       wrap.style.display = 'none';
       document.getElementById(okId).style.display = 'block';
     })
-    .catch(function() { alert('Sorry, there was an error. Please try again.'); });
+    .catch(function() {
+      alert('Sorry, there was a problem sending your submission. Please try again, or email info@houstonjewishinfo.com.');
+      if (btn) { btn.disabled = false; btn.textContent = btnText; }
+    });
   }
 
   function resetForm(type) {
