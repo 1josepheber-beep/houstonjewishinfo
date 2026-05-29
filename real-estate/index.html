@@ -227,20 +227,6 @@
     .payment-methods { flex-direction: column; }
     .nav-bar a { font-size: 9.5px !important; padding: 8px 7px !important; }
   }
-
-  /* ── SPACING FIX: consistent tagline-to-nav gap ── */
-  .masthead-inner { margin-bottom: 0 !important; }
-  .nav-bar { margin-top: 8px !important; }
-
-  @media (max-width: 900px) {
-    .masthead-side { display: none; }
-    .masthead-title { font-size: 36px; }
-  }
-  @media (max-width: 768px) {
-    .nav-bar a { font-size: 9.5px !important; padding: 8px 7px !important; }
-    .nav-arrow { display: none !important; }
-  }
-
 </style>
 </head>
 <body>
@@ -429,7 +415,7 @@
           <a href="/mazaltov">Mazal Tov</a>
           <a href="/events">Events</a>
           <a href="/business">Business Directory</a>
-        <a href="/jobs">Jobs</a>
+          <a href="https://jobs.houstonjewishinfo.com">Jobs</a>
           <a href="/real-estate" class="active">Real Estate</a>
           <a href="/synagogues">Synagogues</a>
           <a href="/schools">Schools</a>
@@ -533,7 +519,7 @@
     <a href="/mazaltov">🎉 Mazal Tov</a>
     <a href="/events">📅 Events</a>
     <a href="/business">🏢 Business Directory</a>
-    <a href="/jobs">💼 Jobs</a>
+    <a href="https://jobs.houstonjewishinfo.com">💼 Jobs</a>
     <a href="/real-estate" class="active">🏡 Real Estate</a>
     <a href="/synagogues">✡️ Synagogues</a>
     <a href="/schools">🏫 Schools</a>
@@ -711,7 +697,6 @@ function submitListing(){
 
 loadListings();
 </script>
-
 <script>
 // Center active nav tab on mobile — only if not already fully visible
 (function(){
@@ -726,6 +711,5 @@ loadListings();
   nav.scrollLeft = elLeft - (nav.offsetWidth / 2) + (active.offsetWidth / 2);
 })();
 </script>
-
 </body>
 </html>

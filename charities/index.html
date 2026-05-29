@@ -727,20 +727,6 @@
     .lead-headline { font-size: 24px; }
     .form-row { grid-template-columns: 1fr; }
   }
-
-  /* ── SPACING FIX: consistent tagline-to-nav gap ── */
-  .masthead-inner { margin-bottom: 0 !important; }
-  .nav-bar { margin-top: 8px !important; }
-
-  @media (max-width: 900px) {
-    .masthead-side { display: none; }
-    .masthead-title { font-size: 36px; }
-  }
-  @media (max-width: 768px) {
-    .nav-bar a { font-size: 9.5px !important; padding: 8px 7px !important; }
-    .nav-arrow { display: none !important; }
-  }
-
 </style>
 <style>
   .page-hero {
@@ -898,7 +884,7 @@
           <a href="/mazaltov">Mazal Tov</a>
           <a href="/events">Events</a>
           <a href="/business">Business Directory</a>
-        <a href="/jobs">Jobs</a>
+          <a href="https://jobs.houstonjewishinfo.com">Jobs</a>
           <a href="/real-estate">Real Estate</a>
           <a href="/synagogues">Synagogues</a>
           <a href="/schools">Schools</a>
@@ -1055,7 +1041,6 @@
     document.getElementById('charity-count').textContent = count;
   }
 </script>
-
 <script>
 // Center active nav tab on mobile — only if not already fully visible
 (function(){
@@ -1070,6 +1055,5 @@
   nav.scrollLeft = elLeft - (nav.offsetWidth / 2) + (active.offsetWidth / 2);
 })();
 </script>
-
 </body>
 </html>
