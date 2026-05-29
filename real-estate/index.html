@@ -209,12 +209,12 @@
     .filter-reset { grid-column: 1/-1; }
   }
   @media (max-width: 768px) {
-    .hamburger { display: flex !important; }
-    .nav-arrow { display: flex; }
-    .masthead { position: relative; padding: 12px 0 0; }
-    .masthead-inner { flex-direction: column !important; align-items: center !important; padding: 0 48px 10px !important; gap: 6px !important; text-align: center; }
-    .masthead-side { display: none !important; }
-    .masthead-title { font-size: 28px !important; }
+    .hamburger { display: none !important; }
+    .nav-arrow { display: none !important; }
+    .masthead { position: static; padding: 16px 0 10px; }
+    .masthead-inner { flex-direction: row !important; align-items: center !important; padding: 0 !important; gap: 16px !important; text-align: left; }
+    .masthead-title { font-size: 28px; }
+    .nav-bar a { font-size: 9.5px !important; padding: 8px 7px !important; }
     .re-card { grid-template-columns: 1fr; }
     .re-card-img { min-height: 120px; }
     .re-hero-inner { flex-direction: column; }
@@ -231,12 +231,6 @@
   .masthead-inner { margin-bottom: 0 !important; }
   .nav-bar { margin-top: 8px !important; }
   .masthead { padding-bottom: 0 !important; }
-
-  /* ── MOBILE: just tighten nav tabs, hide stray arrows ── */
-  @media (max-width: 768px) {
-    .nav-bar a { font-size: 9.5px !important; padding: 8px 7px !important; }
-    .nav-arrow { display: none !important; }
-  }
 
 </style>
 </head>
@@ -420,11 +414,7 @@
           <a href="#" style="font-family:sans-serif;font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--navy);border:1px solid var(--navy);padding:5px 10px;border-radius:3px;display:inline-block">Subscribe →</a>
         </div>
       </div>
-      <button class="hamburger" id="hamburger-btn" aria-label="Toggle navigation" onclick="openMobileMenu()">
-        <span></span><span></span><span></span>
-      </button>
       <div class="nav-wrapper">
-        <button class="nav-arrow left" aria-label="Scroll nav left">&#8249;</button>
         <nav class="nav-bar" id="main-nav" aria-label="Main navigation">
           <a href="/">Home</a>
           <a href="/mazaltov">Mazal Tov</a>
