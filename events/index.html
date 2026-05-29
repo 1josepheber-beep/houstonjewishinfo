@@ -720,6 +720,46 @@
     .form-row { grid-template-columns: 1fr; }
   }
 
+
+  /* ── HAMBURGER ── */
+  .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; padding: 8px; background: none; border: none; z-index: 300; position: absolute; top: 8px; right: 8px; }
+  .hamburger span { display: block; width: 24px; height: 2px; background: var(--navy); border-radius: 2px; transition: all .3s; }
+  .hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+  .hamburger.open span:nth-child(2) { opacity: 0; }
+  .hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+  /* ── MOBILE SLIDE-OUT MENU ── */
+  .mobile-menu-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.45); z-index: 400; }
+  .mobile-menu-overlay.open { display: block; }
+  .mobile-menu { position: fixed; top: 0; right: -280px; width: 280px; height: 100%; background: var(--white,#fff); z-index: 500; box-shadow: -4px 0 20px rgba(0,0,0,.2); transition: right .3s ease; overflow-y: auto; display: flex; flex-direction: column; }
+  .mobile-menu.open { right: 0; }
+  .mobile-menu-head { background: var(--navy,#1a2744); padding: 20px 18px 16px; display: flex; align-items: center; justify-content: space-between; }
+  .mobile-menu-title { font-family: 'Playfair Display', serif; font-size: 18px; font-weight: 700; color: #fff; }
+  .mobile-menu-close { background: none; border: none; color: #fff; font-size: 24px; cursor: pointer; line-height: 1; padding: 4px; }
+  .mobile-menu-links { padding: 8px 0; flex: 1; }
+  .mobile-menu-links a { display: block; padding: 15px 20px; font-family: sans-serif; font-size: 14px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: var(--navy,#1a2744); border-bottom: 1px solid var(--border,#ddd); text-decoration: none; transition: background .15s; }
+  .mobile-menu-links a:hover { background: #eef3fb; }
+  .mobile-menu-links a.active { color: #c0391b; }
+  .mobile-menu-footer { padding: 16px 20px; border-top: 1px solid var(--border,#ddd); font-family: sans-serif; font-size: 11px; color: var(--muted,#888); text-align: center; }
+
+  /* ── MOBILE MASTHEAD (max 768px) ── */
+  @media (max-width: 768px) {
+    .masthead { position: relative !important; padding: 12px 0 0 !important; }
+    .masthead-inner { display: flex !important; flex-direction: column !important; align-items: center !important; justify-content: center !important; padding: 0 48px 10px !important; gap: 6px !important; text-align: center !important; margin-bottom: 0 !important; }
+    .masthead-side { display: flex !important; flex-direction: column !important; align-items: center !important; width: auto !important; }
+    .masthead-side img { height: 60px !important; width: auto !important; }
+    .masthead-side .social-links { display: flex !important; justify-content: center !important; margin-top: 4px !important; }
+    .masthead-side.right { display: none !important; }
+    .masthead-logo { text-align: center !important; width: 100% !important; }
+    .masthead-title { font-size: 30px !important; line-height: 1.2 !important; }
+    .masthead-tagline { display: block !important; font-size: 12px !important; }
+    .masthead-date { font-size: 10px !important; text-align: center !important; }
+    .hamburger { display: flex !important; }
+    .nav-bar { margin-top: 0 !important; }
+    .nav-bar a { font-size: 10px !important; padding: 8px 8px !important; }
+    .nav-arrow { display: none !important; }
+  }
+
 </style>
 <style>
   .page-hero {
@@ -966,7 +1006,8 @@
           <div style="margin-bottom:6px">Get stories in your inbox</div>
           <a href="#" style="font-family:sans-serif;font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--navy);border:1px solid var(--navy);padding:5px 10px;border-radius:3px;display:inline-block">Subscribe →</a>
         </div>
-      </div>
+            <button class="hamburger" id="hamburger-btn" aria-label="Toggle navigation" onclick="openMobileMenu()"><span></span><span></span><span></span></button>
+</div>
       <nav class="nav-bar" aria-label="Main navigation">
         <a href="/">Home</a>
         <a href="/mazaltov">Mazal Tov</a>
@@ -1246,17 +1287,40 @@
   <button class="lightbox-close" onclick="closeLightbox()">×</button>
   <img id="lightbox-img" src="" alt="" onclick="event.stopPropagation()">
 </div>
+<div class="mobile-menu-overlay" id="mob-overlay" onclick="closeMobileMenu()"></div>
+<div class="mobile-menu" id="mob-menu">
+  <div class="mobile-menu-head">
+    <div class="mobile-menu-title">Houston Jewish Info</div>
+    <button class="mobile-menu-close" onclick="closeMobileMenu()">×</button>
+  </div>
+  <div class="mobile-menu-links">
+    <a href="/">🏠 Home</a>
+    <a href="/mazaltov">🎉 Mazal Tov</a>
+    <a href="/events" class="active">📅 Events</a>
+    <a href="/business">🏢 Business Directory</a>
+    <a href="/jobs">💼 Jobs</a>
+    <a href="/real-estate">🏡 Real Estate</a>
+    <a href="/synagogues">✡️ Synagogues</a>
+    <a href="/schools">🏫 Schools</a>
+    <a href="/charities">💛 Charities</a>
+    <a href="/contact">📬 Contact / Submit</a>
+  </div>
+  <div class="mobile-menu-footer">© 2026 Houston Jewish Info<br>Serving the Houston Jewish community 🌟</div>
+</div>
 <script>
-// Center active nav tab on mobile — only if not already fully visible
+function openMobileMenu(){document.getElementById('mob-menu').classList.add('open');document.getElementById('mob-overlay').classList.add('open');document.getElementById('hamburger-btn').classList.add('open');document.body.style.overflow='hidden';}
+function closeMobileMenu(){document.getElementById('mob-menu').classList.remove('open');document.getElementById('mob-overlay').classList.remove('open');document.getElementById('hamburger-btn').classList.remove('open');document.body.style.overflow='';}
+document.addEventListener('keydown',function(e){if(e.key==='Escape')closeMobileMenu();});
+</script>
+<script>
 (function(){
-  var active = document.querySelector('.nav-bar a.active');
-  if(!active) return;
-  var nav = active.closest('.nav-bar') || document.querySelector('.nav-bar');
-  if(!nav) return;
-  var elLeft = active.offsetLeft;
-  var elRight = elLeft + active.offsetWidth;
-  if(elLeft >= nav.scrollLeft && elRight <= nav.scrollLeft + nav.offsetWidth) return;
-  nav.scrollLeft = elLeft - (nav.offsetWidth / 2) + (active.offsetWidth / 2);
+  var active=document.querySelector('.nav-bar a.active');
+  if(!active)return;
+  var nav=active.closest('.nav-bar')||document.querySelector('.nav-bar');
+  if(!nav)return;
+  var elLeft=active.offsetLeft,elRight=elLeft+active.offsetWidth;
+  if(elLeft>=nav.scrollLeft&&elRight<=nav.scrollLeft+nav.offsetWidth)return;
+  nav.scrollLeft=elLeft-(nav.offsetWidth/2)+(active.offsetWidth/2);
 })();
 </script>
 </body>
