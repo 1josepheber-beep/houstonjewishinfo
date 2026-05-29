@@ -1005,7 +1005,7 @@
              cls=''; label=d.type||'Other'; grad='#eceae4,#bdbcb4'; badgeStyle=' style="background:#f0f0f0;color:#555;"'; }
       var img=imgURL(d.image);
       var imgBlock=img
-        ? '<div class="school-card-img" style="padding:0;overflow:hidden;"><img src="'+attr(img)+'" alt="'+attr(d.name)+'" style="width:100%;height:100%;object-fit:cover;display:block;"></div>'
+        ? '<div class="school-card-img" style="padding:0;overflow:hidden;"><img src="'+attr(img)+'" alt="'+attr(d.name)+'" loading="lazy" decoding="async" style="width:100%;height:100%;object-fit:cover;display:block;"></div>'
         : '<div class="school-card-img" style="background:linear-gradient(135deg,'+grad+');">\uD83C\uDF93</div>';
       var web=String(d.website||'').trim();
       var webLine=web ? '<div class="school-detail"><span class="school-detail-icon">\uD83C\uDF10</span> <a href="'+attr(web)+'" target="_blank">'+esc(webDisplay(web))+'</a></div>' : '';
