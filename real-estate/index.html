@@ -202,20 +202,19 @@
   footer a:hover { color: var(--navy); }
 
   /* ── RESPONSIVE ── */
+  /* ── RESPONSIVE ── */
   @media (max-width: 900px) {
     .re-layout { grid-template-columns: 1fr; gap: 16px; }
     .re-filters { position: static; display: grid; grid-template-columns: 1fr 1fr; gap: 0 16px; }
     .filter-section-title { grid-column: 1/-1; }
     .filter-reset { grid-column: 1/-1; }
+    /* Match all other pages exactly */
+    .masthead-side { display: none; }
+    .masthead-title { font-size: 36px; }
   }
   @media (max-width: 768px) {
     .hamburger { display: none !important; }
     .nav-arrow { display: none !important; }
-    .masthead { position: static; padding: 16px 0 10px; }
-    .masthead-inner { flex-direction: row !important; align-items: center !important; padding: 0 !important; gap: 16px !important; text-align: left; }
-    .masthead-side { display: none !important; }
-    .masthead-title { font-size: 28px; }
-    .nav-bar a { font-size: 9.5px !important; padding: 8px 7px !important; }
     .re-card { grid-template-columns: 1fr; }
     .re-card-img { min-height: 120px; }
     .re-hero-inner { flex-direction: column; }
@@ -226,6 +225,7 @@
     .re-tabs { overflow-x: auto; -webkit-overflow-scrolling: touch; }
     .re-tab { white-space: nowrap; font-size: 11px; padding: 8px 14px; }
     .payment-methods { flex-direction: column; }
+    .nav-bar a { font-size: 9.5px !important; padding: 8px 7px !important; }
   }
 
   /* ── SPACING: consistent gap between tagline and nav ── */
