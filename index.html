@@ -1778,13 +1778,29 @@
     function esc(s){ return String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
     function imgURL(v){ v = String(v||'').trim(); if(!v) return ''; return /^https?:\/\//i.test(v) ? v : STORY_IMG_BASE + v; }
 
+    // Category tag colors: [background, text]. Add/rename categories here anytime.
+    var LABEL_COLORS = {
+      'breaking':  ['#f7dada', '#8f2020'],
+      'events':    ['#f3e6c8', '#8a5a12'],
+      'community': ['#dde8f6', '#1f3f6e'],
+      'simcha':    ['#f6dde6', '#8a2f4d'],
+      'mazal tov': ['#f6dde6', '#8a2f4d'],
+      'business':  ['#dcecd9', '#2f5a2a'],
+      'education': ['#d9eef0', '#1f5560'],
+      'israel':    ['#e7e1f5', '#46357d']
+    };
+    function labelStyle(label){
+      var c = LABEL_COLORS[String(label||'').toLowerCase().trim()] || ['#ede9e2', '#5f5a51']; // default = neutral gray
+      return 'background:' + c[0] + ';color:' + c[1] + ';padding:3px 9px;border-radius:4px;';
+    }
+
     function cardHTML(d){
       var img = imgURL(d.image);
       var banner = img
         ? '<div class="article-banner" style="padding:0;overflow:hidden;"><img src="' + img + '" alt="' + esc(d.headline) +
           '" style="width:100%;height:100%;object-fit:cover;display:block;"></div>'
         : '';
-      var label = d.label ? '<span class="article-label">' + esc(d.label) + '</span>' : '';
+      var label = d.label ? '<span class="article-label" style="' + labelStyle(d.label) + '">' + esc(d.label) + '</span>' : '';
       var date  = d.date  ? '<span class="article-date">' + esc(d.date) + '</span>' : '';
       var metaTop = (label || date) ? '<div class="article-meta-top">' + label + date + '</div>' : '';
       var byline = d.byline ? '<span class="article-byline">' + esc(d.byline) + '</span>' : '<span class="article-byline"></span>';
