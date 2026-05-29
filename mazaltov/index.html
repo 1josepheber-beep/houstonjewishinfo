@@ -31,7 +31,17 @@
 
   function safeValMT(cell) {
     if(!cell || cell.v === null || cell.v === undefined) return '';
-    return String(cell.v);
+    var v = cell.v;
+    // Google Sheets returns dates as "Date(year,month,day)" — month is 0-indexed
+    if(typeof v === 'string' && v.indexOf('Date(') === 0) {
+      var parts = v.replace('Date(','').replace(')','').split(',');
+      var year = parseInt(parts[0]);
+      var month = parseInt(parts[1]);
+      var day = parseInt(parts[2]);
+      var months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+      return months[month] + ' ' + day + ', ' + year;
+    }
+    return String(v);
   }
 
   function loadMazalTov() {
@@ -252,16 +262,18 @@
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
+    flex: 1;
+    width: 100%;
   }
   .nav-bar::-webkit-scrollbar { display: none; }
   .nav-bar a {
     font-family: sans-serif;
-    font-size: 11px;
+    font-size: 10.5px;
     font-weight: 700;
-    letter-spacing: .08em;
+    letter-spacing: .05em;
     text-transform: uppercase;
     color: var(--navy);
-    padding: 9px 16px;
+    padding: 9px 10px;
     white-space: nowrap;
     border-right: 1px solid var(--border);
     transition: background .15s, color .15s;
@@ -1141,10 +1153,11 @@
         <a href="/mazaltov" class="active">Mazal Tov</a>
         <a href="/events">Events</a>
         <a href="/business">Business Directory</a>
+        <a href="https://jobs.houstonjewishinfo.com">Jobs</a>
+        <a href="/real-estate">Real Estate</a>
         <a href="/synagogues">Synagogues</a>
         <a href="/schools">Schools</a>
         <a href="/charities">Charities</a>
-        <a href="/classifieds">Classifieds</a>
         <a href="/contact">Contact / Submit</a>
       </nav>
         <button class="nav-arrow right" aria-label="Scroll nav right">&#8250;</button>
