@@ -1875,7 +1875,17 @@
         var list = [];
         json.table.rows.forEach(function(row){
           var d = {};
-          cols.forEach(function(col, i){ d[col] = row.c[i] ? (row.c[i].v == null ? '' : row.c[i].v) : ''; });
+          cols.forEach(function(col, i){
+            var cell = row.c[i];
+            // prefer Google's formatted/display value (.f); fall back to the raw value (.v)
+            d[col] = cell ? (cell.f != null ? cell.f : (cell.v == null ? '' : cell.v)) : '';
+          });
+          // if a date cell came through as Google's raw "Date(y,m,d)" form, make it readable
+          if (typeof d.date === 'string' && /^Date\(/.test(d.date)) {
+            var n = d.date.match(/\d+/g);
+            if (n) { var dt = new Date(+n[0], +n[1], +(n[2] || 1));
+              if (!isNaN(dt)) d.date = dt.toLocaleDateString('en-US', { year:'numeric', month:'long', day:'numeric' }); }
+          }
           if ((String(d.status||'').toLowerCase().trim()) !== 'active') return;
           if (!d.headline) return;
           // parse date for sorting (newest first); fall back to sheet order
