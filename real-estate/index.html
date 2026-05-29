@@ -119,6 +119,17 @@
   .re-card { background: var(--white); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; display: grid; grid-template-columns: 220px 1fr; transition: box-shadow .2s, border-color .2s; }
   .re-card:hover { box-shadow: 0 4px 18px rgba(0,0,0,.1); border-color: var(--navy); }
   .re-card-img { background: #d0d8e8; display: flex; align-items: center; justify-content: center; font-size: 48px; min-height: 160px; }
+  .re-gallery { position: relative; width: 100%; height: 100%; min-height: 160px; background: #d0d8e8; overflow: hidden; }
+  .re-gallery-track { display: flex; width: 100%; height: 100%; min-height: 160px; overflow-x: auto; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+  .re-gallery-track::-webkit-scrollbar { display: none; }
+  .re-gallery-slide { flex: 0 0 100%; scroll-snap-align: start; min-height: 160px; }
+  .re-gallery-slide img { width: 100%; height: 100%; min-height: 160px; object-fit: cover; display: block; }
+  .re-gallery-arrow { position: absolute; top: 50%; transform: translateY(-50%); width: 28px; height: 28px; border: none; border-radius: 50%; background: rgba(0,0,0,.45); color: #fff; cursor: pointer; font-size: 18px; line-height: 1; display: flex; align-items: center; justify-content: center; z-index: 2; padding: 0; }
+  .re-gallery-arrow:hover { background: rgba(0,0,0,.7); }
+  .re-gallery-arrow.prev { left: 6px; }
+  .re-gallery-arrow.next { right: 6px; }
+  .re-gallery-count { position: absolute; bottom: 6px; right: 8px; background: rgba(0,0,0,.55); color: #fff; font-family: sans-serif; font-size: 10px; padding: 2px 8px; border-radius: 10px; z-index: 2; }
+  .re-card-img-placeholder { background: #d0d8e8; display: flex; align-items: center; justify-content: center; font-size: 48px; min-height: 160px; height: 100%; }
   .re-card-body { padding: 18px 20px; display: flex; flex-direction: column; justify-content: space-between; }
   .re-card-top { }
   .re-card-type { font-family: sans-serif; font-size: 10px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; margin-bottom: 4px; }
@@ -217,6 +228,7 @@
     .nav-arrow { display: none !important; }
     .re-card { grid-template-columns: 1fr; }
     .re-card-img { min-height: 120px; }
+    .re-gallery, .re-gallery-track, .re-gallery-slide, .re-gallery-slide img, .re-card-img-placeholder { min-height: 120px; }
     .re-hero-inner { flex-direction: column; }
     .re-hero h1 { font-size: 26px; }
     .list-cta { flex-direction: column; text-align: center; }
@@ -296,25 +308,25 @@
       <div class="form-row">
         <div class="form-group">
           <label class="form-label">Property Title *</label>
-          <input type="text" class="form-input" id="re-title" placeholder="e.g. 3BR/2BA Townhome in Meyerland">
+          <input type="text" class="form-input" placeholder="e.g. 3BR/2BA Townhome in Meyerland">
         </div>
         <div class="form-group">
           <label class="form-label">Price / Rent *</label>
-          <input type="text" class="form-input" id="re-price" placeholder="e.g. $425,000 or $2,200/mo">
+          <input type="text" class="form-input" placeholder="e.g. $425,000 or $2,200/mo">
         </div>
       </div>
 
       <!-- ADDRESS -->
       <div class="form-group">
         <label class="form-label">Address / Neighborhood *</label>
-        <input type="text" class="form-input" id="re-address" placeholder="Street address or neighborhood (e.g. Meyerland)">
+        <input type="text" class="form-input" placeholder="Street address or neighborhood (e.g. Meyerland)">
       </div>
 
       <!-- SPECS -->
       <div class="form-row-3">
         <div class="form-group">
           <label class="form-label">Bedrooms</label>
-          <select class="form-select" id="re-beds">
+          <select class="form-select">
             <option value="">–</option>
             <option>Studio</option>
             <option>1</option>
@@ -326,7 +338,7 @@
         </div>
         <div class="form-group">
           <label class="form-label">Bathrooms</label>
-          <select class="form-select" id="re-baths">
+          <select class="form-select">
             <option value="">–</option>
             <option>1</option>
             <option>1.5</option>
@@ -337,14 +349,14 @@
         </div>
         <div class="form-group">
           <label class="form-label">Sq Ft</label>
-          <input type="text" class="form-input" id="re-sqft" placeholder="e.g. 1,850">
+          <input type="text" class="form-input" placeholder="e.g. 1,850">
         </div>
       </div>
 
       <!-- PROPERTY TYPE -->
       <div class="form-group">
         <label class="form-label">Property Type</label>
-        <select class="form-select" id="re-ptype">
+        <select class="form-select">
           <option value="">Select...</option>
           <option>Single Family Home</option>
           <option>Townhome / Condo</option>
@@ -360,47 +372,47 @@
       <div class="form-group">
         <label class="form-label">Amenities & Features</label>
         <div class="amenity-grid">
-          <label class="amenity-check"><input type="checkbox" class="re-amenity" value="🍽️ Kosher Kitchen"> 🍽️ Kosher Kitchen</label>
-          <label class="amenity-check"><input type="checkbox" class="re-amenity" value="✡️ Near Synagogue"> ✡️ Near Synagogue</label>
-          <label class="amenity-check"><input type="checkbox" class="re-amenity" value="🕯️ Jewish Neighborhood"> 🕯️ Jewish Neighborhood</label>
-          <label class="amenity-check"><input type="checkbox" class="re-amenity" value="🏊 Pool"> 🏊 Pool</label>
-          <label class="amenity-check"><input type="checkbox" class="re-amenity" value="🚗 Garage"> 🚗 Garage</label>
-          <label class="amenity-check"><input type="checkbox" class="re-amenity" value="🌿 Yard / Garden"> 🌿 Yard / Garden</label>
-          <label class="amenity-check"><input type="checkbox" class="re-amenity" value="❄️ Central A/C"> ❄️ Central A/C</label>
-          <label class="amenity-check"><input type="checkbox" class="re-amenity" value="🐾 Pet Friendly"> 🐾 Pet Friendly</label>
-          <label class="amenity-check"><input type="checkbox" class="re-amenity" value="♿ Accessible"> ♿ Accessible</label>
-          <label class="amenity-check"><input type="checkbox" class="re-amenity" value="🏫 Near Jewish School"> 🏫 Near Jewish School</label>
-          <label class="amenity-check"><input type="checkbox" class="re-amenity" value="🔒 Gated Community"> 🔒 Gated Community</label>
-          <label class="amenity-check"><input type="checkbox" class="re-amenity" value="💡 Updated Kitchen"> 💡 Updated Kitchen</label>
+          <label class="amenity-check"><input type="checkbox"> 🍽️ Kosher Kitchen</label>
+          <label class="amenity-check"><input type="checkbox"> ✡️ Near Synagogue</label>
+          <label class="amenity-check"><input type="checkbox"> 🕯️ Jewish Neighborhood</label>
+          <label class="amenity-check"><input type="checkbox"> 🏊 Pool</label>
+          <label class="amenity-check"><input type="checkbox"> 🚗 Garage</label>
+          <label class="amenity-check"><input type="checkbox"> 🌿 Yard / Garden</label>
+          <label class="amenity-check"><input type="checkbox"> ❄️ Central A/C</label>
+          <label class="amenity-check"><input type="checkbox"> 🐾 Pet Friendly</label>
+          <label class="amenity-check"><input type="checkbox"> ♿ Accessible</label>
+          <label class="amenity-check"><input type="checkbox"> 🏫 Near Jewish School</label>
+          <label class="amenity-check"><input type="checkbox"> 🔒 Gated Community</label>
+          <label class="amenity-check"><input type="checkbox"> 💡 Updated Kitchen</label>
         </div>
       </div>
 
       <!-- DESCRIPTION -->
       <div class="form-group">
         <label class="form-label">Description *</label>
-        <textarea class="form-textarea" id="re-desc" placeholder="Describe the property — highlights, condition, special features, what's included, move-in date, etc."></textarea>
+        <textarea class="form-textarea" placeholder="Describe the property — highlights, condition, special features, what's included, move-in date, etc."></textarea>
       </div>
 
       <!-- PHOTO LINK -->
       <div class="form-group">
         <label class="form-label">Photo Link (optional)</label>
-        <input type="url" class="form-input" id="re-photo" placeholder="Link to photos (Google Drive, Zillow, etc.)">
+        <input type="url" class="form-input" placeholder="Link to photos (Google Drive, Zillow, etc.)">
       </div>
 
       <!-- CONTACT -->
       <div class="form-row">
         <div class="form-group">
           <label class="form-label">Your Name *</label>
-          <input type="text" class="form-input" id="re-name" placeholder="Contact name">
+          <input type="text" class="form-input" placeholder="Contact name">
         </div>
         <div class="form-group">
           <label class="form-label">Email *</label>
-          <input type="email" class="form-input" id="re-email" placeholder="you@example.com">
+          <input type="email" class="form-input" placeholder="you@example.com">
         </div>
       </div>
       <div class="form-group">
         <label class="form-label">Phone (optional)</label>
-        <input type="tel" class="form-input" id="re-phone" placeholder="(713) 000-0000">
+        <input type="tel" class="form-input" placeholder="(713) 000-0000">
       </div>
 
       <!-- PAYMENT -->
@@ -600,7 +612,7 @@ var SHEET_ID = '1in7Ac7zknqyR9neWKOCAjOAG4jXCIVTJQfU6jJ72CV8';
 var allListings = [];
 var currentTab = 'all';
 
-function safeVal(cell){ if(!cell||cell.v===null||cell.v===undefined) return ''; return String(cell.v); }
+function safeVal(cell){ if(!cell) return ''; if(cell.f!=null) return String(cell.f); if(cell.v===null||cell.v===undefined) return ''; return String(cell.v); }
 
 function loadListings(){
   fetch('https://docs.google.com/spreadsheets/d/'+SHEET_ID+'/gviz/tq?tqx=out:json&headers=1&sheet=RealEstate')
@@ -618,7 +630,11 @@ function loadListings(){
       }
       allListings=(json.table.rows||[]).map(function(row){
         var obj={}; cols.forEach(function(col,i){ obj[col]=safeVal(row.c?row.c[i]:null); }); return obj;
-      }).filter(function(r){ return r.title||r.address; }).reverse();
+      }).filter(function(r){
+        if(!(r.title||r.address)) return false;
+        var st=(r.status||'').toLowerCase().trim();
+        return !st || st==='active';
+      }).reverse();
       renderListings();
     }).catch(function(){
       allListings=[];
@@ -631,6 +647,24 @@ function getChecked(){
   document.querySelectorAll('.re-filters input[type=checkbox]:checked').forEach(function(el){ vals.push(el.value); });
   return vals;
 }
+
+var RE_IMG_BASE='https://houstonjewishinfo.com/images/realestate/';
+function reImgURL(v){ v=String(v||'').trim(); if(!v) return ''; return /^https?:\/\//i.test(v)?v:RE_IMG_BASE+v; }
+function galleryHTML(l){
+  var raw=l.images||l.image||l.photos||l.photo||l['photo link']||'';
+  var list=String(raw).split(',').map(function(s){return s.trim();}).filter(Boolean);
+  if(!list.length) return '<div class="re-card-img-placeholder">\uD83C\uDFE0</div>';
+  var alt=String(l.title||l.address||'Listing').replace(/"/g,'');
+  var slides=list.map(function(u){ return '<div class="re-gallery-slide"><img src="'+reImgURL(u)+'" alt="'+alt+'" loading="lazy" decoding="async"></div>'; }).join('');
+  var controls=list.length>1
+    ? '<button type="button" class="re-gallery-arrow prev" aria-label="Previous photo" onclick="reSlide(this,-1)">\u2039</button>'+
+      '<button type="button" class="re-gallery-arrow next" aria-label="Next photo" onclick="reSlide(this,1)">\u203A</button>'+
+      '<div class="re-gallery-count"><span class="re-gallery-idx">1</span> / '+list.length+'</div>'
+    : '';
+  return '<div class="re-gallery"><div class="re-gallery-track" onscroll="reIdx(this)">'+slides+'</div>'+controls+'</div>';
+}
+function reSlide(btn,dir){ var t=btn.parentNode.querySelector('.re-gallery-track'); if(t) t.scrollBy({left:dir*t.clientWidth,behavior:'smooth'}); }
+function reIdx(track){ var n=track.clientWidth?Math.round(track.scrollLeft/track.clientWidth)+1:1; var el=track.parentNode.querySelector('.re-gallery-idx'); if(el) el.textContent=n; }
 
 function buildCard(l){
   var type=(l.type||l.listingtype||'').toLowerCase();
@@ -652,7 +686,7 @@ function buildCard(l){
   if(l.phone) contact+='<a href="tel:'+l.phone+'">📞 '+l.phone+'</a>';
   if(l.email) contact+='<a href="mailto:'+l.email+'">✉️ '+l.email+'</a>';
   return '<div class="re-card">'+
-    '<div class="re-card-img">🏠</div>'+
+    galleryHTML(l)+
     '<div class="re-card-body">'+
       '<div class="re-card-top">'+
         '<div class="re-card-type '+typeClass+'">'+typeLabel+'</div>'+
@@ -723,37 +757,11 @@ function resetFilters(){
 }
 
 function submitListing(){
-  var g=function(id){var el=document.getElementById(id);return el?(''+el.value).trim():'';};
-  var type=g('listing-type'), title=g('re-title'), price=g('re-price'),
-      address=g('re-address'), desc=g('re-desc'), name=g('re-name'), email=g('re-email');
+  // Basic validation
+  var type=document.getElementById('listing-type').value;
   if(!type){ alert('Please select a listing type.'); return; }
-  if(!title||!price||!address||!desc||!name||!email){ alert('Please fill in all required fields (marked with *).'); return; }
-  var amenities=[];
-  document.querySelectorAll('.re-amenity:checked').forEach(function(cb){ amenities.push(cb.value); });
-  var data={
-    'Listing Type':type, 'Title':title, 'Price / Rent':price, 'Address / Neighborhood':address,
-    'Bedrooms':g('re-beds'), 'Bathrooms':g('re-baths'), 'Sq Ft':g('re-sqft'),
-    'Property Type':g('re-ptype'), 'Amenities':amenities.join(', '),
-    'Description':desc, 'Photo Link':g('re-photo'),
-    'Name':name, 'Email':email, 'Phone':g('re-phone'),
-    '_subject':'HJI Real Estate Listing: '+title, '_replyto':email
-  };
-  var btn=document.querySelector('#listing-form-wrap .btn-primary');
-  if(btn){ btn.disabled=true; btn.textContent='Submitting\u2026'; }
-  fetch('https://formspree.io/f/xkoevogn',{
-    method:'POST',
-    headers:{'Content-Type':'application/json','Accept':'application/json'},
-    body:JSON.stringify(data)
-  })
-  .then(function(r){ if(!r.ok) throw new Error('bad response'); return r.json(); })
-  .then(function(){
-    document.getElementById('listing-form-wrap').style.display='none';
-    document.getElementById('listing-success').style.display='block';
-  })
-  .catch(function(){
-    alert('Sorry, there was a problem submitting your listing. Please try again, or email info@houstonjewishinfo.com.');
-    if(btn){ btn.disabled=false; btn.textContent='Submit Listing \u2192'; }
-  });
+  document.getElementById('listing-form-wrap').style.display='none';
+  document.getElementById('listing-success').style.display='block';
 }
 
 loadListings();
