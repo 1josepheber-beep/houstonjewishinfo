@@ -720,20 +720,6 @@
     .form-row { grid-template-columns: 1fr; }
   }
 
-
-  /* ── SPACING FIX: consistent tagline-to-nav gap ── */
-  .masthead-inner { margin-bottom: 0 !important; }
-  .nav-bar { margin-top: 8px !important; }
-
-  @media (max-width: 900px) {
-    .masthead-side { display: none; }
-    .masthead-title { font-size: 36px; }
-  }
-  @media (max-width: 768px) {
-    .nav-bar a { font-size: 9.5px !important; padding: 8px 7px !important; }
-    .nav-arrow { display: none !important; }
-  }
-
 </style>
 <style>
   .page-hero {
@@ -986,7 +972,7 @@
         <a href="/mazaltov">Mazal Tov</a>
         <a href="/events" class="active">Events</a>
         <a href="/business">Business Directory</a>
-        <a href="/jobs">Jobs</a>
+        <a href="https://jobs.houstonjewishinfo.com">Jobs</a>
         <a href="/real-estate">Real Estate</a>
         <a href="/synagogues">Synagogues</a>
         <a href="/schools">Schools</a>
@@ -1138,11 +1124,21 @@
       '</div></div>';
   }
   function renderEvents(cat){
-    var filtered=cat==='all'?allEvents:allEvents.filter(function(ev){return getCatKey(ev.category)===cat;});
+    // List view: only show today + future events, sorted soonest first
+    var today=new Date(); today.setHours(0,0,0,0);
+    var upcoming=allEvents.filter(function(ev){
+      var d=parseEventDate(ev.date);
+      return !d||d>=today;
+    }).sort(function(a,b){
+      var da=parseEventDate(a.date),db=parseEventDate(b.date);
+      if(!da&&!db) return 0; if(!da) return 1; if(!db) return -1;
+      return da-db;
+    });
+    var filtered=cat==='all'?upcoming:upcoming.filter(function(ev){return getCatKey(ev.category)===cat;});
     document.getElementById('event-count').textContent=filtered.length;
     document.getElementById('events-list').innerHTML=filtered.length
       ?filtered.map(buildEventCard).join('')
-      :'<div style="text-align:center;padding:40px;font-family:sans-serif;color:var(--muted);background:var(--white);border:2px dashed var(--border);border-radius:8px;"><strong style="display:block;color:var(--navy);margin-bottom:6px;">No events in this category</strong>Check back soon!</div>';
+      :'<div style="text-align:center;padding:40px;font-family:sans-serif;color:var(--muted);background:var(--white);border:2px dashed var(--border);border-radius:8px;"><strong style="display:block;color:var(--navy);margin-bottom:6px;">No upcoming events</strong>Check the calendar to browse past events!</div>';
   }
   function filterEvents(cat,btn){
     document.querySelectorAll('.filter-btn').forEach(function(b){b.classList.remove('active');});
@@ -1250,14 +1246,5 @@
   <button class="lightbox-close" onclick="closeLightbox()">×</button>
   <img id="lightbox-img" src="" alt="" onclick="event.stopPropagation()">
 </div>
-
-<script>
-// Center active nav tab on mobile
-(function(){
-  var active = document.querySelector('.nav-bar a.active');
-  if(active) active.scrollIntoView({ behavior: 'auto', inline: 'center', block: 'nearest' });
-})();
-</script>
-
 </body>
 </html>
