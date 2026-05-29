@@ -1290,5 +1290,17 @@ function resetFilters(){
 
 loadJobs();
 </script>
+
+<script>
+// Center active nav tab on mobile
+(function(){
+  var nav = document.getElementById('main-nav') || document.querySelector('.nav-bar');
+  if(!nav) return;
+  var active = nav.querySelector('a.active');
+  if(!active) return;
+  nav.scrollLeft = active.offsetLeft - (nav.offsetWidth / 2) + (active.offsetWidth / 2);
+})();
+</script>
+
 </body>
 </html>
