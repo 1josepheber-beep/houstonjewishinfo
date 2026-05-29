@@ -728,10 +728,17 @@
     .form-row { grid-template-columns: 1fr; }
   }
 
-  /* ── SPACING FIX: consistent gap between tagline and nav on all pages ── */
+  /* ── SPACING: consistent gap between tagline and nav ── */
   .masthead-inner { margin-bottom: 0 !important; }
   .nav-bar { margin-top: 8px !important; }
   .masthead { padding-bottom: 0 !important; }
+
+  /* ── MOBILE: just tighten nav tabs, hide stray arrows ── */
+  @media (max-width: 768px) {
+    .nav-bar a { font-size: 9.5px !important; padding: 8px 7px !important; }
+    .nav-arrow { display: none !important; }
+  }
+
 </style>
 <style>
   .page-hero {
