@@ -107,6 +107,8 @@
   .filter-check input { accent-color: var(--navy); cursor: pointer; }
   .filter-reset { width: 100%; margin-top: 14px; font-family: sans-serif; font-size: 11px; font-weight: 700; padding: 8px; border-radius: 4px; background: var(--navy); color: #fff; border: none; cursor: pointer; }
   .filter-reset:hover { background: #163a75; }
+  .re-sidebar { display: flex; flex-direction: column; gap: 16px; }
+  .re-ads-head { font-family: sans-serif; font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--navy); text-align: center; margin-bottom: 4px; padding-bottom: 8px; border-bottom: 2px solid var(--gold); }
 
   /* ── TABS ── */
   .re-tabs { display: flex; gap: 0; margin-bottom: 16px; border-bottom: 2px solid var(--border); }
@@ -509,7 +511,8 @@
 <div class="portal" style="padding-top:0;">
   <div class="re-layout">
 
-    <!-- FILTERS -->
+    <!-- FILTERS + AGENT ADS (left column) -->
+    <div class="re-sidebar">
     <aside class="re-filters">
       <div class="filter-head">🔎 Filter Listings</div>
 
@@ -525,6 +528,16 @@
 
       <button class="filter-reset" onclick="resetFilters()">Reset Filters</button>
     </aside>
+
+    <!-- Agent ad slots — managed via the Ads sheet (placements real-estate-1..4). Hidden until at least one is active. -->
+    <div id="re-ad-block" class="re-ads" style="display:none;">
+      <div class="re-ads-head">Real Estate Agents</div>
+      <div class="ad-managed" data-ad-slot="real-estate-1"></div>
+      <div class="ad-managed" data-ad-slot="real-estate-2"></div>
+      <div class="ad-managed" data-ad-slot="real-estate-3"></div>
+      <div class="ad-managed" data-ad-slot="real-estate-4"></div>
+    </div>
+    </div>
 
     <!-- LISTINGS -->
     <div>
@@ -856,5 +869,37 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape')closeMobileM
   <button class="lightbox-nav next" id="lb-next" aria-label="Next photo" onclick="event.stopPropagation(); lightboxNav(1)">&#8250;</button>
   <div class="lightbox-count" id="lb-count" onclick="event.stopPropagation()"></div>
 </div>
+<!-- ADS — Google Sheets driven (same Ads tab as the rest of the site) -->
+<script>
+  (function() {
+    var AD_SHEET_ID  = '1in7Ac7zknqyR9neWKOCAjOAG4jXCIVTJQfU6jJ72CV8';
+    var AD_SHEET_TAB = 'Ads';
+    var url = 'https://docs.google.com/spreadsheets/d/' + AD_SHEET_ID + '/gviz/tq?tqx=out:json&sheet=' + encodeURIComponent(AD_SHEET_TAB) + '&headers=1';
+    fetch(url).then(function(r){ return r.text(); }).then(function(text){
+      var json = JSON.parse(text.substring(47, text.length - 2));
+      var cols = json.table.cols.map(function(c){ return (c.label||'').toLowerCase().trim(); });
+      var slots = {};
+      json.table.rows.forEach(function(row){
+        var d = {}; cols.forEach(function(col,i){ d[col] = row.c[i] ? (row.c[i].v||'') : ''; });
+        var slot = (d.placement||'').toLowerCase().trim();
+        if(!slot) return;
+        if(!slots[slot]) slots[slot] = { active:null };
+        var isActive = (d.status||'').toLowerCase().trim() === 'active';
+        if(isActive && d.imageurl && !slots[slot].active) slots[slot].active = d;
+      });
+      document.querySelectorAll('[data-ad-slot]').forEach(function(el){
+        var info = slots[el.getAttribute('data-ad-slot').toLowerCase().trim()];
+        if(info && info.active){
+          var d = info.active;
+          var alt = String(d.advertiser||'Advertisement').replace(/"/g,'&quot;');
+          el.innerHTML = '<a href="'+(d.linkurl||'#')+'" target="_blank" rel="noopener" aria-label="'+alt+'" style="display:block;margin:0 0 16px;border:1px solid #c8a882;border-radius:6px;overflow:hidden;text-decoration:none;"><img src="'+d.imageurl+'" alt="'+alt+'" style="width:100%;height:auto;display:block;"></a>';
+        } else { el.innerHTML=''; }
+      });
+      // show the agent block only if at least one of its slots has an active ad
+      var block = document.getElementById('re-ad-block');
+      if(block){ block.style.display = block.querySelector('[data-ad-slot] a') ? '' : 'none'; }
+    }).catch(function(){});
+  })();
+</script>
 </body>
 </html>
