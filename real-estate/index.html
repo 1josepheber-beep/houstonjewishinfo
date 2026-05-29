@@ -130,6 +130,13 @@
   .re-gallery-arrow.next { right: 6px; }
   .re-gallery-count { position: absolute; bottom: 6px; right: 8px; background: rgba(0,0,0,.55); color: #fff; font-family: sans-serif; font-size: 10px; padding: 2px 8px; border-radius: 10px; z-index: 2; }
   .re-card-img-placeholder { background: #d0d8e8; display: flex; align-items: center; justify-content: center; font-size: 48px; min-height: 160px; height: 100%; }
+  .re-gallery-slide img { cursor: zoom-in; }
+  /* Lightbox (matches events page) */
+  .lightbox-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.92); z-index: 2000; align-items: center; justify-content: center; cursor: zoom-out; }
+  .lightbox-overlay.open { display: flex; }
+  .lightbox-overlay img { max-width: 90vw; max-height: 90vh; object-fit: contain; border-radius: 4px; box-shadow: 0 8px 40px rgba(0,0,0,.6); cursor: default; }
+  .lightbox-close { position: fixed; top: 16px; right: 20px; font-size: 32px; color: #fff; cursor: pointer; line-height: 1; opacity: .8; transition: opacity .15s; background: none; border: none; }
+  .lightbox-close:hover { opacity: 1; }
   .re-card-body { padding: 18px 20px; display: flex; flex-direction: column; justify-content: space-between; }
   .re-card-top { }
   .re-card-type { font-family: sans-serif; font-size: 10px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; margin-bottom: 4px; }
@@ -655,7 +662,7 @@ function galleryHTML(l){
   var list=String(raw).split(',').map(function(s){return s.trim();}).filter(Boolean);
   if(!list.length) return '<div class="re-card-img-placeholder">\uD83C\uDFE0</div>';
   var alt=String(l.title||l.address||'Listing').replace(/"/g,'');
-  var slides=list.map(function(u){ return '<div class="re-gallery-slide"><img src="'+reImgURL(u)+'" alt="'+alt+'" loading="lazy" decoding="async"></div>'; }).join('');
+  var slides=list.map(function(u){ return '<div class="re-gallery-slide"><img src="'+reImgURL(u)+'" alt="'+alt+'" loading="lazy" decoding="async" class="lightbox-trigger" data-src="'+reImgURL(u)+'" data-alt="'+alt+'" title="Click to enlarge"></div>'; }).join('');
   var controls=list.length>1
     ? '<button type="button" class="re-gallery-arrow prev" aria-label="Previous photo" onclick="reSlide(this,-1)">\u2039</button>'+
       '<button type="button" class="re-gallery-arrow next" aria-label="Next photo" onclick="reSlide(this,1)">\u203A</button>'+
@@ -665,6 +672,10 @@ function galleryHTML(l){
 }
 function reSlide(btn,dir){ var t=btn.parentNode.querySelector('.re-gallery-track'); if(t) t.scrollBy({left:dir*t.clientWidth,behavior:'smooth'}); }
 function reIdx(track){ var n=track.clientWidth?Math.round(track.scrollLeft/track.clientWidth)+1:1; var el=track.parentNode.querySelector('.re-gallery-idx'); if(el) el.textContent=n; }
+function openLightbox(src, alt){ var im=document.getElementById('lightbox-img'); if(!im) return; im.src=src; im.alt=alt||''; document.getElementById('lightbox').classList.add('open'); document.body.style.overflow='hidden'; }
+function closeLightbox(){ var lb=document.getElementById('lightbox'); if(lb) lb.classList.remove('open'); document.body.style.overflow=''; }
+document.addEventListener('keydown', function(e){ if(e.key==='Escape') closeLightbox(); });
+document.addEventListener('click', function(e){ if(e.target && e.target.classList && e.target.classList.contains('lightbox-trigger')){ openLightbox(e.target.getAttribute('data-src'), e.target.getAttribute('data-alt')); } });
 
 function buildCard(l){
   var type=(l.type||l.listingtype||'').toLowerCase();
@@ -799,5 +810,10 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape')closeMobileM
   nav.scrollLeft=elLeft-(nav.offsetWidth/2)+(active.offsetWidth/2);
 })();
 </script>
+<!-- LIGHTBOX -->
+<div class="lightbox-overlay" id="lightbox" onclick="closeLightbox()">
+  <button class="lightbox-close" onclick="closeLightbox()" aria-label="Close">&times;</button>
+  <img id="lightbox-img" src="" alt="" onclick="event.stopPropagation()">
+</div>
 </body>
 </html>
