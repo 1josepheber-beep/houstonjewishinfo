@@ -730,6 +730,20 @@
     .lead-headline { font-size: 24px; }
     .form-row { grid-template-columns: 1fr; }
   }
+
+  /* ── SPACING FIX: consistent tagline-to-nav gap ── */
+  .masthead-inner { margin-bottom: 0 !important; }
+  .nav-bar { margin-top: 8px !important; }
+
+  @media (max-width: 900px) {
+    .masthead-side { display: none; }
+    .masthead-title { font-size: 36px; }
+  }
+  @media (max-width: 768px) {
+    .nav-bar a { font-size: 9.5px !important; padding: 8px 7px !important; }
+    .nav-arrow { display: none !important; }
+  }
+
 </style>
 <style>
   /* ── JOBS PAGE ── */
@@ -987,7 +1001,7 @@
         <a href="/mazaltov">Mazal Tov</a>
         <a href="/events">Events</a>
         <a href="/business">Business Directory</a>
-        <a href="https://jobs.houstonjewishinfo.com" class="active">Jobs</a>
+        <a href="/jobs" class="active">Jobs</a>
         <a href="/real-estate">Real Estate</a>
         <a href="/synagogues">Synagogues</a>
         <a href="/schools">Schools</a>
@@ -1214,7 +1228,7 @@ function renderJobs(){
 
     // Type filters (if any checked, must match)
     if(typeFilters.length>0){
-      var typeMatch=typeFilters.some(function(f){return type.indexOf(f)>-1||type.indexOf(f.replace('-',' '))>-1;});
+      var typeMatch=typeFilters.some(function(f){return type.indexOf(f.replace('-',' '))>-1;});
       if(!typeMatch) return false;
     }
 
@@ -1276,5 +1290,21 @@ function resetFilters(){
 
 loadJobs();
 </script>
+
+<script>
+// Center active nav tab on mobile — only if not already fully visible
+(function(){
+  var active = document.querySelector('.nav-bar a.active');
+  if(!active) return;
+  var nav = active.closest('.nav-bar') || document.querySelector('.nav-bar');
+  if(!nav) return;
+  var elLeft = active.offsetLeft;
+  var elRight = elLeft + active.offsetWidth;
+  // Skip scroll if tab is already fully in view
+  if(elLeft >= nav.scrollLeft && elRight <= nav.scrollLeft + nav.offsetWidth) return;
+  nav.scrollLeft = elLeft - (nav.offsetWidth / 2) + (active.offsetWidth / 2);
+})();
+</script>
+
 </body>
 </html>

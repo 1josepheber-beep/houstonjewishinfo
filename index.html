@@ -2023,10 +2023,17 @@
 
 
 <script>
-// Center active nav tab on mobile
+// Center active nav tab on mobile — only if not already fully visible
 (function(){
   var active = document.querySelector('.nav-bar a.active');
-  if(active) active.scrollIntoView({ behavior: 'auto', inline: 'center', block: 'nearest' });
+  if(!active) return;
+  var nav = active.closest('.nav-bar') || document.querySelector('.nav-bar');
+  if(!nav) return;
+  var elLeft = active.offsetLeft;
+  var elRight = elLeft + active.offsetWidth;
+  // Skip scroll if tab is already fully in view
+  if(elLeft >= nav.scrollLeft && elRight <= nav.scrollLeft + nav.offsetWidth) return;
+  nav.scrollLeft = elLeft - (nav.offsetWidth / 2) + (active.offsetWidth / 2);
 })();
 </script>
 
