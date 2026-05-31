@@ -1028,15 +1028,46 @@
   <div class="modal" style="max-width:780px;width:94%;">
     <button class="modal-close" onclick="closeModal('modal-eruv')">×</button>
     <div class="modal-title">🗺️ Houston Community Eruv</div>
-    <div class="modal-sub">The map below shows the boundary of the Houston community eruv.</div>
-    <div style="border:1px solid #ddd;border-radius:8px;overflow:hidden;margin:12px 0;">
-      <iframe src="https://www.google.com/maps/d/embed?mid=1xNEOixp05tJ2bMI1c4JK2ibo4-fP9Jw" style="width:100%;height:430px;border:0;display:block;" loading="lazy" title="Houston Community Eruv Map"></iframe>
+    <div class="modal-sub">The map below shows the boundary of the Houston community eruv. Use the buttons to jump to an area.</div>
+    <div id="eruv-area-buttons" style="display:flex;flex-wrap:wrap;gap:8px;margin:12px 0 10px;"></div>
+    <div style="border:1px solid #ddd;border-radius:8px;overflow:hidden;margin:0 0 12px;">
+      <iframe id="eruv-map-frame" src="https://www.google.com/maps/d/embed?mid=1eCMUSdSQYatZxVpHVPvOuHz_Ru-HkPs&ehbc=2E312F" style="width:100%;height:430px;border:0;display:block;" loading="lazy" title="Houston Community Eruv Map"></iframe>
     </div>
     <p style="font-family:sans-serif;font-size:12px;color:#8a6d1a;background:#fff8e6;border:1px solid #f0d98a;border-radius:6px;padding:9px 11px;line-height:1.5;margin-bottom:12px;">⚠️ An eruv's status can change week to week. Always confirm the eruv is up before relying on it for Shabbat.</p>
     <div style="display:flex;flex-wrap:wrap;gap:16px;font-family:sans-serif;font-size:12px;font-weight:700;">
-      <a href="https://www.google.com/maps/d/viewer?mid=1xNEOixp05tJ2bMI1c4JK2ibo4-fP9Jw" target="_blank" rel="noopener" style="color:var(--navy,#1f3f6e);">Open full map in Google Maps →</a>
-      <a href="https://eruvfinder.com/houston-eruv" target="_blank" rel="noopener" style="color:var(--gold,#b8923a);">Eruvin in other communities →</a>
+      <a href="https://www.google.com/maps/d/viewer?mid=1eCMUSdSQYatZxVpHVPvOuHz_Ru-HkPs" target="_blank" rel="noopener" style="color:var(--navy,#1f3f6e);">Open full map in Google Maps →</a>
     </div>
+    <script>
+      // ── Eruv area jump buttons ──────────────────────────────────────
+      // To add/edit an area: give it a label, latitude, longitude, and zoom
+      // (13 = wider view, 15 = closer). Get lat/lng by right-clicking the spot
+      // in Google Maps and copying the numbers. "All areas" resets to full view.
+      var ERUV_MID = '1eCMUSdSQYatZxVpHVPvOuHz_Ru-HkPs';
+      var ERUV_AREAS = [
+        { label: 'All areas', full: true },
+        { label: 'Chabad – Young Israel',     lat: 29.660012473297257, lng: -95.51293073887385, zoom: 15 },
+        { label: 'Chabad of West Houston',    lat: 29.748821560376232, lng: -95.6026576208174,  zoom: 15 }
+      ];
+      (function buildEruvButtons(){
+        var wrap = document.getElementById('eruv-area-buttons');
+        if(!wrap) return;
+        ERUV_AREAS.forEach(function(a){
+          var b = document.createElement('button');
+          b.type = 'button';
+          b.textContent = a.label;
+          b.style.cssText = 'font-family:sans-serif;font-size:12px;font-weight:700;padding:6px 13px;border-radius:5px;border:1px solid var(--navy,#1f3f6e);background:#fff;color:var(--navy,#1f3f6e);cursor:pointer;';
+          b.onclick = function(){
+            var f = document.getElementById('eruv-map-frame');
+            var base = 'https://www.google.com/maps/d/embed?mid=' + ERUV_MID + '&ehbc=2E312F';
+            f.src = a.full ? base : base + '&ll=' + a.lat + ',' + a.lng + '&z=' + (a.zoom || 14);
+            // highlight the active button
+            wrap.querySelectorAll('button').forEach(function(x){ x.style.background='#fff'; x.style.color='var(--navy,#1f3f6e)'; });
+            b.style.background = 'var(--navy,#1f3f6e)'; b.style.color = '#fff';
+          };
+          wrap.appendChild(b);
+        });
+      })();
+    </script>
   </div>
 </div>
 
