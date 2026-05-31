@@ -1058,6 +1058,26 @@
   }
   .article-excerpt { font-size: 14px; color: #555; line-height: 1.7; margin-bottom: 16px; }
   .article-excerpt-small { font-size: 12px; color: #555; line-height: 1.6; margin-bottom: 12px; }
+  /* Read-more clamp: collapse long text to 5 lines until expanded */
+  .article-excerpt.clamped {
+    display: -webkit-box;
+    -webkit-line-clamp: 5;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .read-more-btn {
+    display: inline-block;
+    background: none;
+    border: none;
+    padding: 0;
+    margin: -6px 0 16px;
+    font-family: sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--navy, #1f3f6e);
+    cursor: pointer;
+  }
+  .read-more-btn:hover { text-decoration: underline; }
   .article-footer {
     display: flex;
     align-items: center;
@@ -1825,6 +1845,7 @@
              '<div class="article-body">' + metaTop +
              '<h2 class="article-headline">' + esc(d.headline) + '</h2>' +
              '<p class="article-excerpt">' + esc(d.excerpt) + '</p>' +
+             '<button type="button" class="read-more-btn" style="display:none;">Read more ↓</button>' +
              footer + '</div></article>';
     }
 
@@ -1878,6 +1899,29 @@
 
       // now that the mobile ad slots exist in the DOM, populate ads
       loadAds();
+      setupReadMore(container);
+    }
+
+    function setupReadMore(scope){
+      var ps = (scope||document).querySelectorAll('.article-excerpt');
+      ps.forEach(function(p){
+        var btn = p.nextElementSibling;
+        if(!btn || !btn.classList.contains('read-more-btn')) return;
+        // measure: is the natural height taller than 5 lines?
+        var lh = parseFloat(getComputedStyle(p).lineHeight) || 22;
+        var maxH = lh * 5 + 2;
+        if(p.scrollHeight > maxH){
+          p.classList.add('clamped');
+          btn.style.display = 'inline-block';
+          btn.onclick = function(){
+            var open = !p.classList.contains('clamped');
+            if(open){ p.classList.add('clamped'); btn.textContent='Read more ↓'; }
+            else { p.classList.remove('clamped'); btn.textContent='Read less ↑'; }
+          };
+        } else {
+          btn.style.display = 'none';
+        }
+      });
     }
 
     fetch(url)
