@@ -896,6 +896,20 @@
   .denom-orthodox  { background: #edf7ed; color: #1a5a1a; }
   .denom-chabad    { background: #fce8e8; color: #8b2020; }
   .denom-other     { background: #f0f0f0; color: #555; }
+  .syn-nusach {
+    display: inline-block;
+    font-family: sans-serif;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    padding: 3px 9px;
+    border-radius: 3px;
+    margin-bottom: 8px;
+    margin-left: 6px;
+    background: #efeaf7; color: #5b3a8c;
+    border: 1px solid #ddd2ee;
+  }
   .syn-name {
     font-family: 'Playfair Display', serif;
     font-size: 18px;
@@ -1202,9 +1216,11 @@
       var webLine=web ? '<div class="syn-detail"><span class="syn-detail-icon">\uD83C\uDF10</span> <a href="'+attr(web)+'" target="_blank">'+esc(webDisplay(web))+'</a></div>' : '';
       var btn=web ? '<a href="'+attr(web)+'" target="_blank" class="syn-website-btn" style="white-space:nowrap;flex-shrink:0;">Visit Website \u2192</a>' : '';
       var times=d.servicetimes ? '<div class="syn-service-times">'+esc(d.servicetimes)+'</div>' : '';
+      var nusach=String(d.nusach||'').trim();
+      var nusachTag=nusach ? '<span class="syn-nusach">'+esc(nusach)+'</span>' : '';
       return '<div class="syn-card" data-denom="'+attr(key)+'">'+imgBlock+
         '<div class="syn-card-body">'+
-          '<span class="syn-denom '+dn.cls+'">'+esc(dn.label)+'</span>'+
+          '<span class="syn-denom '+dn.cls+'">'+esc(dn.label)+'</span>'+nusachTag+
           '<div class="syn-name">'+esc(d.name)+'</div>'+
           detail('\uD83D\uDCCD',d.address)+detail('\uD83D\uDCDE',d.phone)+detail('\uD83D\uDC64',d.rabbi)+webLine+
           '<hr class="syn-divider">'+
