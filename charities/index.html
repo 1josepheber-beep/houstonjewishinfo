@@ -1094,6 +1094,7 @@
       });
       var grid=document.getElementById('charity-grid');
       if(!rows.length){ grid.innerHTML='<div style="grid-column:1/-1;text-align:center;font-family:sans-serif;font-size:14px;color:var(--muted);padding:40px;">No charities listed yet — check back soon.</div>'; document.getElementById('charity-count').textContent='0'; return; }
+      rows.sort(function(a,b){ return String(a.name||'').localeCompare(String(b.name||''), undefined, {sensitivity:'base'}); });
       grid.innerHTML=rows.map(buildCharityCard).join('');
       document.getElementById('charity-count').textContent=rows.length;
       applyCharFilter();
@@ -1175,7 +1176,7 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape')closeMobileM
 <!-- item-tracking: logs name taps (item_view) and link taps (item_visit) to GA4 -->
 <script>
 (function(){
-  var NAME_SEL = '.syn-name,.mikvah-name,.school-name,.edu-tile-name,.charity-name,.biz-name,.service-name,.sli-name,.ttd-name,.mli-name,.article-headline,.mt-headline,.event-title,.job-title,.listing-cat,.re-name';
+  var NAME_SEL = '.syn-name,.mikvah-name,.school-name,.edu-tile-name,.charity-name,.biz-name,.service-name,.sli-name,.ttd-name,.mli-name,.article-headline,.mt-headline,.event-title,.job-title,.listing-title,.re-name';
   var CARD_SEL = '.syn-card,.mikvah-card,.school-card,.edu-tile,.charity-card,.biz-card,.service-item,.sli-item,.ttd-card,.map-list-item,.article-card,.mt-card,.event-card,.job-card,.job-listing,.listing-card,.re-card';
   function section(){
     var p = (location.pathname || '').toLowerCase();

@@ -1069,6 +1069,7 @@
       document.getElementById('count-kids').textContent  = window.EDU_BY_CAT.kids.length + ' listed';
       document.getElementById('count-adult').textContent = window.EDU_BY_CAT.adult.length + ' listed';
       document.getElementById('count-kollel').textContent= window.EDU_BY_CAT.kollel.length + ' listed';
+      ['kids','adult','kollel'].forEach(function(k){ window.EDU_BY_CAT[k].sort(function(a,b){ return String(a.name||'').localeCompare(String(b.name||''), undefined, {sensitivity:'base'}); }); });
       renderEduCat('kids');
     }).catch(function(){
       var grid=document.getElementById('school-grid');
@@ -1215,7 +1216,7 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape')closeMobileM
 <!-- item-tracking: logs name taps (item_view) and link taps (item_visit) to GA4 -->
 <script>
 (function(){
-  var NAME_SEL = '.syn-name,.mikvah-name,.school-name,.edu-tile-name,.charity-name,.biz-name,.service-name,.sli-name,.ttd-name,.mli-name,.article-headline,.mt-headline,.event-title,.job-title,.listing-cat,.re-name';
+  var NAME_SEL = '.syn-name,.mikvah-name,.school-name,.edu-tile-name,.charity-name,.biz-name,.service-name,.sli-name,.ttd-name,.mli-name,.article-headline,.mt-headline,.event-title,.job-title,.listing-title,.re-name';
   var CARD_SEL = '.syn-card,.mikvah-card,.school-card,.edu-tile,.charity-card,.biz-card,.service-item,.sli-item,.ttd-card,.map-list-item,.article-card,.mt-card,.event-card,.job-card,.job-listing,.listing-card,.re-card';
   function section(){
     var p = (location.pathname || '').toLowerCase();

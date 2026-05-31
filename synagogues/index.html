@@ -1274,13 +1274,16 @@
       var json=JSON.parse(text.substring(47,text.length-2));
       var cols=json.table.cols.map(function(c){return (c.label||'').toLowerCase().trim();});
       var html='', n=0;
+      var synRows=[];
       json.table.rows.forEach(function(row){
         var d={};
         cols.forEach(function(col,i){ var cell=row.c[i]; d[col]=cell?(cell.f!=null?cell.f:(cell.v==null?'':cell.v)):''; });
         if(String(d.status||'').toLowerCase().trim()!=='active') return;
         if(!d.name) return;
-        html+=cardHTML(d); n++;
+        synRows.push(d);
       });
+      synRows.sort(function(a,b){ return String(a.name||'').localeCompare(String(b.name||''), undefined, {sensitivity:'base'}); });
+      synRows.forEach(function(d){ html+=cardHTML(d); n++; });
       var grid=document.getElementById('syn-grid');
       grid.innerHTML=html || '<div style="grid-column:1/-1;font-family:sans-serif;font-size:14px;color:var(--muted);text-align:center;padding:40px 0;">No congregations listed yet.</div>';
       var cnt=document.getElementById('syn-count'); if(cnt) cnt.textContent=n;
@@ -1481,7 +1484,7 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape')closeMobileM
 <!-- item-tracking: logs name taps (item_view) and link taps (item_visit) to GA4 -->
 <script>
 (function(){
-  var NAME_SEL = '.syn-name,.mikvah-name,.school-name,.edu-tile-name,.charity-name,.biz-name,.service-name,.sli-name,.ttd-name,.mli-name,.article-headline,.mt-headline,.event-title,.job-title,.listing-cat,.re-name';
+  var NAME_SEL = '.syn-name,.mikvah-name,.school-name,.edu-tile-name,.charity-name,.biz-name,.service-name,.sli-name,.ttd-name,.mli-name,.article-headline,.mt-headline,.event-title,.job-title,.listing-title,.re-name';
   var CARD_SEL = '.syn-card,.mikvah-card,.school-card,.edu-tile,.charity-card,.biz-card,.service-item,.sli-item,.ttd-card,.map-list-item,.article-card,.mt-card,.event-card,.job-card,.job-listing,.listing-card,.re-card';
   function section(){
     var p = (location.pathname || '').toLowerCase();

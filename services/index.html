@@ -2149,6 +2149,7 @@ function renderBizGrid(cat) {
   var filtered = cat === 'all'
     ? allBizListings
     : allBizListings.filter(function(i) { return i._cat === cat; });
+  filtered = filtered.slice().sort(function(a,b){ return String(a.name||a.businessname||'').localeCompare(String(b.name||b.businessname||''), undefined, {sensitivity:'base'}); });
   document.getElementById('biz-count').textContent = filtered.length;
   if(filtered.length === 0) {
     var serviceFinderMap = {'catering':'catering','security':'security','marketing':'marketing','trades':'electric'};
@@ -2430,7 +2431,7 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape')closeMobileM
 <!-- item-tracking: logs name taps (item_view) and link taps (item_visit) to GA4 -->
 <script>
 (function(){
-  var NAME_SEL = '.syn-name,.mikvah-name,.school-name,.edu-tile-name,.charity-name,.biz-name,.service-name,.sli-name,.ttd-name,.mli-name,.article-headline,.mt-headline,.event-title,.job-title,.listing-cat,.re-name';
+  var NAME_SEL = '.syn-name,.mikvah-name,.school-name,.edu-tile-name,.charity-name,.biz-name,.service-name,.sli-name,.ttd-name,.mli-name,.article-headline,.mt-headline,.event-title,.job-title,.listing-title,.re-name';
   var CARD_SEL = '.syn-card,.mikvah-card,.school-card,.edu-tile,.charity-card,.biz-card,.service-item,.sli-item,.ttd-card,.map-list-item,.article-card,.mt-card,.event-card,.job-card,.job-listing,.listing-card,.re-card';
   function section(){
     var p = (location.pathname || '').toLowerCase();

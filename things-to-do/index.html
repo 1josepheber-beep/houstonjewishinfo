@@ -1176,6 +1176,10 @@
 
   <!-- EAT OUT VIEW -->
   <div id="eat-view">
+    <div class="act-search-wrap">
+      <span class="act-search-icon">🔍</span>
+      <input type="text" id="eat-search" placeholder="Search restaurants — e.g. pizza, grill, sushi" oninput="renderEats()">
+    </div>
     <div class="act-filters" id="eat-filters">
       <button class="filter-btn active" data-k="all" onclick="setEatKashrut('all', this)">All</button>
       <button class="filter-btn" data-k="meat" onclick="setEatKashrut('meat', this)">🥩 Meat</button>
@@ -1310,9 +1314,14 @@
       '</div>';
   }
   function renderEats(){
-    var list = EAT_K==='all' ? EAT_ALL : EAT_ALL.filter(function(d){ return kashrutNormList(d.kashrut).indexOf(EAT_K)>-1; });
+    var q=(function(){ var el=document.getElementById('eat-search'); return el?(el.value||'').toLowerCase().trim():''; })();
+    var list = EAT_ALL.filter(function(d){
+      var kOk = EAT_K==='all' || kashrutNormList(d.kashrut).indexOf(EAT_K)>-1;
+      var qOk = !q || (d.name||'').toLowerCase().indexOf(q)>-1 || (d.description||'').toLowerCase().indexOf(q)>-1 || (d.address||'').toLowerCase().indexOf(q)>-1;
+      return kOk && qOk;
+    });
     var grid=document.getElementById('eat-grid');
-    grid.innerHTML = list.length ? list.map(eatCard).join('') : '<div class="ttd-empty">No restaurants match this filter yet.</div>';
+    grid.innerHTML = list.length ? list.map(eatCard).join('') : '<div class="ttd-empty">No restaurants match — try a different search or filter.</div>';
     document.getElementById('eat-count').textContent=list.length;
   }
   function setEatKashrut(k, btn){
@@ -1325,6 +1334,7 @@
     var grid=document.getElementById('eat-grid');
     if(!rows){ grid.innerHTML='<div class="ttd-empty">Restaurants are taking a moment to load. Please refresh.</div>'; return; }
     EAT_ALL=rows.filter(function(d){ if(!d.name) return false; var s=(d.status||'').toLowerCase().trim(); return !s||s==='active'; });
+    EAT_ALL.sort(function(a,b){ return (a.name||'').localeCompare(b.name||'', undefined, {sensitivity:'base'}); });
     renderEats();
   });
 
@@ -1383,6 +1393,7 @@
     var grid=document.getElementById('act-grid');
     if(!rows){ grid.innerHTML='<div class="ttd-empty">Activities are taking a moment to load. Please refresh.</div>'; return; }
     ACT_ALL=rows.filter(function(d){ if(!d.name) return false; var s=(d.status||'').toLowerCase().trim(); return !s||s==='active'; });
+    ACT_ALL.sort(function(a,b){ return (a.name||'').localeCompare(b.name||'', undefined, {sensitivity:'base'}); });
     renderActs();
   });
 
@@ -1681,7 +1692,7 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape')closeMobileM
 <!-- item-tracking: logs name taps (item_view) and link taps (item_visit) to GA4 -->
 <script>
 (function(){
-  var NAME_SEL = '.syn-name,.mikvah-name,.school-name,.edu-tile-name,.charity-name,.biz-name,.service-name,.sli-name,.ttd-name,.mli-name,.article-headline,.mt-headline,.event-title,.job-title,.listing-cat,.re-name';
+  var NAME_SEL = '.syn-name,.mikvah-name,.school-name,.edu-tile-name,.charity-name,.biz-name,.service-name,.sli-name,.ttd-name,.mli-name,.article-headline,.mt-headline,.event-title,.job-title,.listing-title,.re-name';
   var CARD_SEL = '.syn-card,.mikvah-card,.school-card,.edu-tile,.charity-card,.biz-card,.service-item,.sli-item,.ttd-card,.map-list-item,.article-card,.mt-card,.event-card,.job-card,.job-listing,.listing-card,.re-card';
   function section(){
     var p = (location.pathname || '').toLowerCase();
