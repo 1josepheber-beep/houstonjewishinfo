@@ -1226,7 +1226,7 @@
     for(var day=1;day<=daysInMonth;day++){
       var isToday=today.getDate()===day&&today.getMonth()===month&&today.getFullYear()===year;
       var hasEv=evByDay[day]&&evByDay[day].length>0;
-      h+='<div onclick="'+(hasEv?'showDayEvents('+day+','+month+','+year+')':'')+'" style="min-height:64px;border-radius:6px;padding:4px;cursor:'+(hasEv?'pointer':'default')+';border:1px solid '+(isToday?'var(--navy)':'var(--border)')+';background:'+(isToday?'var(--navy)':hasEv?'#eef3fb':'var(--white)')+'">';
+      h+='<div onclick="'+(hasEv?'showDayEvents('+day+','+month+','+year+')':'')+'" style="min-height:64px;min-width:0;overflow:hidden;border-radius:6px;padding:4px;cursor:'+(hasEv?'pointer':'default')+';border:1px solid '+(isToday?'var(--navy)':'var(--border)')+';background:'+(isToday?'var(--navy)':hasEv?'#eef3fb':'var(--white)')+'">';
       h+='<div style="font-family:sans-serif;font-size:12px;font-weight:'+(isToday?'700':'400')+';color:'+(isToday?'#fff':hasEv?'var(--navy)':'var(--ink)')+';margin-bottom:3px;">'+day+'</div>';
       if(hasEv){evByDay[day].forEach(function(ev){var color=catColors[getCatKey(ev.category)]||'#555';h+='<div style="background:'+color+';color:#fff;font-family:sans-serif;font-size:9px;border-radius:2px;padding:1px 4px;margin-bottom:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">'+ev.title+'</div>';});}
       h+='</div>';
