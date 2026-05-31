@@ -1132,6 +1132,12 @@
 
   <!-- EAT OUT VIEW -->
   <div id="eat-view">
+    <div class="act-filters" id="eat-filters">
+      <button class="filter-btn active" data-k="all" onclick="setEatKashrut('all', this)">All</button>
+      <button class="filter-btn" data-k="meat" onclick="setEatKashrut('meat', this)">🥩 Meat</button>
+      <button class="filter-btn" data-k="dairy" onclick="setEatKashrut('dairy', this)">🧀 Dairy</button>
+      <button class="filter-btn" data-k="pareve" onclick="setEatKashrut('pareve', this)">🥗 Pareve</button>
+    </div>
     <div class="results-bar">Showing <strong id="eat-count">0</strong> kosher restaurants in Greater Houston</div>
     <div class="ttd-grid" id="eat-grid">
       <!-- Loaded from the KosherRestaurants sheet tab -->
@@ -1205,6 +1211,14 @@
   function ttdWebDisplay(u){ return String(u||'').replace(/^https?:\/\//i,'').replace(/^www\./i,'').replace(/\/+$/,''); }
 
   // ===== EAT OUT (kosher restaurants) =====
+  var EAT_ALL=[], EAT_K='all';
+  function kashrutNorm(v){
+    v=(v||'').toLowerCase().trim();
+    if(v==='dairy'||v==='milchig') return 'dairy';
+    if(v==='meat'||v==='fleishig') return 'meat';
+    if(v==='pareve'||v==='parve') return 'pareve';
+    return '';
+  }
   function kashrutTag(v){
     v=(v||'').toLowerCase().trim(); if(!v) return '';
     var m={'dairy':['🧀 Dairy','#e6f1fb','#185fa5'],'milchig':['🧀 Dairy','#e6f1fb','#185fa5'],
@@ -1225,12 +1239,23 @@
       (web?'<div class="ttd-footer"><a href="'+ttdAttr(web)+'" target="_blank" rel="noopener" class="ttd-link">Visit Website →</a></div>':'')+
       '</div>';
   }
+  function renderEats(){
+    var list = EAT_K==='all' ? EAT_ALL : EAT_ALL.filter(function(d){ return kashrutNorm(d.kashrut)===EAT_K; });
+    var grid=document.getElementById('eat-grid');
+    grid.innerHTML = list.length ? list.map(eatCard).join('') : '<div class="ttd-empty">No restaurants match this filter yet.</div>';
+    document.getElementById('eat-count').textContent=list.length;
+  }
+  function setEatKashrut(k, btn){
+    EAT_K=k;
+    document.querySelectorAll('#eat-filters .filter-btn').forEach(function(b){ b.classList.remove('active'); });
+    if(btn) btn.classList.add('active');
+    renderEats();
+  }
   ttdRows('KosherRestaurants', function(rows){
     var grid=document.getElementById('eat-grid');
     if(!rows){ grid.innerHTML='<div class="ttd-empty">Restaurants are taking a moment to load. Please refresh.</div>'; return; }
-    var list=rows.filter(function(d){ if(!d.name) return false; var s=(d.status||'').toLowerCase().trim(); return !s||s==='active'; });
-    grid.innerHTML = list.length ? list.map(eatCard).join('') : '<div class="ttd-empty">No restaurants listed yet.</div>';
-    document.getElementById('eat-count').textContent=list.length;
+    EAT_ALL=rows.filter(function(d){ if(!d.name) return false; var s=(d.status||'').toLowerCase().trim(); return !s||s==='active'; });
+    renderEats();
   });
 
   // ===== ACTIVITIES =====
