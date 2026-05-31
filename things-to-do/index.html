@@ -1267,11 +1267,15 @@
     return '<span class="ttd-tag" style="background:'+m[1]+';color:'+m[2]+';">'+m[0]+'</span>';
   }
   function catTag(c){ return c?'<span class="ttd-tag" style="background:#e6f1fb;color:#185fa5;">'+ttdEsc(c)+'</span>':''; }
+  function freeTag(v){
+    v=(v||'').toLowerCase().trim();
+    return (v==='yes'||v==='free'||v==='y'||v==='true') ? '<span class="ttd-tag" style="background:#dff3d8;color:#2c6e1a;">✓ Free</span>' : '';
+  }
   function actCard(d){
     var web=ttdWeb(d.url);
     var link = web ? '<a href="'+ttdAttr(web)+'" target="_blank" rel="noopener" class="ttd-link">Visit site →</a>' : '';
     return '<div class="ttd-card">'+
-      '<div class="ttd-tagrow">'+catTag(d.category)+ioTag(d.indooroutdoor)+'</div>'+
+      '<div class="ttd-tagrow">'+catTag(d.category)+ioTag(d.indooroutdoor)+freeTag(d.free)+'</div>'+
       '<div class="ttd-name">'+ttdEsc(d.name)+'</div>'+
       (d.address?'<div class="ttd-detail">📍 '+ttdEsc(d.address)+'</div>':'')+
       (link?'<div class="ttd-footer">'+link+'</div>':'')+
