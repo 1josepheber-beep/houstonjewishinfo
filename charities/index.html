@@ -824,12 +824,12 @@
     height: 8px;
   }
 
-  .charity-logo-tag {
-    display: flex; flex-direction: column; align-items: flex-start;
-    gap: 6px; margin-bottom: 10px;
+  .charity-card-top {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 12px; margin-bottom: 12px;
   }
   .charity-logo {
-    height: 44px; max-width: 70%; object-fit: contain;
+    height: 40px; max-width: 50%; object-fit: contain;
     object-position: left center; display: block;
   }
 
@@ -841,12 +841,13 @@
   }
 
   .charity-category {
-    align-self: flex-start;
+    margin-left: auto;
     display: inline-block;
     font-family: sans-serif; font-size: 9px; font-weight: 700;
-    letter-spacing: .1em; text-transform: uppercase;
+    letter-spacing: .08em; text-transform: uppercase;
     padding: 3px 9px; border-radius: 3px;
     background: #eef3fb; color: var(--navy);
+    white-space: nowrap;
   }
   .charity-category.emergency { background: #fde8e8; color: #c0391b; }
   .charity-category.education { background: #edf7ed; color: #2a7a2a; }
@@ -1034,7 +1035,7 @@
   var CHAR_LOGO_BASE='https://houstonjewishinfo.com/images/charities/';
   // category -> {key for filter/color, label shown, banner gradient}
   var CHAR_CATS={
-    'emergency':{key:'emergency',label:'🚨 Emergency Services',grad:'linear-gradient(90deg,#c0391b,#e05030)'},
+    'emergency':{key:'emergency',label:'🚨 Emergency',grad:'linear-gradient(90deg,#c0391b,#e05030)'},
     'education':{key:'education',label:'🎓 Education',grad:'linear-gradient(90deg,#1e7a1e,#37a637)'},
     'community':{key:'community',label:'🤝 Community',grad:'linear-gradient(90deg,#1e4d9b,#3a70c0)'},
     'medical':{key:'medical',label:'🏥 Medical',grad:'linear-gradient(90deg,#b8923a,#d9b35e)'}
@@ -1060,7 +1061,7 @@
     return '<div class="charity-card" data-cat="'+charEsc(ci.key)+'">'+
       '<div class="charity-card-banner" style="background:'+ci.grad+';"></div>'+
       '<div class="charity-card-body">'+
-        '<div class="charity-logo-tag">'+
+        '<div class="charity-card-top">'+
           logoBlock+
           '<span class="charity-category">'+charEsc(ci.label)+'</span>'+
         '</div>'+
