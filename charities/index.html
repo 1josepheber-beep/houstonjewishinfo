@@ -824,6 +824,19 @@
     height: 8px;
   }
 
+  .charity-logo-wrap {
+    display: flex; align-items: center; justify-content: center;
+    height: 120px; background: #f7f4ee; border-bottom: 1px solid var(--border);
+    padding: 14px;
+  }
+  .charity-logo-wrap img {
+    max-height: 92px; max-width: 80%; object-fit: contain; display: block;
+  }
+  .charity-logo-fallback {
+    font-family: 'Playfair Display', serif; font-size: 34px; font-weight: 700;
+    color: var(--navy); opacity: .85;
+  }
+
   .charity-card-body {
     padding: 18px 20px;
     flex: 1;
@@ -964,77 +977,7 @@
   <div class="results-bar">Showing <strong id="charity-count">5</strong> charities</div>
 
   <div class="charity-grid" id="charity-grid">
-
-    <!-- HATZALAH -->
-    <div class="charity-card" data-cat="emergency">
-      <div class="charity-card-banner" style="background:linear-gradient(90deg,#c0391b,#e05030);"></div>
-      <div class="charity-card-body">
-        <span class="charity-category emergency">🚑 Emergency Medical</span>
-        <div class="charity-name">Houston Hatzalah</div>
-        <div class="charity-desc">Volunteer emergency medical service operating 24 hours a day, 365 days a year at no cost to those they serve. Staffed entirely by trained volunteer EMTs and paramedics. "Whoever saves a single life, it is as if he saved an entire world."</div>
-        <div class="charity-footer">
-          <span class="charity-meta">houstonhatzalah.org · (832) 743-0111</span>
-          <a href="https://www.houstonhatzalah.org" target="_blank" class="charity-donate-btn red">Donate →</a>
-        </div>
-      </div>
-    </div>
-
-    <!-- CHAVERIM -->
-    <div class="charity-card" data-cat="emergency">
-      <div class="charity-card-banner" style="background:linear-gradient(90deg,#1e4d9b,#3a70c0);"></div>
-      <div class="charity-card-body">
-        <span class="charity-category">🚗 Emergency Assistance</span>
-        <div class="charity-name">Houston Chaverim</div>
-        <div class="charity-desc">Non-medical volunteer emergency organization available 24/6. Services include battery jump-starts, tire changes, fuel delivery, lockouts, and home assistance — all free of charge. Serving Bellaire, Meyerland, Brays Oaks, and surrounding areas.</div>
-        <div class="charity-footer">
-          <span class="charity-meta">houstonchaverim.org · (281) 800-8235</span>
-          <a href="https://www.houstonchaverim.org" target="_blank" class="charity-donate-btn">Donate →</a>
-        </div>
-      </div>
-    </div>
-
-    <!-- EMERY/WEINER -->
-    <div class="charity-card" data-cat="education">
-      <div class="charity-card-banner" style="background:linear-gradient(90deg,#2a7a2a,#50a050);"></div>
-      <div class="charity-card-body">
-        <span class="charity-category education">🎓 Jewish Day School</span>
-        <div class="charity-name">The Emery/Weiner School</div>
-        <div class="charity-desc">Supporting Houston's premier pluralistic Jewish day school for grades 6–12. Donations support scholarships, Judaic programs, and academic excellence at one of the top Jewish day schools in the nation.</div>
-        <div class="charity-footer">
-          <span class="charity-meta">emeryweiner.org</span>
-          <a href="https://www.emeryweiner.org" target="_blank" class="charity-donate-btn green">Support →</a>
-        </div>
-      </div>
-    </div>
-
-    <!-- BEREN ACADEMY -->
-    <div class="charity-card" data-cat="education">
-      <div class="charity-card-banner" style="background:linear-gradient(90deg,#2a7a2a,#70b870);"></div>
-      <div class="charity-card-body">
-        <span class="charity-category education">🎓 Jewish Day School</span>
-        <div class="charity-name">Robert M. Beren Academy</div>
-        <div class="charity-desc">Supporting Houston's Modern Orthodox day school serving Pre-K through 12th grade. Donations fund scholarships, Torah education, and Montessori programming at one of Houston's most distinguished Jewish schools.</div>
-        <div class="charity-footer">
-          <span class="charity-meta">berenacademy.org</span>
-          <a href="https://www.berenacademy.org" target="_blank" class="charity-donate-btn green">Support →</a>
-        </div>
-      </div>
-    </div>
-
-    <!-- TORAH DAY SCHOOL -->
-    <div class="charity-card" data-cat="education">
-      <div class="charity-card-banner" style="background:linear-gradient(90deg,#c0391b,#e07050);"></div>
-      <div class="charity-card-body">
-        <span class="charity-category education">🎓 Jewish Day School</span>
-        <div class="charity-name">Torah Day School of Houston</div>
-        <div class="charity-desc">Supporting Houston's Chabad dual-curriculum day school from Early Childhood through 8th grade. Donations help provide quality Jewish and secular education to Houston's growing Orthodox community.</div>
-        <div class="charity-footer">
-          <span class="charity-meta">tdshouston.org</span>
-          <a href="https://www.tdshouston.org" target="_blank" class="charity-donate-btn red">Support →</a>
-        </div>
-      </div>
-    </div>
-
+    <div id="charity-loading" style="grid-column:1/-1;text-align:center;font-family:sans-serif;font-size:13px;color:var(--muted);padding:40px;">Loading charities…</div>
   </div><!-- end charity-grid -->
 
   <!-- CTA -->
@@ -1070,17 +1013,86 @@
     document.getElementById('today-date').textContent = days[now.getDay()] + ', ' + months[now.getMonth()] + ' ' + now.getDate() + ', ' + now.getFullYear();
   })();
 
+  var CHAR_FILTER='all';
   function filterCharities(cat, btn) {
+    CHAR_FILTER=cat;
     document.querySelectorAll('.filter-btn').forEach(function(b) { b.classList.remove('active'); });
-    btn.classList.add('active');
-    var cards = document.querySelectorAll('.charity-card');
-    var count = 0;
-    cards.forEach(function(card) {
-      if (cat === 'all' || card.dataset.cat === cat) { card.style.display = ''; count++; }
-      else { card.style.display = 'none'; }
-    });
-    document.getElementById('charity-count').textContent = count;
+    if(btn) btn.classList.add('active');
+    applyCharFilter();
   }
+  function applyCharFilter(){
+    var cards=document.querySelectorAll('.charity-card'); var count=0;
+    cards.forEach(function(card){
+      if(CHAR_FILTER==='all' || card.dataset.cat===CHAR_FILTER){ card.style.display=''; count++; }
+      else card.style.display='none';
+    });
+    var c=document.getElementById('charity-count'); if(c) c.textContent=count;
+  }
+
+  // ---- Sheet-driven charities ----
+  var CHAR_SHEET_ID='1in7Ac7zknqyR9neWKOCAjOAG4jXCIVTJQfU6jJ72CV8';
+  var CHAR_SHEET_TAB='Charities';
+  var CHAR_LOGO_BASE='https://houstonjewishinfo.com/images/charities/';
+  // category -> {key for filter/color, label shown, banner gradient}
+  var CHAR_CATS={
+    'emergency':{key:'emergency',label:'🚨 Emergency Services',grad:'linear-gradient(90deg,#c0391b,#e05030)'},
+    'education':{key:'education',label:'🎓 Education',grad:'linear-gradient(90deg,#1e7a1e,#37a637)'},
+    'community':{key:'community',label:'🤝 Community',grad:'linear-gradient(90deg,#1e4d9b,#3a70c0)'},
+    'medical':{key:'medical',label:'🏥 Medical',grad:'linear-gradient(90deg,#b8923a,#d9b35e)'}
+  };
+  function charEsc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+  function charVal(cell){ if(!cell) return ''; if(cell.f!=null) return String(cell.f); if(cell.v==null) return ''; return String(cell.v); }
+  function charLogoURL(v){ v=String(v||'').trim(); if(!v) return ''; return /^https?:\/\//i.test(v)?v:CHAR_LOGO_BASE+v; }
+  function catInfo(cat){
+    var k=String(cat||'').toLowerCase().trim();
+    for(var name in CHAR_CATS){ if(k.indexOf(name)>=0) return CHAR_CATS[name]; }
+    return {key:(k||'other'),label:(cat||'Charity'),grad:'linear-gradient(90deg,#1f3f6e,#3a70c0)'};
+  }
+  function buildCharityCard(d){
+    var ci=catInfo(d.category);
+    var logo=charLogoURL(d.logo);
+    var initials=(d.name||'?').trim().charAt(0).toUpperCase();
+    var logoBlock=logo
+      ? '<div class="charity-logo-wrap"><img src="'+charEsc(logo)+'" alt="'+charEsc(d.name)+' logo" loading="lazy"></div>'
+      : '<div class="charity-logo-wrap"><span class="charity-logo-fallback">'+charEsc(initials)+'</span></div>';
+    var meta=[d.website,d.phone].filter(Boolean).join(' · ');
+    var donate=d.donateurl
+      ? '<a href="'+charEsc(/^https?:\/\//i.test(d.donateurl)?d.donateurl:'https://'+d.donateurl)+'" target="_blank" rel="noopener" class="charity-donate-btn">Donate →</a>'
+      : (d.website ? '<a href="'+charEsc(/^https?:\/\//i.test(d.website)?d.website:'https://'+d.website)+'" target="_blank" rel="noopener" class="charity-donate-btn">Visit →</a>' : '');
+    return '<div class="charity-card" data-cat="'+charEsc(ci.key)+'">'+
+      '<div class="charity-card-banner" style="background:'+ci.grad+';"></div>'+
+      logoBlock+
+      '<div class="charity-card-body">'+
+        '<span class="charity-category">'+charEsc(ci.label)+'</span>'+
+        '<div class="charity-name">'+charEsc(d.name)+'</div>'+
+        '<div class="charity-desc">'+charEsc(d.description)+'</div>'+
+        '<div class="charity-footer">'+
+          '<span class="charity-meta">'+charEsc(meta)+'</span>'+donate+
+        '</div>'+
+      '</div></div>';
+  }
+  (function loadCharities(){
+    var url='https://docs.google.com/spreadsheets/d/'+CHAR_SHEET_ID+'/gviz/tq?tqx=out:json&headers=1&sheet='+encodeURIComponent(CHAR_SHEET_TAB);
+    fetch(url).then(function(r){return r.text();}).then(function(text){
+      var json=JSON.parse(text.substring(47,text.length-2));
+      var cols=json.table.cols.map(function(c){return (c.label||'').toLowerCase().trim();});
+      var rows=json.table.rows.map(function(row){
+        var o={}; cols.forEach(function(col,i){ o[col]=charVal(row.c[i]); }); return o;
+      }).filter(function(o){
+        if(!o.name) return false;
+        var st=(o.status||'').toLowerCase().trim();
+        return !st || st==='active';
+      });
+      var grid=document.getElementById('charity-grid');
+      if(!rows.length){ grid.innerHTML='<div style="grid-column:1/-1;text-align:center;font-family:sans-serif;font-size:14px;color:var(--muted);padding:40px;">No charities listed yet — check back soon.</div>'; document.getElementById('charity-count').textContent='0'; return; }
+      grid.innerHTML=rows.map(buildCharityCard).join('');
+      document.getElementById('charity-count').textContent=rows.length;
+      applyCharFilter();
+    }).catch(function(){
+      var grid=document.getElementById('charity-grid');
+      grid.innerHTML='<div style="grid-column:1/-1;text-align:center;font-family:sans-serif;font-size:14px;color:var(--muted);padding:40px;">Could not load charities right now. Please refresh.</div>';
+    });
+  })();
 </script>
 <div class="mobile-menu-overlay" id="mob-overlay" onclick="closeMobileMenu()"></div>
 <div class="mobile-menu" id="mob-menu">
