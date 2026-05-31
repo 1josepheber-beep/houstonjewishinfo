@@ -1486,5 +1486,40 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape')closeMobileM
       .catch(function() { /* leave placeholders on error */ });
   })();
 </script>
+<!-- maps-linkify: turn 📍 addresses into Apple/Google Maps links -->
+<script>
+(function(){
+  var ua = navigator.userAgent || '';
+  var isIOS = /iPad|iPhone|iPod/.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  var PIN = '\uD83D\uDCCD';
+  function mapURL(addr){
+    var q = encodeURIComponent(addr);
+    return isIOS ? ('https://maps.apple.com/?q=' + q) : ('https://www.google.com/maps/search/?api=1&query=' + q);
+  }
+  function escA(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+  function linkify(){
+    var all = document.querySelectorAll('div,span,p,li,td');
+    for (var i=0;i<all.length;i++){
+      var el = all[i];
+      if (el.__mapDone) continue;
+      var txt = (el.textContent || '').replace(/\u00a0/g,' ').trim();
+      if (txt.slice(0,2) !== PIN) continue;
+      var nKids = el.children.length;
+      if (nKids > 1) continue;
+      if (el.getElementsByTagName('a').length) continue;
+      if (nKids === 1 && (el.children[0].textContent||'').trim() !== PIN) continue;
+      var addr = txt.split(PIN).join('').replace(/\s+/g,' ').trim();
+      if (addr.length < 5) continue;
+      el.__mapDone = true;
+      var iconHTML = (nKids === 1) ? (el.children[0].outerHTML + ' ') : (PIN + ' ');
+      el.innerHTML = iconHTML + '<a href="' + mapURL(addr) + '" target="_blank" rel="noopener" style="color:inherit;text-decoration:underline;text-underline-offset:2px;">' + escA(addr) + '</a>';
+    }
+  }
+  var t;
+  function schedule(){ clearTimeout(t); t = setTimeout(linkify, 200); }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', schedule); else schedule();
+  if (window.MutationObserver){ new MutationObserver(schedule).observe(document.documentElement, {childList:true, subtree:true}); }
+})();
+</script>
 </body>
 </html>
