@@ -990,5 +990,60 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape')closeMobileM
   if (window.MutationObserver){ new MutationObserver(schedule).observe(document.documentElement, {childList:true, subtree:true}); }
 })();
 </script>
+<!-- item-tracking: logs name taps (item_view) and link taps (item_visit) to GA4 -->
+<script>
+(function(){
+  var NAME_SEL = '.syn-name,.mikvah-name,.school-name,.edu-tile-name,.charity-name,.biz-name,.service-name,.sli-name,.ttd-name,.mli-name,.article-headline,.mt-headline,.event-title,.job-title,.listing-cat,.re-name';
+  var CARD_SEL = '.syn-card,.mikvah-card,.school-card,.edu-tile,.charity-card,.biz-card,.service-item,.sli-item,.ttd-card,.map-list-item,.article-card,.mt-card,.event-card,.job-card,.job-listing,.listing-card,.re-card';
+  function section(){
+    var p = (location.pathname || '').toLowerCase();
+    if (p.indexOf('/synagogues')>-1) return 'Synagogues';
+    if (p.indexOf('/education')>-1)  return 'Education';
+    if (p.indexOf('/charities')>-1)  return 'Charities';
+    if (p.indexOf('/services')>-1)   return 'Services';
+    if (p.indexOf('/things-to-do')>-1) return 'Things to Do';
+    if (p.indexOf('/mazaltov')>-1)   return 'Mazal Tov';
+    if (p.indexOf('/events')>-1)     return 'Events';
+    if (p.indexOf('/jobs')>-1)       return 'Jobs';
+    if (p.indexOf('/real-estate')>-1)return 'Real Estate';
+    if (p.indexOf('/classifieds')>-1)return 'Classifieds';
+    return 'Home';
+  }
+  function clean(s){ return (s||'').replace(/\s+/g,' ').trim().slice(0,100); }
+  function nameFromCard(card){
+    if(!card) return '';
+    var n = card.querySelector(NAME_SEL);
+    if(n) return clean(n.textContent);
+    var h = card.querySelector('h1,h2,h3,h4'); if(h) return clean(h.textContent);
+    return '';
+  }
+  function fire(evName, itemName){
+    if(!itemName) return;
+    try{ if(typeof gtag==='function'){ gtag('event', evName, {item_name:itemName, section:section()}); } }catch(e){}
+  }
+  document.addEventListener('click', function(ev){
+    var t = ev.target;
+    // 1) link/visit clicks (anchor with target=_blank, or known link classes)
+    var a = t.closest && t.closest('a');
+    if(a){
+      var isOut = a.getAttribute('target')==='_blank' ||
+                  /ttd-link|charity-donate-btn|article-read-more|biz-link|syn-link/.test(a.className||'');
+      if(isOut){
+        var card = a.closest && a.closest(CARD_SEL);
+        var nm = nameFromCard(card) || clean(a.getAttribute('aria-label')) || clean(a.textContent);
+        // skip nav/menu links and the ad links (ads tracked separately)
+        if(card && !(a.getAttribute('onclick')||'').match(/ad_click/)) fire('item_visit', nm);
+        return;
+      }
+    }
+    // 2) name taps (interest) — even if the name isn't itself a link
+    var nameEl = t.closest && t.closest(NAME_SEL);
+    if(nameEl){
+      var c = nameEl.closest && nameEl.closest(CARD_SEL);
+      fire('item_view', nameFromCard(c) || clean(nameEl.textContent));
+    }
+  }, true);
+})();
+</script>
 </body>
 </html>
