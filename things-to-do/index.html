@@ -930,6 +930,12 @@
   #act-search { width: 100%; padding: 11px 14px 11px 38px; font-family: sans-serif; font-size: 14px; border: 1px solid var(--border); border-radius: 8px; background: var(--white); }
   #act-search:focus { outline: none; border-color: var(--navy); }
   .act-filters { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+  .act-freebar { margin: -6px 0 16px; }
+  .free-toggle { font-family: sans-serif; font-size: 13px; font-weight: 700; padding: 8px 16px; border-radius: 20px; border: 1px solid #b7dcae; background: #fff; color: #2c6e1a; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; transition: all .15s; }
+  .free-toggle .free-dot { opacity: .35; transition: opacity .15s; }
+  .free-toggle:hover { background: #f1f9ee; }
+  .free-toggle.active { background: #2c6e1a; color: #fff; border-color: #2c6e1a; }
+  .free-toggle.active .free-dot { opacity: 1; }
   .syn-tab { font-family: sans-serif; font-size: 14px; font-weight: 700; padding: 9px 20px; border: none; border-radius: 6px; background: transparent; color: #6b6256; cursor: pointer; transition: all .15s; }
   .syn-tab:hover { color: var(--navy); }
   .syn-tab.active { background: var(--navy); color: #fff; box-shadow: 0 1px 4px rgba(0,0,0,.15); }
@@ -1159,6 +1165,9 @@
       <button class="filter-btn" data-cat="Museums" onclick="setActCat('Museums', this)">Museums</button>
       <button class="filter-btn" data-cat="Attraction Pass" onclick="setActCat('Attraction Pass', this)">Attraction Pass</button>
     </div>
+    <div class="act-freebar">
+      <button class="free-toggle" id="free-toggle" onclick="toggleFree(this)" aria-pressed="false"><span class="free-dot">✓</span> Free only</button>
+    </div>
     <div class="results-bar">Showing <strong id="act-count">0</strong> activities</div>
     <div class="ttd-grid" id="act-grid">
       <!-- Loaded from the Activities sheet tab -->
@@ -1259,7 +1268,8 @@
   });
 
   // ===== ACTIVITIES =====
-  var ACT_ALL=[], ACT_CAT='all';
+  var ACT_ALL=[], ACT_CAT='all', ACT_FREE_ONLY=false;
+  function isFreeVal(v){ v=(v||'').toLowerCase().trim(); return v==='yes'||v==='free'||v==='y'||v==='true'; }
   function ioTag(v){
     v=(v||'').toLowerCase().trim(); if(!v) return '';
     var m={'indoor':['Indoor','#eef0f2','#555'],'outdoor':['Outdoor','#eaf3de','#3b6d11'],'both':['Indoor/Outdoor','#fdf3e0','#7a4a0a']}[v];
@@ -1268,8 +1278,7 @@
   }
   function catTag(c){ return c?'<span class="ttd-tag" style="background:#e6f1fb;color:#185fa5;">'+ttdEsc(c)+'</span>':''; }
   function freeTag(v){
-    v=(v||'').toLowerCase().trim();
-    return (v==='yes'||v==='free'||v==='y'||v==='true') ? '<span class="ttd-tag" style="background:#dff3d8;color:#2c6e1a;">✓ Free</span>' : '';
+    return isFreeVal(v) ? '<span class="ttd-tag" style="background:#dff3d8;color:#2c6e1a;">✓ Free</span>' : '';
   }
   function actCard(d){
     var web=ttdWeb(d.url);
@@ -1286,16 +1295,24 @@
     var list=ACT_ALL.filter(function(d){
       var catOk = ACT_CAT==='all' || (d.category||'')===ACT_CAT;
       var qOk = !q || (d.name||'').toLowerCase().indexOf(q)>-1 || (d.category||'').toLowerCase().indexOf(q)>-1;
-      return catOk && qOk;
+      var freeOk = !ACT_FREE_ONLY || isFreeVal(d.free);
+      return catOk && qOk && freeOk;
     });
     var grid=document.getElementById('act-grid');
-    grid.innerHTML = list.length ? list.map(actCard).join('') : '<div class="ttd-empty">No activities match — try a different search or category.</div>';
+    var emptyMsg = ACT_FREE_ONLY ? 'No free activities match — try a different category or search.' : 'No activities match — try a different search or category.';
+    grid.innerHTML = list.length ? list.map(actCard).join('') : '<div class="ttd-empty">'+emptyMsg+'</div>';
     document.getElementById('act-count').textContent=list.length;
   }
   function setActCat(cat, btn){
     ACT_CAT=cat;
     document.querySelectorAll('#act-filters .filter-btn').forEach(function(b){ b.classList.remove('active'); });
     if(btn) btn.classList.add('active');
+    renderActs();
+  }
+  function toggleFree(btn){
+    ACT_FREE_ONLY=!ACT_FREE_ONLY;
+    btn.classList.toggle('active', ACT_FREE_ONLY);
+    btn.setAttribute('aria-pressed', ACT_FREE_ONLY ? 'true' : 'false');
     renderActs();
   }
   ttdRows('Activities', function(rows){
