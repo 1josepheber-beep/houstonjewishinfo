@@ -824,18 +824,20 @@
     height: 8px;
   }
 
+  .charity-logo-tag {
+    display: flex; flex-direction: column; align-items: flex-start;
+    gap: 6px; margin-bottom: 10px;
+  }
   .charity-logo {
-    height: 48px; max-width: 55%; object-fit: contain;
-    object-position: left center; display: block; margin-bottom: 2px;
+    height: 44px; max-width: 70%; object-fit: contain;
+    object-position: left center; display: block;
   }
 
   .charity-card-body {
-    padding: 18px 20px;
+    padding: 16px 20px;
     flex: 1;
     display: flex;
     flex-direction: column;
-    gap: 6px;
-    align-items: flex-start;
   }
 
   .charity-category {
@@ -854,10 +856,13 @@
     font-family: 'Playfair Display', serif;
     font-size: 20px; font-weight: 700;
     color: var(--navy); line-height: 1.2;
+    text-align: center;
   }
   .charity-desc {
     font-size: 13px; color: #555; line-height: 1.65;
     flex: 1;
+    text-align: center;
+    margin-top: 6px;
   }
   .charity-footer {
     display: flex;
@@ -865,13 +870,10 @@
     justify-content: space-between;
     padding-top: 12px;
     border-top: 1px solid var(--border);
-    margin-top: 8px;
+    margin-top: 12px;
     flex-wrap: wrap;
     gap: 8px;
-    align-self: stretch;
-    width: 100%;
   }
-  .charity-name, .charity-desc { align-self: stretch; }
   .charity-meta {
     font-family: sans-serif; font-size: 11px; color: var(--muted);
   }
@@ -1058,8 +1060,10 @@
     return '<div class="charity-card" data-cat="'+charEsc(ci.key)+'">'+
       '<div class="charity-card-banner" style="background:'+ci.grad+';"></div>'+
       '<div class="charity-card-body">'+
-        logoBlock+
-        '<span class="charity-category">'+charEsc(ci.label)+'</span>'+
+        '<div class="charity-logo-tag">'+
+          logoBlock+
+          '<span class="charity-category">'+charEsc(ci.label)+'</span>'+
+        '</div>'+
         '<div class="charity-name">'+charEsc(d.name)+'</div>'+
         '<div class="charity-desc">'+charEsc(d.description)+'</div>'+
         '<div class="charity-footer">'+
