@@ -1147,10 +1147,11 @@
   <div class="filter-bar">
     <span class="filter-label">Filter:</span>
     <button class="filter-btn active" onclick="filterSyn('all', this)">All</button>
-    <button class="filter-btn" onclick="filterSyn('reform', this)">Reform</button>
-    <button class="filter-btn" onclick="filterSyn('conservative', this)">Conservative</button>
     <button class="filter-btn" onclick="filterSyn('orthodox', this)">Orthodox</button>
     <button class="filter-btn" onclick="filterSyn('chabad', this)">Chabad</button>
+    <button class="filter-btn" onclick="filterSyn('ashkenaz', this)">Ashkenaz</button>
+    <button class="filter-btn" onclick="filterSyn('sefard', this)">Sefard</button>
+    <button class="filter-btn" onclick="filterSyn('nusach ari', this)">Nusach Ari</button>
   </div>
 
   <div class="results-bar">Showing <strong id="syn-count">10</strong> congregations in Greater Houston</div>
@@ -1218,7 +1219,7 @@
       var times=d.servicetimes ? '<div class="syn-service-times">'+esc(d.servicetimes)+'</div>' : '';
       var nusach=String(d.nusach||'').trim();
       var nusachTag=nusach ? '<span class="syn-nusach">'+esc(nusach)+'</span>' : '';
-      return '<div class="syn-card" data-denom="'+attr(key)+'">'+imgBlock+
+      return '<div class="syn-card" data-denom="'+attr(key)+'" data-nusach="'+attr(nusach.toLowerCase())+'">'+imgBlock+
         '<div class="syn-card-body">'+
           '<span class="syn-denom '+dn.cls+'">'+esc(dn.label)+'</span>'+nusachTag+
           '<div class="syn-name">'+esc(d.name)+'</div>'+
@@ -1251,14 +1252,16 @@
     });
   })();
 
-  // Filter
-  function filterSyn(denom, btn) {
+  // Filter — matches by denomination OR nusach
+  function filterSyn(val, btn) {
     document.querySelectorAll('.filter-btn').forEach(function(b) { b.classList.remove('active'); });
     btn.classList.add('active');
     var cards = document.querySelectorAll('.syn-card');
     var count = 0;
     cards.forEach(function(card) {
-      if (denom === 'all' || card.dataset.denom === denom) {
+      var denom = card.dataset.denom || '';
+      var nusach = card.dataset.nusach || '';
+      if (val === 'all' || denom === val || nusach === val) {
         card.style.display = '';
         count++;
       } else {
