@@ -1286,7 +1286,7 @@
         <a href="/jobs">Jobs</a>
         <a href="/real-estate">Real Estate</a>
         <a href="/synagogues">Synagogues</a>
-        <a href="/schools">Schools</a>
+        <a href="/education">Education</a>
         <a href="/charities">Charities</a>
         <a href="/contact">Contact / Submit</a>
       </nav>
@@ -2102,6 +2102,20 @@ function getBadgeClass(badge) {
   return 'badge-friendly';
 }
 
+function kashrutTag(v){
+  v=(v||'').toLowerCase().trim();
+  if(!v) return '';
+  var map={
+    'dairy':   {label:'🧀 Dairy',  bg:'#e6f1fb', col:'#185fa5'},
+    'milchig': {label:'🧀 Dairy',  bg:'#e6f1fb', col:'#185fa5'},
+    'meat':    {label:'🥩 Meat',   bg:'#fce8e8', col:'#a32d2d'},
+    'fleishig':{label:'🥩 Meat',   bg:'#fce8e8', col:'#a32d2d'},
+    'pareve':  {label:'🥗 Pareve', bg:'#eaf3de', col:'#3b6d11'},
+    'parve':   {label:'🥗 Pareve', bg:'#eaf3de', col:'#3b6d11'}
+  };
+  var m=map[v]||{label:v.charAt(0).toUpperCase()+v.slice(1), bg:'#f0f0f0', col:'#555'};
+  return '<span class="biz-badge" style="background:'+m.bg+';color:'+m.col+';margin-left:6px;">'+m.label+'</span>';
+}
 function buildBizCard(item) {
   var website = item.website || '';
   if(website && website.indexOf('http') !== 0) website = 'https://' + website;
@@ -2111,7 +2125,10 @@ function buildBizCard(item) {
     '<div class="biz-category">' + cat + '</div>' +
     '<div class="biz-name">' + item.name + '</div>' +
     '</div>' +
+    '<div style="display:flex;flex-wrap:wrap;justify-content:flex-end;gap:0;">' +
     (item.badge ? '<span class="biz-badge ' + getBadgeClass(item.badge) + '">' + item.badge + '</span>' : '') +
+    kashrutTag(item.kashrut) +
+    '</div>' +
     '</div>' +
     (item.address ? '<div class="biz-detail">📍 ' + item.address + '</div>' : '') +
     (item.phone ? '<div class="biz-detail">📞 ' + item.phone + '</div>' : '') +
@@ -2348,7 +2365,7 @@ document.addEventListener('click', function(e) {
     <a href="/jobs">💼 Jobs</a>
     <a href="/real-estate">🏡 Real Estate</a>
     <a href="/synagogues">✡️ Synagogues</a>
-    <a href="/schools">🏫 Schools</a>
+    <a href="/education">🎓 Education</a>
     <a href="/charities">💛 Charities</a>
     <a href="/contact">📬 Contact / Submit</a>
   </div>
