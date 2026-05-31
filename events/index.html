@@ -875,6 +875,21 @@
     font-size: 13px; color: #555; line-height: 1.65;
     flex: 1;
   }
+  .event-desc.clamped {
+    display: -webkit-box;
+    -webkit-line-clamp: 5;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    flex: none;
+  }
+  .read-more-btn {
+    align-self: flex-start;
+    background: none; border: none; padding: 0;
+    margin: 6px 0 0;
+    font-family: sans-serif; font-size: 12px; font-weight: 700;
+    color: var(--navy, #1f3f6e); cursor: pointer;
+  }
+  .read-more-btn:hover { text-decoration: underline; }
   .event-footer {
     display: flex; align-items: center;
     justify-content: space-between;
@@ -1161,7 +1176,7 @@
       '<div class="event-details">'+
       (ev.location?'<span>📍 '+ev.location+'</span>':'')+
       '</div>'+
-      (ev.description?'<div class="event-desc">'+ev.description+'</div>':'')+
+      (ev.description?'<div class="event-desc">'+ev.description+'</div><button type="button" class="read-more-btn" style="display:none;">Read more ↓</button>':'')+
       '<div class="event-footer">'+presenterHtml+btnHtml+'</div>'+
       '</div></div>';
   }
@@ -1181,6 +1196,22 @@
     document.getElementById('events-list').innerHTML=filtered.length
       ?filtered.map(buildEventCard).join('')
       :'<div style="text-align:center;padding:40px;font-family:sans-serif;color:var(--muted);background:var(--white);border:2px dashed var(--border);border-radius:8px;"><strong style="display:block;color:var(--navy);margin-bottom:6px;">No upcoming events</strong>Check the calendar to browse past events!</div>';
+    setupReadMore(document.getElementById('events-list'));
+  }
+  function setupReadMore(scope){
+    var ps=(scope||document).querySelectorAll('.event-desc');
+    ps.forEach(function(p){
+      var btn=p.nextElementSibling;
+      if(!btn||!btn.classList.contains('read-more-btn')) return;
+      var lh=parseFloat(getComputedStyle(p).lineHeight)||21;
+      if(p.scrollHeight > lh*5+2){
+        p.classList.add('clamped'); btn.style.display='inline-block';
+        btn.onclick=function(){
+          if(p.classList.contains('clamped')){ p.classList.remove('clamped'); btn.textContent='Read less ↑'; }
+          else { p.classList.add('clamped'); btn.textContent='Read more ↓'; }
+        };
+      } else { btn.style.display='none'; }
+    });
   }
   function filterEvents(cat,btn){
     document.querySelectorAll('.filter-btn').forEach(function(b){b.classList.remove('active');});
