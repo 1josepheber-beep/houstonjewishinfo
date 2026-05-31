@@ -17,7 +17,7 @@
 </script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Synagogues — Houston Jewish Info</title>
+<title>Things to Do — Houston Jewish Info</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,400&display=swap" rel="stylesheet">
@@ -911,6 +911,25 @@
     border: 1px solid #ddd2ee;
   }
   .syn-tabs { display: inline-flex; gap: 4px; background: #f0ece3; padding: 5px; border-radius: 9px; margin-bottom: 22px; }
+  .ttd-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 40px; }
+  @media (max-width: 820px){ .ttd-grid { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 560px){ .ttd-grid { grid-template-columns: 1fr; } }
+  .ttd-card { background: var(--white); border: 1px solid var(--border); border-radius: 8px; padding: 16px 18px; display: flex; flex-direction: column; }
+  .ttd-card:hover { box-shadow: 0 3px 12px rgba(0,0,0,.09); }
+  .ttd-tagrow { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; }
+  .ttd-tag { display: inline-block; font-family: sans-serif; font-size: 9px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; padding: 3px 9px; border-radius: 3px; }
+  .ttd-name { font-family: 'Playfair Display', serif; font-size: 17px; font-weight: 700; color: var(--navy); line-height: 1.2; margin-bottom: 6px; }
+  .ttd-desc { font-family: sans-serif; font-size: 13px; color: #555; line-height: 1.55; margin-bottom: 8px; }
+  .ttd-detail { font-family: sans-serif; font-size: 12.5px; color: #555; line-height: 1.5; margin-bottom: 3px; }
+  .ttd-footer { margin-top: auto; padding-top: 10px; }
+  .ttd-link { font-family: sans-serif; font-size: 12px; font-weight: 700; color: var(--gold); text-decoration: none; }
+  .ttd-link:hover { text-decoration: underline; }
+  .ttd-empty { grid-column: 1/-1; text-align: center; font-family: sans-serif; font-size: 14px; color: var(--muted); padding: 40px 0; background: var(--white); border: 2px dashed var(--border); border-radius: 8px; }
+  .act-search-wrap { position: relative; margin-bottom: 14px; }
+  .act-search-icon { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); font-size: 14px; opacity: .6; }
+  #act-search { width: 100%; padding: 11px 14px 11px 38px; font-family: sans-serif; font-size: 14px; border: 1px solid var(--border); border-radius: 8px; background: var(--white); }
+  #act-search:focus { outline: none; border-color: var(--navy); }
+  .act-filters { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
   .syn-tab { font-family: sans-serif; font-size: 14px; font-weight: 700; padding: 9px 20px; border: none; border-radius: 6px; background: transparent; color: #6b6256; cursor: pointer; transition: all .15s; }
   .syn-tab:hover { color: var(--navy); }
   .syn-tab.active { background: var(--navy); color: #fff; box-shadow: 0 1px 4px rgba(0,0,0,.15); }
@@ -1052,52 +1071,7 @@
 </div>
 
 <!-- ERUV MAP MODAL -->
-<div class="modal-overlay" id="modal-eruv">
-  <div class="modal" style="max-width:780px;width:94%;">
-    <button class="modal-close" onclick="closeModal('modal-eruv')">×</button>
-    <div class="modal-title">🗺️ Houston Community Eruv</div>
-    <div class="modal-sub">The map below shows the boundary of the Houston community eruv. Use the buttons to jump to an area.</div>
-    <div id="eruv-area-buttons" style="display:flex;flex-wrap:wrap;gap:8px;margin:12px 0 10px;"></div>
-    <div style="border:1px solid #ddd;border-radius:8px;overflow:hidden;margin:0 0 12px;">
-      <iframe id="eruv-map-frame" src="https://www.google.com/maps/d/embed?mid=1eCMUSdSQYatZxVpHVPvOuHz_Ru-HkPs&ehbc=2E312F" style="width:100%;height:430px;border:0;display:block;" loading="lazy" title="Houston Community Eruv Map"></iframe>
-    </div>
-    <p style="font-family:sans-serif;font-size:12px;color:#8a6d1a;background:#fff8e6;border:1px solid #f0d98a;border-radius:6px;padding:9px 11px;line-height:1.5;margin-bottom:12px;">⚠️ An eruv's status can change week to week. Always confirm the eruv is up before relying on it for Shabbat.</p>
-    <div style="display:flex;flex-wrap:wrap;gap:16px;font-family:sans-serif;font-size:12px;font-weight:700;">
-      <a href="https://www.google.com/maps/d/viewer?mid=1eCMUSdSQYatZxVpHVPvOuHz_Ru-HkPs" target="_blank" rel="noopener" style="color:var(--navy,#1f3f6e);">Open full map in Google Maps →</a>
-    </div>
-    <script>
-      // ── Eruv area jump buttons ──────────────────────────────────────
-      // To add/edit an area: give it a label, latitude, longitude, and zoom
-      // (13 = wider view, 15 = closer). Get lat/lng by right-clicking the spot
-      // in Google Maps and copying the numbers. "All areas" resets to full view.
-      var ERUV_MID = '1eCMUSdSQYatZxVpHVPvOuHz_Ru-HkPs';
-      var ERUV_AREAS = [
-        { label: 'All areas', full: true },
-        { label: 'Chabad – Young Israel',     lat: 29.660012473297257, lng: -95.51293073887385, zoom: 15 },
-        { label: 'Chabad of West Houston',    lat: 29.748821560376232, lng: -95.6026576208174,  zoom: 15 }
-      ];
-      (function buildEruvButtons(){
-        var wrap = document.getElementById('eruv-area-buttons');
-        if(!wrap) return;
-        ERUV_AREAS.forEach(function(a){
-          var b = document.createElement('button');
-          b.type = 'button';
-          b.textContent = a.label;
-          b.style.cssText = 'font-family:sans-serif;font-size:12px;font-weight:700;padding:6px 13px;border-radius:5px;border:1px solid var(--navy,#1f3f6e);background:#fff;color:var(--navy,#1f3f6e);cursor:pointer;';
-          b.onclick = function(){
-            var f = document.getElementById('eruv-map-frame');
-            var base = 'https://www.google.com/maps/d/embed?mid=' + ERUV_MID + '&ehbc=2E312F';
-            f.src = a.full ? base : base + '&ll=' + a.lat + ',' + a.lng + '&z=' + (a.zoom || 14);
-            // highlight the active button
-            wrap.querySelectorAll('button').forEach(function(x){ x.style.background='#fff'; x.style.color='var(--navy,#1f3f6e)'; });
-            b.style.background = 'var(--navy,#1f3f6e)'; b.style.color = '#fff';
-          };
-          wrap.appendChild(b);
-        });
-      })();
-    </script>
-  </div>
-</div>
+
 
 <!-- HEADER -->
 <header>
@@ -1123,9 +1097,9 @@
         <a href="/services">Services</a>
         <a href="/jobs">Jobs</a>
         <a href="/real-estate">Real Estate</a>
-        <a href="/synagogues" class="active">Synagogues</a>
+        <a href="/synagogues">Synagogues</a>
         <a href="/education">Education</a>
-        <a href="/things-to-do">Things to Do</a>
+        <a href="/things-to-do" class="active">Things to Do</a>
         <a href="/charities">Charities</a>
         <a href="/contact">Contact / Submit</a>
       </nav>
@@ -1140,19 +1114,11 @@
   <div class="portal">
     <div class="page-hero-inner">
       <div>
-        <h1>✡️ Houston Synagogue Directory</h1>
-        <p>Find congregations across Greater Houston — from Meyerland to the Woodlands, representing every movement in Jewish life.</p>
+        <h1>🎡 Things to Do Around Houston</h1>
+        <p>Where to eat out and fun activities for the whole family across Greater Houston.</p>
       </div>
     </div>
   </div>
-</div>
-
-<!-- ERUV BANNER -->
-<div class="portal" style="padding-top:2px;padding-bottom:18px;">
-  <button type="button" class="eruv-banner" onclick="openModal('modal-eruv')" aria-label="View the Houston community eruv map">
-    <span class="eruv-banner-text">🗺️ <strong>Houston Community Eruv</strong> — view the eruv boundary map</span>
-    <span class="eruv-banner-cta">View Map →</span>
-  </button>
 </div>
 
 <!-- MAIN -->
@@ -1160,42 +1126,38 @@
 
   <!-- VIEW TABS -->
   <div class="syn-tabs" role="tablist">
-    <button class="syn-tab active" id="tab-syn" role="tab" onclick="showSynView()">🏛️ Synagogues</button>
-    <button class="syn-tab" id="tab-mik" role="tab" onclick="showMikvahView()">💧 Mikvaot</button>
+    <button class="syn-tab active" id="tab-eat" role="tab" onclick="showEatView()">🍽️ Eat Out</button>
+    <button class="syn-tab" id="tab-act" role="tab" onclick="showActView()">🎡 Activities</button>
   </div>
 
-  <!-- SYNAGOGUE VIEW -->
-  <div id="syn-view">
-  <!-- FILTER BAR -->
-  <div class="filter-bar">
-    <span class="filter-label">Filter:</span>
-    <button class="filter-btn active" onclick="filterSyn('all', this)">All</button>
-    <button class="filter-btn" onclick="filterSyn('orthodox', this)">Orthodox</button>
-    <button class="filter-btn" onclick="filterSyn('chabad', this)">Chabad</button>
-    <button class="filter-btn" onclick="filterSyn('ashkenaz', this)">Ashkenaz</button>
-    <button class="filter-btn" onclick="filterSyn('sefard', this)">Sefard</button>
-    <button class="filter-btn" onclick="filterSyn('nusach ari', this)">Nusach Ari</button>
-  </div>
-
-  <div class="results-bar">Showing <strong id="syn-count">10</strong> congregations in Greater Houston</div>
-
-  <!-- SYNAGOGUE GRID -->
-  <div class="syn-grid" id="syn-grid">
-    <!-- Cards loaded dynamically from the Synagogues sheet tab -->
-  </div><!-- end syn-grid -->
-  </div><!-- end syn-view -->
-
-  <!-- MIKVAOT VIEW -->
-  <div class="mikvah-section" id="mikvah-view" style="display:none;">
-    <div class="mikvah-head">
-      <span style="font-size:22px;">💧</span>
-      <span>Mikvaot in Houston</span>
+  <!-- EAT OUT VIEW -->
+  <div id="eat-view">
+    <div class="results-bar">Showing <strong id="eat-count">0</strong> kosher restaurants in Greater Houston</div>
+    <div class="ttd-grid" id="eat-grid">
+      <!-- Loaded from the KosherRestaurants sheet tab -->
     </div>
-    <div class="mikvah-sub">Ritual baths serving the community</div>
-    <div class="mikvah-grid" id="mikvah-grid">
-      <!-- Loaded dynamically from the Mikvaot sheet tab -->
+  </div><!-- end eat-view -->
+
+  <!-- ACTIVITIES VIEW -->
+  <div id="act-view" style="display:none;">
+    <div class="act-search-wrap">
+      <span class="act-search-icon">🔍</span>
+      <input type="text" id="act-search" placeholder="Search activities — e.g. splash pad, zoo, trampoline" oninput="renderActs()">
     </div>
-  </div>
+    <div class="act-filters" id="act-filters">
+      <button class="filter-btn active" data-cat="all" onclick="setActCat('all', this)">All</button>
+      <button class="filter-btn" data-cat="Playgrounds" onclick="setActCat('Playgrounds', this)">Playgrounds &amp; Splash Pads</button>
+      <button class="filter-btn" data-cat="Outdoor" onclick="setActCat('Outdoor', this)">Outdoor &amp; Parks</button>
+      <button class="filter-btn" data-cat="Little Kids" onclick="setActCat('Little Kids', this)">Little Kids</button>
+      <button class="filter-btn" data-cat="Big Kids" onclick="setActCat('Big Kids', this)">Big Kids &amp; Teens</button>
+      <button class="filter-btn" data-cat="Museums" onclick="setActCat('Museums', this)">Museums</button>
+      <button class="filter-btn" data-cat="Attraction Pass" onclick="setActCat('Attraction Pass', this)">Attraction Pass</button>
+    </div>
+    <div class="results-bar">Showing <strong id="act-count">0</strong> activities</div>
+    <div class="ttd-grid" id="act-grid">
+      <!-- Loaded from the Activities sheet tab -->
+    </div>
+  </div><!-- end act-view -->
 
 
 </div><!-- end portal -->
@@ -1223,136 +1185,109 @@
     document.getElementById('today-date').textContent = days[now.getDay()] + ', ' + months[now.getMonth()] + ' ' + now.getDate() + ', ' + now.getFullYear();
   })();
 
-  // ===== SYNAGOGUES — Google Sheets driven =====
-  (function() {
-    var SYN_SHEET_ID  = '1in7Ac7zknqyR9neWKOCAjOAG4jXCIVTJQfU6jJ72CV8';
-    var SYN_SHEET_TAB = 'Synagogues';
-    var SYN_IMG_BASE  = 'https://houstonjewishinfo.com/images/synagogues/';
-
-    var DENOM = {
-      'reform':       { cls:'denom-reform',   label:'Reform',       grad:'#e8f0fb,#7a99cc' },
-      'conservative': { cls:'denom-conserv',  label:'Conservative', grad:'#fdf3e0,#d4a060' },
-      'orthodox':     { cls:'denom-orthodox', label:'Orthodox',     grad:'#edf7ed,#5aa85a' },
-      'chabad':       { cls:'denom-chabad',   label:'Chabad',       grad:'#fce8e8,#d05a5a' },
-      'other':        { cls:'denom-other',    label:'Other',        grad:'#eceae4,#bdbcb4' }
-    };
-    function esc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-    function attr(s){ return esc(s).replace(/"/g,'&quot;'); }
-    function imgURL(v){ v=String(v||'').trim(); if(!v) return ''; return /^https?:\/\//i.test(v)?v:SYN_IMG_BASE+v; }
-    function webDisplay(u){ return String(u||'').replace(/^https?:\/\//i,'').replace(/^www\./i,'').replace(/\/+$/,''); }
-    function detail(icon,val){ return val ? '<div class="syn-detail"><span class="syn-detail-icon">'+icon+'</span> '+esc(val)+'</div>' : ''; }
-
-    function cardHTML(d){
-      var key=String(d.denomination||'other').toLowerCase().trim();
-      var dn=DENOM[key]||DENOM['other'];
-      var img=imgURL(d.image);
-      var imgBlock=img
-        ? '<div class="syn-card-img" style="padding:0;overflow:hidden;"><img src="'+attr(img)+'" alt="'+attr(d.name)+'" loading="lazy" decoding="async" style="width:100%;height:100%;object-fit:cover;display:block;"></div>'
-        : '<div class="syn-card-img" style="background:linear-gradient(135deg,'+dn.grad+');">\uD83D\uDD4D</div>';
-      var web=String(d.website||'').trim();
-      var webLine=web ? '<div class="syn-detail"><span class="syn-detail-icon">\uD83C\uDF10</span> <a href="'+attr(web)+'" target="_blank">'+esc(webDisplay(web))+'</a></div>' : '';
-      var btn=web ? '<a href="'+attr(web)+'" target="_blank" class="syn-website-btn" style="white-space:nowrap;flex-shrink:0;">Visit Website \u2192</a>' : '';
-      var times=d.servicetimes ? '<div class="syn-service-times">'+esc(d.servicetimes)+'</div>' : '';
-      var nusach=String(d.nusach||'').trim();
-      var nusachTag=nusach ? '<span class="syn-nusach">'+esc(nusach)+'</span>' : '';
-      return '<div class="syn-card" data-denom="'+attr(key)+'" data-nusach="'+attr(nusach.toLowerCase())+'">'+imgBlock+
-        '<div class="syn-card-body">'+
-          '<span class="syn-denom '+dn.cls+'">'+esc(dn.label)+'</span>'+nusachTag+
-          '<div class="syn-name">'+esc(d.name)+'</div>'+
-          detail('\uD83D\uDCCD',d.address)+detail('\uD83D\uDCDE',d.phone)+detail('\uD83D\uDC64',d.rabbi)+webLine+
-          '<hr class="syn-divider">'+
-          '<div style="display:flex;align-items:center;justify-content:space-between;gap:10px;">'+
-            '<div><div class="syn-services">Shabbat Services</div>'+times+'</div>'+btn+
-          '</div>'+
-        '</div></div>';
-    }
-
-    var url='https://docs.google.com/spreadsheets/d/'+SYN_SHEET_ID+'/gviz/tq?tqx=out:json&sheet='+encodeURIComponent(SYN_SHEET_TAB)+'&headers=1';
+  // ===== THINGS TO DO — shared helpers =====
+  var TTD_SHEET_ID='1in7Ac7zknqyR9neWKOCAjOAG4jXCIVTJQfU6jJ72CV8';
+  function ttdEsc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+  function ttdAttr(s){ return ttdEsc(s).replace(/"/g,'&quot;'); }
+  function ttdVal(cell){ return cell?(cell.f!=null?String(cell.f):(cell.v==null?'':String(cell.v))):''; }
+  function ttdRows(tab,cb){
+    var url='https://docs.google.com/spreadsheets/d/'+TTD_SHEET_ID+'/gviz/tq?tqx=out:json&headers=1&sheet='+encodeURIComponent(tab);
     fetch(url).then(function(r){return r.text();}).then(function(text){
       var json=JSON.parse(text.substring(47,text.length-2));
       var cols=json.table.cols.map(function(c){return (c.label||'').toLowerCase().trim();});
-      var html='', n=0;
-      json.table.rows.forEach(function(row){
-        var d={};
-        cols.forEach(function(col,i){ var cell=row.c[i]; d[col]=cell?(cell.f!=null?cell.f:(cell.v==null?'':cell.v)):''; });
-        if(String(d.status||'').toLowerCase().trim()!=='active') return;
-        if(!d.name) return;
-        html+=cardHTML(d); n++;
+      var out=json.table.rows.map(function(row){
+        var d={}; cols.forEach(function(col,i){ d[col]=ttdVal(row.c?row.c[i]:null); }); return d;
       });
-      var grid=document.getElementById('syn-grid');
-      grid.innerHTML=html || '<div style="grid-column:1/-1;font-family:sans-serif;font-size:14px;color:var(--muted);text-align:center;padding:40px 0;">No congregations listed yet.</div>';
-      var cnt=document.getElementById('syn-count'); if(cnt) cnt.textContent=n;
-    }).catch(function(){
-      var grid=document.getElementById('syn-grid');
-      grid.innerHTML='<div style="grid-column:1/-1;font-family:sans-serif;font-size:14px;color:var(--muted);text-align:center;padding:40px 0;">Congregations are taking a moment to load. Please refresh.</div>';
-    });
-  })();
-
-  // ===== MIKVAOT — Google Sheets driven =====
-  (function() {
-    var MIK_SHEET_ID  = '1in7Ac7zknqyR9neWKOCAjOAG4jXCIVTJQfU6jJ72CV8';
-    var MIK_SHEET_TAB = 'Mikvaot';
-    function esc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-    function mikCard(d){
-      var phone=d.phone?'<div class="mikvah-detail">\uD83D\uDCDE '+esc(d.phone)+'</div>':'';
-      var addr=d.address?'<div class="mikvah-detail">\uD83D\uDCCD '+esc(d.address)+'</div>':'';
-      var notes=d.notes?'<div class="mikvah-detail" style="color:#777;">'+esc(d.notes)+'</div>':'';
-      return '<div class="mikvah-card"><span class="mikvah-tag">Mikvah</span>'+
-        '<div class="mikvah-name">'+esc(d.name)+'</div>'+addr+phone+notes+'</div>';
-    }
-    var url='https://docs.google.com/spreadsheets/d/'+MIK_SHEET_ID+'/gviz/tq?tqx=out:json&sheet='+encodeURIComponent(MIK_SHEET_TAB)+'&headers=1';
-    fetch(url).then(function(r){return r.text();}).then(function(text){
-      var json=JSON.parse(text.substring(47,text.length-2));
-      var cols=json.table.cols.map(function(c){return (c.label||'').toLowerCase().trim();});
-      var html='', n=0;
-      json.table.rows.forEach(function(row){
-        var d={};
-        cols.forEach(function(col,i){ var cell=row.c[i]; d[col]=cell?(cell.f!=null?cell.f:(cell.v==null?'':cell.v)):''; });
-        if(!d.name) return;
-        if(String(d.status||'').toLowerCase().trim()==='inactive') return;
-        html+=mikCard(d); n++;
-      });
-      var grid=document.getElementById('mikvah-grid');
-      if(!grid) return;
-      if(n){ grid.innerHTML=html; }
-      else { grid.innerHTML='<div style="grid-column:1/-1;font-family:sans-serif;font-size:14px;color:var(--muted);text-align:center;padding:30px 0;">No mikvaot listed yet — check back soon.</div>'; }
-    }).catch(function(){
-      var grid=document.getElementById('mikvah-grid');
-      if(grid) grid.innerHTML='<div style="grid-column:1/-1;font-family:sans-serif;font-size:14px;color:var(--muted);text-align:center;padding:30px 0;">Mikvaot are taking a moment to load. Please refresh.</div>';
-    });
-  })();
-
-  // ===== View tabs: Synagogues <-> Mikvaot =====
-  function showSynView(){
-    document.getElementById('syn-view').style.display='';
-    document.getElementById('mikvah-view').style.display='none';
-    document.getElementById('tab-syn').classList.add('active');
-    document.getElementById('tab-mik').classList.remove('active');
+      cb(out);
+    }).catch(function(){ cb(null); });
   }
-  function showMikvahView(){
-    document.getElementById('syn-view').style.display='none';
-    document.getElementById('mikvah-view').style.display='';
-    document.getElementById('tab-mik').classList.add('active');
-    document.getElementById('tab-syn').classList.remove('active');
-  }
+  function ttdWeb(u){ u=String(u||'').trim(); if(!u) return ''; return /^https?:\/\//i.test(u)?u:'https://'+u; }
+  function ttdWebDisplay(u){ return String(u||'').replace(/^https?:\/\//i,'').replace(/^www\./i,'').replace(/\/+$/,''); }
 
-  // Filter — matches by denomination OR nusach
-  function filterSyn(val, btn) {
-    document.querySelectorAll('.filter-btn').forEach(function(b) { b.classList.remove('active'); });
-    btn.classList.add('active');
-    var cards = document.querySelectorAll('.syn-card');
-    var count = 0;
-    cards.forEach(function(card) {
-      var denom = card.dataset.denom || '';
-      var nusach = card.dataset.nusach || '';
-      if (val === 'all' || denom === val || nusach === val) {
-        card.style.display = '';
-        count++;
-      } else {
-        card.style.display = 'none';
-      }
+  // ===== EAT OUT (kosher restaurants) =====
+  function kashrutTag(v){
+    v=(v||'').toLowerCase().trim(); if(!v) return '';
+    var m={'dairy':['🧀 Dairy','#e6f1fb','#185fa5'],'milchig':['🧀 Dairy','#e6f1fb','#185fa5'],
+      'meat':['🥩 Meat','#fce8e8','#a32d2d'],'fleishig':['🥩 Meat','#fce8e8','#a32d2d'],
+      'pareve':['🥗 Pareve','#eaf3de','#3b6d11'],'parve':['🥗 Pareve','#eaf3de','#3b6d11']}[v];
+    if(!m) m=[v.charAt(0).toUpperCase()+v.slice(1),'#f0f0f0','#555'];
+    return '<span class="ttd-tag" style="background:'+m[1]+';color:'+m[2]+';">'+m[0]+'</span>';
+  }
+  function eatCard(d){
+    var web=ttdWeb(d.website);
+    return '<div class="ttd-card">'+
+      '<div class="ttd-tagrow">'+(d.badge?'<span class="ttd-tag" style="background:#edf7ed;color:#1a5a1a;">'+ttdEsc(d.badge)+'</span>':'')+kashrutTag(d.kashrut)+'</div>'+
+      '<div class="ttd-name">'+ttdEsc(d.name)+'</div>'+
+      (d.description?'<div class="ttd-desc">'+ttdEsc(d.description)+'</div>':'')+
+      (d.address?'<div class="ttd-detail">📍 '+ttdEsc(d.address)+'</div>':'')+
+      (d.phone?'<div class="ttd-detail">📞 '+ttdEsc(d.phone)+'</div>':'')+
+      (d.hours?'<div class="ttd-detail" style="color:#888;">🕐 '+ttdEsc(d.hours)+'</div>':'')+
+      (web?'<div class="ttd-footer"><a href="'+ttdAttr(web)+'" target="_blank" rel="noopener" class="ttd-link">Visit Website →</a></div>':'')+
+      '</div>';
+  }
+  ttdRows('KosherRestaurants', function(rows){
+    var grid=document.getElementById('eat-grid');
+    if(!rows){ grid.innerHTML='<div class="ttd-empty">Restaurants are taking a moment to load. Please refresh.</div>'; return; }
+    var list=rows.filter(function(d){ if(!d.name) return false; var s=(d.status||'').toLowerCase().trim(); return !s||s==='active'; });
+    grid.innerHTML = list.length ? list.map(eatCard).join('') : '<div class="ttd-empty">No restaurants listed yet.</div>';
+    document.getElementById('eat-count').textContent=list.length;
+  });
+
+  // ===== ACTIVITIES =====
+  var ACT_ALL=[], ACT_CAT='all';
+  function ioTag(v){
+    v=(v||'').toLowerCase().trim(); if(!v) return '';
+    var m={'indoor':['Indoor','#eef0f2','#555'],'outdoor':['Outdoor','#eaf3de','#3b6d11'],'both':['Indoor/Outdoor','#fdf3e0','#7a4a0a']}[v];
+    if(!m) return '';
+    return '<span class="ttd-tag" style="background:'+m[1]+';color:'+m[2]+';">'+m[0]+'</span>';
+  }
+  function catTag(c){ return c?'<span class="ttd-tag" style="background:#e6f1fb;color:#185fa5;">'+ttdEsc(c)+'</span>':''; }
+  function actCard(d){
+    var web=ttdWeb(d.url);
+    var link = web ? '<a href="'+ttdAttr(web)+'" target="_blank" rel="noopener" class="ttd-link">Visit site →</a>' : '';
+    return '<div class="ttd-card">'+
+      '<div class="ttd-tagrow">'+catTag(d.category)+ioTag(d.indooroutdoor)+'</div>'+
+      '<div class="ttd-name">'+ttdEsc(d.name)+'</div>'+
+      (d.address?'<div class="ttd-detail">📍 '+ttdEsc(d.address)+'</div>':'')+
+      (link?'<div class="ttd-footer">'+link+'</div>':'')+
+      '</div>';
+  }
+  function renderActs(){
+    var q=(document.getElementById('act-search').value||'').toLowerCase().trim();
+    var list=ACT_ALL.filter(function(d){
+      var catOk = ACT_CAT==='all' || (d.category||'')===ACT_CAT;
+      var qOk = !q || (d.name||'').toLowerCase().indexOf(q)>-1 || (d.category||'').toLowerCase().indexOf(q)>-1;
+      return catOk && qOk;
     });
-    document.getElementById('syn-count').textContent = count;
+    var grid=document.getElementById('act-grid');
+    grid.innerHTML = list.length ? list.map(actCard).join('') : '<div class="ttd-empty">No activities match — try a different search or category.</div>';
+    document.getElementById('act-count').textContent=list.length;
+  }
+  function setActCat(cat, btn){
+    ACT_CAT=cat;
+    document.querySelectorAll('#act-filters .filter-btn').forEach(function(b){ b.classList.remove('active'); });
+    if(btn) btn.classList.add('active');
+    renderActs();
+  }
+  ttdRows('Activities', function(rows){
+    var grid=document.getElementById('act-grid');
+    if(!rows){ grid.innerHTML='<div class="ttd-empty">Activities are taking a moment to load. Please refresh.</div>'; return; }
+    ACT_ALL=rows.filter(function(d){ if(!d.name) return false; var s=(d.status||'').toLowerCase().trim(); return !s||s==='active'; });
+    renderActs();
+  });
+
+  // ===== View tabs: Eat Out <-> Activities =====
+  function showEatView(){
+    document.getElementById('eat-view').style.display='';
+    document.getElementById('act-view').style.display='none';
+    document.getElementById('tab-eat').classList.add('active');
+    document.getElementById('tab-act').classList.remove('active');
+  }
+  function showActView(){
+    document.getElementById('eat-view').style.display='none';
+    document.getElementById('act-view').style.display='';
+    document.getElementById('tab-act').classList.add('active');
+    document.getElementById('tab-eat').classList.remove('active');
   }
 
   // Modals
@@ -1417,9 +1352,9 @@
     <a href="/services">🛠️ Services</a>
     <a href="/jobs">💼 Jobs</a>
     <a href="/real-estate">🏡 Real Estate</a>
-    <a href="/synagogues" class="active">✡️ Synagogues</a>
+    <a href="/synagogues">✡️ Synagogues</a>
     <a href="/education">🎓 Education</a>
-    <a href="/things-to-do">🎡 Things to Do</a>
+    <a href="/things-to-do" class="active">🎡 Things to Do</a>
     <a href="/charities">💛 Charities</a>
     <a href="/contact">📬 Contact / Submit</a>
   </div>

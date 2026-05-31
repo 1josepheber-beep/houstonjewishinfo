@@ -17,7 +17,7 @@
 </script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Synagogues — Houston Jewish Info</title>
+<title>Business Directory — Houston Jewish Info</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,400&display=swap" rel="stylesheet">
@@ -776,34 +776,26 @@
   .masthead-inner::after { content: ''; width: 140px; flex-shrink: 0; }
 </style>
 <style>
-  /* ── SYNAGOGUE PAGE EXTRAS ── */
+  /* ── PAGE HERO ── */
   .page-hero {
     background: linear-gradient(135deg, #1a2744 0%, #2a407a 100%);
     color: #fff;
-    padding: 28px 0 22px;
-    margin-bottom: 14px;
+    padding: 28px 0 0;
     border-bottom: 3px solid var(--gold);
+    margin-bottom: 0;
   }
-  .page-hero h1 {
-    font-family: 'Playfair Display', serif;
-    font-size: 36px;
-    font-weight: 900;
-    margin-bottom: 6px;
-  }
-  .page-hero p {
-    font-size: 14px;
-    opacity: .8;
-    font-family: sans-serif;
-    max-width: 560px;
-  }
-  .page-hero-inner {
+  .page-hero-top {
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 20px;
     flex-wrap: wrap;
+    padding-bottom: 20px;
   }
-  .submit-hero-btn {
+  .page-hero h1 { font-family: 'Playfair Display', serif; font-size: 34px; font-weight: 900; margin-bottom: 6px; }
+  .page-hero p { font-size: 13px; opacity: .8; font-family: sans-serif; max-width: 520px; }
+
+  .hero-submit-btn {
     background: var(--gold);
     color: #fff;
     border: none;
@@ -817,33 +809,107 @@
     cursor: pointer;
     white-space: nowrap;
     transition: background .15s;
+    flex-shrink: 0;
   }
-  .submit-hero-btn:hover { background: #a87828; }
+  .hero-submit-btn:hover { background: #a87828; }
 
-  /* Filter bar */
-  .filter-bar {
+  /* ── MAIN TABS ── */
+  .main-tabs {
     display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
-    margin-bottom: 24px;
-    align-items: center;
+    gap: 0;
+    margin-top: 20px;
   }
-  .filter-label {
+  .main-tab {
+    font-family: sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: .04em;
+    padding: 14px 36px;
+    border: none;
+    background: rgba(255,255,255,0.1);
+    color: rgba(255,255,255,0.7);
+    cursor: pointer;
+    transition: all .2s;
+    border-radius: 6px 6px 0 0;
+    margin-right: 4px;
+  }
+  .main-tab.active {
+    background: var(--cream);
+    color: var(--navy);
+  }
+  .main-tab:hover:not(.active) { background: rgba(255,255,255,0.18); color: #fff; }
+
+  /* ── TAB CONTENT PANELS ── */
+  .tab-panel { display: none; padding: 28px 0 40px; }
+  .tab-panel.active { display: block; }
+
+  /* ── SEARCH + FILTER BAR ── */
+  .search-filter-bar {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+    padding: 16px;
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+  }
+  .search-input {
+    flex: 1;
+    min-width: 200px;
+    padding: 9px 14px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    font-family: 'Source Serif 4', serif;
+    font-size: 14px;
+    color: var(--ink);
+    outline: none;
+    transition: border-color .15s;
+  }
+  .search-input:focus { border-color: var(--navy); }
+  .search-select {
+    padding: 9px 14px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    font-family: sans-serif;
+    font-size: 12px;
+    color: var(--navy);
+    font-weight: 600;
+    background: var(--white);
+    outline: none;
+    cursor: pointer;
+  }
+  .search-btn {
+    background: var(--navy);
+    color: #fff;
+    border: none;
     font-family: sans-serif;
     font-size: 11px;
     font-weight: 700;
     letter-spacing: .06em;
     text-transform: uppercase;
-    color: var(--muted);
-    margin-right: 4px;
+    padding: 9px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background .15s;
+    white-space: nowrap;
   }
-  .filter-btn {
+  .search-btn:hover { background: #263d6e; }
+
+  /* ── CATEGORY PILLS ── */
+  .cat-pills {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+  }
+  .cat-pill {
     font-family: sans-serif;
     font-size: 11px;
     font-weight: 700;
-    letter-spacing: .05em;
-    text-transform: uppercase;
-    padding: 6px 14px;
+    letter-spacing: .04em;
+    padding: 5px 14px;
     border-radius: 20px;
     border: 1px solid var(--border);
     background: transparent;
@@ -851,154 +917,202 @@
     cursor: pointer;
     transition: all .15s;
   }
-  .filter-btn:hover, .filter-btn.active { background: var(--navy); color: #fff; border-color: var(--navy); }
+  .cat-pill.active, .cat-pill:hover { background: var(--navy); color: #fff; border-color: var(--navy); }
 
-  /* Synagogue grid */
-  .syn-grid {
+  .results-bar { font-family: sans-serif; font-size: 12px; color: var(--muted); margin-bottom: 16px; }
+  .results-bar strong { color: var(--navy); }
+
+  /* ── BUSINESS LISTING CARDS ── */
+  .biz-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 20px;
+    gap: 16px;
     margin-bottom: 32px;
   }
-  .syn-card {
+  .biz-card {
     background: var(--white);
     border: 1px solid var(--border);
     border-radius: 6px;
-    overflow: hidden;
-    transition: box-shadow .2s;
-  }
-  .syn-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,.10); }
-  .syn-card-img {
-    width: 100%;
-    height: 160px;
-    background: linear-gradient(135deg, #c5d5ee, #8aaad4);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 48px;
-  }
-  .syn-card-body {
     padding: 16px;
-  }
-  .syn-denom {
-    display: inline-block;
-    font-family: sans-serif;
-    font-size: 9px;
-    font-weight: 700;
-    letter-spacing: .08em;
-    text-transform: uppercase;
-    padding: 3px 9px;
-    border-radius: 3px;
-    margin-bottom: 8px;
-  }
-  .denom-reform    { background: #e8f0fb; color: #1a3a7a; }
-  .denom-conserv   { background: #fdf3e0; color: #7a4a0a; }
-  .denom-orthodox  { background: #edf7ed; color: #1a5a1a; }
-  .denom-chabad    { background: #fce8e8; color: #8b2020; }
-  .denom-other     { background: #f0f0f0; color: #555; }
-  .syn-nusach {
-    display: inline-block;
-    font-family: sans-serif;
-    font-size: 9px;
-    font-weight: 700;
-    letter-spacing: .08em;
-    text-transform: uppercase;
-    padding: 3px 9px;
-    border-radius: 3px;
-    margin-bottom: 8px;
-    margin-left: 6px;
-    background: #efeaf7; color: #5b3a8c;
-    border: 1px solid #ddd2ee;
-  }
-  .syn-tabs { display: inline-flex; gap: 4px; background: #f0ece3; padding: 5px; border-radius: 9px; margin-bottom: 22px; }
-  .syn-tab { font-family: sans-serif; font-size: 14px; font-weight: 700; padding: 9px 20px; border: none; border-radius: 6px; background: transparent; color: #6b6256; cursor: pointer; transition: all .15s; }
-  .syn-tab:hover { color: var(--navy); }
-  .syn-tab.active { background: var(--navy); color: #fff; box-shadow: 0 1px 4px rgba(0,0,0,.15); }
-  @media (max-width: 480px){ .syn-tab { padding: 9px 14px; font-size: 13px; } }
-  .mikvah-section { margin-top: 36px; }
-  #mikvah-view.mikvah-section { margin-top: 0; }  .mikvah-head { display: flex; align-items: center; gap: 10px; font-family: 'Playfair Display', serif; font-size: 26px; font-weight: 900; color: var(--navy); }
-  .mikvah-sub { font-family: sans-serif; font-size: 13px; color: var(--muted); margin: 2px 0 16px; padding-bottom: 14px; border-bottom: 2px solid var(--gold); }
-  .mikvah-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-bottom: 20px; }
-  @media (max-width: 700px){ .mikvah-grid { grid-template-columns: 1fr; } }
-  .mikvah-card { background: var(--white); border: 1px solid var(--border); border-radius: 8px; padding: 16px 18px; }
-  .mikvah-tag { display: inline-block; font-family: sans-serif; font-size: 9px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; padding: 3px 9px; border-radius: 3px; background: #e6f1fb; color: #185fa5; margin-bottom: 8px; }
-  .mikvah-name { font-family: 'Playfair Display', serif; font-size: 18px; font-weight: 700; color: var(--navy); margin-bottom: 8px; }
-  .mikvah-detail { font-family: sans-serif; font-size: 13px; color: #555; line-height: 1.5; margin-bottom: 4px; }
-  .syn-name {
-    font-family: 'Playfair Display', serif;
-    font-size: 18px;
-    font-weight: 700;
-    color: var(--navy);
-    line-height: 1.2;
-    margin-bottom: 10px;
-  }
-  .syn-detail {
+    transition: box-shadow .2s;
     display: flex;
-    gap: 7px;
-    align-items: flex-start;
-    font-family: sans-serif;
-    font-size: 12px;
-    color: var(--muted);
-    margin-bottom: 5px;
-    line-height: 1.4;
+    flex-direction: column;
+    gap: 6px;
   }
-  .syn-detail-icon { flex-shrink: 0; margin-top: 1px; }
-  .syn-detail a { color: var(--gold); }
-  .syn-detail a:hover { color: var(--navy); }
-  .syn-divider {
-    border: none;
-    border-top: 1px solid var(--border);
-    margin: 12px 0;
+  .biz-card:hover { box-shadow: 0 3px 12px rgba(0,0,0,.09); }
+  .biz-card-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
+  .biz-badge {
+    display: inline-block; font-family: sans-serif; font-size: 9px; font-weight: 700;
+    letter-spacing: .07em; text-transform: uppercase; padding: 3px 8px;
+    border-radius: 3px; white-space: nowrap; flex-shrink: 0;
   }
-  .syn-services {
-    font-family: sans-serif;
-    font-size: 11px;
-    color: var(--navy);
-    font-weight: 600;
-    margin-bottom: 4px;
+  .badge-kosher   { background: #edf7ed; color: #1a5a1a; }
+  .badge-jewish   { background: #e8f0fb; color: #1a3a7a; }
+  .badge-friendly { background: #fdf3e0; color: #7a4a0a; }
+  .biz-name { font-family: 'Playfair Display', serif; font-size: 16px; font-weight: 700; color: var(--navy); line-height: 1.2; }
+  .biz-category { font-family: sans-serif; font-size: 11px; color: var(--gold); font-weight: 700; text-transform: uppercase; letter-spacing: .05em; }
+  .biz-detail { display: flex; gap: 6px; font-family: sans-serif; font-size: 12px; color: var(--muted); align-items: flex-start; line-height: 1.4; }
+  .biz-desc { font-size: 12px; color: #555; line-height: 1.5; margin-top: 2px; }
+  .biz-card-footer { display: flex; align-items: center; justify-content: space-between; margin-top: 6px; padding-top: 10px; border-top: 1px solid var(--border); }
+  .biz-website {
+    font-family: sans-serif; font-size: 10px; font-weight: 700; letter-spacing: .05em;
+    text-transform: uppercase; color: var(--gold); border: 1px solid var(--gold);
+    padding: 4px 10px; border-radius: 3px; transition: all .15s;
   }
-  .syn-service-times {
-    font-family: sans-serif;
-    font-size: 11px;
-    color: var(--muted);
-    line-height: 1.6;
-  }
-  .syn-website-btn {
-    display: inline-block;
-    margin-top: 12px;
-    font-family: sans-serif;
-    font-size: 10px;
-    font-weight: 700;
-    letter-spacing: .06em;
-    text-transform: uppercase;
-    color: var(--gold);
-    border: 1px solid var(--gold);
-    padding: 5px 12px;
-    border-radius: 3px;
-    transition: all .15s;
-  }
-  .syn-website-btn:hover { background: var(--gold); color: #fff; }
+  .biz-website:hover { background: var(--gold); color: #fff; }
 
-  /* Count bar */
-  .results-bar {
-    font-family: sans-serif;
-    font-size: 12px;
-    color: var(--muted);
-    margin-bottom: 16px;
-    padding-bottom: 10px;
-    border-bottom: 1px solid var(--border);
+  /* ── SERVICE FINDER CARDS ── */
+  .service-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-bottom: 32px;
   }
-  .results-bar strong { color: var(--navy); }
-  .eruv-banner { width:100%; display:flex; align-items:center; justify-content:space-between; gap:12px; background:#eef3fb; border:1px solid var(--gold,#c8a882); border-radius:8px; padding:12px 16px; cursor:pointer; text-align:left; font-family:sans-serif; transition:background .15s; }
-  .eruv-banner:hover { background:#e3ecf9; }
-  .eruv-banner-text { font-size:14px; color:var(--navy,#1f3f6e); }
-  .eruv-banner-cta { font-size:12px; font-weight:700; color:#fff; background:var(--navy,#1f3f6e); padding:7px 14px; border-radius:5px; white-space:nowrap; }
-  @media (max-width:600px){ .eruv-banner{ flex-direction:column; align-items:flex-start; } }
+  .service-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 20px 16px;
+    text-align: center;
+    cursor: pointer;
+    transition: all .2s;
+  }
+  .service-card:hover {
+    box-shadow: 0 4px 14px rgba(0,0,0,.10);
+    border-color: var(--navy);
+    transform: translateY(-2px);
+  }
+  .service-icon { font-size: 36px; margin-bottom: 10px; }
+  .service-name { font-family: 'Playfair Display', serif; font-size: 15px; font-weight: 700; color: var(--navy); margin-bottom: 4px; }
+  .service-count { font-family: sans-serif; font-size: 11px; color: var(--muted); }
+  .service-arrow { font-family: sans-serif; font-size: 10px; font-weight: 700; color: var(--gold); margin-top: 8px; letter-spacing: .04em; text-transform: uppercase; }
 
-  @media (max-width: 700px) {
-    .syn-grid { grid-template-columns: 1fr; }
+  /* Service listing expanded view */
+  .service-listings { display: none; margin-bottom: 32px; }
+  .service-listings.open { display: block; }
+  .service-listings-header {
+    display: flex; align-items: center; justify-content: space-between;
+    background: var(--navy); color: #fff; padding: 14px 18px;
+    border-radius: 6px 6px 0 0; font-family: 'Playfair Display', serif; font-size: 18px; font-weight: 700;
+  }
+  .service-close-btn {
+    background: none; border: none; color: #fff; font-size: 22px; cursor: pointer; line-height: 1;
+  }
+  .service-listing-item {
+    background: var(--white); border: 1px solid var(--border); border-top: none;
+    padding: 14px 18px; display: flex; align-items: center; justify-content: space-between; gap: 16px;
+    transition: background .15s;
+  }
+  .service-listing-item:hover { background: #f5f3ee; }
+  .service-listing-item:last-child { border-radius: 0 0 6px 6px; }
+  .sli-name { font-family: sans-serif; font-size: 13px; font-weight: 700; color: var(--navy); margin-bottom: 2px; }
+  .sli-meta { font-family: sans-serif; font-size: 11px; color: var(--muted); }
+  .sli-phone { font-family: sans-serif; font-size: 12px; color: var(--navy); font-weight: 600; white-space: nowrap; }
+
+  /* Placeholder state */
+  .placeholder-card {
+    background: #f9f8f5; border: 2px dashed var(--border); border-radius: 6px;
+    padding: 24px; text-align: center; color: var(--muted); font-family: sans-serif; font-size: 12px;
+  }
+  .placeholder-card strong { display: block; color: var(--navy); font-size: 14px; margin-bottom: 6px; }
+
+  @media (max-width: 800px) {
+    .biz-grid { grid-template-columns: 1fr; }
+    .service-grid { grid-template-columns: repeat(2, 1fr); }
     .page-hero h1 { font-size: 26px; }
+    .main-tab { padding: 12px 20px; font-size: 12px; }
   }
+  @media (max-width: 500px) {
+    .service-grid { grid-template-columns: 1fr; }
+  }
+
+  /* ── SELF HELP TAB ── */
+  .sh-layout { display:grid; grid-template-columns:180px 1fr; gap:24px; align-items:start; margin-bottom:32px; }
+
+  .sh-sidebar { background:var(--white); border:1px solid var(--border); border-radius:6px; overflow:hidden; position:sticky; top:20px; }
+  .sh-sidebar-item {
+    display:flex; align-items:center; gap:10px;
+    padding:12px 16px; font-family:sans-serif; font-size:12px; font-weight:700;
+    color:var(--navy); cursor:pointer; border-bottom:1px solid var(--border);
+    transition:background .15s;
+  }
+  .sh-sidebar-item:last-child { border-bottom:none; }
+  .sh-sidebar-item:hover { background:var(--light-blue, #eef3fb); }
+  .sh-sidebar-item.active { background:var(--navy); color:#fff; }
+  .sh-sidebar-icon { font-size:16px; }
+
+  .sh-content { display:flex; flex-direction:column; gap:16px; }
+
+  .sh-cat-head {
+    font-family:'Playfair Display', serif; font-size:17px; font-weight:700;
+    color:var(--navy); border-bottom:2px solid var(--gold);
+    padding-bottom:6px; margin-top:8px;
+  }
+  .sh-cat-head:first-child { margin-top:0; }
+
+  .sh-guide-card {
+    background:var(--white); border:1px solid var(--border);
+    border-radius:6px; padding:18px; transition:box-shadow .2s;
+  }
+  .sh-guide-card:hover { box-shadow:0 3px 12px rgba(0,0,0,.08); }
+
+  .sh-guide-header { margin-bottom:12px; }
+  .sh-guide-badges { display:flex; gap:6px; margin-bottom:7px; }
+  .sh-badge {
+    font-family:sans-serif; font-size:9px; font-weight:700;
+    letter-spacing:.07em; text-transform:uppercase;
+    padding:3px 8px; border-radius:3px;
+  }
+  .sh-badge-video { background:#fdf0ec; color:#c0391b; }
+  .sh-badge-guide { background:#eef3fb; color:#1e4d9b; }
+
+  .sh-guide-title {
+    font-family:'Playfair Display', serif; font-size:16px; font-weight:700;
+    color:var(--navy); line-height:1.3; margin-bottom:4px;
+  }
+  .sh-guide-desc { font-size:12px; color:var(--muted); line-height:1.5; }
+
+  .sh-toggle-bar {
+    display:flex; gap:0; margin-bottom:12px;
+    border:1px solid var(--border); border-radius:4px; overflow:hidden;
+    width:fit-content;
+  }
+  .sh-toggle {
+    font-family:sans-serif; font-size:11px; font-weight:700;
+    padding:6px 16px; border:none; background:transparent;
+    color:var(--muted); cursor:pointer; transition:all .15s;
+  }
+  .sh-toggle.active { background:var(--navy); color:#fff; }
+  .sh-toggle:hover:not(.active) { background:#eef3fb; }
+
+  .sh-content-block { }
+  .sh-video-wrap {
+    position:relative; padding-bottom:56.25%; height:0; overflow:hidden;
+    background:#000; border-radius:4px;
+  }
+  .sh-video-wrap iframe { position:absolute; top:0; left:0; width:100%; height:100%; border:none; }
+
+  .sh-steps { padding:0; margin:0; list-style:none; }
+  .sh-step {
+    display:flex; gap:10px; padding:8px 0;
+    border-bottom:1px solid var(--border); font-size:13px;
+    color:var(--ink); line-height:1.5;
+  }
+  .sh-step:last-child { border-bottom:none; }
+  .sh-step-num {
+    font-family:'Playfair Display', serif; font-size:22px; font-weight:700;
+    color:var(--border); flex-shrink:0; line-height:1; width:24px;
+  }
+
+  .sh-add-banner {
+    background:var(--navy); color:#fff; border-radius:6px;
+    padding:20px 24px; display:flex; align-items:center;
+    justify-content:space-between; gap:16px; flex-wrap:wrap; margin-bottom:16px;
+  }
+  .sh-add-banner-title { font-family:'Playfair Display',serif; font-size:17px; font-weight:700; margin-bottom:3px; }
+  .sh-add-banner-sub { font-family:sans-serif; font-size:12px; opacity:.8; }
+
+  @media (max-width:700px) { .sh-layout { grid-template-columns:1fr; } .sh-sidebar { position:static; } }
 
   /* ── NAV SCROLL WRAPPER ── */
   .nav-wrapper {
@@ -1030,6 +1144,105 @@
 </head>
 <body>
 
+<!-- SUBMIT BUSINESS MODAL -->
+<div class="modal-overlay" id="modal-submit-biz">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('modal-submit-biz')">×</button>
+    <div id="biz-form-wrap">
+      <div class="modal-title">Submit a Business or Service</div>
+      <div class="modal-sub">All submissions are reviewed by HJI before publishing. We'll be in touch within 1–2 business days.</div>
+      <div class="form-group">
+        <label class="form-label">Business / Service Name *</label>
+        <input name="e.g._cohen" type="text" class="form-input" placeholder="e.g. Cohen's Kosher Deli">
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Listing Type *</label>
+          <select class="form-select">
+            <option value="">Select...</option>
+            <option>Business Listing (Browse Businesses tab)</option>
+            <option>Service Provider (Find a Service tab)</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Category *</label>
+          <select class="form-select">
+            <option value="">Select...</option>
+            <option>24 Hour Services</option>
+            <option>Attorney / Legal</option>
+            <option>Catering &amp; Events</option>
+            <option>Community Organization</option>
+            <option>Construction</option>
+            <option>Electrician</option>
+            <option>Financial / Accounting</option>
+            <option>Funeral Home</option>
+            <option>HVAC</option>
+            <option>Insurance</option>
+            <option>Jewish Books &amp; Gifts</option>
+            <option>Jewish Family Service</option>
+            <option>Kosher Market / Grocery</option>
+            <option>Kosher Restaurant</option>
+            <option>Marketing &amp; Digital</option>
+            <option>Medical / Healthcare</option>
+            <option>Photography</option>
+            <option>Plumbing</option>
+            <option>Real Estate</option>
+            <option>Security Services</option>
+            <option>Therapy &amp; Counseling</option>
+            <option>Trades</option>
+            <option>Travel Agency</option>
+            <option>Tutoring</option>
+            <option>Other</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Address</label>
+        <input name="street_address,_houston_tx" type="text" class="form-input" placeholder="Street address, Houston TX">
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Phone *</label>
+          <input name="(713)_000-0000" type="tel" class="form-input" placeholder="(713) 000-0000">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Website</label>
+          <input name="https:__..." type="text" class="form-input" placeholder="https://...">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Short Description *</label>
+        <textarea name="tell_the_community_about_your_" class="form-textarea" placeholder="Tell the community about your business or service (2–3 sentences)..."></textarea>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Badge (optional)</label>
+        <select class="form-select">
+          <option value="">None</option>
+          <option>Kosher Certified</option>
+          <option>Jewish-Owned</option>
+          <option>Jewish-Friendly</option>
+        </select>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Your Name *</label>
+          <input name="contact_name" type="text" class="form-input" placeholder="Contact name">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Your Email *</label>
+          <input name="you@example.com" type="email" class="form-input" placeholder="you@example.com">
+        </div>
+      </div>
+      <button class="btn-primary" onclick="submitForm('biz-form-wrap','biz-success')">Submit for Review</button>
+    </div>
+    <div class="success-msg" id="biz-success">
+      <div class="check">✅</div>
+      <p>Thank you! Your submission has been received.</p>
+      <small>Our team will review and publish it within 1–2 business days.</small>
+    </div>
+  </div>
+</div>
+
 <!-- ADVERTISE MODAL -->
 <div class="modal-overlay" id="modal-ad">
   <div class="modal">
@@ -1037,65 +1250,14 @@
     <div id="ad-form-wrap">
       <div class="modal-title">Advertise with Us</div>
       <div class="modal-sub">Reach Houston's Jewish community on every page of HJI.</div>
-      <div class="form-group"><label class="form-label">Business Name *</label><input name="your_business_or_organization" type="text" class="form-input" placeholder="Your business or organization"></div>
-      <div class="form-group"><label class="form-label">Ad Slot</label>
-        <select class="form-select"><option>Sidebar Large (300×250)</option><option>Sidebar Medium (300×150)</option><option>Sponsored Listing</option></select>
-      </div>
+      <div class="form-group"><label class="form-label">Business Name *</label><input name="your_business" type="text" class="form-input" placeholder="Your business"></div>
       <div class="form-row">
-        <div class="form-group"><label class="form-label">Your Name *</label><input name="contact_name" type="text" class="form-input" placeholder="Contact name"></div>
-        <div class="form-group"><label class="form-label">Email *</label><input name="you@example.com" type="email" class="form-input" placeholder="you@example.com"></div>
+        <div class="form-group"><label class="form-label">Your Name *</label><input type="text" class="form-input"></div>
+        <div class="form-group"><label class="form-label">Email *</label><input type="email" class="form-input"></div>
       </div>
       <button class="btn-primary" onclick="submitForm('ad-form-wrap','ad-success')">Send Inquiry</button>
     </div>
-    <div class="success-msg" id="ad-success"><div class="check">✅</div><p>We'll be in touch shortly!</p><small>Our team will contact you within 24 hours.</small></div>
-  </div>
-</div>
-
-<!-- ERUV MAP MODAL -->
-<div class="modal-overlay" id="modal-eruv">
-  <div class="modal" style="max-width:780px;width:94%;">
-    <button class="modal-close" onclick="closeModal('modal-eruv')">×</button>
-    <div class="modal-title">🗺️ Houston Community Eruv</div>
-    <div class="modal-sub">The map below shows the boundary of the Houston community eruv. Use the buttons to jump to an area.</div>
-    <div id="eruv-area-buttons" style="display:flex;flex-wrap:wrap;gap:8px;margin:12px 0 10px;"></div>
-    <div style="border:1px solid #ddd;border-radius:8px;overflow:hidden;margin:0 0 12px;">
-      <iframe id="eruv-map-frame" src="https://www.google.com/maps/d/embed?mid=1eCMUSdSQYatZxVpHVPvOuHz_Ru-HkPs&ehbc=2E312F" style="width:100%;height:430px;border:0;display:block;" loading="lazy" title="Houston Community Eruv Map"></iframe>
-    </div>
-    <p style="font-family:sans-serif;font-size:12px;color:#8a6d1a;background:#fff8e6;border:1px solid #f0d98a;border-radius:6px;padding:9px 11px;line-height:1.5;margin-bottom:12px;">⚠️ An eruv's status can change week to week. Always confirm the eruv is up before relying on it for Shabbat.</p>
-    <div style="display:flex;flex-wrap:wrap;gap:16px;font-family:sans-serif;font-size:12px;font-weight:700;">
-      <a href="https://www.google.com/maps/d/viewer?mid=1eCMUSdSQYatZxVpHVPvOuHz_Ru-HkPs" target="_blank" rel="noopener" style="color:var(--navy,#1f3f6e);">Open full map in Google Maps →</a>
-    </div>
-    <script>
-      // ── Eruv area jump buttons ──────────────────────────────────────
-      // To add/edit an area: give it a label, latitude, longitude, and zoom
-      // (13 = wider view, 15 = closer). Get lat/lng by right-clicking the spot
-      // in Google Maps and copying the numbers. "All areas" resets to full view.
-      var ERUV_MID = '1eCMUSdSQYatZxVpHVPvOuHz_Ru-HkPs';
-      var ERUV_AREAS = [
-        { label: 'All areas', full: true },
-        { label: 'Chabad – Young Israel',     lat: 29.660012473297257, lng: -95.51293073887385, zoom: 15 },
-        { label: 'Chabad of West Houston',    lat: 29.748821560376232, lng: -95.6026576208174,  zoom: 15 }
-      ];
-      (function buildEruvButtons(){
-        var wrap = document.getElementById('eruv-area-buttons');
-        if(!wrap) return;
-        ERUV_AREAS.forEach(function(a){
-          var b = document.createElement('button');
-          b.type = 'button';
-          b.textContent = a.label;
-          b.style.cssText = 'font-family:sans-serif;font-size:12px;font-weight:700;padding:6px 13px;border-radius:5px;border:1px solid var(--navy,#1f3f6e);background:#fff;color:var(--navy,#1f3f6e);cursor:pointer;';
-          b.onclick = function(){
-            var f = document.getElementById('eruv-map-frame');
-            var base = 'https://www.google.com/maps/d/embed?mid=' + ERUV_MID + '&ehbc=2E312F';
-            f.src = a.full ? base : base + '&ll=' + a.lat + ',' + a.lng + '&z=' + (a.zoom || 14);
-            // highlight the active button
-            wrap.querySelectorAll('button').forEach(function(x){ x.style.background='#fff'; x.style.color='var(--navy,#1f3f6e)'; });
-            b.style.background = 'var(--navy,#1f3f6e)'; b.style.color = '#fff';
-          };
-          wrap.appendChild(b);
-        });
-      })();
-    </script>
+    <div class="success-msg" id="ad-success"><div class="check">✅</div><p>We'll be in touch shortly!</p></div>
   </div>
 </div>
 
@@ -1120,10 +1282,10 @@
         <a href="/">Home</a>
         <a href="/mazaltov">Mazal Tov</a>
         <a href="/events">Events</a>
-        <a href="/services">Services</a>
+        <a href="/services" class="active">Services</a>
         <a href="/jobs">Jobs</a>
         <a href="/real-estate">Real Estate</a>
-        <a href="/synagogues" class="active">Synagogues</a>
+        <a href="/synagogues">Synagogues</a>
         <a href="/education">Education</a>
         <a href="/things-to-do">Things to Do</a>
         <a href="/charities">Charities</a>
@@ -1135,68 +1297,646 @@
   </div>
 </header>
 
-<!-- PAGE HERO -->
+<!-- PAGE HERO + TABS -->
 <div class="page-hero">
   <div class="portal">
-    <div class="page-hero-inner">
+    <div class="page-hero-top">
       <div>
-        <h1>✡️ Houston Synagogue Directory</h1>
-        <p>Find congregations across Greater Houston — from Meyerland to the Woodlands, representing every movement in Jewish life.</p>
+        <h1>🛠️ Houston Jewish Services</h1>
+        <p>Find Jewish-owned businesses, kosher dining, trusted services, and community-recommended professionals across Greater Houston.</p>
       </div>
+      <button class="hero-submit-btn" onclick="openModal('modal-submit-biz')">+ Submit a Listing</button>
+    </div>
+    <div class="main-tabs">
+      <button class="main-tab active" onclick="switchTab('browse', this)">🏪 Browse Businesses</button>
+      <button class="main-tab" onclick="switchTab('services', this)">🔧 Find a Service</button>
+      <button class="main-tab" onclick="switchTab('selfhelp', this)">📚 Self Help &amp; How-To</button>
     </div>
   </div>
 </div>
 
-<!-- ERUV BANNER -->
-<div class="portal" style="padding-top:2px;padding-bottom:18px;">
-  <button type="button" class="eruv-banner" onclick="openModal('modal-eruv')" aria-label="View the Houston community eruv map">
-    <span class="eruv-banner-text">🗺️ <strong>Houston Community Eruv</strong> — view the eruv boundary map</span>
-    <span class="eruv-banner-cta">View Map →</span>
-  </button>
-</div>
-
-<!-- MAIN -->
+<!-- MAIN CONTENT -->
 <div class="portal">
 
-  <!-- VIEW TABS -->
-  <div class="syn-tabs" role="tablist">
-    <button class="syn-tab active" id="tab-syn" role="tab" onclick="showSynView()">🏛️ Synagogues</button>
-    <button class="syn-tab" id="tab-mik" role="tab" onclick="showMikvahView()">💧 Mikvaot</button>
-  </div>
+  <!-- ══════════════════════════════════════
+       TAB 1: BROWSE BUSINESSES
+  ══════════════════════════════════════ -->
+  <div class="tab-panel active" id="tab-browse">
 
-  <!-- SYNAGOGUE VIEW -->
-  <div id="syn-view">
-  <!-- FILTER BAR -->
-  <div class="filter-bar">
-    <span class="filter-label">Filter:</span>
-    <button class="filter-btn active" onclick="filterSyn('all', this)">All</button>
-    <button class="filter-btn" onclick="filterSyn('orthodox', this)">Orthodox</button>
-    <button class="filter-btn" onclick="filterSyn('chabad', this)">Chabad</button>
-    <button class="filter-btn" onclick="filterSyn('ashkenaz', this)">Ashkenaz</button>
-    <button class="filter-btn" onclick="filterSyn('sefard', this)">Sefard</button>
-    <button class="filter-btn" onclick="filterSyn('nusach ari', this)">Nusach Ari</button>
-  </div>
-
-  <div class="results-bar">Showing <strong id="syn-count">10</strong> congregations in Greater Houston</div>
-
-  <!-- SYNAGOGUE GRID -->
-  <div class="syn-grid" id="syn-grid">
-    <!-- Cards loaded dynamically from the Synagogues sheet tab -->
-  </div><!-- end syn-grid -->
-  </div><!-- end syn-view -->
-
-  <!-- MIKVAOT VIEW -->
-  <div class="mikvah-section" id="mikvah-view" style="display:none;">
-    <div class="mikvah-head">
-      <span style="font-size:22px;">💧</span>
-      <span>Mikvaot in Houston</span>
+    <div class="search-filter-bar">
+      <input name="🔍__search_businesses..." type="text" class="search-input" id="biz-search" placeholder="🔍  Search businesses..." oninput="filterBiz()">
+      <select class="search-select" id="biz-cat-select" onchange="filterBiz()">
+        <option value="all">All Categories</option>
+        <option value="kosher-restaurant">Kosher Restaurant</option>
+        <option value="kosher-market">Kosher Market</option>
+        <option value="books-gifts">Books &amp; Gifts</option>
+        <option value="catering">Catering &amp; Events</option>
+        <option value="community-org">Community Organizations</option>
+        <option value="security">Security Services</option>
+        <option value="marketing">Marketing &amp; Digital</option>
+        <option value="trades">Trades</option>
+      </select>
     </div>
-    <div class="mikvah-sub">Ritual baths serving the community</div>
-    <div class="mikvah-grid" id="mikvah-grid">
-      <!-- Loaded dynamically from the Mikvaot sheet tab -->
-    </div>
-  </div>
 
+    <div class="cat-pills">
+      <button class="cat-pill active" onclick="setCat('all', this)">All</button>
+      <button class="cat-pill" onclick="setCat('kosher-restaurant', this)">🍽️ Kosher Restaurants</button>
+      <button class="cat-pill" onclick="setCat('kosher-market', this)">🛒 Kosher Markets</button>
+      <button class="cat-pill" onclick="setCat('books-gifts', this)">📚 Books &amp; Gifts</button>
+      <button class="cat-pill" onclick="setCat('catering', this)">🍽️ Catering &amp; Events</button>
+      <button class="cat-pill" onclick="setCat('community-org', this)">🏛️ Community Organizations</button>
+      <button class="cat-pill" onclick="setCat('security', this)">🛡️ Security</button>
+      <button class="cat-pill" onclick="setCat('marketing', this)">📱 Marketing</button>
+      <button class="cat-pill" onclick="setCat('trades', this)">🔌 Trades</button>
+    </div>
+
+    <div class="results-bar">Showing <strong id="biz-count">25</strong> listings</div>
+
+    <div class="biz-grid" id="biz-grid">
+      <div id="biz-loading" style="grid-column:1/-1;text-align:center;font-family:sans-serif;font-size:13px;color:var(--muted);padding:40px;">
+        Loading directory...
+      </div>
+    </div><!-- end biz-grid -->
+
+    <!-- SUBMIT CTA -->
+    <div style="background:var(--navy);color:#fff;border-radius:6px;padding:20px 24px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:16px;">
+      <div>
+        <div style="font-family:'Playfair Display',serif;font-size:17px;font-weight:700;margin-bottom:3px;">Is your business listed?</div>
+        <div style="font-family:sans-serif;font-size:12px;opacity:.8;">Submit your listing — reviewed and published by HJI within 1–2 days.</div>
+      </div>
+      <button class="hero-submit-btn" onclick="openModal('modal-submit-biz')">+ Submit a Listing</button>
+    </div>
+
+  </div><!-- end tab-browse -->
+
+
+  <!-- ══════════════════════════════════════
+       TAB 2: FIND A SERVICE
+  ══════════════════════════════════════ -->
+  <div class="tab-panel" id="tab-services">
+
+    <p style="font-family:sans-serif;font-size:13px;color:var(--muted);margin-bottom:20px;">Click any category below to see available providers in the Houston Jewish community.</p>
+
+    <div class="service-grid">
+      <!-- ROW 1: Emergency -->
+      <div class="service-card" onclick="window.open('https://www.houstonhatzalah.org','_blank')" style="border-color:#c0391b;">
+        <div class="service-icon">🚑</div>
+        <div class="service-name">Houston Hatzalah</div>
+        <div class="service-count" style="color:#c0391b;font-weight:700;">(832) 743-0111 · 24/7/365</div>
+        <div class="service-arrow">Emergency Medical →</div>
+      </div>
+      <div class="service-card" onclick="window.open('https://www.houstonchaverim.org','_blank')" style="border-color:#c0391b;">
+        <div class="service-icon">🚗</div>
+        <div class="service-name">Houston Chaverim</div>
+        <div class="service-count" style="color:#c0391b;font-weight:700;">(281) 800-8235 · 24/6</div>
+        <div class="service-arrow">Jump start · Lockout →</div>
+      </div>
+      <div class="service-card" onclick="openService('medical')">
+        <div class="service-icon">🏥</div>
+        <div class="service-name">Medical / Healthcare</div>
+        <div class="service-count">Submit your listing</div>
+        <div class="service-arrow">View Providers →</div>
+      </div>
+      <div class="service-card" onclick="openService('legal')">
+        <div class="service-icon">⚖️</div>
+        <div class="service-name">Attorney / Legal</div>
+        <div class="service-count">Submit your listing</div>
+        <div class="service-arrow">View Providers →</div>
+      </div>
+      <div class="service-card" onclick="openService('realestate')">
+        <div class="service-icon">🏠</div>
+        <div class="service-name">Real Estate</div>
+        <div class="service-count">Submit your listing</div>
+        <div class="service-arrow">View Providers →</div>
+      </div>
+      <div class="service-card" onclick="openService('financial')">
+        <div class="service-icon">💼</div>
+        <div class="service-name">Financial / Accounting</div>
+        <div class="service-count">Submit your listing</div>
+        <div class="service-arrow">View Providers →</div>
+      </div>
+      <div class="service-card" onclick="openService('catering')">
+        <div class="service-icon">🍽️</div>
+        <div class="service-name">Catering & Events</div>
+        <div class="service-count">Submit your listing</div>
+        <div class="service-arrow">View Providers →</div>
+      </div>
+      <div class="service-card" onclick="openService('photography')">
+        <div class="service-icon">📸</div>
+        <div class="service-name">Photography</div>
+        <div class="service-count">Submit your listing</div>
+        <div class="service-arrow">View Providers →</div>
+      </div>
+      <div class="service-card" onclick="openService('security')">
+        <div class="service-icon">🛡️</div>
+        <div class="service-name">Security Services</div>
+        <div class="service-count">1 provider</div>
+        <div class="service-arrow">View Providers →</div>
+      </div>
+      <div class="service-card" onclick="openService('marketing')">
+        <div class="service-icon">📱</div>
+        <div class="service-name">Marketing & Digital</div>
+        <div class="service-count">1 provider</div>
+        <div class="service-arrow">View Providers →</div>
+      </div>
+      <div class="service-card" onclick="openService('therapy')">
+        <div class="service-icon">🧠</div>
+        <div class="service-name">Therapy & Counseling</div>
+        <div class="service-count">Submit your listing</div>
+        <div class="service-arrow">View Providers →</div>
+      </div>
+      <div class="service-card" onclick="openService('tutoring')">
+        <div class="service-icon">📖</div>
+        <div class="service-name">Tutoring</div>
+        <div class="service-count">Submit your listing</div>
+        <div class="service-arrow">View Providers →</div>
+      </div>
+      <div class="service-card" onclick="openService('plumbing')">
+        <div class="service-icon">🔧</div>
+        <div class="service-name">Plumbing</div>
+        <div class="service-count">Submit your listing</div>
+        <div class="service-arrow">View Providers →</div>
+      </div>
+      <div class="service-card" onclick="openService('electric')">
+        <div class="service-icon">⚡</div>
+        <div class="service-name">Electrician</div>
+        <div class="service-count">1 provider</div>
+        <div class="service-arrow">View Providers →</div>
+      </div>
+      <div class="service-card" onclick="openService('hvac')">
+        <div class="service-icon">❄️</div>
+        <div class="service-name">HVAC</div>
+        <div class="service-count">Submit your listing</div>
+        <div class="service-arrow">View Providers →</div>
+      </div>
+      <div class="service-card" onclick="openService('construction')">
+        <div class="service-icon">🏗️</div>
+        <div class="service-name">Construction</div>
+        <div class="service-count">Submit your listing</div>
+        <div class="service-arrow">View Providers →</div>
+      </div>
+      <div class="service-card" onclick="openService('24hour')">
+        <div class="service-icon">🕐</div>
+        <div class="service-name">24 Hour Services</div>
+        <div class="service-count">Submit your listing</div>
+        <div class="service-arrow">View Providers →</div>
+      </div>
+      <div class="service-card" onclick="openService('funeral')">
+        <div class="service-icon">🕯️</div>
+        <div class="service-name">Funeral Home</div>
+        <div class="service-count">3 providers</div>
+        <div class="service-arrow">View Providers →</div>
+      </div>
+      <div class="service-card" onclick="openService('travel')">
+        <div class="service-icon">✈️</div>
+        <div class="service-name">Travel Agency</div>
+        <div class="service-count">Submit your listing</div>
+        <div class="service-arrow">View Providers →</div>
+      </div>
+      <div class="service-card" onclick="openService('insurance')">
+        <div class="service-icon">🛡️</div>
+        <div class="service-name">Insurance</div>
+        <div class="service-count">Submit your listing</div>
+        <div class="service-arrow">View Providers →</div>
+      </div>
+      <div class="service-card" onclick="openService('jfs')">
+        <div class="service-icon">💛</div>
+        <div class="service-name">Jewish Family Service</div>
+        <div class="service-count">1 provider</div>
+        <div class="service-arrow">View Providers →</div>
+      </div>
+    </div>
+
+    <!-- Expanded service panel -->
+    <div class="service-listings" id="service-listings">
+      <div class="service-listings-header">
+        <span id="service-listings-title">Providers</span>
+        <button class="service-close-btn" onclick="closeService()">×</button>
+      </div>
+      <div id="service-listings-body">
+        <div class="placeholder-card" style="border-radius:0 0 6px 6px;">
+          <strong>No listings yet for this category</strong>
+          Be the first to list your service — submissions are reviewed and published by HJI within 1–2 business days.
+          <br><br>
+          <button class="hero-submit-btn" onclick="openModal('modal-submit-biz')" style="margin:0 auto;">+ Submit Your Service</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ELECTRICIAN — expanded static listings -->
+    <div class="service-listings" id="electric-listings" style="display:none;">
+      <div class="service-listings-header">
+        <span>⚡ Electrician Providers</span>
+        <button class="service-close-btn" onclick="document.getElementById('electric-listings').style.display='none'">×</button>
+      </div>
+      <div class="service-listing-item" style="border-radius:0 0 6px 6px;">
+        <div>
+          <div class="sli-name">Lumenor LLC</div>
+          <div class="sli-meta">7809 W Belfort Ave, Houston, TX &nbsp;·&nbsp; Jewish-Owned &nbsp;·&nbsp; Binyamin Shaw</div>
+          <div class="sli-meta" style="margin-top:4px;">Professional electrical services for residential and commercial clients across Greater Houston.</div>
+          <div class="sli-meta" style="margin-top:3px;">📧 <a href="mailto:lumenorllc@gmail.com" style="color:var(--gold);">lumenorllc@gmail.com</a></div>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;">
+          <span class="sli-phone">(346) 670-7330</span>
+          <a href="https://www.lumenor.net" target="_blank" class="biz-website" style="font-size:10px;">Visit Website →</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- MARKETING — expanded static listings shown when marketing tile is clicked -->
+    <div class="service-listings" id="marketing-listings" style="display:none;">
+      <div class="service-listings-header">
+        <span>📱 Marketing &amp; Digital Providers</span>
+        <button class="service-close-btn" onclick="document.getElementById('marketing-listings').style.display='none'">×</button>
+      </div>
+      <div class="service-listing-item" style="border-radius:0 0 6px 6px;">
+        <div>
+          <div class="sli-name">Aviacion Digital</div>
+          <div class="sli-meta">4660 Beechnut St, Suite 200, Houston, TX 77096 &nbsp;·&nbsp; Digital Marketing Agency</div>
+          <div class="sli-meta" style="margin-top:4px;">Digital strategy, web, and growth marketing. Good marketing starts with understanding your goals, not selling you a package.</div>
+          <div class="sli-meta" style="margin-top:3px;">📧 <a href="mailto:info@avacion.com" style="color:var(--gold);">info@avacion.com</a></div>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;">
+          <span class="sli-phone">(832) 538-2929</span>
+          <a href="https://avacion.com" target="_blank" class="biz-website" style="font-size:10px;">Visit Website →</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- SERVICE LISTINGS DYNAMIC — powered by Google Sheets -->
+    <div class="service-listings" id="service-listings-dynamic" style="display:none;">
+      <div class="service-listings-header">
+        <span id="service-listings-title-dynamic">Providers</span>
+        <button class="service-close-btn" onclick="closeService()">×</button>
+      </div>
+      <div id="service-listings-body-dynamic">
+        <div class="placeholder-card" style="border-radius:0 0 6px 6px;">
+          <strong>Loading...</strong>
+        </div>
+      </div>
+    </div>
+
+    <!-- Submit CTA -->
+    <div style="background:var(--navy);color:#fff;border-radius:6px;padding:20px 24px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-top:8px;margin-bottom:16px;">
+      <div>
+        <div style="font-family:'Playfair Display',serif;font-size:17px;font-weight:700;margin-bottom:3px;">Offer a service to the community?</div>
+        <div style="font-family:sans-serif;font-size:12px;opacity:.8;">Submit your listing — it's free and reviewed before publishing.</div>
+      </div>
+      <button class="hero-submit-btn" onclick="openModal('modal-submit-biz')">+ Submit a Listing</button>
+    </div>
+
+  </div><!-- end tab-services -->
+
+  <!-- ══════════════════════════════════════
+       TAB 3: SELF HELP & HOW-TO
+  ══════════════════════════════════════ -->
+  <div class="tab-panel" id="tab-selfhelp">
+
+    <p style="font-family:sans-serif;font-size:13px;color:var(--muted);margin-bottom:20px;">
+      Step-by-step guides and videos to help you handle everyday tasks yourself — from home repairs to tax tips to Jewish life resources.
+    </p>
+
+    <div style="margin-bottom:16px;">
+      <input name="🔍__search_guides..._(e.g._wate" type="text" id="sh-search" class="search-input" placeholder="🔍  Search guides... (e.g. water heater, property tax, challah)" oninput="searchSH()" style="width:100%;max-width:100%;">
+      <div id="sh-no-results" style="display:none;font-family:sans-serif;font-size:13px;color:var(--muted);padding:12px 0;">No guides found for that search. Try a different keyword.</div>
+    </div>
+
+    <div class="sh-layout">
+
+      <!-- SIDEBAR -->
+      <div class="sh-sidebar">
+        <div class="sh-sidebar-item active" onclick="showSHCat('all',this)">
+          <span class="sh-sidebar-icon">📋</span> All Guides
+        </div>
+        <div class="sh-sidebar-item" onclick="showSHCat('home',this)">
+          <span class="sh-sidebar-icon">🏠</span> Home &amp; DIY
+        </div>
+        <div class="sh-sidebar-item" onclick="showSHCat('taxes',this)">
+          <span class="sh-sidebar-icon">💰</span> Taxes &amp; Finance
+        </div>
+        <div class="sh-sidebar-item" onclick="showSHCat('jewish',this)">
+          <span class="sh-sidebar-icon">✡️</span> Jewish Life
+        </div>
+      </div>
+
+      <!-- GUIDE CARDS -->
+      <div class="sh-content" id="sh-content">
+
+        <!-- ── HOME & DIY ── -->
+        <div class="sh-cat-head" data-shcat="home">🏠 Home &amp; DIY</div>
+
+        <!-- Card: Water heater — both -->
+        <div class="sh-guide-card" data-shcat="home">
+          <div class="sh-guide-header">
+            <div>
+              <div class="sh-guide-badges">
+                <span class="sh-badge sh-badge-video">▶ Video</span>
+                <span class="sh-badge sh-badge-guide">📄 Guide</span>
+              </div>
+              <div class="sh-guide-title">How to Relight Your Water Heater Pilot Light</div>
+              <div class="sh-guide-desc">Gas water heater won't ignite? Here's how to safely relight the pilot.</div>
+            </div>
+          </div>
+          <div class="sh-toggle-bar">
+            <button class="sh-toggle active" onclick="showContent(this,'watch','read','wh')">▶ Watch</button>
+            <button class="sh-toggle" onclick="showContent(this,'read','watch','wh')">📄 Read</button>
+          </div>
+          <div id="wh-watch" class="sh-content-block">
+            <div class="sh-video-wrap">
+              <iframe src="https://www.youtube.com/embed/RUfaAR5Bz1s" title="How to Relight a Water Heater" allowfullscreen loading="lazy"></iframe>
+            </div>
+          </div>
+          <div id="wh-read" class="sh-content-block" style="display:none;">
+            <ol class="sh-steps">
+              <li class="sh-step"><span class="sh-step-num">1</span><span>Turn the thermostat to the lowest setting and set the gas valve to <strong>Pilot</strong>.</span></li>
+              <li class="sh-step"><span class="sh-step-num">2</span><span>Press and hold the pilot button down while pressing the igniter repeatedly until you see a flame.</span></li>
+              <li class="sh-step"><span class="sh-step-num">3</span><span>Keep holding the pilot button for 30–60 seconds after the flame appears to let the thermocouple heat up.</span></li>
+              <li class="sh-step"><span class="sh-step-num">4</span><span>Release the button slowly. If the flame stays, turn the gas valve back to <strong>On</strong> and set your desired temperature.</span></li>
+              <li class="sh-step"><span class="sh-step-num">5</span><span>If the pilot won't stay lit after a few tries, the thermocouple may need replacing — call a plumber.</span></li>
+            </ol>
+          </div>
+        </div>
+
+        <!-- Card: Circuit breaker — guide only -->
+        <div class="sh-guide-card" data-shcat="home">
+          <div class="sh-guide-header">
+            <div>
+              <div class="sh-guide-badges">
+                <span class="sh-badge sh-badge-guide">📄 Guide</span>
+              </div>
+              <div class="sh-guide-title">How to Reset a Tripped Circuit Breaker</div>
+              <div class="sh-guide-desc">Power out in one room? A tripped breaker is usually the fix.</div>
+            </div>
+          </div>
+          <ol class="sh-steps">
+            <li class="sh-step"><span class="sh-step-num">1</span><span>Find your electrical panel — usually in a utility room, garage, or hallway closet.</span></li>
+            <li class="sh-step"><span class="sh-step-num">2</span><span>Look for a breaker that's in the middle position (neither fully ON nor OFF) — that's the tripped one.</span></li>
+            <li class="sh-step"><span class="sh-step-num">3</span><span>Flip it fully to <strong>OFF</strong> first, then firmly flip it back to <strong>ON</strong>.</span></li>
+            <li class="sh-step"><span class="sh-step-num">4</span><span>If it trips again immediately, don't keep resetting it — call a licensed electrician.</span></li>
+          </ol>
+        </div>
+
+        <!-- Card: Unclog drain — both -->
+        <div class="sh-guide-card" data-shcat="home">
+          <div class="sh-guide-header">
+            <div>
+              <div class="sh-guide-badges">
+                <span class="sh-badge sh-badge-video">▶ Video</span>
+                <span class="sh-badge sh-badge-guide">📄 Guide</span>
+              </div>
+              <div class="sh-guide-title">How to Unclog a Slow or Blocked Drain</div>
+              <div class="sh-guide-desc">Natural and tool-based methods — no plumber needed.</div>
+            </div>
+          </div>
+          <div class="sh-toggle-bar">
+            <button class="sh-toggle active" onclick="showContent(this,'drain-watch','drain-read','drain')">▶ Watch</button>
+            <button class="sh-toggle" onclick="showContent(this,'drain-read','drain-watch','drain')">📄 Read</button>
+          </div>
+          <div id="drain-watch" class="sh-content-block">
+            <div class="sh-video-wrap">
+              <iframe src="https://www.youtube.com/embed/pzMBHdCFx5c" title="How to Unclog a Drain" allowfullscreen loading="lazy"></iframe>
+            </div>
+          </div>
+          <div id="drain-read" class="sh-content-block" style="display:none;">
+            <ol class="sh-steps">
+              <li class="sh-step"><span class="sh-step-num">1</span><span>Pour boiling water slowly down the drain — this dissolves soap and grease buildup.</span></li>
+              <li class="sh-step"><span class="sh-step-num">2</span><span>Mix 1/2 cup baking soda + 1/2 cup white vinegar, pour in, cover with a rag for 5 minutes, then flush with hot water.</span></li>
+              <li class="sh-step"><span class="sh-step-num">3</span><span>Use a drain snake or hair catcher tool to physically pull out any clogs.</span></li>
+              <li class="sh-step"><span class="sh-step-num">4</span><span>For stubborn clogs, use a plunger with petroleum jelly on the rim to create a tighter seal.</span></li>
+            </ol>
+          </div>
+        </div>
+
+        <!-- Card: Shut off water — guide only -->
+        <div class="sh-guide-card" data-shcat="home">
+          <div class="sh-guide-header">
+            <div>
+              <div class="sh-guide-badges">
+                <span class="sh-badge sh-badge-guide">📄 Guide</span>
+              </div>
+              <div class="sh-guide-title">How to Shut Off Your Home's Water in an Emergency</div>
+              <div class="sh-guide-desc">Know where your shutoff valve is before you need it.</div>
+            </div>
+          </div>
+          <ol class="sh-steps">
+            <li class="sh-step"><span class="sh-step-num">1</span><span>Find your main shutoff valve — usually near the water meter, in the garage, or outside near the foundation.</span></li>
+            <li class="sh-step"><span class="sh-step-num">2</span><span>Turn the valve clockwise (righty-tighty) until it stops. This cuts water to the whole house.</span></li>
+            <li class="sh-step"><span class="sh-step-num">3</span><span>Open a faucet to release any remaining water pressure in the lines.</span></li>
+            <li class="sh-step"><span class="sh-step-num">4</span><span>Call a plumber and document any damage for your insurance claim.</span></li>
+          </ol>
+        </div>
+
+        <!-- ── TAXES & FINANCE ── -->
+        <div class="sh-cat-head" data-shcat="taxes">💰 Taxes &amp; Finance</div>
+
+        <!-- Card: Property tax protest — guide only -->
+        <div class="sh-guide-card" data-shcat="taxes">
+          <div class="sh-guide-header">
+            <div>
+              <div class="sh-guide-badges">
+                <span class="sh-badge sh-badge-guide">📄 Guide</span>
+              </div>
+              <div class="sh-guide-title">How to Fight Your Property Tax Appraisal in Texas</div>
+              <div class="sh-guide-desc">Harris County homeowners can protest every year — here's how.</div>
+            </div>
+          </div>
+          <ol class="sh-steps">
+            <li class="sh-step"><span class="sh-step-num">1</span><span>Check your appraisal notice — you have until <strong>May 15</strong> (or 30 days from notice) to file a protest.</span></li>
+            <li class="sh-step"><span class="sh-step-num">2</span><span>Go to <strong>hcad.org</strong> and file your protest online under "iFile" — it's free.</span></li>
+            <li class="sh-step"><span class="sh-step-num">3</span><span>Gather evidence: recent sales of similar nearby homes, photos of damage, or a recent private appraisal.</span></li>
+            <li class="sh-step"><span class="sh-step-num">4</span><span>You'll get an informal hearing first — many cases settle there without going to the ARB.</span></li>
+            <li class="sh-step"><span class="sh-step-num">5</span><span>If unsatisfied, request a formal ARB hearing. Bring your comparables and be specific.</span></li>
+          </ol>
+        </div>
+
+        <!-- Card: Homestead exemption — guide only -->
+        <div class="sh-guide-card" data-shcat="taxes">
+          <div class="sh-guide-header">
+            <div>
+              <div class="sh-guide-badges">
+                <span class="sh-badge sh-badge-guide">📄 Guide</span>
+              </div>
+              <div class="sh-guide-title">How to File for a Texas Homestead Exemption</div>
+              <div class="sh-guide-desc">Save hundreds per year if your home is your primary residence.</div>
+            </div>
+          </div>
+          <ol class="sh-steps">
+            <li class="sh-step"><span class="sh-step-num">1</span><span>You must own and live in the home as your primary residence as of January 1 of the tax year.</span></li>
+            <li class="sh-step"><span class="sh-step-num">2</span><span>Download the Homestead Exemption application at <strong>hcad.org</strong> or your county appraisal district's website.</span></li>
+            <li class="sh-step"><span class="sh-step-num">3</span><span>Attach a copy of your Texas driver's license or ID showing your home address.</span></li>
+            <li class="sh-step"><span class="sh-step-num">4</span><span>Submit by mail or online. No hard deadline — but file early to apply for the current year.</span></li>
+            <li class="sh-step"><span class="sh-step-num">5</span><span>You only need to apply once — it renews automatically unless your status changes.</span></li>
+          </ol>
+        </div>
+
+        <!-- Card: Read tax bill — both -->
+        <div class="sh-guide-card" data-shcat="taxes">
+          <div class="sh-guide-header">
+            <div>
+              <div class="sh-guide-badges">
+                <span class="sh-badge sh-badge-video">▶ Video</span>
+                <span class="sh-badge sh-badge-guide">📄 Guide</span>
+              </div>
+              <div class="sh-guide-title">How to Read and Understand Your Property Tax Bill</div>
+              <div class="sh-guide-desc">A plain-English breakdown of every line on your Texas tax bill.</div>
+            </div>
+          </div>
+          <div class="sh-toggle-bar">
+            <button class="sh-toggle active" onclick="showContent(this,'tax-watch','tax-read','tax')">▶ Watch</button>
+            <button class="sh-toggle" onclick="showContent(this,'tax-read','tax-watch','tax')">📄 Read</button>
+          </div>
+          <div id="tax-watch" class="sh-content-block">
+            <div class="sh-video-wrap">
+              <iframe src="https://www.youtube.com/embed/VjdPMRnF8NU" title="How to Read Your Property Tax Bill" allowfullscreen loading="lazy"></iframe>
+            </div>
+          </div>
+          <div id="tax-read" class="sh-content-block" style="display:none;">
+            <ol class="sh-steps">
+              <li class="sh-step"><span class="sh-step-num">1</span><span><strong>Appraised Value</strong> — what the county says your property is worth. This is what you protest.</span></li>
+              <li class="sh-step"><span class="sh-step-num">2</span><span><strong>Assessed Value</strong> — appraised value minus any exemptions (homestead, over-65, disability, etc.).</span></li>
+              <li class="sh-step"><span class="sh-step-num">3</span><span><strong>Tax Rate</strong> — set by each taxing unit (city, school district, county). Multiply by assessed value for your bill.</span></li>
+              <li class="sh-step"><span class="sh-step-num">4</span><span><strong>Total Tax Due</strong> — sum of all taxing units. Pay by January 31 to avoid penalties.</span></li>
+            </ol>
+          </div>
+        </div>
+
+        <!-- Card: Organize finances — guide only -->
+        <div class="sh-guide-card" data-shcat="taxes">
+          <div class="sh-guide-header">
+            <div>
+              <div class="sh-guide-badges">
+                <span class="sh-badge sh-badge-guide">📄 Guide</span>
+              </div>
+              <div class="sh-guide-title">How to Get Your Finances Organized in a Weekend</div>
+              <div class="sh-guide-desc">A simple system to track income, expenses, and savings.</div>
+            </div>
+          </div>
+          <ol class="sh-steps">
+            <li class="sh-step"><span class="sh-step-num">1</span><span>List every monthly expense — fixed (rent, car) and variable (groceries). Use your last 3 bank statements.</span></li>
+            <li class="sh-step"><span class="sh-step-num">2</span><span>Set up a free budgeting tool like <strong>Mint</strong>, <strong>YNAB</strong>, or a Google Sheets template.</span></li>
+            <li class="sh-step"><span class="sh-step-num">3</span><span>Automate savings — set up an automatic transfer on payday, even if it's just $25.</span></li>
+            <li class="sh-step"><span class="sh-step-num">4</span><span>Review subscriptions and cancel anything unused — most people save $50–$150/month doing this.</span></li>
+            <li class="sh-step"><span class="sh-step-num">5</span><span>Check your credit report free at <strong>annualcreditreport.com</strong> and dispute any errors.</span></li>
+          </ol>
+        </div>
+
+        <!-- ── JEWISH LIFE ── -->
+        <div class="sh-cat-head" data-shcat="jewish">✡️ Jewish Life</div>
+
+        <!-- Card: Kosher symbols — guide only -->
+        <div class="sh-guide-card" data-shcat="jewish">
+          <div class="sh-guide-header">
+            <div>
+              <div class="sh-guide-badges">
+                <span class="sh-badge sh-badge-guide">📄 Guide</span>
+              </div>
+              <div class="sh-guide-title">How to Read a Kosher Symbol on a Food Product</div>
+              <div class="sh-guide-desc">Not all kosher symbols are the same — here's what to look for.</div>
+            </div>
+          </div>
+          <ol class="sh-steps">
+            <li class="sh-step"><span class="sh-step-num">1</span><span>Look for a hechsher on the packaging — common ones include OU, OK, Star-K, Kof-K, and HKA (Houston).</span></li>
+            <li class="sh-step"><span class="sh-step-num">2</span><span><strong>Meat:</strong> no extra letter. <strong>Dairy:</strong> look for a "D." <strong>Pareve:</strong> neither meat nor dairy, often marked "P" or "Pareve."</span></li>
+            <li class="sh-step"><span class="sh-step-num">3</span><span>A standalone "P" on some symbols means <strong>Passover</strong> approved — not pareve. Context matters.</span></li>
+            <li class="sh-step"><span class="sh-step-num">4</span><span>When in doubt, check <strong>kosherquest.org</strong> or the certifying agency's website for a full product list.</span></li>
+          </ol>
+        </div>
+
+        <!-- Card: Light Shabbat candles — both -->
+        <div class="sh-guide-card" data-shcat="jewish">
+          <div class="sh-guide-header">
+            <div>
+              <div class="sh-guide-badges">
+                <span class="sh-badge sh-badge-video">▶ Video</span>
+                <span class="sh-badge sh-badge-guide">📄 Guide</span>
+              </div>
+              <div class="sh-guide-title">How to Light Shabbat Candles</div>
+              <div class="sh-guide-desc">A warm, beginner-friendly guide to Friday night candle lighting — blessings included.</div>
+            </div>
+          </div>
+          <div class="sh-toggle-bar">
+            <button class="sh-toggle active" onclick="showContent(this,'shab-watch','shab-read','shab')">▶ Watch</button>
+            <button class="sh-toggle" onclick="showContent(this,'shab-read','shab-watch','shab')">📄 Read</button>
+          </div>
+          <div id="shab-watch" class="sh-content-block">
+            <div class="sh-video-wrap">
+              <iframe src="https://www.youtube.com/embed/J3fRLTDQMzE" title="How to Light Shabbat Candles" allowfullscreen loading="lazy"></iframe>
+            </div>
+          </div>
+          <div id="shab-read" class="sh-content-block" style="display:none;">
+            <ol class="sh-steps">
+              <li class="sh-step"><span class="sh-step-num">1</span><span>Place two candles in candlesticks 18 minutes before sunset on Friday.</span></li>
+              <li class="sh-step"><span class="sh-step-num">2</span><span>Light the candles, then use your hands to draw the flame toward you three times.</span></li>
+              <li class="sh-step"><span class="sh-step-num">3</span><span>Cover your eyes and recite: <em>Baruch Atah Adonai, Eloheinu Melech haolam, asher kid'shanu b'mitzvotav v'tzivanu l'hadlik ner shel Shabbat.</em></span></li>
+              <li class="sh-step"><span class="sh-step-num">4</span><span>Uncover your eyes, take in the light, and say <em>Shabbat Shalom</em> to those around you.</span></li>
+            </ol>
+          </div>
+        </div>
+
+        <!-- Card: Bar/Bat Mitzvah on a budget — guide only -->
+        <div class="sh-guide-card" data-shcat="jewish">
+          <div class="sh-guide-header">
+            <div>
+              <div class="sh-guide-badges">
+                <span class="sh-badge sh-badge-guide">📄 Guide</span>
+              </div>
+              <div class="sh-guide-title">How to Plan a Bar/Bat Mitzvah on a Budget</div>
+              <div class="sh-guide-desc">A meaningful celebration doesn't have to break the bank.</div>
+            </div>
+          </div>
+          <ol class="sh-steps">
+            <li class="sh-step"><span class="sh-step-num">1</span><span>Set your total budget first — then work backwards. The ceremony is free; it's the party that costs.</span></li>
+            <li class="sh-step"><span class="sh-step-num">2</span><span>Consider Friday night or Sunday morning — venues cost significantly less than Saturday afternoon.</span></li>
+            <li class="sh-step"><span class="sh-step-num">3</span><span>Use the JCC or your synagogue's social hall — often much cheaper than a hotel ballroom.</span></li>
+            <li class="sh-step"><span class="sh-step-num">4</span><span>Limit the guest list. Smaller, more intimate gatherings save on catering, invitations, and favors.</span></li>
+            <li class="sh-step"><span class="sh-step-num">5</span><span>Focus spending on what matters most — great food, a meaningful speech, a live musician — and simplify the rest.</span></li>
+          </ol>
+        </div>
+
+        <!-- Card: Bake challah — both -->
+        <div class="sh-guide-card" data-shcat="jewish">
+          <div class="sh-guide-header">
+            <div>
+              <div class="sh-guide-badges">
+                <span class="sh-badge sh-badge-video">▶ Video</span>
+                <span class="sh-badge sh-badge-guide">📄 Guide</span>
+              </div>
+              <div class="sh-guide-title">How to Bake Challah From Scratch</div>
+              <div class="sh-guide-desc">Beautiful braided challah for Shabbat and holidays — beginner friendly.</div>
+            </div>
+          </div>
+          <div class="sh-toggle-bar">
+            <button class="sh-toggle active" onclick="showContent(this,'challah-watch','challah-read','challah')">▶ Watch</button>
+            <button class="sh-toggle" onclick="showContent(this,'challah-read','challah-watch','challah')">📄 Read</button>
+          </div>
+          <div id="challah-watch" class="sh-content-block">
+            <div class="sh-video-wrap">
+              <iframe src="https://www.youtube.com/embed/1KG0UpWr0m8" title="How to Make Challah Bread" allowfullscreen loading="lazy"></iframe>
+            </div>
+          </div>
+          <div id="challah-read" class="sh-content-block" style="display:none;">
+            <ol class="sh-steps">
+              <li class="sh-step"><span class="sh-step-num">1</span><span>Mix 2 tsp yeast + 1 tsp sugar in 1 cup warm water. Let sit 5–10 minutes until foamy.</span></li>
+              <li class="sh-step"><span class="sh-step-num">2</span><span>In a large bowl combine 4 cups flour, 1/3 cup sugar, 1 tsp salt. Add yeast mix, 2 eggs, and 1/3 cup oil. Knead 8–10 minutes.</span></li>
+              <li class="sh-step"><span class="sh-step-num">3</span><span>Cover and let rise 1.5 hours until doubled. Punch down, divide into 3 strands, and braid.</span></li>
+              <li class="sh-step"><span class="sh-step-num">4</span><span>Place on a parchment-lined pan, brush with egg wash, let rise 30 more minutes.</span></li>
+              <li class="sh-step"><span class="sh-step-num">5</span><span>Bake at 375°F for 30–35 minutes until deep golden brown. Cool before slicing.</span></li>
+            </ol>
+          </div>
+        </div>
+
+      </div><!-- end sh-content -->
+    </div><!-- end sh-layout -->
+
+    <div class="sh-add-banner">
+      <div>
+        <div class="sh-add-banner-title">Have a guide to suggest?</div>
+        <div class="sh-add-banner-sub">We're always adding new how-to guides and videos. Send us your suggestions!</div>
+      </div>
+      <a href="/contact" style="background:var(--gold);color:#fff;font-family:sans-serif;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:11px 22px;border-radius:4px;white-space:nowrap;text-decoration:none;">Suggest a Guide →</a>
+    </div>
+
+  </div><!-- end tab-selfhelp -->
 
 </div><!-- end portal -->
 
@@ -1215,198 +1955,406 @@
 </footer>
 
 <script>
-  // Date
-  (function() {
-    var days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
-    var months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
-    var now = new Date();
-    document.getElementById('today-date').textContent = days[now.getDay()] + ', ' + months[now.getMonth()] + ' ' + now.getDate() + ', ' + now.getFullYear();
-  })();
+// ── DATE ──
+(function() {
+  var d = new Date();
+  var days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  var months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  var el = document.getElementById('today-date');
+  if(el) el.textContent = days[d.getDay()] + ', ' + months[d.getMonth()] + ' ' + d.getDate() + ', ' + d.getFullYear();
+})();
 
-  // ===== SYNAGOGUES — Google Sheets driven =====
-  (function() {
-    var SYN_SHEET_ID  = '1in7Ac7zknqyR9neWKOCAjOAG4jXCIVTJQfU6jJ72CV8';
-    var SYN_SHEET_TAB = 'Synagogues';
-    var SYN_IMG_BASE  = 'https://houstonjewishinfo.com/images/synagogues/';
+// ── TABS ──
+function switchTab(tab, btn) {
+  document.querySelectorAll('.tab-panel').forEach(function(p) { p.classList.remove('active'); });
+  document.querySelectorAll('.main-tab').forEach(function(b) { b.classList.remove('active'); });
+  document.getElementById('tab-'+tab).classList.add('active');
+  btn.classList.add('active');
+}
 
-    var DENOM = {
-      'reform':       { cls:'denom-reform',   label:'Reform',       grad:'#e8f0fb,#7a99cc' },
-      'conservative': { cls:'denom-conserv',  label:'Conservative', grad:'#fdf3e0,#d4a060' },
-      'orthodox':     { cls:'denom-orthodox', label:'Orthodox',     grad:'#edf7ed,#5aa85a' },
-      'chabad':       { cls:'denom-chabad',   label:'Chabad',       grad:'#fce8e8,#d05a5a' },
-      'other':        { cls:'denom-other',    label:'Other',        grad:'#eceae4,#bdbcb4' }
-    };
-    function esc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-    function attr(s){ return esc(s).replace(/"/g,'&quot;'); }
-    function imgURL(v){ v=String(v||'').trim(); if(!v) return ''; return /^https?:\/\//i.test(v)?v:SYN_IMG_BASE+v; }
-    function webDisplay(u){ return String(u||'').replace(/^https?:\/\//i,'').replace(/^www\./i,'').replace(/\/+$/,''); }
-    function detail(icon,val){ return val ? '<div class="syn-detail"><span class="syn-detail-icon">'+icon+'</span> '+esc(val)+'</div>' : ''; }
+// ── MODALS ──
+function openModal(id) {
+  document.getElementById(id).classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeModal(id) {
+  document.getElementById(id).classList.remove('open');
+  document.body.style.overflow = '';
+}
+document.querySelectorAll('.modal-overlay').forEach(function(o) {
+  o.addEventListener('click', function(e) { if(e.target===o) closeModal(o.id); });
+});
+document.addEventListener('keydown', function(e) {
+  if(e.key==='Escape') document.querySelectorAll('.modal-overlay.open').forEach(function(m) { closeModal(m.id); });
+});
 
-    function cardHTML(d){
-      var key=String(d.denomination||'other').toLowerCase().trim();
-      var dn=DENOM[key]||DENOM['other'];
-      var img=imgURL(d.image);
-      var imgBlock=img
-        ? '<div class="syn-card-img" style="padding:0;overflow:hidden;"><img src="'+attr(img)+'" alt="'+attr(d.name)+'" loading="lazy" decoding="async" style="width:100%;height:100%;object-fit:cover;display:block;"></div>'
-        : '<div class="syn-card-img" style="background:linear-gradient(135deg,'+dn.grad+');">\uD83D\uDD4D</div>';
-      var web=String(d.website||'').trim();
-      var webLine=web ? '<div class="syn-detail"><span class="syn-detail-icon">\uD83C\uDF10</span> <a href="'+attr(web)+'" target="_blank">'+esc(webDisplay(web))+'</a></div>' : '';
-      var btn=web ? '<a href="'+attr(web)+'" target="_blank" class="syn-website-btn" style="white-space:nowrap;flex-shrink:0;">Visit Website \u2192</a>' : '';
-      var times=d.servicetimes ? '<div class="syn-service-times">'+esc(d.servicetimes)+'</div>' : '';
-      var nusach=String(d.nusach||'').trim();
-      var nusachTag=nusach ? '<span class="syn-nusach">'+esc(nusach)+'</span>' : '';
-      return '<div class="syn-card" data-denom="'+attr(key)+'" data-nusach="'+attr(nusach.toLowerCase())+'">'+imgBlock+
-        '<div class="syn-card-body">'+
-          '<span class="syn-denom '+dn.cls+'">'+esc(dn.label)+'</span>'+nusachTag+
-          '<div class="syn-name">'+esc(d.name)+'</div>'+
-          detail('\uD83D\uDCCD',d.address)+detail('\uD83D\uDCDE',d.phone)+detail('\uD83D\uDC64',d.rabbi)+webLine+
-          '<hr class="syn-divider">'+
-          '<div style="display:flex;align-items:center;justify-content:space-between;gap:10px;">'+
-            '<div><div class="syn-services">Shabbat Services</div>'+times+'</div>'+btn+
-          '</div>'+
-        '</div></div>';
-    }
+// ── SUBMIT FORM ──
+function submitForm(formId, successId) {
+  var formEl = document.getElementById(formId);
+  var inputs = formEl.querySelectorAll('input, select, textarea');
+  var data = { _subject: 'HJI Business Submission' };
+  inputs.forEach(function(el) {
+    var key = el.name || el.placeholder || el.type;
+    if(key) data[key] = el.value;
+  });
+  fetch('https://formspree.io/f/xkoevogn', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json', 'Accept': 'application/json'},
+    body: JSON.stringify(data)
+  }).then(function(r) { return r.json(); }).then(function() {
+    formEl.style.display = 'none';
+    document.getElementById(successId).style.display = 'block';
+  }).catch(function() { alert('Error submitting. Please try again.'); });
+}
 
-    var url='https://docs.google.com/spreadsheets/d/'+SYN_SHEET_ID+'/gviz/tq?tqx=out:json&sheet='+encodeURIComponent(SYN_SHEET_TAB)+'&headers=1';
-    fetch(url).then(function(r){return r.text();}).then(function(text){
-      var json=JSON.parse(text.substring(47,text.length-2));
-      var cols=json.table.cols.map(function(c){return (c.label||'').toLowerCase().trim();});
-      var html='', n=0;
-      json.table.rows.forEach(function(row){
-        var d={};
-        cols.forEach(function(col,i){ var cell=row.c[i]; d[col]=cell?(cell.f!=null?cell.f:(cell.v==null?'':cell.v)):''; });
-        if(String(d.status||'').toLowerCase().trim()!=='active') return;
-        if(!d.name) return;
-        html+=cardHTML(d); n++;
-      });
-      var grid=document.getElementById('syn-grid');
-      grid.innerHTML=html || '<div style="grid-column:1/-1;font-family:sans-serif;font-size:14px;color:var(--muted);text-align:center;padding:40px 0;">No congregations listed yet.</div>';
-      var cnt=document.getElementById('syn-count'); if(cnt) cnt.textContent=n;
-    }).catch(function(){
-      var grid=document.getElementById('syn-grid');
-      grid.innerHTML='<div style="grid-column:1/-1;font-family:sans-serif;font-size:14px;color:var(--muted);text-align:center;padding:40px 0;">Congregations are taking a moment to load. Please refresh.</div>';
-    });
-  })();
+// ── MOBILE MENU ──
+function openMobileMenu() {
+  document.getElementById('mob-menu').classList.add('open');
+  document.getElementById('mob-overlay').classList.add('open');
+  document.getElementById('hamburger-btn').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeMobileMenu() {
+  document.getElementById('mob-menu').classList.remove('open');
+  document.getElementById('mob-overlay').classList.remove('open');
+  document.getElementById('hamburger-btn').classList.remove('open');
+  document.body.style.overflow = '';
+}
 
-  // ===== MIKVAOT — Google Sheets driven =====
-  (function() {
-    var MIK_SHEET_ID  = '1in7Ac7zknqyR9neWKOCAjOAG4jXCIVTJQfU6jJ72CV8';
-    var MIK_SHEET_TAB = 'Mikvaot';
-    function esc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-    function mikCard(d){
-      var phone=d.phone?'<div class="mikvah-detail">\uD83D\uDCDE '+esc(d.phone)+'</div>':'';
-      var addr=d.address?'<div class="mikvah-detail">\uD83D\uDCCD '+esc(d.address)+'</div>':'';
-      var notes=d.notes?'<div class="mikvah-detail" style="color:#777;">'+esc(d.notes)+'</div>':'';
-      return '<div class="mikvah-card"><span class="mikvah-tag">Mikvah</span>'+
-        '<div class="mikvah-name">'+esc(d.name)+'</div>'+addr+phone+notes+'</div>';
-    }
-    var url='https://docs.google.com/spreadsheets/d/'+MIK_SHEET_ID+'/gviz/tq?tqx=out:json&sheet='+encodeURIComponent(MIK_SHEET_TAB)+'&headers=1';
-    fetch(url).then(function(r){return r.text();}).then(function(text){
-      var json=JSON.parse(text.substring(47,text.length-2));
-      var cols=json.table.cols.map(function(c){return (c.label||'').toLowerCase().trim();});
-      var html='', n=0;
-      json.table.rows.forEach(function(row){
-        var d={};
-        cols.forEach(function(col,i){ var cell=row.c[i]; d[col]=cell?(cell.f!=null?cell.f:(cell.v==null?'':cell.v)):''; });
-        if(!d.name) return;
-        if(String(d.status||'').toLowerCase().trim()==='inactive') return;
-        html+=mikCard(d); n++;
-      });
-      var grid=document.getElementById('mikvah-grid');
-      if(!grid) return;
-      if(n){ grid.innerHTML=html; }
-      else { grid.innerHTML='<div style="grid-column:1/-1;font-family:sans-serif;font-size:14px;color:var(--muted);text-align:center;padding:30px 0;">No mikvaot listed yet — check back soon.</div>'; }
-    }).catch(function(){
-      var grid=document.getElementById('mikvah-grid');
-      if(grid) grid.innerHTML='<div style="grid-column:1/-1;font-family:sans-serif;font-size:14px;color:var(--muted);text-align:center;padding:30px 0;">Mikvaot are taking a moment to load. Please refresh.</div>';
-    });
-  })();
+// ── NAV ARROWS ──
+(function() {
+  var nav = document.getElementById('main-nav');
+  if(!nav) return;
+  var left = document.querySelector('.nav-arrow.left');
+  var right = document.querySelector('.nav-arrow.right');
+  if(left) left.addEventListener('click', function() { nav.scrollBy({left:-100,behavior:'smooth'}); });
+  if(right) right.addEventListener('click', function() { nav.scrollBy({left:100,behavior:'smooth'}); });
+})();
 
-  // ===== View tabs: Synagogues <-> Mikvaot =====
-  function showSynView(){
-    document.getElementById('syn-view').style.display='';
-    document.getElementById('mikvah-view').style.display='none';
-    document.getElementById('tab-syn').classList.add('active');
-    document.getElementById('tab-mik').classList.remove('active');
-  }
-  function showMikvahView(){
-    document.getElementById('syn-view').style.display='none';
-    document.getElementById('mikvah-view').style.display='';
-    document.getElementById('tab-mik').classList.add('active');
-    document.getElementById('tab-syn').classList.remove('active');
-  }
+// ── BROWSE BUSINESSES — Google Sheets ──
+var SHEET_ID = '1in7Ac7zknqyR9neWKOCAjOAG4jXCIVTJQfU6jJ72CV8';
+var allBizListings = [];
+var tabsLoaded = 0;
 
-  // Filter — matches by denomination OR nusach
-  function filterSyn(val, btn) {
-    document.querySelectorAll('.filter-btn').forEach(function(b) { b.classList.remove('active'); });
-    btn.classList.add('active');
-    var cards = document.querySelectorAll('.syn-card');
-    var count = 0;
-    cards.forEach(function(card) {
-      var denom = card.dataset.denom || '';
-      var nusach = card.dataset.nusach || '';
-      if (val === 'all' || denom === val || nusach === val) {
-        card.style.display = '';
-        count++;
-      } else {
-        card.style.display = 'none';
+var bizTabMap = {
+  'kosher-restaurant': 'KosherRestaurants',
+  'kosher-market':     'KosherMarkets',
+  'books-gifts':       'BooksGifts',
+  'catering':          'Catering',
+  'community-org':     'CommunityOrgs',
+  'security':          'Security',
+  'marketing':         'Marketing',
+  'trades':            'Trades'
+};
+var bizTabKeys = Object.keys(bizTabMap);
+var TOTAL_TABS = bizTabKeys.length;
+
+function safeVal(cell) {
+  if(!cell || cell.v === null || cell.v === undefined) return '';
+  return String(cell.v);
+}
+
+function fetchBizTab(tabName, cat) {
+  var url = 'https://docs.google.com/spreadsheets/d/' + SHEET_ID +
+    '/gviz/tq?tqx=out:json&headers=1&sheet=' + encodeURIComponent(tabName);
+  fetch(url)
+    .then(function(r) { return r.text(); })
+    .then(function(text) {
+      try {
+        var json = JSON.parse(text.substring(47, text.length - 2));
+        var cols = json.table.cols.map(function(c) { return (c.label||'').toLowerCase().trim(); });
+        var rows = (json.table.rows||[]).map(function(row) {
+          var obj = {};
+          cols.forEach(function(col, i) {
+            obj[col] = safeVal(row.c ? row.c[i] : null);
+          });
+          obj._cat = cat;
+          return obj;
+        }).filter(function(r) {
+          return r.name && r.name.length > 0 && r.status.toLowerCase().trim() === 'active';
+        });
+        allBizListings = allBizListings.concat(rows);
+      } catch(e) {
+        console.error('Error parsing tab ' + tabName + ':', e);
+      }
+      tabsLoaded++;
+      if(tabsLoaded === TOTAL_TABS) {
+        var loader = document.getElementById('biz-loading');
+        if(loader) loader.style.display = 'none';
+        document.getElementById('biz-count').textContent = allBizListings.length;
+        renderBizGrid('all');
+      }
+    })
+    .catch(function(err) {
+      console.error('Fetch error for ' + tabName + ':', err);
+      tabsLoaded++;
+      if(tabsLoaded === TOTAL_TABS) {
+        var loader = document.getElementById('biz-loading');
+        if(loader) loader.style.display = 'none';
+        renderBizGrid('all');
       }
     });
-    document.getElementById('syn-count').textContent = count;
+}
+
+function getBadgeClass(badge) {
+  var b = (badge||'').toLowerCase();
+  if(b.indexOf('kosher') > -1) return 'badge-kosher';
+  if(b.indexOf('jewish') > -1) return 'badge-jewish';
+  return 'badge-friendly';
+}
+
+function kashrutTag(v){
+  v=(v||'').toLowerCase().trim();
+  if(!v) return '';
+  var map={
+    'dairy':   {label:'🧀 Dairy',  bg:'#e6f1fb', col:'#185fa5'},
+    'milchig': {label:'🧀 Dairy',  bg:'#e6f1fb', col:'#185fa5'},
+    'meat':    {label:'🥩 Meat',   bg:'#fce8e8', col:'#a32d2d'},
+    'fleishig':{label:'🥩 Meat',   bg:'#fce8e8', col:'#a32d2d'},
+    'pareve':  {label:'🥗 Pareve', bg:'#eaf3de', col:'#3b6d11'},
+    'parve':   {label:'🥗 Pareve', bg:'#eaf3de', col:'#3b6d11'}
+  };
+  var m=map[v]||{label:v.charAt(0).toUpperCase()+v.slice(1), bg:'#f0f0f0', col:'#555'};
+  return '<span class="biz-badge" style="background:'+m.bg+';color:'+m.col+';margin-left:6px;">'+m.label+'</span>';
+}
+function buildBizCard(item) {
+  var website = item.website || '';
+  if(website && website.indexOf('http') !== 0) website = 'https://' + website;
+  var cat = item.category || item._cat || '';
+  return '<div class="biz-card" data-cat="' + item._cat + '" data-name="' + item.name + '">' +
+    '<div class="biz-card-top"><div>' +
+    '<div class="biz-category">' + cat + '</div>' +
+    '<div class="biz-name">' + item.name + '</div>' +
+    '</div>' +
+    '<div style="display:flex;flex-wrap:wrap;justify-content:flex-end;gap:0;">' +
+    (item.badge ? '<span class="biz-badge ' + getBadgeClass(item.badge) + '">' + item.badge + '</span>' : '') +
+    kashrutTag(item.kashrut) +
+    '</div>' +
+    '</div>' +
+    (item.address ? '<div class="biz-detail">📍 ' + item.address + '</div>' : '') +
+    (item.phone ? '<div class="biz-detail">📞 ' + item.phone + '</div>' : '') +
+    (item.email ? '<div class="biz-detail">📧 <a href="mailto:' + item.email + '" style="color:var(--gold);">' + item.email + '</a></div>' : '') +
+    (item.description ? '<div class="biz-desc">' + item.description + '</div>' : '') +
+    '<div class="biz-card-footer">' +
+    '<span style="font-family:sans-serif;font-size:11px;color:var(--muted);">' + (item.hours||'') + '</span>' +
+    (website ? '<a href="' + website + '" target="_blank" class="biz-website">Visit Website →</a>' : '') +
+    '</div></div>';
+}
+
+function renderBizGrid(cat) {
+  var grid = document.getElementById('biz-grid');
+  var filtered = cat === 'all'
+    ? allBizListings
+    : allBizListings.filter(function(i) { return i._cat === cat; });
+  document.getElementById('biz-count').textContent = filtered.length;
+  if(filtered.length === 0) {
+    var serviceFinderMap = {'catering':'catering','security':'security','marketing':'marketing','trades':'electric'};
+    var serviceType = serviceFinderMap[cat];
+    var sel = document.getElementById('biz-cat-select');
+    var catLabel = sel ? sel.options[sel.selectedIndex].text : cat;
+    if(allBizListings.length === 0) {
+      grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:40px;font-family:sans-serif;color:var(--muted);">Loading failed. Please refresh.</div>';
+    } else if(serviceType) {
+      grid.innerHTML = '<div style="grid-column:1/-1;background:var(--white);border:1px solid var(--border);border-radius:8px;padding:32px 24px;text-align:center;">' +
+        '<div style="font-family:Playfair Display,serif;font-size:18px;font-weight:700;color:var(--navy);margin-bottom:8px;">No browse listings for ' + catLabel + ' yet</div>' +
+        '<div style="font-family:sans-serif;font-size:13px;color:#888;line-height:1.6;margin-bottom:16px;">Looking for a ' + catLabel + ' professional? We have providers listed under <strong>Find a Service</strong>.</div>' +
+        '<button data-svc="' + serviceType + '" class="svc-nudge-btn" style="font-family:sans-serif;font-size:12px;font-weight:700;padding:9px 18px;border-radius:4px;background:var(--navy);color:#fff;border:none;cursor:pointer;">Go to Find a Service &rarr; ' + catLabel + '</button></div>';
+    } else {
+      grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:40px;font-family:sans-serif;color:var(--muted);">No listings in this category yet.</div>';
+    }
+    return;
+  }
+  grid.innerHTML = filtered.map(buildBizCard).join('');
+}
+
+// Start loading all tabs
+bizTabKeys.forEach(function(cat) {
+  fetchBizTab(bizTabMap[cat], cat);
+});
+
+// Pre-load Services sheet on page load to show counts immediately
+function preloadServiceCounts() {
+  fetch('https://docs.google.com/spreadsheets/d/' + SHEET_ID + '/gviz/tq?tqx=out:json&headers=1&sheet=Services')
+    .then(function(r){return r.text();})
+    .then(function(text){
+      var json = JSON.parse(text.substring(47, text.length - 2));
+      var cols = json.table.cols.map(function(c){return(c.label||'').toLowerCase().trim();});
+      serviceCache = {};
+      (json.table.rows||[]).forEach(function(row){
+        var obj = {};
+        cols.forEach(function(col,i){obj[col]=safeVal(row.c?row.c[i]:null);});
+        if(!obj.name||obj.status.toLowerCase().trim()!=='active') return;
+        var cats = (obj.category||'').split(',').map(function(c){return c.trim().toLowerCase();});
+        cats.forEach(function(cat){
+          if(!serviceCache[cat]) serviceCache[cat] = [];
+          serviceCache[cat].push(obj);
+        });
+      });
+      // Update all tile counts
+      document.querySelectorAll('.service-card').forEach(function(card){
+        var onclick = card.getAttribute('onclick')||'';
+        var match = onclick.match(/openService\('([^']+)'\)/);
+        if(match){
+          var type = match[1];
+          var providers = serviceCache[type]||[];
+          var countEl = card.querySelector('.service-count');
+          if(countEl){
+            countEl.textContent = providers.length > 0
+              ? providers.length + (providers.length===1?' provider':' providers')
+              : 'Submit your listing';
+          }
+        }
+      });
+    }).catch(function(e){console.error('Service preload error:',e);});
+}
+preloadServiceCounts();
+
+function filterBiz() {
+  var query = (document.getElementById('biz-search').value||'').toLowerCase();
+  var cat = document.getElementById('biz-cat-select').value;
+  if(query === '') {
+    // No search query — use renderBizGrid so nudge shows for empty categories
+    renderBizGrid(cat);
+    return;
+  }
+  // Has search query — filter across all listings
+  var filtered = allBizListings.filter(function(item) {
+    var nameMatch = (item.name||'').toLowerCase().indexOf(query) > -1 ||
+                    (item.description||'').toLowerCase().indexOf(query) > -1;
+    var catMatch = cat === 'all' || item._cat === cat;
+    return nameMatch && catMatch;
+  });
+  document.getElementById('biz-count').textContent = filtered.length;
+  if(filtered.length === 0) {
+    document.getElementById('biz-grid').innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:40px;font-family:sans-serif;color:var(--muted);">No results found for \"' + query + '\".</div>';
+  } else {
+    document.getElementById('biz-grid').innerHTML = filtered.map(buildBizCard).join('');
+  }
+}
+
+function setCat(cat, btn) {
+  document.querySelectorAll('.cat-pill').forEach(function(p) { p.classList.remove('active'); });
+  btn.classList.add('active');
+  document.getElementById('biz-cat-select').value = cat;
+  document.getElementById('biz-search').value = '';
+  renderBizGrid(cat);
+}
+
+// ── FIND A SERVICE — Google Sheets ──
+var serviceCache = null;
+var serviceLabels = {
+  legal:'Attorney / Legal', financial:'Financial / Accounting',
+  realestate:'Real Estate', medical:'Medical / Healthcare',
+  therapy:'Therapy & Counseling', tutoring:'Tutoring',
+  plumbing:'Plumbing', electric:'Electrician', hvac:'HVAC',
+  funeral:'Funeral Home', travel:'Travel Agency',
+  insurance:'Insurance', catering:'Catering & Events',
+  marketing:'Marketing & Digital', security:'Security Services',
+  jfs:'Jewish Family Service',
+  construction:'Construction',
+  '24hour':'24 Hour Services',
+  photography:'Photography'
+};
+
+function openService(type) {
+  var panel = document.getElementById('service-listings-dynamic');
+  var titleEl = document.getElementById('service-listings-title-dynamic');
+  var bodyEl = document.getElementById('service-listings-body-dynamic');
+
+  titleEl.textContent = (serviceLabels[type] || type) + ' Providers';
+  panel.style.display = 'block';
+  panel.scrollIntoView({behavior:'smooth', block:'start'});
+
+  if(serviceCache) {
+    showServiceProviders(type, bodyEl);
+    return;
   }
 
-  // Modals
-  function openModal(id) { document.getElementById(id).classList.add('open'); document.body.style.overflow = 'hidden'; }
-  function closeModal(id) { document.getElementById(id).classList.remove('open'); document.body.style.overflow = ''; }
-  document.querySelectorAll('.modal-overlay').forEach(function(overlay) {
-    overlay.addEventListener('click', function(e) { if (e.target === overlay) closeModal(overlay.id); });
-  });
-  document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape') document.querySelectorAll('.modal-overlay.open').forEach(function(m) { closeModal(m.id); });
-  });
-  function submitForm(formId, successId) {
-    var formEl = document.getElementById(formId);
-    var inputs = formEl.querySelectorAll('input, select, textarea');
-    var data = {};
-    inputs.forEach(function(el) {
-      if (el.name) data[el.name] = el.value;
-      // If no name attr, use placeholder or type as key
-      else if (el.placeholder) data[el.placeholder] = el.value;
-    });
-    // Add form type context
-    data['_form_id'] = formId;
-    data['_subject'] = 'HJI Submission: ' + formId.replace(/-/g,' ');
-    fetch('https://formspree.io/f/xkoevogn', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-      body: JSON.stringify(data)
-    })
-    .then(function(r) { return r.json(); })
-    .then(function() {
-      formEl.style.display = 'none';
-      document.getElementById(successId).style.display = 'block';
-    })
-    .catch(function() {
-      alert('Sorry, there was an error submitting your form. Please try again.');
-    });
-  }
+  bodyEl.innerHTML = '<div class="placeholder-card"><strong>Loading providers...</strong></div>';
 
-  // Nav scroll arrows
-  (function() {
-    var nav = document.getElementById('main-nav');
-    if (!nav) return;
-    var leftBtn = document.querySelector('.nav-arrow.left');
-    var rightBtn = document.querySelector('.nav-arrow.right');
-    if (!leftBtn || !rightBtn) return;
-    var scrollAmt = 100;
-    leftBtn.addEventListener('click', function() {
-      nav.scrollBy({ left: -scrollAmt, behavior: 'smooth' });
+  fetch('https://docs.google.com/spreadsheets/d/' + SHEET_ID + '/gviz/tq?tqx=out:json&headers=1&sheet=Services')
+    .then(function(r) { return r.text(); })
+    .then(function(text) {
+      var json = JSON.parse(text.substring(47, text.length - 2));
+      var cols = json.table.cols.map(function(c) { return (c.label||'').toLowerCase().trim(); });
+      serviceCache = {};
+      (json.table.rows||[]).forEach(function(row) {
+        var obj = {};
+        cols.forEach(function(col, i) { obj[col] = safeVal(row.c ? row.c[i] : null); });
+        if(!obj.name || obj.status.toLowerCase().trim() !== 'active') return;
+        var cats = (obj.category||'').split(',').map(function(c){return c.trim().toLowerCase();});
+        cats.forEach(function(cat){
+          if(!serviceCache[cat]) serviceCache[cat] = [];
+          serviceCache[cat].push(obj);
+        });
+      });
+      // Update tile counts dynamically
+      document.querySelectorAll('.service-card').forEach(function(card) {
+        var onclick = card.getAttribute('onclick') || '';
+        var match = onclick.match(/openService\('([^']+)'\)/);
+        if(match) {
+          var type = match[1];
+          var providers = serviceCache[type] || [];
+          var countEl = card.querySelector('.service-count');
+          if(countEl && providers.length > 0) {
+            countEl.textContent = providers.length + (providers.length === 1 ? ' provider' : ' providers');
+          }
+        }
+      });
+      showServiceProviders(type, bodyEl);
+    })
+    .catch(function(err) {
+      console.error('Services fetch error:', err);
+      bodyEl.innerHTML = '<div class="placeholder-card"><strong>Could not load providers. Please try again.</strong></div>';
     });
-    rightBtn.addEventListener('click', function() {
-      nav.scrollBy({ left: scrollAmt, behavior: 'smooth' });
-    });
-  })();
-  </script>
+}
+
+function showServiceProviders(type, bodyEl) {
+  var providers = (serviceCache && serviceCache[type]) || [];
+  if(providers.length === 0) {
+    bodyEl.innerHTML = '<div class="placeholder-card" style="border-radius:0 0 6px 6px;">' +
+      '<strong>No listings yet for this category</strong>' +
+      '<br><br><button class="hero-submit-btn" onclick="openModal(&quot;modal-submit-biz&quot;)" style="margin:0 auto;">+ Submit Your Service</button>' +
+      '</div>';
+    return;
+  }
+  bodyEl.innerHTML = providers.map(function(p, idx) {
+    var website = p.website || '';
+    if(website && website.indexOf('http') !== 0) website = 'https://' + website;
+    var isLast = idx === providers.length - 1;
+    return '<div class="service-listing-item"' + (isLast ? ' style="border-radius:0 0 6px 6px;"' : '') + '>' +
+      '<div>' +
+      '<div class="sli-name">' + p.name + '</div>' +
+      '<div class="sli-meta">' + (p.address||'') + (p.description ? ' · ' + p.description : '') + '</div>' +
+      (p.email ? '<div class="sli-meta">📧 <a href="mailto:'+p.email+'" style="color:var(--gold);">'+p.email+'</a></div>' : '') +
+      '</div>' +
+      '<div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;">' +
+      (p.phone ? '<span class="sli-phone">' + p.phone + '</span>' : '') +
+      (website ? '<a href="'+website+'" target="_blank" class="biz-website" style="font-size:10px;">Visit Website →</a>' : '') +
+      '</div></div>';
+  }).join('');
+}
+
+function closeService() {
+  var panel = document.getElementById('service-listings-dynamic');
+  if(panel) panel.style.display = 'none';
+}
+function switchToService(type) {
+  document.querySelectorAll('.main-tab').forEach(function(b) {
+    if(b.getAttribute('onclick') && b.getAttribute('onclick').indexOf('services') > -1) {
+      switchTab('services', b);
+    }
+  });
+  setTimeout(function() { openService(type); }, 150);
+}
+
+// Event delegation for nudge buttons
+document.addEventListener('click', function(e) {
+  if(e.target && e.target.classList.contains('svc-nudge-btn')) {
+    switchToService(e.target.getAttribute('data-svc'));
+  }
+});
+</script>
 <div class="mobile-menu-overlay" id="mob-overlay" onclick="closeMobileMenu()"></div>
 <div class="mobile-menu" id="mob-menu">
   <div class="mobile-menu-head"><div class="mobile-menu-title">Houston Jewish Info</div><button class="mobile-menu-close" onclick="closeMobileMenu()">×</button></div>
@@ -1414,10 +2362,10 @@
     <a href="/">🏠 Home</a>
     <a href="/mazaltov">🎉 Mazal Tov</a>
     <a href="/events">📅 Events</a>
-    <a href="/services">🛠️ Services</a>
+    <a href="/services" class="active">🛠️ Services</a>
     <a href="/jobs">💼 Jobs</a>
     <a href="/real-estate">🏡 Real Estate</a>
-    <a href="/synagogues" class="active">✡️ Synagogues</a>
+    <a href="/synagogues">✡️ Synagogues</a>
     <a href="/education">🎓 Education</a>
     <a href="/things-to-do">🎡 Things to Do</a>
     <a href="/charities">💛 Charities</a>
