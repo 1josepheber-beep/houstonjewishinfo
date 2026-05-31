@@ -1279,6 +1279,7 @@
 
   // ===== EAT OUT (kosher restaurants) =====
   var EAT_ALL=[], EAT_K='all';
+  function splitTags(v){ return String(v||'').split(/[,;/]+/).map(function(s){return s.trim();}).filter(Boolean); }
   function kashrutNorm(v){
     v=(v||'').toLowerCase().trim();
     if(v==='dairy'||v==='milchig') return 'dairy';
@@ -1286,7 +1287,8 @@
     if(v==='pareve'||v==='parve') return 'pareve';
     return '';
   }
-  function kashrutTag(v){
+  function kashrutNormList(v){ return splitTags(v).map(kashrutNorm).filter(Boolean); }
+  function oneKashrutTag(v){
     v=(v||'').toLowerCase().trim(); if(!v) return '';
     var m={'dairy':['🧀 Dairy','#e6f1fb','#185fa5'],'milchig':['🧀 Dairy','#e6f1fb','#185fa5'],
       'meat':['🥩 Meat','#fce8e8','#a32d2d'],'fleishig':['🥩 Meat','#fce8e8','#a32d2d'],
@@ -1294,6 +1296,7 @@
     if(!m) m=[v.charAt(0).toUpperCase()+v.slice(1),'#f0f0f0','#555'];
     return '<span class="ttd-tag" style="background:'+m[1]+';color:'+m[2]+';">'+m[0]+'</span>';
   }
+  function kashrutTag(v){ return splitTags(v).map(oneKashrutTag).join(''); }
   function eatCard(d){
     var web=ttdWeb(d.website);
     return '<div class="ttd-card">'+
@@ -1307,7 +1310,7 @@
       '</div>';
   }
   function renderEats(){
-    var list = EAT_K==='all' ? EAT_ALL : EAT_ALL.filter(function(d){ return kashrutNorm(d.kashrut)===EAT_K; });
+    var list = EAT_K==='all' ? EAT_ALL : EAT_ALL.filter(function(d){ return kashrutNormList(d.kashrut).indexOf(EAT_K)>-1; });
     var grid=document.getElementById('eat-grid');
     grid.innerHTML = list.length ? list.map(eatCard).join('') : '<div class="ttd-empty">No restaurants match this filter yet.</div>';
     document.getElementById('eat-count').textContent=list.length;
@@ -1329,12 +1332,14 @@
   var ACT_ALL=[], ACT_CAT='all', ACT_FREE_ONLY=false;
   function isFreeVal(v){ v=(v||'').toLowerCase().trim(); return v==='yes'||v==='free'||v==='y'||v==='true'; }
   function ioTag(v){
-    v=(v||'').toLowerCase().trim(); if(!v) return '';
-    var m={'indoor':['Indoor','#eef0f2','#555'],'outdoor':['Outdoor','#eaf3de','#3b6d11'],'both':['Indoor/Outdoor','#fdf3e0','#7a4a0a']}[v];
-    if(!m) return '';
-    return '<span class="ttd-tag" style="background:'+m[1]+';color:'+m[2]+';">'+m[0]+'</span>';
+    return splitTags(v).map(function(one){
+      one=one.toLowerCase().trim();
+      var m={'indoor':['Indoor','#eef0f2','#555'],'outdoor':['Outdoor','#eaf3de','#3b6d11'],'both':['Indoor/Outdoor','#fdf3e0','#7a4a0a']}[one];
+      if(!m) return '';
+      return '<span class="ttd-tag" style="background:'+m[1]+';color:'+m[2]+';">'+m[0]+'</span>';
+    }).join('');
   }
-  function catTag(c){ return c?'<span class="ttd-tag" style="background:#e6f1fb;color:#185fa5;">'+ttdEsc(c)+'</span>':''; }
+  function catTag(c){ return splitTags(c).map(function(one){ return '<span class="ttd-tag" style="background:#e6f1fb;color:#185fa5;">'+ttdEsc(one)+'</span>'; }).join(''); }
   function freeTag(v){
     return isFreeVal(v) ? '<span class="ttd-tag" style="background:#dff3d8;color:#2c6e1a;">✓ Free</span>' : '';
   }
@@ -1351,7 +1356,8 @@
   function renderActs(){
     var q=(document.getElementById('act-search').value||'').toLowerCase().trim();
     var list=ACT_ALL.filter(function(d){
-      var catOk = ACT_CAT==='all' || (d.category||'')===ACT_CAT;
+      var cats=splitTags(d.category).map(function(s){return s.toLowerCase();});
+      var catOk = ACT_CAT==='all' || cats.indexOf(ACT_CAT.toLowerCase())>-1;
       var qOk = !q || (d.name||'').toLowerCase().indexOf(q)>-1 || (d.category||'').toLowerCase().indexOf(q)>-1;
       var freeOk = !ACT_FREE_ONLY || isFreeVal(d.free);
       return catOk && qOk && freeOk;

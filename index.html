@@ -2059,6 +2059,20 @@
   })();
 
   // Ads — Google Sheets driven (mirrors the Jobs Board loader above)
+  // Fire an ad_view event once, when the ad actually scrolls into view (>=50% visible)
+  function trackAdView(el, adName, slotName){
+    if(!('IntersectionObserver' in window)){ return; } // older browsers: skip view tracking, clicks still work
+    var fired=false;
+    var obs=new IntersectionObserver(function(entries){
+      entries.forEach(function(en){
+        if(!fired && en.isIntersecting && en.intersectionRatio>=0.5){
+          fired=true; obs.disconnect();
+          try{ if(typeof gtag==='function'){ gtag('event','ad_view',{ad_name:adName, ad_placement:slotName}); } }catch(e){}
+        }
+      });
+    }, {threshold:[0.5]});
+    obs.observe(el);
+  }
   function loadAds() {
     // If your Ads tab lives in the SAME workbook as the Jobs Board, leave this ID as-is.
     // If it's a different spreadsheet, paste that spreadsheet's ID here.
@@ -2086,9 +2100,14 @@
           if (info && info.active) {   // active row -> show the ad (border + spacing injected here)
             var d = info.active;
             var alt = String(d.advertiser || 'Advertisement').replace(/"/g, '&quot;');
+            var slotName = el.getAttribute('data-ad-slot');
+            var trackName = String(d.advertiser || 'Advertisement').replace(/'/g, "\\'");
+            var onclk = "try{if(typeof gtag==='function'){gtag('event','ad_click',{ad_name:'" + trackName + "',ad_placement:'" + slotName + "'});}}catch(e){}";
             el.innerHTML = '<a href="' + (d.linkurl || '#') + '" target="_blank" rel="noopener" aria-label="' + alt + '" ' +
+                           'onclick="' + onclk + '" ' +
                            'style="display:block;margin:0 0 16px;border:1px solid #c8a882;border-radius:6px;overflow:hidden;text-decoration:none;">' +
                            '<img src="' + d.imageurl + '" alt="' + alt + '" style="width:100%;height:auto;display:block;"></a>';
+            trackAdView(el, String(d.advertiser || 'Advertisement'), slotName);
           } else {                     // no active ad for this placement -> stays empty (collapses)
             el.innerHTML = '';
           }

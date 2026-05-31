@@ -1254,8 +1254,10 @@
       var btn=web ? '<a href="'+attr(web)+'" target="_blank" class="syn-website-btn" style="white-space:nowrap;flex-shrink:0;">Visit Website \u2192</a>' : '';
       var times=d.servicetimes ? '<div class="syn-service-times">'+esc(d.servicetimes)+'</div>' : '';
       var nusach=String(d.nusach||'').trim();
-      var nusachTag=nusach ? '<span class="syn-nusach">'+esc(nusach)+'</span>' : '';
-      return '<div class="syn-card" data-denom="'+attr(key)+'" data-nusach="'+attr(nusach.toLowerCase())+'">'+imgBlock+
+      var nusachList=nusach.split(/[,;/]+/).map(function(s){return s.trim();}).filter(Boolean);
+      var nusachTag=nusachList.map(function(nz){ return '<span class="syn-nusach">'+esc(nz)+'</span>'; }).join('');
+      var nusachData=nusachList.map(function(nz){return nz.toLowerCase();}).join('|');
+      return '<div class="syn-card" data-denom="'+attr(key)+'" data-nusach="'+attr(nusachData)+'">'+imgBlock+
         '<div class="syn-card-body">'+
           '<span class="syn-denom '+dn.cls+'">'+esc(dn.label)+'</span>'+nusachTag+
           '<div class="syn-name">'+esc(d.name)+'</div>'+
@@ -1344,8 +1346,8 @@
     var count = 0;
     cards.forEach(function(card) {
       var denom = card.dataset.denom || '';
-      var nusach = card.dataset.nusach || '';
-      if (val === 'all' || denom === val || nusach === val) {
+      var nusachVals = (card.dataset.nusach || '').split('|');
+      if (val === 'all' || denom === val || nusachVals.indexOf(val) > -1) {
         card.style.display = '';
         count++;
       } else {

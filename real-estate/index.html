@@ -928,13 +928,31 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape')closeMobileM
         if(info && info.active){
           var d = info.active;
           var alt = String(d.advertiser||'Advertisement').replace(/"/g,'&quot;');
-          el.innerHTML = '<a href="'+(d.linkurl||'#')+'" target="_blank" rel="noopener" aria-label="'+alt+'" style="display:block;margin:0 0 16px;border:1px solid #c8a882;border-radius:6px;overflow:hidden;text-decoration:none;"><img src="'+d.imageurl+'" alt="'+alt+'" style="width:100%;height:auto;display:block;"></a>';
+          var reTrack = String(d.advertiser||'Advertisement').replace(/'/g,"\\'");
+          var reSlot = el.getAttribute('data-ad-slot');
+          var reOnclk = "try{if(typeof gtag==='function'){gtag('event','ad_click',{ad_name:'"+reTrack+"',ad_placement:'"+reSlot+"'});}}catch(e){}";
+          el.innerHTML = '<a href="'+(d.linkurl||'#')+'" target="_blank" rel="noopener" aria-label="'+alt+'" onclick="'+reOnclk+'" style="display:block;margin:0 0 16px;border:1px solid #c8a882;border-radius:6px;overflow:hidden;text-decoration:none;"><img src="'+d.imageurl+'" alt="'+alt+'" style="width:100%;height:auto;display:block;"></a>';
+          trackAdView(el, String(d.advertiser||'Advertisement'), reSlot);
         } else { el.innerHTML=''; }
       });
       // show the agent block only if at least one of its slots has an active ad
       var block = document.getElementById('re-ad-block');
       if(block){ block.style.display = block.querySelector('[data-ad-slot] a') ? '' : 'none'; }
     }).catch(function(){});
+
+    function trackAdView(el, adName, slotName){
+      if(!('IntersectionObserver' in window)){ return; }
+      var fired=false;
+      var obs=new IntersectionObserver(function(entries){
+        entries.forEach(function(en){
+          if(!fired && en.isIntersecting && en.intersectionRatio>=0.5){
+            fired=true; obs.disconnect();
+            try{ if(typeof gtag==='function'){ gtag('event','ad_view',{ad_name:adName, ad_placement:slotName}); } }catch(e){}
+          }
+        });
+      }, {threshold:[0.5]});
+      obs.observe(el);
+    }
   })();
 </script>
 <!-- maps-linkify: turn 📍 addresses into Apple/Google Maps links -->

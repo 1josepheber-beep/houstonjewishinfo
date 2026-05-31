@@ -2104,8 +2104,8 @@ function getBadgeClass(badge) {
 }
 
 function kashrutTag(v){
-  v=(v||'').toLowerCase().trim();
-  if(!v) return '';
+  var parts=String(v||'').split(/[,;/]+/).map(function(s){return s.trim();}).filter(Boolean);
+  if(!parts.length) return '';
   var map={
     'dairy':   {label:'🧀 Dairy',  bg:'#e6f1fb', col:'#185fa5'},
     'milchig': {label:'🧀 Dairy',  bg:'#e6f1fb', col:'#185fa5'},
@@ -2114,8 +2114,11 @@ function kashrutTag(v){
     'pareve':  {label:'🥗 Pareve', bg:'#eaf3de', col:'#3b6d11'},
     'parve':   {label:'🥗 Pareve', bg:'#eaf3de', col:'#3b6d11'}
   };
-  var m=map[v]||{label:v.charAt(0).toUpperCase()+v.slice(1), bg:'#f0f0f0', col:'#555'};
-  return '<span class="biz-badge" style="background:'+m.bg+';color:'+m.col+';margin-left:6px;">'+m.label+'</span>';
+  return parts.map(function(p){
+    var k=p.toLowerCase();
+    var m=map[k]||{label:p.charAt(0).toUpperCase()+p.slice(1), bg:'#f0f0f0', col:'#555'};
+    return '<span class="biz-badge" style="background:'+m.bg+';color:'+m.col+';margin-left:6px;">'+m.label+'</span>';
+  }).join('');
 }
 function buildBizCard(item) {
   var website = item.website || '';

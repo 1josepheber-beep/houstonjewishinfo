@@ -1024,7 +1024,8 @@
   function applyCharFilter(){
     var cards=document.querySelectorAll('.charity-card'); var count=0;
     cards.forEach(function(card){
-      if(CHAR_FILTER==='all' || card.dataset.cat===CHAR_FILTER){ card.style.display=''; count++; }
+      var cats=(card.dataset.cat||'').split('|');
+      if(CHAR_FILTER==='all' || cats.indexOf(CHAR_FILTER)>-1){ card.style.display=''; count++; }
       else card.style.display='none';
     });
     var c=document.getElementById('charity-count'); if(c) c.textContent=count;
@@ -1049,8 +1050,14 @@
     for(var name in CHAR_CATS){ if(k.indexOf(name)>=0) return CHAR_CATS[name]; }
     return {key:(k||'other'),label:(cat||'Charity'),grad:'linear-gradient(90deg,#1f3f6e,#3a70c0)'};
   }
+  function catList(cat){
+    return String(cat||'').split(/[,;/]+/).map(function(s){return s.trim();}).filter(Boolean).map(catInfo);
+  }
   function buildCharityCard(d){
-    var ci=catInfo(d.category);
+    var cats=catList(d.category);
+    var ci=cats.length?cats[0]:catInfo(d.category);
+    var allKeys=cats.length?cats.map(function(c){return c.key;}).join('|'):ci.key;
+    var labelTags=(cats.length?cats:[ci]).map(function(c){ return '<span class="charity-category">'+charEsc(c.label)+'</span>'; }).join(' ');
     var logo=charLogoURL(d.logo);
     var logoBlock=logo
       ? '<img class="charity-logo" src="'+charEsc(logo)+'" alt="'+charEsc(d.name)+' logo" loading="lazy">'
@@ -1059,12 +1066,12 @@
     var donate=d.donateurl
       ? '<a href="'+charEsc(/^https?:\/\//i.test(d.donateurl)?d.donateurl:'https://'+d.donateurl)+'" target="_blank" rel="noopener" class="charity-donate-btn">Donate →</a>'
       : (d.website ? '<a href="'+charEsc(/^https?:\/\//i.test(d.website)?d.website:'https://'+d.website)+'" target="_blank" rel="noopener" class="charity-donate-btn">Visit →</a>' : '');
-    return '<div class="charity-card" data-cat="'+charEsc(ci.key)+'">'+
+    return '<div class="charity-card" data-cat="'+charEsc(allKeys)+'">'+
       '<div class="charity-card-banner" style="background:'+ci.grad+';"></div>'+
       '<div class="charity-card-body">'+
         '<div class="charity-card-top">'+
           logoBlock+
-          '<span class="charity-category">'+charEsc(ci.label)+'</span>'+
+          labelTags+
         '</div>'+
         '<div class="charity-name">'+charEsc(d.name)+'</div>'+
         '<div class="charity-desc">'+charEsc(d.description)+'</div>'+
