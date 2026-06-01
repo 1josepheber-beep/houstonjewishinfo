@@ -1409,8 +1409,6 @@
         <button class="nav-arrow left" aria-label="Scroll nav left">&#8249;</button>
         <nav class="nav-bar" id="main-nav" aria-label="Main navigation">
         <a href="/" class="active">Home</a>
-        <a href="/mazaltov">Mazal Tov</a>
-        <a href="/events">Events</a>
         <a href="/services">Services</a>
         <a href="/jobs">Jobs</a>
         <a href="/real-estate">Real Estate</a>
@@ -1574,18 +1572,88 @@
     <!-- ========================================================
          CENTER — News Stories
          ======================================================== -->
-    <main class="news-center" aria-label="News stories">
-
-      <!-- NEWS ARTICLES -->
-      <div id="articles-container">
-        <!-- Stories are loaded dynamically from the Stories sheet tab -->
-      </div><!-- end articles-container -->      <!-- PAGINATION -->
-      <div class="pagination" id="pagination">
-        <button class="page-arrow" id="prev-btn" onclick="changePage(-1)" disabled>← Previous</button>
-        <span class="page-indicator" id="page-indicator">Page 1 of 2</span>
-        <button class="page-arrow" id="next-btn" onclick="changePage(1)">Next →</button>
+    <main class="news-center" aria-label="Community feed">
+    <style>
+      #community-feed{font-family:inherit;}
+      #community-feed .cf-title-main{font-family:'Playfair Display',serif;font-size:30px;font-weight:700;color:var(--navy);text-align:center;margin:0;}
+      #community-feed .cf-rule{border-top:2px solid var(--navy);border-bottom:1px solid var(--border);height:4px;margin:10px 0 16px;}
+      #community-feed .cf-controls{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:10px;}
+      #community-feed .cf-pills{display:flex;gap:8px;flex-wrap:wrap;}
+      #community-feed .cf-pill{font-family:sans-serif;font-size:12px;font-weight:700;padding:6px 14px;border-radius:999px;border:1px solid var(--border);background:#fff;color:var(--navy);cursor:pointer;display:inline-flex;align-items:center;gap:6px;}
+      #community-feed .cf-pill.on{background:var(--navy);color:#fff;border-color:var(--navy);}
+      #community-feed .cf-dot{width:7px;height:7px;border-radius:50%;display:inline-block;}
+      #community-feed .cf-seg{display:inline-flex;border:1px solid var(--border);border-radius:6px;overflow:hidden;background:#fff;}
+      #community-feed .cf-seg button{font-family:sans-serif;border:none;background:#fff;color:var(--navy);font-size:12px;font-weight:700;padding:7px 14px;cursor:pointer;}
+      #community-feed .cf-seg button.on{background:var(--navy);color:#fff;}
+      #community-feed .cf-women{display:flex;align-items:center;gap:8px;margin-bottom:18px;font-family:sans-serif;font-size:13px;color:#333;}
+      #community-feed .cf-muted{color:var(--muted);}
+      #community-feed .cf-switch{width:34px;height:20px;border-radius:999px;background:#cfc7b6;border:none;position:relative;cursor:pointer;padding:0;flex:0 0 auto;transition:background .15s;}
+      #community-feed .cf-switch.on{background:var(--gold);}
+      #community-feed .cf-switch i{position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:#fff;transition:left .15s;}
+      #community-feed .cf-switch.on i{left:16px;}
+      #community-feed .article-card{border:1px solid var(--border);border-radius:12px;margin-bottom:14px;overflow:hidden;background:#fff;}
+      #community-feed .cf-banner{width:100%;height:180px;overflow:hidden;}
+      #community-feed .cf-banner img{width:100%;height:100%;object-fit:cover;display:block;}
+      #community-feed .cf-body{padding:16px 18px;}
+      #community-feed .cf-row1{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;}
+      #community-feed .cf-dateline{font-family:sans-serif;color:var(--navy);font-weight:700;font-size:13px;}
+      #community-feed .cf-tags{display:flex;gap:7px;margin:9px 0 4px;flex-wrap:wrap;}
+      #community-feed .cf-tag{font-family:sans-serif;font-size:10px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;padding:3px 9px;border-radius:5px;white-space:nowrap;}
+      #community-feed .cf-type-news{background:#dde8f6;color:#185fa5;}
+      #community-feed .cf-type-event{background:#f3e6c8;color:#8a5a12;}
+      #community-feed .cf-type-mazal{background:#f6dde6;color:#a3375a;}
+      #community-feed .cf-cat{background:#ede9e2;color:#5f5a51;}
+      #community-feed .cf-tag-mz{background:#eee9df;color:#7a6a3f;}
+      #community-feed .cf-up{background:#e3efe0;color:#3b6d11;}
+      #community-feed .cf-past{background:#efece6;color:#6b6b6b;}
+      #community-feed .article-headline{font-family:'Playfair Display',serif;font-size:21px;font-weight:700;color:var(--navy);line-height:1.25;margin:4px 0;}
+      #community-feed .cf-meta{display:flex;flex-wrap:wrap;gap:14px;color:var(--muted);font-family:sans-serif;font-size:13px;margin:6px 0 8px;}
+      #community-feed .cf-desc{font-family:sans-serif;color:#444;font-size:14px;line-height:1.6;margin:0;}
+      #community-feed .cf-desc.clamped{display:-webkit-box;-webkit-line-clamp:5;-webkit-box-orient:vertical;overflow:hidden;}
+      #community-feed .cf-foot{display:flex;gap:16px;align-items:center;margin-top:12px;flex-wrap:wrap;}
+      #community-feed .article-read-more{font-family:sans-serif;font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;background:var(--navy);color:#fff;padding:9px 16px;border-radius:6px;text-decoration:none;display:inline-block;}
+      #community-feed .article-read-more:hover{background:var(--gold);color:#fff;}
+      #community-feed .cf-addcal{font-family:sans-serif;background:none;border:none;color:var(--gold);font-size:13px;font-weight:700;cursor:pointer;padding:0;}
+      #community-feed .cf-empty{font-family:sans-serif;text-align:center;color:var(--muted);padding:40px 0;}
+      #community-feed .cf-calhead{display:flex;justify-content:center;align-items:center;gap:18px;margin:6px 0 12px;}
+      #community-feed .cf-calnav{background:#fff;border:1px solid var(--border);border-radius:6px;padding:6px 12px;cursor:pointer;color:var(--navy);font-weight:700;}
+      #community-feed .cf-calmonth{font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:var(--navy);}
+      #community-feed table.cf-caltable{width:100%;border-collapse:collapse;}
+      #community-feed .cf-caltable th{font-family:sans-serif;font-size:11px;color:var(--muted);font-weight:700;padding:4px;}
+      #community-feed .cf-caltable td{height:46px;text-align:center;vertical-align:top;font-size:13px;border:1px solid var(--border);padding:4px;font-family:sans-serif;color:#333;width:14.28%;}
+      #community-feed .cf-caltable td.empty{background:var(--cream);}
+      #community-feed .cf-caltable td.has{font-weight:700;cursor:pointer;color:var(--navy);}
+      #community-feed .cf-cdot{width:6px;height:6px;border-radius:50%;background:var(--gold);margin:3px auto 0;}
+      #community-feed .cf-cal-day{margin-top:14px;}
+    </style>
+    <section id="community-feed">
+      <h1 class="cf-title-main">Community Feed</h1>
+      <div class="cf-rule"></div>
+      <div class="cf-controls">
+        <div class="cf-pills" id="cf-pills">
+          <button type="button" class="cf-pill on" data-f="all">All</button>
+          <button type="button" class="cf-pill" data-f="news"><span class="cf-dot" style="background:#185fa5;"></span>News</button>
+          <button type="button" class="cf-pill" data-f="event"><span class="cf-dot" style="background:#b8923a;"></span>Events</button>
+          <button type="button" class="cf-pill" data-f="mazal"><span class="cf-dot" style="background:#c4537e;"></span>Mazal Tov</button>
+        </div>
+        <div class="cf-seg" id="cf-seg" style="display:none;">
+          <button type="button" id="cf-vlist" class="on" onclick="cfSetView('list')">List</button>
+          <button type="button" id="cf-vcal" onclick="cfSetView('cal')">Calendar</button>
+        </div>
       </div>
-
+      <div class="cf-women">
+        <button type="button" class="cf-switch" id="cf-wsw" onclick="cfToggleWomen()" aria-pressed="false" aria-label="Toggle women's events"><i></i></button>
+        <span>Women's events <span class="cf-muted">(off by default)</span></span>
+      </div>
+      <div id="cf-ad-mazal"></div>
+      <div id="cf-list"></div>
+      <div class="pagination" id="cf-pager" style="display:none;">
+        <button class="page-arrow" id="cf-prev" onclick="cfPage(-1)" disabled>&#8592; Previous</button>
+        <span class="page-indicator" id="cf-pind">Page 1 of 1</span>
+        <button class="page-arrow" id="cf-next" onclick="cfPage(1)">Next &#8594;</button>
+      </div>
+      <div id="cf-cal" style="display:none;"></div>
+    </section>
     </main>
 
 
@@ -1779,197 +1847,214 @@
       });
   })();
 
-  // Pagination
-  var currentPage = 1;
-  var totalPages = 1; // set automatically by the Stories loader
+  // ===== COMMUNITY FEED — Stories + Events + Mazal Tov (Google Sheets driven) =====
+  (function(){
+    var SHEET_ID='1in7Ac7zknqyR9neWKOCAjOAG4jXCIVTJQfU6jJ72CV8';
+    var STORY_IMG='https://houstonjewishinfo.com/images/stories/';
+    var EVENT_IMG='https://houstonjewishinfo.com/images/events/';
+    var PER_PAGE=6;
+    var MOBILE_AD_SLOTS=['mobile-1','mobile-2','mobile-3','mobile-4','mobile-5'];
+    var MAZAL_AD_SLOTS=['mazaltov-1','mazaltov-2','mazaltov-3','mazaltov-4','mazaltov-5'];
+    var TYPE={news:'News',event:'Event',mazal:'Mazal Tov'};
+    var MONTHS=['January','February','March','April','May','June','July','August','September','October','November','December'];
 
-  function changePage(dir) {
-    var newPage = currentPage + dir;
-    if (newPage < 1 || newPage > totalPages) return;
+    var items=[], filter='all', view='list', showWomen=false, page=1, wired=false;
+    var calM, calY;
 
-    document.querySelectorAll('.article-page').forEach(function(p) { p.style.display = 'none'; });
-    document.getElementById('page-' + newPage).style.display = 'block';
-    currentPage = newPage;
+    function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+    function attr(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/"/g,'&quot;');}
+    function firstLine(s){return String(s||'').split('\n')[0].trim();}
+    function cleanLoc(s){return String(s||'').replace(/\s*\n\s*/g,', ').replace(/,\s*$/,'').trim();}
+    function imgURL(v,base){v=String(v||'').trim();if(!v)return '';return /^https?:\/\//i.test(v)?v:base+v;}
+    function cfToday(){var d=new Date();d.setHours(0,0,0,0);return d;}
+    function fmtDate(d){return d?d.toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'}).toUpperCase():'';}
 
-    // Update indicator
-    document.getElementById('page-indicator').textContent = 'Page ' + currentPage + ' of ' + totalPages;
+    function parseDate(cell){
+      if(!cell)return null;
+      var v=cell.v,f=cell.f;
+      if(typeof v==='string'&&/^Date\(/.test(v)){var n=v.match(/\d+/g);if(n)return new Date(+n[0],+n[1],+(n[2]||1));}
+      if(Object.prototype.toString.call(v)==='[object Date]')return v;
+      if(typeof f==='string'){var t=Date.parse(f);if(!isNaN(t))return new Date(t);}
+      if(typeof v==='string'){var t2=Date.parse(v);if(!isNaN(t2))return new Date(t2);}
+      return null;
+    }
+    function cellStr(c){if(!c)return '';return c.f!=null?c.f:(c.v==null?'':c.v);}
+    function tabURL(tab){return 'https://docs.google.com/spreadsheets/d/'+SHEET_ID+'/gviz/tq?tqx=out:json&headers=1&sheet='+encodeURIComponent(tab);}
+    function getTab(tab){return fetch(tabURL(tab)).then(function(r){return r.text();}).then(function(text){
+      var json=JSON.parse(text.substring(47,text.length-2));
+      var cols=json.table.cols.map(function(c){return (c.label||'').toLowerCase().trim();});
+      return (json.table.rows||[]).map(function(row){var o={_cells:{}};cols.forEach(function(col,i){var c=row.c?row.c[i]:null;o[col]=cellStr(c);o._cells[col]=c;});return o;});
+    });}
+    function active(o){return String(o.status||'').toLowerCase().trim()==='active';}
 
-    // Update arrow states
-    document.getElementById('prev-btn').disabled = currentPage === 1;
-    document.getElementById('next-btn').disabled = currentPage === totalPages;
-
-    // Scroll to top of articles
-    document.querySelector('.news-center').scrollIntoView({behavior:'smooth', block:'start'});
-  }
-
-  // ===== STORIES — Google Sheets driven =====
-  (function() {
-    var STORY_SHEET_ID  = '1in7Ac7zknqyR9neWKOCAjOAG4jXCIVTJQfU6jJ72CV8';
-    var STORY_SHEET_TAB = 'Stories';
-    var STORY_IMG_BASE  = 'https://houstonjewishinfo.com/images/stories/'; // folder in your repo
-    var PER_PAGE        = 4;                 // stories per page
-    var MOBILE_AD_SLOTS = ['mobile-1','mobile-2','mobile-3','mobile-4','mobile-5'];
-
-    var url = 'https://docs.google.com/spreadsheets/d/' + STORY_SHEET_ID +
-              '/gviz/tq?tqx=out:json&sheet=' + encodeURIComponent(STORY_SHEET_TAB) + '&headers=1';
-
-    function esc(s){ return String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-    function imgURL(v){ v = String(v||'').trim(); if(!v) return ''; return /^https?:\/\//i.test(v) ? v : STORY_IMG_BASE + v; }
-
-    // Category tag colors: [background, text]. Add/rename categories here anytime.
-    var LABEL_COLORS = {
-      'breaking':  ['#f7dada', '#8f2020'],
-      'events':    ['#f3e6c8', '#8a5a12'],
-      'community': ['#dde8f6', '#1f3f6e'],
-      'simcha':    ['#f6dde6', '#8a2f4d'],
-      'mazal tov': ['#f6dde6', '#8a2f4d'],
-      'business':  ['#dcecd9', '#2f5a2a'],
-      'education': ['#d9eef0', '#1f5560'],
-      'israel':    ['#e7e1f5', '#46357d']
-    };
-    function labelStyle(label){
-      var c = LABEL_COLORS[String(label||'').toLowerCase().trim()] || ['#ede9e2', '#5f5a51']; // default = neutral gray
-      return 'background:' + c[0] + ';color:' + c[1] + ';padding:3px 9px;border-radius:4px;';
+    function buildItems(stories,events,mazals){
+      var out=[];
+      stories.forEach(function(r){if(!active(r)||!r.headline)return;
+        out.push({type:'news',date:parseDate(r._cells.date),time:'',title:r.headline,cat:r.label||'',org:r.byline||'',loc:'',desc:r.excerpt||'',img:imgURL(r.image,STORY_IMG),link:r.linkurl||'',linkText:r.linktext||'Read More \u2192',women:false});});
+      events.forEach(function(r){if(!active(r)||!r.title)return;
+        out.push({type:'event',date:parseDate(r._cells.date),time:r.time||'',title:r.title,cat:r.category||'Event',org:r.presenter||'',loc:r.location||'',desc:r.description||'',img:imgURL(r.imageurl,EVENT_IMG),link:r.ticketurl||'',linkText:(r.buttontext||'More Details'),women:String(r.women||'').toLowerCase().trim()==='yes'});});
+      mazals.forEach(function(r){if(!active(r)||!r.name)return;
+        out.push({type:'mazal',date:parseDate(r._cells.date),time:'',title:r.name,cat:r.type||'',org:'',loc:r.city||'',desc:r.message||'',img:'',link:'',linkText:'',women:false});});
+      return out;
     }
 
-    function cardHTML(d){
-      var img = imgURL(d.image);
-      var banner = img
-        ? '<div class="article-banner" style="padding:0;overflow:hidden;"><img src="' + img + '" alt="' + esc(d.headline) +
-          '" style="width:100%;height:100%;object-fit:cover;display:block;"></div>'
-        : '';
-      var label = d.label ? '<span class="article-label" style="' + labelStyle(d.label) + '">' + esc(d.label) + '</span>' : '';
-      var date  = d.date  ? '<span class="article-date">' + esc(d.date) + '</span>' : '';
-      var metaTop = (label || date) ? '<div class="article-meta-top">' + label + date + '</div>' : '';
-      var byline = d.byline ? '<span class="article-byline">' + esc(d.byline) + '</span>' : '<span class="article-byline"></span>';
-      var link = d.linkurl
-        ? '<a href="' + esc(d.linkurl) + '" target="_blank" class="article-read-more">' + esc(d.linktext || 'Read More →') + '</a>'
-        : '';
-      var footer = (d.byline || d.linkurl) ? '<div class="article-footer">' + byline + link + '</div>' : '';
-      return '<article class="article-card">' + banner +
-             '<div class="article-body">' + metaTop +
-             '<h2 class="article-headline">' + esc(d.headline) + '</h2>' +
-             '<p class="article-excerpt">' + esc(d.excerpt) + '</p>' +
-             '<button type="button" class="read-more-btn" style="display:none;">Read more ↓</button>' +
-             footer + '</div></article>';
+    function pad(n){return (n<10?'0':'')+n;}
+    function gcal(x){
+      if(!x.date)return '';
+      var s=''+x.date.getFullYear()+pad(x.date.getMonth()+1)+pad(x.date.getDate());
+      var e2=new Date(x.date.getTime()+86400000);
+      var e=''+e2.getFullYear()+pad(e2.getMonth()+1)+pad(e2.getDate());
+      var det=(x.time?x.time+'\n':'')+(x.desc||'');
+      return 'https://calendar.google.com/calendar/render?action=TEMPLATE&text='+encodeURIComponent(x.title)+'&dates='+s+'/'+e+'&details='+encodeURIComponent(det)+'&location='+encodeURIComponent(cleanLoc(x.loc));
     }
+    window.cfAddCal=function(enc){try{window.open(decodeURIComponent(enc),'_blank');}catch(e){}};
 
-    function adSlot(name){
-      var id = (name === 'mobile-1') ? ' id="mobile-ad-strip"' : '';
-      var cls = (name === 'mobile-1') ? 'ad-managed' : 'zb-mobile-ad ad-managed';
-      return '<div' + id + ' class="' + cls + '" data-ad-slot="' + name + '"></div>';
-    }
-
-    function render(stories){
-      var container = document.getElementById('articles-container');
-      if (!stories.length){
-        container.innerHTML = '<div class="article-page" id="page-1"><div style="font-family:sans-serif;font-size:14px;color:var(--muted);text-align:center;padding:40px 0;">No stories yet — check back soon.</div></div>';
-        totalPages = 1; currentPage = 1;
-        var pag = document.getElementById('pagination'); if (pag) pag.style.display = 'none';
-        loadAds();
-        return;
+    function cfCard(x){
+      var today=cfToday();
+      var up=x.date?(x.date>=today):true;
+      var banner=x.img?'<div class="cf-banner"><img src="'+attr(x.img)+'" alt="'+attr(x.title)+'" loading="lazy"></div>':'';
+      var badge='';
+      if(x.type==='event')badge='<span class="cf-tag '+(up?'cf-up':'cf-past')+'">'+(up?'UPCOMING':'PAST')+'</span>';
+      else if(x.type==='mazal'&&x.cat)badge='<span class="cf-tag cf-tag-mz">'+esc(x.cat).toUpperCase()+'</span>';
+      var dline=x.date?'<span class="cf-dateline">\uD83D\uDCC5 '+esc(fmtDate(x.date))+(firstLine(x.time)?' \u00b7 '+esc(firstLine(x.time)):'')+'</span>':'<span class="cf-dateline"></span>';
+      var typeTag='<span class="cf-tag cf-type-'+x.type+'">'+esc(TYPE[x.type])+'</span>';
+      var catTag=(x.cat&&x.type!=='mazal')?'<span class="cf-tag cf-cat">'+esc(x.cat).toUpperCase()+'</span>':'';
+      var mi=[];
+      if(x.loc)mi.push('<span>\uD83D\uDCCD '+esc(cleanLoc(x.loc))+'</span>');
+      if(x.org)mi.push('<span>\u270D\uFE0F '+esc(x.org)+'</span>');
+      var meta=mi.length?'<div class="cf-meta">'+mi.join('')+'</div>':'';
+      var desc=x.desc?'<p class="cf-desc">'+esc(x.desc).replace(/\n/g,'<br>')+'</p><button type="button" class="read-more-btn" style="display:none;">Read more \u2193</button>':'';
+      var foot='';
+      if(x.type==='event'){
+        var primary=x.link?'<a href="'+attr(x.link)+'" target="_blank" rel="noopener" class="article-read-more">'+esc(x.linkText||'More Details')+'</a>':'';
+        var gc=gcal(x);
+        var addcal=gc?'<button type="button" class="cf-addcal" onclick="cfAddCal(\''+encodeURIComponent(gc)+'\')">\uD83D\uDCC5 Add to calendar</button>':'';
+        if(primary||addcal)foot='<div class="cf-foot">'+primary+addcal+'</div>';
+      }else if(x.type==='news'&&x.link){
+        foot='<div class="cf-foot"><a href="'+attr(x.link)+'" target="_blank" rel="noopener" class="article-read-more">'+esc(x.linkText||'Read More \u2192')+'</a></div>';
       }
-      // chunk into pages
-      var pages = [];
-      for (var i=0; i<stories.length; i+=PER_PAGE) pages.push(stories.slice(i, i+PER_PAGE));
-
-      var html = '';
-      pages.forEach(function(group, p){
-        html += '<div class="article-page" id="page-' + (p+1) + '"' + (p===0 ? '' : ' style="display:none;"') + '>';
-        if (p === 0){
-          // Page 1: weave mobile ad slots between stories, exactly like the original layout
-          html += adSlot(MOBILE_AD_SLOTS[0]);          // top strip
-          var slot = 1;
-          group.forEach(function(d){
-            html += cardHTML(d);
-            if (slot < MOBILE_AD_SLOTS.length){ html += adSlot(MOBILE_AD_SLOTS[slot]); slot++; }
-          });
-          // any leftover mobile slots stack at the end (matches current behavior)
-          while (slot < MOBILE_AD_SLOTS.length){ html += adSlot(MOBILE_AD_SLOTS[slot]); slot++; }
-        } else {
-          group.forEach(function(d){ html += cardHTML(d); });
-        }
-        html += '</div>';
-      });
-      container.innerHTML = html;
-
-      // wire up the pager
-      totalPages = pages.length; currentPage = 1;
-      var pag = document.getElementById('pagination');
-      if (pag) pag.style.display = (totalPages > 1) ? '' : 'none';
-      var ind = document.getElementById('page-indicator');
-      if (ind) ind.textContent = 'Page 1 of ' + totalPages;
-      var prev = document.getElementById('prev-btn'); if (prev) prev.disabled = true;
-      var next = document.getElementById('next-btn'); if (next) next.disabled = (totalPages <= 1);
-
-      // now that the mobile ad slots exist in the DOM, populate ads
-      loadAds();
-      setupReadMore(container);
+      return '<article class="article-card">'+banner+'<div class="cf-body"><div class="cf-row1">'+dline+badge+'</div><div class="cf-tags">'+typeTag+catTag+'</div><h2 class="article-headline">'+esc(x.title)+'</h2>'+meta+desc+foot+'</div></article>';
     }
 
-    function setupReadMore(scope){
-      var ps = (scope||document).querySelectorAll('.article-excerpt');
-      ps.forEach(function(p){
-        var btn = p.nextElementSibling;
-        if(!btn || !btn.classList.contains('read-more-btn')) return;
-        // measure: is the natural height taller than 5 lines?
-        var lh = parseFloat(getComputedStyle(p).lineHeight) || 22;
-        var maxH = lh * 5 + 2;
-        if(p.scrollHeight > maxH){
-          p.classList.add('clamped');
-          btn.style.display = 'inline-block';
-          btn.onclick = function(){
-            var open = !p.classList.contains('clamped');
-            if(open){ p.classList.add('clamped'); btn.textContent='Read more ↓'; }
-            else { p.classList.remove('clamped'); btn.textContent='Read less ↑'; }
-          };
-        } else {
-          btn.style.display = 'none';
-        }
+    function adSlot(name){var id=(name==='mobile-1')?' id="mobile-ad-strip"':'';var cls=(name==='mobile-1')?'ad-managed':'zb-mobile-ad ad-managed';return '<div'+id+' class="'+cls+'" data-ad-slot="'+name+'"></div>';}
+    function mazalSlot(name){return '<div class="ad-managed" data-ad-slot="'+name+'"></div>';}
+
+    function currentList(){
+      var today=cfToday();
+      var arr=items.filter(function(x){
+        if(x.women&&!showWomen)return false;
+        if(filter==='news')return x.type==='news';
+        if(filter==='mazal')return x.type==='mazal';
+        if(filter==='event')return x.type==='event'&&(!x.date||x.date>=today);
+        if(x.type==='event')return (!x.date||x.date>=today);
+        return true;
+      });
+      arr.sort(function(a,b){
+        var at=a.date?a.date.getTime():null, bt=b.date?b.date.getTime():null;
+        if(at==null&&bt==null)return 0; if(at==null)return 1; if(bt==null)return -1;
+        return (filter==='event')?(at-bt):(bt-at);
+      });
+      return arr;
+    }
+
+    function cfReadMore(scope){
+      var ps=(scope||document).querySelectorAll('#cf-list .cf-desc, #cf-cal .cf-desc');
+      Array.prototype.forEach.call(ps,function(p){
+        var btn=p.nextElementSibling;
+        if(!btn||!btn.classList.contains('read-more-btn'))return;
+        var lh=parseFloat(getComputedStyle(p).lineHeight)||22;
+        if(p.scrollHeight>lh*5+2){p.classList.add('clamped');btn.style.display='inline-block';
+          btn.onclick=function(){if(p.classList.contains('clamped')){p.classList.remove('clamped');btn.textContent='Read less \u2191';}else{p.classList.add('clamped');btn.textContent='Read more \u2193';}};}
+        else{btn.style.display='none';}
       });
     }
 
-    fetch(url)
-      .then(function(r){ return r.text(); })
-      .then(function(text){
-        var json = JSON.parse(text.substring(47, text.length - 2));
-        var cols = json.table.cols.map(function(c){ return (c.label || '').toLowerCase().trim(); });
-        var list = [];
-        json.table.rows.forEach(function(row){
-          var d = {};
-          cols.forEach(function(col, i){
-            var cell = row.c[i];
-            // prefer Google's formatted/display value (.f); fall back to the raw value (.v)
-            d[col] = cell ? (cell.f != null ? cell.f : (cell.v == null ? '' : cell.v)) : '';
-          });
-          // if a date cell came through as Google's raw "Date(y,m,d)" form, make it readable
-          if (typeof d.date === 'string' && /^Date\(/.test(d.date)) {
-            var n = d.date.match(/\d+/g);
-            if (n) { var dt = new Date(+n[0], +n[1], +(n[2] || 1));
-              if (!isNaN(dt)) d.date = dt.toLocaleDateString('en-US', { year:'numeric', month:'long', day:'numeric' }); }
-          }
-          if ((String(d.status||'').toLowerCase().trim()) !== 'active') return;
-          if (!d.headline) return;
-          // parse date for sorting (newest first); fall back to sheet order
-          var t = Date.parse(d.date); d._t = isNaN(t) ? null : t;
-          list.push(d);
+    function renderList(){
+      var arr=currentList();
+      var pages=Math.max(1,Math.ceil(arr.length/PER_PAGE));
+      if(page>pages)page=pages; if(page<1)page=1;
+      var slice=arr.slice((page-1)*PER_PAGE,page*PER_PAGE);
+      document.getElementById('cf-ad-mazal').innerHTML=(filter==='mazal')?mazalSlot('mazaltov-1'):'';
+      var html='';
+      if(!slice.length){html='<div class="cf-empty">Nothing here right now \u2014 check back soon.</div>';}
+      else if(page===1){
+        html+=adSlot(MOBILE_AD_SLOTS[0]);
+        var mob=1, mz=1;
+        slice.forEach(function(x){
+          html+=cfCard(x);
+          if(filter==='mazal'&&mz<MAZAL_AD_SLOTS.length){html+=mazalSlot(MAZAL_AD_SLOTS[mz]);mz++;}
+          if(mob<MOBILE_AD_SLOTS.length){html+=adSlot(MOBILE_AD_SLOTS[mob]);mob++;}
         });
-        // newest first; rows without a parseable date keep their sheet order at the end
-        list.sort(function(a,b){
-          if (a._t == null && b._t == null) return 0;
-          if (a._t == null) return 1;
-          if (b._t == null) return -1;
-          return b._t - a._t;
+        while(mob<MOBILE_AD_SLOTS.length){html+=adSlot(MOBILE_AD_SLOTS[mob]);mob++;}
+      }else{slice.forEach(function(x){html+=cfCard(x);});}
+      document.getElementById('cf-list').innerHTML=html;
+      var pg=document.getElementById('cf-pager');
+      if(view==='list'&&pages>1){pg.style.display='';document.getElementById('cf-pind').textContent='Page '+page+' of '+pages;
+        document.getElementById('cf-prev').disabled=(page===1);document.getElementById('cf-next').disabled=(page===pages);}
+      else{pg.style.display='none';}
+      if(typeof loadAds==='function')loadAds();
+      cfReadMore(document.getElementById('cf-list'));
+    }
+
+    function cfRenderCal(){
+      if(calM==null){var t=cfToday();calM=t.getMonth();calY=t.getFullYear();}
+      var evs=items.filter(function(x){return x.type==='event'&&x.date&&!(x.women&&!showWomen);});
+      var byDay={};
+      evs.forEach(function(x){if(x.date.getMonth()===calM&&x.date.getFullYear()===calY){var k=x.date.getDate();(byDay[k]=byDay[k]||[]).push(x);}});
+      window.__cfByDay=byDay;
+      var dows=['Su','Mo','Tu','We','Th','Fr','Sa'];
+      var head='<div class="cf-calhead"><button type="button" class="cf-calnav" onclick="cfCalNav(-1)">&#8249;</button><span class="cf-calmonth">'+MONTHS[calM]+' '+calY+'</span><button type="button" class="cf-calnav" onclick="cfCalNav(1)">&#8250;</button></div>';
+      var t='<table class="cf-caltable"><thead><tr>';
+      dows.forEach(function(d){t+='<th>'+d+'</th>';});
+      t+='</tr></thead><tbody>';
+      var first=new Date(calY,calM,1).getDay(), days=new Date(calY,calM+1,0).getDate(), cell=0, dayNum=0;
+      for(var w=0;w<6;w++){t+='<tr>';for(var dow=0;dow<7;dow++){dayNum=cell-first+1;
+        if(cell<first||dayNum>days){t+='<td class="empty"></td>';}
+        else{var has=byDay[dayNum];t+='<td'+(has?' class="has" onclick="cfCalDay('+dayNum+')"':'')+'>'+dayNum+(has?'<div class="cf-cdot"></div>':'')+'</td>';}
+        cell++;}t+='</tr>';if(dayNum>=days)break;}
+      t+='</tbody></table>';
+      document.getElementById('cf-cal').innerHTML=head+t+'<div id="cf-cal-day" class="cf-cal-day"><div class="cf-empty" style="padding:18px 0;">Tap a highlighted day to see its events.</div></div>';
+    }
+    window.cfCalNav=function(d){calM+=d;if(calM<0){calM=11;calY--;}if(calM>11){calM=0;calY++;}cfRenderCal();};
+    window.cfCalDay=function(n){var its=(window.__cfByDay||{})[n]||[];var box=document.getElementById('cf-cal-day');
+      box.innerHTML=its.length?its.map(cfCard).join(''):'';if(typeof loadAds==='function')loadAds();cfReadMore(document.getElementById('cf-cal'));};
+
+    window.cfPage=function(d){page+=d;renderList();var sec=document.getElementById('community-feed');if(sec)sec.scrollIntoView({behavior:'smooth',block:'start'});};
+
+    window.cfSetView=function(v){view=v;
+      document.getElementById('cf-vlist').classList.toggle('on',v==='list');
+      document.getElementById('cf-vcal').classList.toggle('on',v==='cal');
+      if(v==='cal'){document.getElementById('cf-list').style.display='none';document.getElementById('cf-pager').style.display='none';document.getElementById('cf-ad-mazal').style.display='none';document.getElementById('cf-cal').style.display='';cfRenderCal();}
+      else{document.getElementById('cf-cal').style.display='none';document.getElementById('cf-ad-mazal').style.display='';document.getElementById('cf-list').style.display='';renderList();}
+    };
+
+    window.cfToggleWomen=function(){showWomen=!showWomen;var sw=document.getElementById('cf-wsw');sw.classList.toggle('on',showWomen);sw.setAttribute('aria-pressed',showWomen?'true':'false');page=1;if(view==='cal')cfRenderCal();else renderList();};
+
+    function wireUp(){
+      if(wired)return; wired=true;
+      var pills=document.querySelectorAll('#cf-pills .cf-pill');
+      Array.prototype.forEach.call(pills,function(b){
+        b.addEventListener('click',function(){
+          Array.prototype.forEach.call(pills,function(x){x.classList.remove('on');});
+          b.classList.add('on'); filter=b.getAttribute('data-f'); page=1;
+          try{ if(typeof gtag==='function'){ gtag('event','feed_filter',{filter:filter, filter_name:(b.textContent||'').trim(), section:'Home'}); } }catch(e){}
+          var isEv=(filter==='event');
+          document.getElementById('cf-seg').style.display=isEv?'':'none';
+          view='list';
+          document.getElementById('cf-vlist').classList.add('on'); document.getElementById('cf-vcal').classList.remove('on');
+          document.getElementById('cf-cal').style.display='none';
+          document.getElementById('cf-ad-mazal').style.display='';
+          document.getElementById('cf-list').style.display='';
+          renderList();
         });
-        render(list);
-      })
-      .catch(function(){
-        var container = document.getElementById('articles-container');
-        container.innerHTML = '<div class="article-page" id="page-1"><div style="font-family:sans-serif;font-size:14px;color:var(--muted);text-align:center;padding:40px 0;">Stories are taking a moment to load. Please refresh.</div></div>';
-        totalPages = 1; currentPage = 1;
-        var pag = document.getElementById('pagination'); if (pag) pag.style.display = 'none';
-        loadAds();
       });
+    }
+
+    document.getElementById('cf-list').innerHTML='<div class="cf-empty">Loading the community feed\u2026</div>';
+    wireUp();
+    Promise.all([getTab('Stories'),getTab('Events'),getTab('MazalTov')])
+      .then(function(res){items=buildItems(res[0],res[1],res[2]);renderList();})
+      .catch(function(){document.getElementById('cf-list').innerHTML='<div class="cf-empty">The feed is taking a moment to load. Please refresh.</div>';if(typeof loadAds==='function')loadAds();});
   })();
 
   /* -- Live weather via Open-Meteo (free, no API key needed) -- */
@@ -2147,8 +2232,6 @@
   </div>
   <div class="mobile-menu-links">
     <a href="/" class="active">🏠 Home</a>
-    <a href="/mazaltov">🎉 Mazal Tov</a>
-    <a href="/events">📅 Events</a>
     <a href="/services">🛠️ Services</a>
     <a href="/jobs">💼 Jobs</a>
     <a href="/real-estate">🏡 Real Estate</a>
@@ -2169,8 +2252,6 @@
   <div class="mobile-menu-head"><div class="mobile-menu-title">Houston Jewish Info</div><button class="mobile-menu-close" onclick="closeMobileMenu()">×</button></div>
   <div class="mobile-menu-links">
     <a href="/" class="active">🏠 Home</a>
-    <a href="/mazaltov">🎉 Mazal Tov</a>
-    <a href="/events">📅 Events</a>
     <a href="/services">🛠️ Services</a>
     <a href="/jobs">💼 Jobs</a>
     <a href="/real-estate">🏡 Real Estate</a>
