@@ -880,6 +880,24 @@
     .nav-arrow { display: flex; }
   }
 </style>
+<style>
+/* Jewish dropdown (added) */
+.nav-dd{position:relative;display:flex;flex:1;}
+.nav-dd>.nav-dd-btn{font-family:sans-serif;font-size:10.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--navy);padding:9px 10px;white-space:nowrap;border:none;border-right:1px solid var(--border);background:none;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:4px;flex:1;width:100%;}
+.nav-dd>.nav-dd-btn:hover{background:#e8e4dc;}
+.nav-dd.active>.nav-dd-btn{background:var(--navy);color:#fff;}
+.nav-dd-caret{font-size:8px;}
+.nav-dd-menu{position:fixed;display:none;min-width:210px;background:#fff;border:1px solid var(--border);border-top:2px solid var(--gold);box-shadow:0 8px 22px rgba(0,0,0,.16);z-index:600;}
+.nav-dd-menu.open{display:block;}
+.nav-dd-menu a{display:block;padding:11px 16px;font-family:sans-serif;font-size:12px;font-weight:700;letter-spacing:.03em;text-transform:none;color:var(--navy);text-decoration:none;border-bottom:1px solid #f0ece4;white-space:nowrap;}
+.nav-dd-menu a:last-child{border-bottom:none;}
+.nav-dd-menu a:hover{background:#faf6ee;color:var(--gold);}
+.m-jewish-btn{display:flex;justify-content:space-between;align-items:center;width:100%;background:none;border:none;border-bottom:1px solid var(--border);font-family:sans-serif;font-size:14px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--navy);padding:15px 20px;cursor:pointer;text-align:left;}
+.m-jewish-sub{display:none;}
+.m-jewish-sub.open{display:block;}
+.m-jewish-sub a{padding-left:38px !important;background:#faf8f3 !important;text-transform:none !important;font-weight:600 !important;}
+.m-jewish-caret{font-size:11px;color:var(--gold);}
+</style>
 </head>
 <body>
 
@@ -919,12 +937,10 @@
             <button class="hamburger" id="hamburger-btn" aria-label="Toggle navigation" onclick="openMobileMenu()"><span></span><span></span><span></span></button>
 </div>
       <nav class="nav-bar" aria-label="Main navigation">
-        <a href="/">Home</a>
+        <a href="/">Home</a><div class="nav-dd active" id="nav-jewish"><button type="button" class="nav-dd-btn" aria-haspopup="true" aria-expanded="false" onclick="hjiToggleJewish(event)">Jewish <span class="nav-dd-caret">▾</span></button></div>
         <a href="/services">Services</a>
         <a href="/jobs">Jobs</a>
         <a href="/real-estate">Real Estate</a>
-        <a href="/synagogues">Synagogues</a>
-        <a href="/education" class="active">Education</a>
         <a href="/things-to-do">Things to Do</a>
         <a href="/charities">Charities</a>
         <a href="/contact">Contact / Submit</a>
@@ -954,22 +970,17 @@
   <div class="edu-tiles" id="edu-tiles">
     <div class="edu-tile active" data-cat="kids" onclick="showEduCat('kids', this)">
       <div class="edu-tile-icon">🏫</div>
-      <div class="edu-tile-name">Kids' Schools</div>
+      <div class="edu-tile-name">Orthodox Schools</div>
       <div class="edu-tile-count" id="count-kids">—</div>
     </div>
-    <div class="edu-tile" data-cat="adult" onclick="showEduCat('adult', this)">
+    <div class="edu-tile" data-cat="adultlearning" onclick="showEduCat('adultlearning', this)">
       <div class="edu-tile-icon">📚</div>
-      <div class="edu-tile-name">Adult Education</div>
-      <div class="edu-tile-count" id="count-adult">—</div>
-    </div>
-    <div class="edu-tile" data-cat="kollel" onclick="showEduCat('kollel', this)">
-      <div class="edu-tile-icon">📖</div>
-      <div class="edu-tile-name">Kollel</div>
-      <div class="edu-tile-count" id="count-kollel">—</div>
+      <div class="edu-tile-name">Adult Learning</div>
+      <div class="edu-tile-count" id="count-adultlearning">—</div>
     </div>
   </div>
 
-  <div class="results-bar"><strong id="edu-cat-label">Kids' Schools</strong> — showing <strong id="school-count">0</strong></div>
+  <div class="results-bar"><strong id="edu-cat-label">Orthodox Schools</strong> — showing <strong id="school-count">0</strong></div>
 
   <div class="school-grid" id="school-grid">
     <!-- Cards loaded dynamically from the Education sheet tab -->
@@ -1064,11 +1075,14 @@
         else cat='kids';
         window.EDU_BY_CAT[cat].push(d);
       });
-      document.getElementById('count-kids').textContent  = window.EDU_BY_CAT.kids.length + ' listed';
-      document.getElementById('count-adult').textContent = window.EDU_BY_CAT.adult.length + ' listed';
-      document.getElementById('count-kollel').textContent= window.EDU_BY_CAT.kollel.length + ' listed';
-      ['kids','adult','kollel'].forEach(function(k){ window.EDU_BY_CAT[k].sort(function(a,b){ return String(a.name||'').localeCompare(String(b.name||''), undefined, {sensitivity:'base'}); }); });
-      renderEduCat('kids');
+      window.EDU_BY_CAT.adultlearning = window.EDU_BY_CAT.adult.concat(window.EDU_BY_CAT.kollel);
+      ['kids','adultlearning'].forEach(function(k){ window.EDU_BY_CAT[k].sort(function(a,b){ return String(a.name||'').localeCompare(String(b.name||''), undefined, {sensitivity:'base'}); }); });
+      document.getElementById('count-kids').textContent = window.EDU_BY_CAT.kids.length + ' listed';
+      document.getElementById('count-adultlearning').textContent = window.EDU_BY_CAT.adultlearning.length + ' listed';
+      // deep-link: open the right category from the URL hash (#schools, #adult-learning)
+      var h=(location.hash||'').toLowerCase();
+      if(h.indexOf('adult')>=0 || h.indexOf('kollel')>=0){ showEduCat('adultlearning', document.querySelector('.edu-tile[data-cat="adultlearning"]')); }
+      else { renderEduCat('kids'); }
     }).catch(function(){
       var grid=document.getElementById('school-grid');
       grid.innerHTML='<div style="grid-column:1/-1;font-family:sans-serif;font-size:14px;color:var(--muted);text-align:center;padding:40px 0;">Listings are taking a moment to load. Please refresh.</div>';
@@ -1083,7 +1097,7 @@
     };
   })();
 
-  var EDU_LABELS={ kids:"Kids' Schools", adult:'Adult Education', kollel:'Kollel' };
+  var EDU_LABELS={ kids:"Orthodox Schools", adultlearning:"Adult Learning" };
   function showEduCat(cat, tile){
     document.querySelectorAll('.edu-tile').forEach(function(t){ t.classList.remove('active'); });
     if(tile) tile.classList.add('active');
@@ -1147,11 +1161,16 @@
   <div class="mobile-menu-head"><div class="mobile-menu-title">Houston Jewish Info</div><button class="mobile-menu-close" onclick="closeMobileMenu()">×</button></div>
   <div class="mobile-menu-links">
     <a href="/">🏠 Home</a>
+<button type="button" class="m-jewish-btn" onclick="hjiToggleMJewish(this)">✢ Jewish <span class="m-jewish-caret">▾</span></button>
+<div class="m-jewish-sub">
+<a href="/education#schools">Orthodox Schools</a>
+<a href="/synagogues">Orthodox Shuls</a>
+<a href="/synagogues#mikvah">Mikvahs</a>
+<a href="/education#adult-learning">Adult Learning</a>
+</div>
     <a href="/services">🛠️ Services</a>
     <a href="/jobs">💼 Jobs</a>
     <a href="/real-estate">🏡 Real Estate</a>
-    <a href="/synagogues">✡️ Synagogues</a>
-    <a href="/education" class="active">🎓 Education</a>
     <a href="/things-to-do">🎡 Things to Do</a>
     <a href="/charities">💛 Charities</a>
     <a href="/contact">📬 Contact / Submit</a>
@@ -1263,6 +1282,18 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape')closeMobileM
     }
   }, true);
 })();
+</script>
+<div class="nav-dd-menu" id="hji-jewish-menu" role="menu">
+<a href="/education#schools" role="menuitem">Orthodox Schools</a>
+<a href="/synagogues" role="menuitem">Orthodox Shuls</a>
+<a href="/synagogues#mikvah" role="menuitem">Mikvahs</a>
+<a href="/education#adult-learning" role="menuitem">Adult Learning</a>
+</div>
+<script>
+function hjiToggleJewish(e){e.stopPropagation();var m=document.getElementById('hji-jewish-menu');var b=e.currentTarget;if(!m)return;if(m.classList.contains('open')){m.classList.remove('open');b.setAttribute('aria-expanded','false');return;}var r=b.getBoundingClientRect();m.style.left=Math.round(r.left)+'px';m.style.top=Math.round(r.bottom)+'px';m.classList.add('open');b.setAttribute('aria-expanded','true');}
+function hjiToggleMJewish(b){var s=b.nextElementSibling;if(!s)return;var o=s.classList.toggle('open');var c=b.querySelector('.m-jewish-caret');if(c)c.textContent=o?'\u25b4':'\u25be';}
+document.addEventListener('click',function(ev){var m=document.getElementById('hji-jewish-menu');if(m&&m.classList.contains('open')&&!m.contains(ev.target)&&!(ev.target.closest&&ev.target.closest('.nav-dd-btn')))m.classList.remove('open');});
+window.addEventListener('resize',function(){var m=document.getElementById('hji-jewish-menu');if(m)m.classList.remove('open');});
 </script>
 </body>
 </html>

@@ -1185,6 +1185,24 @@
   /* Center masthead title — balance logo on left with invisible spacer on right */
   .masthead-inner::after { content: ''; width: 140px; flex-shrink: 0; }
 </style>
+<style>
+/* Jewish dropdown (added) */
+.nav-dd{position:relative;display:flex;flex:1;}
+.nav-dd>.nav-dd-btn{font-family:sans-serif;font-size:10.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--navy);padding:9px 10px;white-space:nowrap;border:none;border-right:1px solid var(--border);background:none;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:4px;flex:1;width:100%;}
+.nav-dd>.nav-dd-btn:hover{background:#e8e4dc;}
+.nav-dd.active>.nav-dd-btn{background:var(--navy);color:#fff;}
+.nav-dd-caret{font-size:8px;}
+.nav-dd-menu{position:fixed;display:none;min-width:210px;background:#fff;border:1px solid var(--border);border-top:2px solid var(--gold);box-shadow:0 8px 22px rgba(0,0,0,.16);z-index:600;}
+.nav-dd-menu.open{display:block;}
+.nav-dd-menu a{display:block;padding:11px 16px;font-family:sans-serif;font-size:12px;font-weight:700;letter-spacing:.03em;text-transform:none;color:var(--navy);text-decoration:none;border-bottom:1px solid #f0ece4;white-space:nowrap;}
+.nav-dd-menu a:last-child{border-bottom:none;}
+.nav-dd-menu a:hover{background:#faf6ee;color:var(--gold);}
+.m-jewish-btn{display:flex;justify-content:space-between;align-items:center;width:100%;background:none;border:none;border-bottom:1px solid var(--border);font-family:sans-serif;font-size:14px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--navy);padding:15px 20px;cursor:pointer;text-align:left;}
+.m-jewish-sub{display:none;}
+.m-jewish-sub.open{display:block;}
+.m-jewish-sub a{padding-left:38px !important;background:#faf8f3 !important;text-transform:none !important;font-weight:600 !important;}
+.m-jewish-caret{font-size:11px;color:var(--gold);}
+</style>
 </head>
 <body style="-webkit-tap-highlight-color: transparent;">
 
@@ -1408,12 +1426,10 @@
       <div class="nav-wrapper">
         <button class="nav-arrow left" aria-label="Scroll nav left">&#8249;</button>
         <nav class="nav-bar" id="main-nav" aria-label="Main navigation">
-        <a href="/" class="active">Home</a>
+        <a href="/" class="active">Home</a><div class="nav-dd" id="nav-jewish"><button type="button" class="nav-dd-btn" aria-haspopup="true" aria-expanded="false" onclick="hjiToggleJewish(event)">Jewish <span class="nav-dd-caret">▾</span></button></div>
         <a href="/services">Services</a>
         <a href="/jobs">Jobs</a>
         <a href="/real-estate">Real Estate</a>
-        <a href="/synagogues">Synagogues</a>
-        <a href="/education">Education</a>
         <a href="/things-to-do">Things to Do</a>
         <a href="/charities">Charities</a>
         <a href="/contact">Contact / Submit</a>
@@ -2232,11 +2248,16 @@
   </div>
   <div class="mobile-menu-links">
     <a href="/" class="active">🏠 Home</a>
+<button type="button" class="m-jewish-btn" onclick="hjiToggleMJewish(this)">✢ Jewish <span class="m-jewish-caret">▾</span></button>
+<div class="m-jewish-sub">
+<a href="/education#schools">Orthodox Schools</a>
+<a href="/synagogues">Orthodox Shuls</a>
+<a href="/synagogues#mikvah">Mikvahs</a>
+<a href="/education#adult-learning">Adult Learning</a>
+</div>
     <a href="/services">🛠️ Services</a>
     <a href="/jobs">💼 Jobs</a>
     <a href="/real-estate">🏡 Real Estate</a>
-    <a href="/synagogues">✡️ Synagogues</a>
-    <a href="/education">🎓 Education</a>
     <a href="/things-to-do">🎡 Things to Do</a>
     <a href="/charities">💛 Charities</a>
     <a href="/contact">📬 Contact / Submit</a>
@@ -2252,11 +2273,16 @@
   <div class="mobile-menu-head"><div class="mobile-menu-title">Houston Jewish Info</div><button class="mobile-menu-close" onclick="closeMobileMenu()">×</button></div>
   <div class="mobile-menu-links">
     <a href="/" class="active">🏠 Home</a>
+<button type="button" class="m-jewish-btn" onclick="hjiToggleMJewish(this)">✢ Jewish <span class="m-jewish-caret">▾</span></button>
+<div class="m-jewish-sub">
+<a href="/education#schools">Orthodox Schools</a>
+<a href="/synagogues">Orthodox Shuls</a>
+<a href="/synagogues#mikvah">Mikvahs</a>
+<a href="/education#adult-learning">Adult Learning</a>
+</div>
     <a href="/services">🛠️ Services</a>
     <a href="/jobs">💼 Jobs</a>
     <a href="/real-estate">🏡 Real Estate</a>
-    <a href="/synagogues">✡️ Synagogues</a>
-    <a href="/education">🎓 Education</a>
     <a href="/things-to-do">🎡 Things to Do</a>
     <a href="/charities">💛 Charities</a>
     <a href="/contact">📬 Contact / Submit</a>
@@ -2368,6 +2394,18 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape')closeMobileM
     }
   }, true);
 })();
+</script>
+<div class="nav-dd-menu" id="hji-jewish-menu" role="menu">
+<a href="/education#schools" role="menuitem">Orthodox Schools</a>
+<a href="/synagogues" role="menuitem">Orthodox Shuls</a>
+<a href="/synagogues#mikvah" role="menuitem">Mikvahs</a>
+<a href="/education#adult-learning" role="menuitem">Adult Learning</a>
+</div>
+<script>
+function hjiToggleJewish(e){e.stopPropagation();var m=document.getElementById('hji-jewish-menu');var b=e.currentTarget;if(!m)return;if(m.classList.contains('open')){m.classList.remove('open');b.setAttribute('aria-expanded','false');return;}var r=b.getBoundingClientRect();m.style.left=Math.round(r.left)+'px';m.style.top=Math.round(r.bottom)+'px';m.classList.add('open');b.setAttribute('aria-expanded','true');}
+function hjiToggleMJewish(b){var s=b.nextElementSibling;if(!s)return;var o=s.classList.toggle('open');var c=b.querySelector('.m-jewish-caret');if(c)c.textContent=o?'\u25b4':'\u25be';}
+document.addEventListener('click',function(ev){var m=document.getElementById('hji-jewish-menu');if(m&&m.classList.contains('open')&&!m.contains(ev.target)&&!(ev.target.closest&&ev.target.closest('.nav-dd-btn')))m.classList.remove('open');});
+window.addEventListener('resize',function(){var m=document.getElementById('hji-jewish-menu');if(m)m.classList.remove('open');});
 </script>
 </body>
 </html>
