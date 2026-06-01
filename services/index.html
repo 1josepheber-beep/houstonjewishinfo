@@ -1310,6 +1310,7 @@
     <div class="main-tabs">
       <button class="main-tab active" onclick="switchTab('browse', this)">🏪 Browse Businesses</button>
       <button class="main-tab" onclick="switchTab('services', this)">🔧 Find a Service</button>
+      <button class="main-tab" onclick="switchTab('gemachim', this)">🤝 Gemachim</button>
       <button class="main-tab" onclick="switchTab('selfhelp', this)">📚 Self Help &amp; How-To</button>
     </div>
   </div>
@@ -1586,6 +1587,22 @@
     </div>
 
   </div><!-- end tab-services -->
+
+  <!-- ══════════════════════════════════════
+       TAB: GEMACHIM (free-loan resources)
+  ══════════════════════════════════════ -->
+  <div class="tab-panel" id="tab-gemachim">
+    <p style="font-family:sans-serif;font-size:13px;color:var(--muted);margin-bottom:16px;">
+      Gemachim are free-loan community resources — borrow what you need, from baby gear to medical equipment to simcha supplies.
+    </p>
+    <div class="search-filter-bar">
+      <input type="text" class="search-input" id="gemS-search" placeholder="🔍  Search gemachim — e.g. crib, wheelchair, chairs, gown" oninput="renderGemS()">
+    </div>
+    <div class="results-bar" style="font-family:sans-serif;font-size:12px;color:var(--muted);margin:10px 0 16px;">Showing <strong id="gemS-count" style="color:var(--navy);">0</strong> gemachim</div>
+    <div class="biz-grid" id="gemS-grid">
+      <div style="grid-column:1/-1;text-align:center;font-family:sans-serif;font-size:13px;color:var(--muted);padding:40px;">Loading gemachim…</div>
+    </div>
+  </div><!-- end tab-gemachim -->
 
   <!-- ══════════════════════════════════════
        TAB 3: SELF HELP & HOW-TO
@@ -2033,6 +2050,53 @@ function closeMobileMenu() {
 
 // ── BROWSE BUSINESSES — Google Sheets ──
 var SHEET_ID = '1in7Ac7zknqyR9neWKOCAjOAG4jXCIVTJQfU6jJ72CV8';
+
+// ===== GEMACHIM (mirror of the Charities Gemachim tab) =====
+var GEMS_ALL = [];
+function gemsEsc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function gemsVal(cell){ return cell?(cell.f!=null?String(cell.f):(cell.v==null?'':String(cell.v))):''; }
+function gemSCard(d){
+  var phone=d.phone?'<div class="biz-detail" style="font-family:sans-serif;font-size:12.5px;color:#555;margin-bottom:3px;">📞 <a href="tel:'+gemsEsc(String(d.phone).replace(/[^0-9+]/g,''))+'" style="color:inherit;">'+gemsEsc(d.phone)+'</a></div>':'';
+  var email=d.email?'<div class="biz-detail" style="font-family:sans-serif;font-size:12.5px;color:#555;margin-bottom:3px;">✉️ <a href="mailto:'+gemsEsc(d.email)+'" style="color:inherit;">'+gemsEsc(d.email)+'</a></div>':'';
+  var contact=d.contactname?'<div class="biz-detail" style="font-family:sans-serif;font-size:12.5px;color:#555;margin-bottom:3px;">👤 '+gemsEsc(d.contactname)+'</div>':'';
+  var area=d.area?'<div class="biz-detail" style="font-family:sans-serif;font-size:12.5px;color:#555;margin-bottom:3px;">📍 '+gemsEsc(d.area)+'</div>':'';
+  var hours=d.hours?'<div class="biz-detail" style="font-family:sans-serif;font-size:12.5px;color:#888;margin-bottom:3px;">🕐 '+gemsEsc(d.hours)+'</div>':'';
+  return '<div class="biz-card" data-cat="gemach" data-name="'+gemsEsc(d.name)+'">'+
+    '<div class="biz-card-top"><div>'+
+    '<div class="biz-category">'+gemsEsc(d.category||'Gemach')+'</div>'+
+    '<div class="biz-name">'+gemsEsc(d.name)+'</div>'+
+    '</div></div>'+
+    (d.lends?'<div class="biz-desc" style="font-family:sans-serif;font-size:13px;color:#444;margin:8px 0;">Lends: '+gemsEsc(d.lends)+'</div>':'')+
+    contact+area+phone+email+hours+
+    '</div>';
+}
+function renderGemS(){
+  var q=(function(){ var el=document.getElementById('gemS-search'); return el?(el.value||'').toLowerCase().trim():''; })();
+  var list=GEMS_ALL.filter(function(d){
+    if(!q) return true;
+    return (d.name||'').toLowerCase().indexOf(q)>-1 || (d.lends||'').toLowerCase().indexOf(q)>-1 ||
+           (d.category||'').toLowerCase().indexOf(q)>-1 || (d.area||'').toLowerCase().indexOf(q)>-1;
+  });
+  var grid=document.getElementById('gemS-grid');
+  if(!grid) return;
+  grid.innerHTML = list.length ? list.map(gemSCard).join('')
+    : '<div style="grid-column:1/-1;text-align:center;font-family:sans-serif;font-size:13px;color:var(--muted);padding:40px;">No gemachim match your search.</div>';
+  var c=document.getElementById('gemS-count'); if(c) c.textContent=list.length;
+}
+(function loadGemS(){
+  fetch('https://docs.google.com/spreadsheets/d/'+SHEET_ID+'/gviz/tq?tqx=out:json&headers=1&sheet=Gemachim')
+    .then(function(r){return r.text();}).then(function(text){
+      var json=JSON.parse(text.substring(47,text.length-2));
+      var cols=json.table.cols.map(function(c){return (c.label||'').toLowerCase().trim();});
+      var rows=json.table.rows.map(function(row){ var o={}; cols.forEach(function(col,i){ o[col]=gemsVal(row.c?row.c[i]:null); }); return o; })
+        .filter(function(o){ if(!o.name) return false; var s=(o.status||'').toLowerCase().trim(); return !s||s==='active'; });
+      rows.sort(function(a,b){ return String(a.name||'').localeCompare(String(b.name||''), undefined, {sensitivity:'base'}); });
+      GEMS_ALL=rows; renderGemS();
+    }).catch(function(){
+      var grid=document.getElementById('gemS-grid');
+      if(grid) grid.innerHTML='<div style="grid-column:1/-1;text-align:center;font-family:sans-serif;font-size:13px;color:var(--muted);padding:40px;">Could not load gemachim right now. Please refresh.</div>';
+    });
+})();
 var allBizListings = [];
 var tabsLoaded = 0;
 
