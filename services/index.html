@@ -2153,6 +2153,40 @@ function renderGemS(){
 var allBizListings = [];
 var tabsLoaded = 0;
 
+/* Map a Services-tab row's own category value to a dropdown filter key.
+ * Tolerant of variants: "electric", "Electrician", "Electrical" all -> electric.
+ * Returns '' if unknown (row still loads, just under generic 'services'). */
+function mapServiceCat(v){
+  var k = String(v||'').toLowerCase().replace(/&/g,' and ').replace(/[^a-z0-9]/g,'');
+  var M = {
+    electric:'electric', electrician:'electric', electrical:'electric',
+    plumbing:'plumbing', plumber:'plumbing', plumbers:'plumbing',
+    medical:'medical', healthcare:'medical', health:'medical', doctor:'medical',
+    legal:'legal', attorney:'legal', attorneylegal:'legal', lawyer:'legal',
+    financial:'financial', financialaccounting:'financial', accounting:'financial',
+    realestate:'realestate', realtor:'realestate',
+    therapy:'therapy', therapycounseling:'therapy', counseling:'therapy',
+    tutoring:'tutoring', tutor:'tutoring',
+    hvac:'hvac',
+    construction:'construction',
+    photography:'photography', photographer:'photography',
+    funeral:'funeral', funeralhome:'funeral',
+    travel:'travel', travelagency:'travel',
+    insurance:'insurance',
+    '24hour':'24hour', '24hourservices':'24hour',
+    jfs:'jfs', jewishfamilyservice:'jfs',
+    security:'security', securityservices:'security',
+    marketing:'marketing', marketinganddigital:'marketing',
+    catering:'catering', cateringandevents:'catering',
+    kosherrestaurant:'kosher-restaurant',
+    koshermarket:'kosher-market', koshermarketgrocery:'kosher-market',
+    booksgifts:'books-gifts', jewishbooksandgifts:'books-gifts',
+    communityorganization:'community-org', communityorg:'community-org',
+    trades:'trades'
+  };
+  return M[k] || '';
+}
+
 var bizTabMap = {
   'kosher-restaurant': 'KosherRestaurants',
   'kosher-market':     'KosherMarkets',
@@ -2161,7 +2195,8 @@ var bizTabMap = {
   'community-org':     'CommunityOrgs',
   'security':          'Security',
   'marketing':         'Marketing',
-  'trades':            'Trades'
+  'trades':            'Trades',
+  'services':          'Services'
 };
 var bizTabKeys = Object.keys(bizTabMap);
 var TOTAL_TABS = bizTabKeys.length;
@@ -2185,7 +2220,15 @@ function fetchBizTab(tabName, cat) {
           cols.forEach(function(col, i) {
             obj[col] = safeVal(row.c ? row.c[i] : null);
           });
-          obj._cat = cat;
+          // The catch-all "Services" tab holds many different categories
+          // (electric, medical, funeral, ...). Give each row a _cat based on
+          // its OWN category value so the dropdown filters find it. Other
+          // tabs keep the single fixed category passed in.
+          if (cat === 'services') {
+            obj._cat = mapServiceCat(obj.category) || 'services';
+          } else {
+            obj._cat = cat;
+          }
           return obj;
         }).filter(function(r) {
           return r.name && r.name.length > 0 && r.status.toLowerCase().trim() === 'active';
