@@ -807,13 +807,25 @@
   @media (max-width:480px){ .cg-tab { padding:9px 14px; font-size:13px; } }
   .gem-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:16px; margin-bottom:30px; }
   @media (max-width:680px){ .gem-grid { grid-template-columns:1fr; } }
-  .gem-card { background:var(--white); border:1px solid var(--border); border-radius:8px; padding:18px 20px; display:flex; flex-direction:column; }
+  .gem-card { background:var(--white); border:1px solid var(--border); border-radius:8px; overflow:hidden; display:flex; flex-direction:column; transition:box-shadow .2s; }
   .gem-card:hover { box-shadow:0 3px 12px rgba(0,0,0,.09); }
+  .gem-card-banner { height:8px; background:linear-gradient(90deg,#0d7d7d,#16a8a8); }
+  .gem-card-body { padding:16px 20px; display:flex; flex-direction:column; flex:1; }
   .gem-cat { display:inline-block; align-self:flex-start; font-family:sans-serif; font-size:9px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; padding:3px 9px; border-radius:3px; background:#eaf3de; color:#3b6d11; margin-bottom:8px; }
   .gem-name { font-family:'Playfair Display',serif; font-size:18px; font-weight:700; color:var(--navy); line-height:1.2; margin-bottom:6px; }
   .gem-lends { font-family:sans-serif; font-size:13.5px; color:#444; line-height:1.5; margin-bottom:10px; }
   .gem-detail { font-family:sans-serif; font-size:12.5px; color:#555; line-height:1.5; margin-bottom:3px; }
   .gem-detail a { color:inherit; text-decoration:underline; text-underline-offset:2px; }
+  .gem-website-btn { display:inline-block; background:#0d7d7d; color:#fff; font-family:sans-serif; font-size:10px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; padding:8px 18px; border-radius:4px; text-decoration:none; transition:background .15s; white-space:nowrap; }
+  .gem-website-btn:hover { background:#095c5c; color:#fff; }
+  /* Premium image card (shared look) */
+  .biz-card-premium { padding:0 !important; }
+  .biz-premium-link { display:block; text-decoration:none; color:inherit; }
+  .biz-premium-img { display:block; width:100%; aspect-ratio:1.75/1; object-fit:cover; background:#f4f1ea; }
+  .biz-premium-meta { display:flex; align-items:center; justify-content:space-between; gap:8px; padding:8px 14px; border-top:1px solid var(--border); }
+  .biz-premium-name { font-family:sans-serif; font-size:12px; font-weight:700; color:var(--navy); }
+  .biz-premium-cat { font-family:sans-serif; font-size:9px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--gold); white-space:nowrap; }
+  .biz-card-premium:hover { box-shadow:0 6px 20px rgba(0,0,0,.16); }
   .gem-search-wrap { position:relative; margin-bottom:16px; }
   .gem-search-icon { position:absolute; left:14px; top:50%; transform:translateY(-50%); font-size:14px; opacity:.6; }
   #gem-search { width:100%; padding:11px 14px 11px 38px; font-family:sans-serif; font-size:14px; border:1px solid var(--border); border-radius:8px; background:var(--white); }
@@ -1108,6 +1120,22 @@
     return String(cat||'').split(/[,;/]+/).map(function(s){return s.trim();}).filter(Boolean).map(catInfo);
   }
   function buildCharityCard(d){
+    // PREMIUM image card (if CardImage set), clickable to website/donate.
+    if (d.cardimage) {
+      var pimg=d.cardimage;
+      if (pimg.indexOf('http')!==0 && pimg.indexOf('images/')!==0) pimg='images/cards/'+pimg;
+      var plink=d.donateurl||d.website||'';
+      if (plink && !/^https?:\/\//i.test(plink)) plink='https://'+plink;
+      var pinner='<img class="biz-premium-img" src="'+charEsc(pimg)+'" alt="'+charEsc(d.name)+' card" loading="lazy">'+
+        '<div class="biz-premium-meta"><span class="biz-premium-name">'+charEsc(d.name)+'</span>'+
+        (d.category?'<span class="biz-premium-cat">'+charEsc(d.category)+'</span>':'')+'</div>';
+      var pcard=plink
+        ? '<a class="biz-premium-link" href="'+charEsc(plink)+'" target="_blank" rel="noopener">'+pinner+'</a>'
+        : pinner;
+      var cats0=catList(d.category);
+      var keys0=cats0.length?cats0.map(function(c){return c.key;}).join('|'):catInfo(d.category).key;
+      return '<div class="charity-card biz-card-premium" data-cat="'+charEsc(keys0)+'">'+pcard+'</div>';
+    }
     var cats=catList(d.category);
     var ci=cats.length?cats[0]:catInfo(d.category);
     var allKeys=cats.length?cats.map(function(c){return c.key;}).join('|'):ci.key;
@@ -1182,11 +1210,31 @@
     var area=d.area?'<div class="gem-detail">📍 '+gemEsc(d.area)+'</div>':'';
     var hours=d.hours?'<div class="gem-detail" style="color:#888;">🕐 '+gemEsc(d.hours)+'</div>':'';
     var notes=d.notes?'<div class="gem-detail" style="color:#777;font-style:italic;margin-top:4px;">'+gemEsc(d.notes)+'</div>':'';
+    var website=d.website
+      ? '<div style="margin-top:auto;padding-top:12px;text-align:right;"><a href="'+gemEsc(/^https?:\/\//i.test(d.website)?d.website:'https://'+d.website)+'" target="_blank" rel="noopener" class="gem-website-btn">Visit Website →</a></div>'
+      : '';
+
+    // PREMIUM image card (if a CardImage is set), clickable to website.
+    if (d.cardimage) {
+      var img=d.cardimage;
+      if (img.indexOf('http')!==0 && img.indexOf('images/')!==0) img='images/cards/'+img;
+      var inner='<img class="biz-premium-img" src="'+gemEsc(img)+'" alt="'+gemEsc(d.name)+' card" loading="lazy">'+
+        '<div class="biz-premium-meta"><span class="biz-premium-name">'+gemEsc(d.name)+'</span>'+
+        (d.category?'<span class="biz-premium-cat">'+gemEsc(d.category)+'</span>':'')+'</div>';
+      var link=d.website
+        ? '<a class="biz-premium-link" href="'+gemEsc(/^https?:\/\//i.test(d.website)?d.website:'https://'+d.website)+'" target="_blank" rel="noopener">'+inner+'</a>'
+        : inner;
+      return '<div class="gem-card biz-card-premium">'+link+'</div>';
+    }
+
     return '<div class="gem-card">'+
-      (d.category?'<span class="gem-cat">'+gemEsc(d.category)+'</span>':'')+
-      '<div class="gem-name">'+gemEsc(d.name)+'</div>'+
-      (d.lends?'<div class="gem-lends">Lends: '+gemEsc(d.lends)+'</div>':'')+
-      contact+area+phone+email+hours+notes+
+      '<div class="gem-card-banner"></div>'+
+      '<div class="gem-card-body">'+
+        (d.category?'<span class="gem-cat">'+gemEsc(d.category)+'</span>':'')+
+        '<div class="gem-name">'+gemEsc(d.name)+'</div>'+
+        (d.lends?'<div class="gem-lends">Lends: '+gemEsc(d.lends)+'</div>':'')+
+        contact+area+phone+email+hours+notes+website+
+      '</div>'+
       '</div>';
   }
   function renderGems(){
