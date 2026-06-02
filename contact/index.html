@@ -663,6 +663,22 @@
     border-color: var(--navy);
   }
   .form-textarea { resize: vertical; min-height: 80px; }
+  .cat-checks {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+    gap: 6px 14px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 12px;
+    max-height: 220px;
+    overflow-y: auto;
+    background: #fff;
+  }
+  .cat-checks label {
+    display: flex; align-items: center; gap: 7px;
+    font-family: sans-serif; font-size: 13px; cursor: pointer; font-weight: 400;
+  }
+  .cat-checks input[type="checkbox"] { width: auto; margin: 0; cursor: pointer; }
   .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
   .form-row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
   .amenity-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 4px; }
@@ -1061,6 +1077,7 @@
           <option value="event">📅 &nbsp; Submit an Event</option>
           <option value="mazaltov">🎉 &nbsp; Submit a Mazal Tov</option>
           <option value="business">🏢 &nbsp; Submit a Business Listing</option>
+          <option value="job">💼 &nbsp; Post a Job / Find Work</option>
           <option value="realestate">🏠 &nbsp; Post a Real Estate Listing</option>
           <option value="activity">🎡 &nbsp; Submit an Activity</option>
           <option value="advertise">💼 &nbsp; Advertise with HJI</option>
@@ -1211,14 +1228,42 @@
         </div>
         <div class="form-body" id="business-wrap">
           <div class="form-group"><label class="form-label">Business Name *</label><input type="text" name="business_name" class="form-input" placeholder="e.g. Cohen's Kosher Deli"></div>
-          <div class="form-row">
-            <div class="form-group"><label class="form-label">Category *</label>
-              <select name="category" class="form-select"><option>Kosher Restaurant</option><option>Kosher Market</option><option>Books & Gifts</option><option>Catering</option><option>Security</option><option>Marketing</option><option>Community Organization</option><option>Legal</option><option>Financial</option><option>Real Estate</option><option>Medical</option><option>Other</option></select>
+          <div class="form-group">
+            <label class="form-label">Category * <span style="font-weight:400;color:var(--muted);font-size:11px;">(check all that apply)</span></label>
+            <div class="cat-checks">
+              <label><input type="checkbox" name="category" value="24 Hour Services"> 24 Hour Services</label>
+              <label><input type="checkbox" name="category" value="Attorney / Legal"> Attorney / Legal</label>
+              <label><input type="checkbox" name="category" value="Catering & Events"> Catering &amp; Events</label>
+              <label><input type="checkbox" name="category" value="Community Organization"> Community Organization</label>
+              <label><input type="checkbox" name="category" value="Construction"> Construction</label>
+              <label><input type="checkbox" name="category" value="Electrician"> Electrician</label>
+              <label><input type="checkbox" name="category" value="Financial / Accounting"> Financial / Accounting</label>
+              <label><input type="checkbox" name="category" value="Funeral Home"> Funeral Home</label>
+              <label><input type="checkbox" name="category" value="HVAC"> HVAC</label>
+              <label><input type="checkbox" name="category" value="Insurance"> Insurance</label>
+              <label><input type="checkbox" name="category" value="Jewish Books & Gifts"> Jewish Books &amp; Gifts</label>
+              <label><input type="checkbox" name="category" value="Jewish Family Service"> Jewish Family Service</label>
+              <label><input type="checkbox" name="category" value="Kosher Market / Grocery"> Kosher Market / Grocery</label>
+              <label><input type="checkbox" name="category" value="Kosher Restaurant"> Kosher Restaurant</label>
+              <label><input type="checkbox" name="category" value="Marketing & Digital"> Marketing &amp; Digital</label>
+              <label><input type="checkbox" name="category" value="Medical / Healthcare"> Medical / Healthcare</label>
+              <label><input type="checkbox" name="category" value="Photography"> Photography</label>
+              <label><input type="checkbox" name="category" value="Plumbing"> Plumbing</label>
+              <label><input type="checkbox" name="category" value="Real Estate"> Real Estate</label>
+              <label><input type="checkbox" name="category" value="Security Services"> Security Services</label>
+              <label><input type="checkbox" name="category" value="Therapy & Counseling"> Therapy &amp; Counseling</label>
+              <label><input type="checkbox" name="category" value="Trades"> Trades</label>
+              <label><input type="checkbox" name="category" value="Travel Agency"> Travel Agency</label>
+              <label><input type="checkbox" name="category" value="Tutoring"> Tutoring</label>
+              <label><input type="checkbox" name="category" value="Other"> Other</label>
             </div>
-            <div class="form-group"><label class="form-label">Phone *</label><input type="tel" name="phone" class="form-input" placeholder="(713) 000-0000"></div>
           </div>
+          <div class="form-group"><label class="form-label">Phone *</label><input type="tel" name="phone" class="form-input" placeholder="(713) 000-0000"></div>
           <div class="form-group"><label class="form-label">Address</label><input type="text" name="address" class="form-input" placeholder="Street address, Houston TX"></div>
           <div class="form-group"><label class="form-label">Website</label><input type="text" name="website" class="form-input" placeholder="https://..."></div>
+          <div class="form-group"><label class="form-label">Badge (optional)</label>
+            <select name="badge" class="form-select"><option value="">None</option><option>Kosher Certified</option><option>Jewish-Owned</option><option>Jewish-Friendly</option></select>
+          </div>
           <div class="form-group"><label class="form-label">Description *</label><textarea name="description" class="form-textarea" placeholder="Tell the community about your business..."></textarea></div>
           <div class="form-row">
             <div class="form-group"><label class="form-label">Your Name *</label><input type="text" name="name" class="form-input" placeholder="Contact name"></div>
@@ -1231,6 +1276,44 @@
           <div class="form-success-title">Listing submitted!</div>
           <div class="form-success-sub">We'll review and publish within 1–2 business days.</div>
           <button class="form-success-back" onclick="resetForm('business')">← Submit another</button>
+        </div>
+      </div>
+
+      <!-- POST A JOB / FIND WORK -->
+      <div class="form-panel" id="panel-job">
+        <div class="form-header">
+          <span class="form-header-icon">💼</span>
+          <div>
+            <div class="form-header-title">Post a Job / Find Work</div>
+            <div class="form-header-sub">List a job opening or let the community know you're available</div>
+          </div>
+        </div>
+        <div class="form-body" id="job-form-wrap">
+          <div class="form-group"><label class="form-label">Listing Type *</label>
+            <select name="listing_type" class="form-select"><option>I'm Hiring</option><option>I'm Looking for Work</option></select>
+          </div>
+          <div class="form-group"><label class="form-label">Job Title / Role *</label><input type="text" name="title" class="form-input" placeholder="e.g. Part-time Receptionist or Experienced Plumber available"></div>
+          <div class="form-row">
+            <div class="form-group"><label class="form-label">Company / Your Name *</label><input type="text" name="organization" class="form-input" placeholder="Company or name"></div>
+            <div class="form-group"><label class="form-label">Category</label>
+              <select name="category" class="form-select"><option>Education</option><option>Shuls</option><option>Nonprofit</option><option>Healthcare</option><option>Office / Admin</option><option>Food Service</option><option>Tech</option><option>Trades</option><option>Other</option></select>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group"><label class="form-label">Job Type</label>
+              <select name="job_type" class="form-select"><option>Full-time</option><option>Part-time</option><option>Contract</option><option>Flexible</option><option>Seasonal</option></select>
+            </div>
+            <div class="form-group"><label class="form-label">Pay / Rate</label><input type="text" name="pay" class="form-input" placeholder="e.g. $18/hr or Negotiable"></div>
+          </div>
+          <div class="form-group"><label class="form-label">Description</label><textarea name="description" class="form-textarea" placeholder="Describe the role, requirements, or your skills and experience..."></textarea></div>
+          <div class="form-group"><label class="form-label">Contact Email *</label><input type="email" name="email" class="form-input" placeholder="you@example.com"></div>
+          <button class="btn-primary" onclick="submitForm('job-form-wrap','job-ok','Job Listing Submission')">Submit for Review</button>
+        </div>
+        <div class="form-success" id="job-ok">
+          <div class="form-success-icon">✅</div>
+          <div class="form-success-title">Listing submitted!</div>
+          <div class="form-success-sub">It will appear on the jobs board after review.</div>
+          <button class="form-success-back" onclick="resetForm('job')">← Submit another</button>
         </div>
       </div>
 
@@ -1454,7 +1537,7 @@
       var group = el.closest ? el.closest('.form-group') : null;
       var lblEl = group ? group.querySelector('.form-label, label') : null;
       var label = (lblEl ? lblEl.textContent : '') || el.getAttribute('placeholder') || el.name || type;
-      label = label.replace(/\*/g, '').trim();
+      label = label.replace(/\*/g, '').replace(/\([^)]*\)/g, '').replace(/\s+/g, ' ').trim();
       var value;
       if (type === 'checkbox') {
         if (!el.checked) return;

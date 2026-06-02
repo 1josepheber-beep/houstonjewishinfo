@@ -720,6 +720,18 @@
     margin-top: 6px;
   }
   .btn-primary:hover { background: #263d6e; }
+  .btn-primary:disabled:hover { background: var(--navy); }
+  .hji-spinner {
+    display: inline-block;
+    width: 13px; height: 13px;
+    margin-right: 8px;
+    vertical-align: -2px;
+    border: 2px solid rgba(255,255,255,.4);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: hji-spin .6s linear infinite;
+  }
+  @keyframes hji-spin { to { transform: rotate(360deg); } }
   .success-msg {
     display: none;
     text-align: center;
@@ -1301,6 +1313,7 @@
       <div class="check">✅</div>
       <p>Thank you! Your business has been submitted.</p>
       <small>We'll review and publish it within 1–2 business days.</small>
+      <div style="margin-top:18px;"><button class="btn-primary" style="width:auto;padding:11px 22px;" onclick="resetForm('biz-form-wrap','biz-success')">+ Submit Another Listing</button></div>
     </div>
   </div>
 </div>
@@ -1373,6 +1386,7 @@
       <div class="check">✅</div>
       <p>Your listing has been submitted!</p>
       <small>It will appear on the jobs board after review.</small>
+      <div style="margin-top:18px;"><button class="btn-primary" style="width:auto;padding:11px 22px;" onclick="resetForm('job-form-wrap','job-success')">+ Submit Another Listing</button></div>
     </div>
   </div>
 </div>
@@ -1535,7 +1549,7 @@
         </div>
       </div>
 
-      <button class="sidebar-btn" onclick="openModal('modal-job')">+ Post a Listing</button>
+      <button class="sidebar-btn" onclick="location.href='/contact/#job'">+ Post a Listing</button>
 
       <!-- COMMUNITY RESOURCES — edit .resource-item entries here -->
       <div class="section-head" style="margin-top:22px">Community Resources</div>
@@ -1610,7 +1624,7 @@
           <div class="resource-sub">(832) 743-0111 · 24/7 emergency EMS</div>
         </div>
       </a>
-      <button class="sidebar-btn" onclick="openModal('modal-business')">+ Submit Your Business</button>
+      <button class="sidebar-btn" onclick="location.href='/contact/#business'">+ Submit Your Business</button>
     </aside>
 
 
@@ -1754,7 +1768,7 @@
       © 2026 Houston Jewish Info &nbsp;|&nbsp;
       <a href="/contact">Contact Us</a>
       <a href="/contact">Submit a Story</a>
-      <a href="#" onclick="openModal('modal-ad')">Advertise</a>
+      <a href="#" onclick="location.href='/contact/#advertise'; return false;">Advertise</a>
       <a href="/privacy">Privacy Policy</a>
       <a href="/terms">Terms of Use</a>
     </div>
@@ -1859,19 +1873,63 @@
       fields.push({ label: label, value: value });
     });
     var payload = { form_id: formId, fields: fields, page: location.href, submitted_at: new Date().toString() };
+
+    // Loading state on the submit button while the send is in flight (~2s),
+    // so the user sees progress and can't double-submit.
+    var btn = wrap.querySelector('.btn-primary') ||
+              wrap.querySelector('button[onclick*="submitForm"]') ||
+              wrap.querySelector('button');
+    var originalBtnText = '';
+    if (btn) {
+      originalBtnText = btn.innerHTML;
+      btn.disabled = true;
+      btn.style.opacity = '0.7';
+      btn.style.cursor = 'wait';
+      btn.innerHTML = '<span class="hji-spinner" aria-hidden="true"></span>Submitting\u2026';
+    }
+    function restoreBtn() {
+      if (!btn) return;
+      btn.disabled = false;
+      btn.style.opacity = '';
+      btn.style.cursor = '';
+      btn.innerHTML = originalBtnText;
+    }
+
     fetch(HJI_INTAKE_URL, {
       method: 'POST', mode: 'no-cors',
       headers: { 'Content-Type': 'text/plain;charset=utf-8' },
       body: JSON.stringify(payload)
     })
     .then(function() {
+      restoreBtn();
       wrap.style.display = 'none';
       var s = document.getElementById(successId);
       if (s) s.style.display = 'block';
     })
     .catch(function() {
+      restoreBtn();
       alert('Sorry, there was an error submitting. Please try again.');
     });
+  }
+
+  // Reset a form after success so the user can submit another without reloading.
+  function resetForm(formId, successId) {
+    var wrap = document.getElementById(formId);
+    if (wrap) {
+      wrap.querySelectorAll('input, select, textarea').forEach(function(el) {
+        var type = (el.type || '').toLowerCase();
+        if (type === 'checkbox' || type === 'radio') {
+          el.checked = false;
+        } else if (el.tagName === 'SELECT') {
+          el.selectedIndex = 0;
+        } else if (type !== 'button' && type !== 'submit') {
+          el.value = '';
+        }
+      });
+      wrap.style.display = 'block';
+    }
+    var s = document.getElementById(successId);
+    if (s) s.style.display = 'none';
   }
 
   /* -- Shabbat Times via HebCal API (Houston coordinates) -- */
