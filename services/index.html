@@ -1360,6 +1360,7 @@
       <button class="main-tab active" onclick="switchTab('browse', this)">🏪 Browse Businesses</button>
       <button class="main-tab" onclick="switchTab('services', this)">🔧 Find a Service</button>
       <button class="main-tab" onclick="switchTab('gemachim', this)">🤝 Gemachim</button>
+      <button class="main-tab" onclick="switchTab('charities', this)">❤️ Charities</button>
       <button class="main-tab" onclick="switchTab('selfhelp', this)">📚 Self Help &amp; How-To</button>
     </div>
   </div>
@@ -1657,6 +1658,22 @@
       <div style="grid-column:1/-1;text-align:center;font-family:sans-serif;font-size:13px;color:var(--muted);padding:40px;">Loading gemachim…</div>
     </div>
   </div><!-- end tab-gemachim -->
+
+  <!-- ══════════════════════════════════════
+       CHARITIES TAB
+  ══════════════════════════════════════ -->
+  <div class="tab-panel" id="tab-charities">
+    <p style="font-family:sans-serif;font-size:13px;color:var(--muted);margin-bottom:16px;">
+      Houston's Jewish charities and tzedakah organizations — support the causes that serve our community.
+    </p>
+    <div class="search-filter-bar">
+      <input type="text" class="search-input" id="charS-search" placeholder="🔍  Search charities — e.g. emergency, education, food, community" oninput="renderCharS()">
+    </div>
+    <div class="results-bar" style="font-family:sans-serif;font-size:12px;color:var(--muted);margin:10px 0 16px;">Showing <strong id="charS-count" style="color:var(--navy);">0</strong> charities</div>
+    <div class="biz-grid" id="charS-grid">
+      <div style="grid-column:1/-1;text-align:center;font-family:sans-serif;font-size:13px;color:var(--muted);padding:40px;">Loading charities…</div>
+    </div>
+  </div><!-- end tab-charities -->
 
   <!-- ══════════════════════════════════════
        TAB 3: SELF HELP & HOW-TO
@@ -2223,6 +2240,51 @@ function renderGemS(){
     }).catch(function(){
       var grid=document.getElementById('gemS-grid');
       if(grid) grid.innerHTML='<div style="grid-column:1/-1;text-align:center;font-family:sans-serif;font-size:13px;color:var(--muted);padding:40px;">Could not load gemachim right now. Please refresh.</div>';
+    });
+})();
+
+// ===== CHARITIES (mirror of the Charities page, shown on Services) =====
+var CHAR_ALL = [];
+function charEsc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function charVal(cell){ return cell?(cell.f!=null?String(cell.f):(cell.v==null?'':String(cell.v))):''; }
+function charSCard(d){
+  var phone=d.phone?'<div class="biz-detail" style="font-family:sans-serif;font-size:12.5px;color:#555;margin-bottom:3px;">📞 <a href="tel:'+charEsc(String(d.phone).replace(/[^0-9+]/g,''))+'" style="color:inherit;">'+charEsc(d.phone)+'</a></div>':'';
+  var site=d.website?'<div class="biz-detail" style="font-family:sans-serif;font-size:12.5px;color:#555;margin-bottom:3px;">🔗 <a href="'+charEsc(/^https?:\/\//.test(d.website)?d.website:'https://'+d.website)+'" target="_blank" rel="noopener" style="color:inherit;">'+charEsc(d.website)+'</a></div>':'';
+  var donate=d.donateurl?'<div style="margin-top:10px;"><a href="'+charEsc(/^https?:\/\//.test(d.donateurl)?d.donateurl:'https://'+d.donateurl)+'" target="_blank" rel="noopener" class="hero-submit-btn" style="display:inline-block;text-decoration:none;font-size:11px;padding:8px 18px;">❤️ Donate</a></div>':'';
+  var desc=d.description?'<div class="biz-desc" style="font-family:sans-serif;font-size:13px;color:#444;margin:8px 0;line-height:1.5;">'+charEsc(d.description)+'</div>':'';
+  return '<div class="biz-card" data-cat="charity" data-name="'+charEsc(d.name)+'">'+
+    '<div class="biz-card-top"><div>'+
+    '<div class="biz-category">'+charEsc(d.category||'Charity')+'</div>'+
+    '<div class="biz-name">'+charEsc(d.name)+'</div>'+
+    '</div></div>'+
+    desc+phone+site+donate+
+    '</div>';
+}
+function renderCharS(){
+  var q=(function(){ var el=document.getElementById('charS-search'); return el?(el.value||'').toLowerCase().trim():''; })();
+  var list=CHAR_ALL.filter(function(d){
+    if(!q) return true;
+    return (d.name||'').toLowerCase().indexOf(q)>-1 || (d.description||'').toLowerCase().indexOf(q)>-1 ||
+           (d.category||'').toLowerCase().indexOf(q)>-1;
+  });
+  var grid=document.getElementById('charS-grid');
+  if(!grid) return;
+  grid.innerHTML = list.length ? list.map(charSCard).join('')
+    : '<div style="grid-column:1/-1;text-align:center;font-family:sans-serif;font-size:13px;color:var(--muted);padding:40px;">No charities match your search.</div>';
+  var c=document.getElementById('charS-count'); if(c) c.textContent=list.length;
+}
+(function loadCharS(){
+  fetch('https://docs.google.com/spreadsheets/d/'+SHEET_ID+'/gviz/tq?tqx=out:json&headers=1&sheet=Charities')
+    .then(function(r){return r.text();}).then(function(text){
+      var json=JSON.parse(text.substring(47,text.length-2));
+      var cols=json.table.cols.map(function(c){return (c.label||'').toLowerCase().trim();});
+      var rows=json.table.rows.map(function(row){ var o={}; cols.forEach(function(col,i){ o[col]=charVal(row.c?row.c[i]:null); }); return o; })
+        .filter(function(o){ if(!o.name) return false; var s=(o.status||'').toLowerCase().trim(); return !s||s==='active'; });
+      rows.sort(function(a,b){ return String(a.name||'').localeCompare(String(b.name||''), undefined, {sensitivity:'base'}); });
+      CHAR_ALL=rows; renderCharS();
+    }).catch(function(){
+      var grid=document.getElementById('charS-grid');
+      if(grid) grid.innerHTML='<div style="grid-column:1/-1;text-align:center;font-family:sans-serif;font-size:13px;color:var(--muted);padding:40px;">Could not load charities right now. Please refresh.</div>';
     });
 })();
 var allBizListings = [];
