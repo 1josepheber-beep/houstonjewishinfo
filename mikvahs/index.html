@@ -1160,13 +1160,16 @@
     var MIK_SHEET_ID  = '1in7Ac7zknqyR9neWKOCAjOAG4jXCIVTJQfU6jJ72CV8';
     var MIK_SHEET_TAB = 'Mikvahs';
     function esc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+    function mikWeb(u){u=String(u||'').trim();return u?(/^https?:\/\//i.test(u)?u:'https://'+u):'';}
+    function mikWebText(u){return String(u||'').replace(/^https?:\/\//i,'').replace(/^www\./i,'').replace(/\/+$/,'');}
     function mikCard(d){
       var phone=d.phone?'<div class="mikvah-detail">\uD83D\uDCDE '+esc(d.phone)+'</div>':'';
       var email=d.email?'<div class="mikvah-detail">\u2709\uFE0F <a href="mailto:'+esc(d.email)+'">'+esc(d.email)+'</a></div>':'';
+      var website=d.website?'<div class="mikvah-detail">\uD83C\uDF10 <a href="'+esc(mikWeb(d.website))+'" target="_blank" rel="noopener">'+esc(mikWebText(d.website))+'</a></div>':'';
       var addr=d.address?'<div class="mikvah-detail">\uD83D\uDCCD '+esc(d.address)+'</div>':'';
       var notes=d.notes?'<div class="mikvah-detail" style="color:#777;">'+esc(d.notes)+'</div>':'';
       return '<div class="mikvah-card"><span class="mikvah-tag">Mikvah</span>'+
-        '<div class="mikvah-name">'+esc(d.name)+'</div>'+addr+phone+email+notes+'</div>';
+        '<div class="mikvah-name">'+esc(d.name)+'</div>'+addr+phone+email+website+notes+'</div>';
     }
     var url='https://docs.google.com/spreadsheets/d/'+MIK_SHEET_ID+'/gviz/tq?tqx=out:json&sheet='+encodeURIComponent(MIK_SHEET_TAB)+'&headers=1';
     fetch(url).then(function(r){return r.text();}).then(function(text){
