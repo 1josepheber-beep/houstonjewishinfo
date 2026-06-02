@@ -1611,6 +1611,13 @@
       #community-feed .cf-banner{width:100%;height:180px;overflow:hidden;}
       #community-feed .cf-banner img{width:100%;height:100%;object-fit:cover;display:block;}
       #community-feed .cf-body{padding:16px 18px;}
+      #community-feed .cf-pass-row{display:flex;gap:16px;align-items:flex-start;}
+      #community-feed .cf-pass-photo{flex:0 0 104px;}
+      #community-feed .cf-pass-photo img{width:104px;height:126px;object-fit:cover;border-radius:8px;border:1px solid var(--border);display:block;background:#faf8f3;}
+      #community-feed .cf-pass-candle{width:104px;height:126px;border-radius:8px;border:1px solid var(--border);background:#faf8f3;display:flex;align-items:center;justify-content:center;}
+      #community-feed .cf-pass-candle svg{width:60px;height:104px;display:block;}
+      #community-feed .cf-pass-main{flex:1 1 auto;min-width:0;}
+      @media (max-width:420px){#community-feed .cf-pass-photo{flex-basis:84px;}#community-feed .cf-pass-photo img,#community-feed .cf-pass-candle{width:84px;height:104px;}}
       #community-feed .cf-row1{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;}
       #community-feed .cf-dateline{font-family:sans-serif;color:var(--navy);font-weight:700;font-size:13px;}
       #community-feed .cf-tags{display:flex;gap:7px;margin:9px 0 4px;flex-wrap:wrap;}
@@ -1888,6 +1895,8 @@
     var SHEET_ID='1in7Ac7zknqyR9neWKOCAjOAG4jXCIVTJQfU6jJ72CV8';
     var STORY_IMG='https://houstonjewishinfo.com/images/stories/';
     var EVENT_IMG='https://houstonjewishinfo.com/images/events/';
+    var PASSING_IMG='https://houstonjewishinfo.com/images/passings/';
+    var CANDLE_SVG='<div class="cf-pass-candle"><svg viewBox="0 0 64 104" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Memorial candle"><defs><radialGradient id="cfGlow" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#f6d68a" stop-opacity="0.9"/><stop offset="100%" stop-color="#f6d68a" stop-opacity="0"/></radialGradient><linearGradient id="cfFlame" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#fff3c4"/><stop offset="45%" stop-color="#f4b740"/><stop offset="100%" stop-color="#e08a1e"/></linearGradient></defs><circle cx="32" cy="26" r="22" fill="url(#cfGlow)"/><path d="M32 8 C 38 18, 40 24, 32 34 C 24 24, 26 18, 32 8 Z" fill="url(#cfFlame)"/><path d="M32 18 C 35 23, 35 27, 32 32 C 29 27, 29 23, 32 18 Z" fill="#fff6da" opacity="0.85"/><rect x="31" y="33" width="2" height="5" rx="1" fill="#6b5a3e"/><rect x="20" y="38" width="24" height="58" rx="3" fill="#f1ece0"/><rect x="20" y="38" width="7" height="58" rx="3" fill="#ffffff" opacity="0.5"/><rect x="38" y="38" width="6" height="58" rx="3" fill="#d9d2c4" opacity="0.6"/><ellipse cx="32" cy="38" rx="12" ry="3.5" fill="#f7f3ea"/><rect x="16" y="94" width="32" height="6" rx="2" fill="#cfc7b6"/></svg></div>';
     var ADS_IMG='https://houstonjewishinfo.com/images/ads/';
     var PER_PAGE=6;
     var MOBILE_AD_SLOTS=['mobile-1','mobile-2','mobile-3','mobile-4','mobile-5'];
@@ -1937,7 +1946,7 @@
         if(r.levaya)parts.push('Levaya: '+r.levaya);
         if(r.shiva)parts.push('Shiva: '+r.shiva);
         if(r.message)parts.push(r.message);
-        out.push({type:'passing',date:parseDate(r._cells.date),time:'',title:r.name,cat:'',org:'',loc:r.city||'',desc:parts.join('\n'),img:'',link:'',linkText:'',women:false});});
+        out.push({type:'passing',date:parseDate(r._cells.date),time:'',title:r.name,cat:'',org:'',loc:r.city||'',desc:parts.join('\n'),img:imgURL(r.image,PASSING_IMG),link:'',linkText:'',women:false});});
       return out;
     }
 
@@ -1954,6 +1963,18 @@
 
     function cfCard(x){
       var today=cfToday();
+      if(x.type==='passing'){
+        var photo=x.img?'<img src="'+attr(x.img)+'" alt="'+attr(x.title)+'" loading="lazy">':CANDLE_SVG;
+        var pdline=x.date?'<span class="cf-dateline">'+esc(fmtDate(x.date))+'</span>':'<span class="cf-dateline"></span>';
+        var pmeta=x.loc?'<div class="cf-meta"><span>\uD83D\uDCCD '+esc(cleanLoc(x.loc))+'</span></div>':'';
+        var pdesc=x.desc?'<p class="cf-desc">'+esc(x.desc).replace(/\n/g,'<br>')+'</p><button type="button" class="read-more-btn" style="display:none;">Read more \u2193</button>':'';
+        return '<article class="article-card cf-passing"><div class="cf-body"><div class="cf-pass-row">'+
+          '<div class="cf-pass-photo">'+photo+'</div>'+
+          '<div class="cf-pass-main"><div class="cf-row1">'+pdline+'</div>'+
+          '<div class="cf-tags"><span class="cf-tag cf-type-passing">'+esc(TYPE.passing)+'</span></div>'+
+          '<h2 class="article-headline">'+esc(x.title)+'</h2>'+pmeta+pdesc+
+          '</div></div></div></article>';
+      }
       var up=x.date?(x.date>=today):true;
       var banner=x.img?'<div class="cf-banner"><img src="'+attr(x.img)+'" alt="'+attr(x.title)+'" loading="lazy"></div>':'';
       var badge='';
