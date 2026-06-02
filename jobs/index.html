@@ -793,8 +793,21 @@
   }
   .jobs-hero p { font-family: sans-serif; font-size: 14px; opacity: .85; margin-bottom: 16px; }
 
+  /* Hero layout — matches the real-estate hero: heading + search on the
+     left (sized to content, not stretched), button on the right. */
+  .page-hero-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+  .page-hero-inner > div { min-width: 0; }
+  .page-hero-inner .hero-submit-btn { flex-shrink: 0; }
+
   /* Search bar */
   .jobs-search-bar {
+    max-width: 620px;
     display: flex; gap: 10px; flex-wrap: wrap;
     background: rgba(255,255,255,.1);
     border: 1px solid rgba(255,255,255,.2);
@@ -959,7 +972,28 @@
     background: var(--gold); color: #fff; border: none;
     cursor: pointer; text-decoration: none; display: inline-block;
     letter-spacing: .04em;
+    transition: background .15s;
   }
+  .post-job-btn:hover { background: #a87828; color: #fff; }
+  .hero-submit-btn {
+    background: var(--gold);
+    color: #fff;
+    border: none;
+    font-family: sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    padding: 11px 22px;
+    border-radius: 4px;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background .15s;
+    flex-shrink: 0;
+    text-decoration: none;
+    display: inline-block;
+  }
+  .hero-submit-btn:hover { background: #a87828; color: #fff; }
 
   /* Empty state */
   .jobs-empty {
@@ -981,6 +1015,7 @@
     .job-listing { grid-template-columns: 1fr; }
     .job-listing-right { align-items: flex-start; flex-direction: row; flex-wrap: wrap; }
     .jobs-hero h1 { font-size: 26px; }
+    .page-hero-inner .hero-submit-btn { margin-top: 4px; }
   }
 </style>
 <style>
