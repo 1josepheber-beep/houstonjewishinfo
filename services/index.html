@@ -1537,7 +1537,10 @@
     </div>
     <div style="font-family:sans-serif;font-size:11px;color:var(--muted);margin:-6px 0 14px;">Search by name, service, or keyword — e.g. &ldquo;plumber&rdquo;, &ldquo;kosher&rdquo;, &ldquo;security&rdquo;.</div>
 
-    <div class="results-bar">Showing <strong id="biz-count">25</strong> listings</div>
+    <div class="results-bar" style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;">
+      <span>Showing <strong id="biz-count">25</strong> listings</span>
+      <a href="#premium-section" onclick="document.getElementById('premium-section').scrollIntoView({behavior:'smooth'});return false;" style="font-family:sans-serif;font-size:11px;font-weight:700;color:var(--navy);background:#f7efd9;border:1px solid var(--gold);border-radius:20px;padding:5px 14px;text-decoration:none;white-space:nowrap;cursor:pointer;">⭐ See premium listing options ↓</a>
+    </div>
 
     <div class="biz-grid" id="biz-grid">
       <div id="biz-loading" style="grid-column:1/-1;text-align:center;font-family:sans-serif;font-size:13px;color:var(--muted);padding:40px;">
@@ -1555,7 +1558,7 @@
     </div>
 
     <!-- PREMIUM CALLOUT -->
-    <div class="premium-callout" style="background:linear-gradient(135deg,#1a2744,#2a407a);border-radius:10px;padding:26px;margin-bottom:24px;align-items:center;">
+    <div class="premium-callout" id="premium-section" style="background:linear-gradient(135deg,#1a2744,#2a407a);border-radius:10px;padding:26px;margin-bottom:24px;align-items:center;scroll-margin-top:20px;">
       <div>
         <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px;">
           <span style="font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:#fff;">⭐ Premium Listing</span>
