@@ -2378,22 +2378,6 @@ function closeMobileMenu() {
 // ── BROWSE BUSINESSES — Google Sheets ──
 var SHEET_ID = '1in7Ac7zknqyR9neWKOCAjOAG4jXCIVTJQfU6jJ72CV8';
 
-// ===== Sheet data cache (within-visit, 5 min) =====
-// Speeds up tab switches and refetches by reusing recently-fetched sheet data.
-// A hard refresh (Ctrl+Shift+R) always pulls fresh. Affects freshness only, never visibility.
-var SHEET_CACHE_MS = 5 * 60 * 1000;
-var _sheetCache = {};
-function cachedFetchText(url){
-  var now = Date.now();
-  var hit = _sheetCache[url];
-  if (hit && (now - hit.t) < SHEET_CACHE_MS) {
-    return Promise.resolve(hit.v);
-  }
-  return fetch(url).then(function(r){ return r.text(); }).then(function(txt){
-    _sheetCache[url] = { t: Date.now(), v: txt };
-    return txt;
-  });
-}
 
 // ===== GEMACHIM (mirror of the Charities Gemachim tab) =====
 var GEMS_ALL = [];
@@ -2445,7 +2429,7 @@ function renderGemS(){
   var c=document.getElementById('gemS-count'); if(c) c.textContent=list.length;
 }
 (function loadGemS(){
-  cachedFetchText('https://docs.google.com/spreadsheets/d/'+SHEET_ID+'/gviz/tq?tqx=out:json&headers=1&sheet=Gemachim').then(function(text){
+  fetch('https://docs.google.com/spreadsheets/d/'+SHEET_ID+'/gviz/tq?tqx=out:json&headers=1&sheet=Gemachim').then(function(r){return r.text();}).then(function(text){
       var json=JSON.parse(text.substring(47,text.length-2));
       var cols=json.table.cols.map(function(c){return (c.label||'').toLowerCase().trim();});
       var rows=json.table.rows.map(function(row){ var o={}; cols.forEach(function(col,i){ o[col]=gemsVal(row.c?row.c[i]:null); }); return o; })
@@ -2528,7 +2512,7 @@ function renderCharS(){
   var c=document.getElementById('charS-count'); if(c) c.textContent=list.length;
 }
 (function loadCharS(){
-  cachedFetchText('https://docs.google.com/spreadsheets/d/'+SHEET_ID+'/gviz/tq?tqx=out:json&headers=1&sheet=Charities').then(function(text){
+  fetch('https://docs.google.com/spreadsheets/d/'+SHEET_ID+'/gviz/tq?tqx=out:json&headers=1&sheet=Charities').then(function(r){return r.text();}).then(function(text){
       var json=JSON.parse(text.substring(47,text.length-2));
       var cols=json.table.cols.map(function(c){return (c.label||'').toLowerCase().trim();});
       var rows=json.table.rows.map(function(row){ var o={}; cols.forEach(function(col,i){ o[col]=charVal(row.c?row.c[i]:null); }); return o; })
@@ -2759,7 +2743,8 @@ bizTabKeys.forEach(function(cat) {
 
 // Pre-load Services sheet on page load to show counts immediately
 function preloadServiceCounts() {
-  cachedFetchText('https://docs.google.com/spreadsheets/d/' + SHEET_ID + '/gviz/tq?tqx=out:json&headers=1&sheet=Services')
+  fetch('https://docs.google.com/spreadsheets/d/' + SHEET_ID + '/gviz/tq?tqx=out:json&headers=1&sheet=Services')
+    .then(function(r){ return r.text(); })
     .then(function(text){
       var json = JSON.parse(text.substring(47, text.length - 2));
       var cols = json.table.cols.map(function(c){return(c.label||'').toLowerCase().trim();});
@@ -2925,7 +2910,8 @@ function openService(type) {
 
   bodyEl.innerHTML = '<div class="placeholder-card"><strong>Loading providers...</strong></div>';
 
-  cachedFetchText('https://docs.google.com/spreadsheets/d/' + SHEET_ID + '/gviz/tq?tqx=out:json&headers=1&sheet=Services')
+  fetch('https://docs.google.com/spreadsheets/d/' + SHEET_ID + '/gviz/tq?tqx=out:json&headers=1&sheet=Services')
+    .then(function(r){ return r.text(); })
     .then(function(text) {
       var json = JSON.parse(text.substring(47, text.length - 2));
       var cols = json.table.cols.map(function(c) { return (c.label||'').toLowerCase().trim(); });
