@@ -2059,7 +2059,10 @@ function submitForm(formId, successId) {
     var group = el.closest ? el.closest('.form-group') : null;
     var lblEl = group ? group.querySelector('.form-label, label') : null;
     var label = (lblEl ? lblEl.textContent : '') || el.getAttribute('placeholder') || el.name || type;
-    label = label.replace(/\*/g, '').trim();
+    // Clean the label: drop the required asterisk and any parenthetical hint
+    // like "(check all that apply)" or "(optional)" so it matches the
+    // intake script's expected field names exactly.
+    label = label.replace(/\*/g, '').replace(/\([^)]*\)/g, '').replace(/\s+/g, ' ').trim();
     var value;
     if (type === 'checkbox') {
       if (!el.checked) return;
