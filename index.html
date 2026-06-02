@@ -1997,16 +1997,6 @@
   (function(){
     var SHEET_ID='1in7Ac7zknqyR9neWKOCAjOAG4jXCIVTJQfU6jJ72CV8';
 
-// ===== Sheet data cache (within-visit, 5 min) =====
-var SHEET_CACHE_MS = 5 * 60 * 1000;
-var _sheetCache = {};
-function cachedFetchText(u){
-  var now = Date.now(), hit = _sheetCache[u];
-  if (hit && (now - hit.t) < SHEET_CACHE_MS) return Promise.resolve(hit.v);
-  return fetch(u).then(function(r){ return r.text(); }).then(function(txt){
-    _sheetCache[u] = { t: Date.now(), v: txt }; return txt;
-  });
-}
 
     var STORY_IMG='https://houstonjewishinfo.com/images/stories/';
     var EVENT_IMG='https://houstonjewishinfo.com/images/events/';
@@ -2041,7 +2031,7 @@ function cachedFetchText(u){
     }
     function cellStr(c){if(!c)return '';return c.f!=null?c.f:(c.v==null?'':c.v);}
     function tabURL(tab){return 'https://docs.google.com/spreadsheets/d/'+SHEET_ID+'/gviz/tq?tqx=out:json&headers=1&sheet='+encodeURIComponent(tab);}
-    function getTab(tab){return cachedFetchText(tabURL(tab)).then(function(text){
+    function getTab(tab){return fetch(tabURL(tab)).then(function(r){return r.text();}).then(function(text){
       var json=JSON.parse(text.substring(47,text.length-2));
       var cols=json.table.cols.map(function(c){return (c.label||'').toLowerCase().trim();});
       return (json.table.rows||[]).map(function(row){var o={_cells:{}};cols.forEach(function(col,i){var c=row.c?row.c[i]:null;o[col]=cellStr(c);o._cells[col]=c;});return o;});
@@ -2270,7 +2260,8 @@ function cachedFetchText(u){
     var JOBS_SHEET_TAB = 'Jobs'; // <-- must match your jobs tab name EXACTLY (case-sensitive)
     var url = 'https://docs.google.com/spreadsheets/d/' + JOBS_SHEET_ID +
               '/gviz/tq?tqx=out:json&sheet=' + encodeURIComponent(JOBS_SHEET_TAB) + '&headers=1';
-    cachedFetchText(url)
+    fetch(url)
+      .then(function(r){ return r.text(); })
       .then(function(text) {
         // Strip Google's wrapper
         var json = JSON.parse(text.substring(47, text.length - 2));
@@ -2352,7 +2343,8 @@ function cachedFetchText(u){
     function adImg(v){ v=String(v||'').trim(); if(!v) return ''; return /^https?:\/\//i.test(v)?v:AD_IMG_BASE+v; }
     var url = 'https://docs.google.com/spreadsheets/d/' + AD_SHEET_ID +
               '/gviz/tq?tqx=out:json&sheet=' + encodeURIComponent(AD_SHEET_TAB) + '&headers=1';
-    cachedFetchText(url)
+    fetch(url)
+      .then(function(r){ return r.text(); })
       .then(function(text) {
         var json = JSON.parse(text.substring(47, text.length - 2));
         var cols = json.table.cols.map(function(c) { return (c.label || '').toLowerCase().trim(); });
