@@ -917,8 +917,11 @@
   .ttd-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 40px; }
   @media (max-width: 820px){ .ttd-grid { grid-template-columns: 1fr 1fr; } }
   @media (max-width: 560px){ .ttd-grid { grid-template-columns: 1fr; } }
-  .ttd-card { background: var(--white); border: 1px solid var(--border); border-radius: 8px; padding: 16px 18px; display: flex; flex-direction: column; }
+  .ttd-card { background: var(--white); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; display: flex; flex-direction: column; transition: box-shadow .2s; }
   .ttd-card:hover { box-shadow: 0 3px 12px rgba(0,0,0,.09); }
+  .ttd-card-banner { height: 8px; background: linear-gradient(90deg,#1f3f6e,#3a70c0); }
+  .ttd-card-eat .ttd-card-banner { background: linear-gradient(90deg,#3b6d11,#63991f); }
+  .ttd-card-body { padding: 16px 18px; display: flex; flex-direction: column; flex: 1; }
   .ttd-tagrow { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; }
   .ttd-tag { display: inline-block; font-family: sans-serif; font-size: 9px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; padding: 3px 9px; border-radius: 3px; }
   .ttd-name { font-family: 'Playfair Display', serif; font-size: 17px; font-weight: 700; color: var(--navy); line-height: 1.2; margin-bottom: 6px; }
@@ -1320,14 +1323,17 @@
   function kashrutTag(v){ return splitTags(v).map(oneKashrutTag).join(''); }
   function eatCard(d){
     var web=ttdWeb(d.website);
-    return '<div class="ttd-card">'+
-      '<div class="ttd-tagrow">'+(d.badge?'<span class="ttd-tag" style="background:#edf7ed;color:#1a5a1a;">'+ttdEsc(d.badge)+'</span>':'')+kashrutTag(d.kashrut)+'</div>'+
-      '<div class="ttd-name">'+ttdEsc(d.name)+'</div>'+
-      (d.description?'<div class="ttd-desc">'+ttdEsc(d.description)+'</div>':'')+
-      (d.address?'<div class="ttd-detail">📍 '+ttdEsc(d.address)+'</div>':'')+
-      (d.phone?'<div class="ttd-detail">📞 '+ttdEsc(d.phone)+'</div>':'')+
-      (d.hours?'<div class="ttd-detail" style="color:#888;">🕐 '+ttdEsc(d.hours)+'</div>':'')+
-      (web?'<div class="ttd-footer"><a href="'+ttdAttr(web)+'" target="_blank" rel="noopener" class="ttd-link">Visit Website →</a></div>':'')+
+    return '<div class="ttd-card ttd-card-eat">'+
+      '<div class="ttd-card-banner"></div>'+
+      '<div class="ttd-card-body">'+
+        '<div class="ttd-tagrow">'+(d.badge?'<span class="ttd-tag" style="background:#edf7ed;color:#1a5a1a;">'+ttdEsc(d.badge)+'</span>':'')+kashrutTag(d.kashrut)+'</div>'+
+        '<div class="ttd-name">'+ttdEsc(d.name)+'</div>'+
+        (d.description?'<div class="ttd-desc">'+ttdEsc(d.description)+'</div>':'')+
+        (d.address?'<div class="ttd-detail">📍 '+ttdEsc(d.address)+'</div>':'')+
+        (d.phone?'<div class="ttd-detail">📞 '+ttdEsc(d.phone)+'</div>':'')+
+        (d.hours?'<div class="ttd-detail" style="color:#888;">🕐 '+ttdEsc(d.hours)+'</div>':'')+
+        (web?'<div class="ttd-footer"><a href="'+ttdAttr(web)+'" target="_blank" rel="noopener" class="ttd-link">Visit Website →</a></div>':'')+
+      '</div>'+
       '</div>';
   }
   function renderEats(){
@@ -1374,10 +1380,13 @@
     var web=ttdWeb(d.url);
     var link = web ? '<a href="'+ttdAttr(web)+'" target="_blank" rel="noopener" class="ttd-link">Visit site →</a>' : '';
     return '<div class="ttd-card">'+
-      '<div class="ttd-tagrow">'+catTag(d.category)+ioTag(d.indooroutdoor)+freeTag(d.free)+'</div>'+
-      '<div class="ttd-name">'+ttdEsc(d.name)+'</div>'+
-      (d.address?'<div class="ttd-detail">📍 '+ttdEsc(d.address)+'</div>':'')+
-      (link?'<div class="ttd-footer">'+link+'</div>':'')+
+      '<div class="ttd-card-banner"></div>'+
+      '<div class="ttd-card-body">'+
+        '<div class="ttd-tagrow">'+catTag(d.category)+ioTag(d.indooroutdoor)+freeTag(d.free)+'</div>'+
+        '<div class="ttd-name">'+ttdEsc(d.name)+'</div>'+
+        (d.address?'<div class="ttd-detail">📍 '+ttdEsc(d.address)+'</div>':'')+
+        (link?'<div class="ttd-footer">'+link+'</div>':'')+
+      '</div>'+
       '</div>';
   }
   function renderActs(){
