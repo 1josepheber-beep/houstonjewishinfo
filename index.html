@@ -1611,13 +1611,12 @@
       #community-feed .cf-banner{width:100%;height:180px;overflow:hidden;}
       #community-feed .cf-banner img{width:100%;height:100%;object-fit:cover;display:block;}
       #community-feed .cf-body{padding:16px 18px;}
-      #community-feed .cf-pass-row{display:flex;gap:16px;align-items:stretch;}
-      #community-feed .cf-pass-photo{flex:0 0 104px;align-self:stretch;}
-      #community-feed .cf-pass-photo img{width:104px;height:100%;min-height:126px;object-fit:cover;object-position:center top;border-radius:8px;border:1px solid var(--border);display:block;background:#faf8f3;}
-      #community-feed .cf-pass-candle{width:104px;height:100%;min-height:126px;border-radius:8px;border:1px solid var(--border);background:#faf8f3;display:flex;align-items:center;justify-content:center;}
+      #community-feed .cf-pass-wrap::after{content:"";display:table;clear:both;}
+      #community-feed .cf-pass-photo{float:left;width:104px;margin:2px 16px 10px 0;}
+      #community-feed .cf-pass-photo img{width:104px;height:126px;object-fit:cover;object-position:center top;border-radius:8px;border:1px solid var(--border);display:block;background:#faf8f3;}
+      #community-feed .cf-pass-candle{width:104px;height:126px;border-radius:8px;border:1px solid var(--border);background:#faf8f3;display:flex;align-items:center;justify-content:center;}
       #community-feed .cf-pass-candle svg{width:60px;height:104px;display:block;}
-      #community-feed .cf-pass-main{flex:1 1 auto;min-width:0;}
-      @media (max-width:420px){#community-feed .cf-pass-photo{flex-basis:84px;}#community-feed .cf-pass-photo img,#community-feed .cf-pass-candle{width:84px;}}
+      @media (max-width:420px){#community-feed .cf-pass-photo{width:84px;}#community-feed .cf-pass-photo img,#community-feed .cf-pass-candle{width:84px;height:104px;}}
       #community-feed .cf-row1{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;}
       #community-feed .cf-dateline{font-family:sans-serif;color:var(--navy);font-weight:700;font-size:13px;}
       #community-feed .cf-tags{display:flex;gap:7px;margin:9px 0 4px;flex-wrap:wrap;}
@@ -1969,12 +1968,12 @@
         var pdline=x.date?'<span class="cf-dateline">'+esc(fmtDate(x.date))+'</span>':'<span class="cf-dateline"></span>';
         var pmeta=x.loc?'<div class="cf-meta"><span>\uD83D\uDCCD '+esc(cleanLoc(x.loc))+'</span></div>':'';
         var pdesc=x.desc?'<p class="cf-desc cf-pass-desc">'+esc(x.desc).replace(/\n/g,'<br>')+'</p><button type="button" class="read-more-btn" style="display:none;">Read more \u2193</button>':'';
-        return '<article class="article-card cf-passing"><div class="cf-body"><div class="cf-pass-row">'+
+        return '<article class="article-card cf-passing"><div class="cf-body cf-pass-wrap">'+
           '<div class="cf-pass-photo">'+photo+'</div>'+
-          '<div class="cf-pass-main"><div class="cf-row1">'+pdline+'</div>'+
+          '<div class="cf-row1">'+pdline+'</div>'+
           '<div class="cf-tags"><span class="cf-tag cf-type-passing">'+esc(TYPE.passing)+'</span></div>'+
           '<h2 class="article-headline">'+esc(x.title)+'</h2>'+pmeta+pdesc+
-          '</div></div></div></article>';
+          '</div></article>';
       }
       var up=x.date?(x.date>=today):true;
       var banner=x.img?'<div class="cf-banner"><img src="'+attr(x.img)+'" alt="'+attr(x.title)+'" loading="lazy"></div>':'';
