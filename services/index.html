@@ -853,7 +853,11 @@
     display: flex;
     gap: 0;
     margin-top: 20px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;        /* hide scrollbar (Firefox) */
   }
+  .main-tabs::-webkit-scrollbar { display: none; }  /* hide scrollbar (Chrome/Safari) */
   .main-tab {
     font-family: sans-serif;
     font-size: 13px;
@@ -867,6 +871,8 @@
     transition: all .2s;
     border-radius: 6px 6px 0 0;
     margin-right: 4px;
+    white-space: nowrap;          /* keep each tab label on one line */
+    flex-shrink: 0;               /* don't squash tabs; let them scroll instead */
   }
   .main-tab.active {
     background: var(--cream);
@@ -1055,7 +1061,7 @@
     .biz-grid { grid-template-columns: 1fr; }
     .service-grid { grid-template-columns: repeat(2, 1fr); }
     .page-hero h1 { font-size: 26px; }
-    .main-tab { padding: 12px 20px; font-size: 12px; }
+    .main-tab { padding: 12px 16px; font-size: 12px; }
   }
   @media (max-width: 500px) {
     .service-grid { grid-template-columns: 1fr; }
