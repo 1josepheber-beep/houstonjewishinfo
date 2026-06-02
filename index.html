@@ -1633,7 +1633,10 @@
       #community-feed .cf-meta{display:flex;flex-wrap:wrap;gap:14px;color:var(--muted);font-family:sans-serif;font-size:13px;margin:6px 0 8px;}
       #community-feed .cf-desc{font-family:sans-serif;color:#444;font-size:14px;line-height:1.6;margin:0;}
       #community-feed .cf-desc.clamped{display:-webkit-box;-webkit-line-clamp:5;-webkit-box-orient:vertical;overflow:hidden;}
-      #community-feed .cf-pass-desc.clamped{-webkit-line-clamp:3;}
+      #community-feed .cf-pass-extra{display:none;}
+      #community-feed .cf-pass-extra.open{display:block;}
+      #community-feed .cf-pass-text{font-family:sans-serif;color:#444;font-size:14px;line-height:1.6;margin:0;}
+      #community-feed .cf-pass-toggle{clear:both;display:inline-block;font-family:sans-serif;font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;background:none;border:none;color:var(--gold);cursor:pointer;padding:0;margin-top:12px;}
       #community-feed .cf-foot{display:flex;gap:16px;align-items:center;margin-top:12px;flex-wrap:wrap;}
       #community-feed .article-read-more{font-family:sans-serif;font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;background:var(--navy);color:#fff;padding:9px 16px;border-radius:6px;text-decoration:none;display:inline-block;}
       #community-feed .article-read-more:hover{background:var(--gold);color:#fff;}
@@ -1960,6 +1963,7 @@
       return 'https://calendar.google.com/calendar/render?action=TEMPLATE&text='+encodeURIComponent(x.title)+'&dates='+s+'/'+e+'&details='+encodeURIComponent(det)+'&location='+encodeURIComponent(cleanLoc(x.loc));
     }
     window.cfAddCal=function(enc){try{window.open(decodeURIComponent(enc),'_blank');}catch(e){}};
+    window.cfPassToggle=function(btn){var wrap=btn.parentNode;var extra=wrap.querySelector('.cf-pass-extra');if(!extra)return;var open=extra.classList.toggle('open');btn.innerHTML=open?'Read less \u2191':'Read more \u2193';};
 
     function cfCard(x){
       var today=cfToday();
@@ -1967,12 +1971,16 @@
         var photo=x.img?'<img src="'+attr(x.img)+'" alt="'+attr(x.title)+'" loading="lazy">':CANDLE_SVG;
         var pdline=x.date?'<span class="cf-dateline">'+esc(fmtDate(x.date))+'</span>':'<span class="cf-dateline"></span>';
         var pmeta=x.loc?'<div class="cf-meta"><span>\uD83D\uDCCD '+esc(cleanLoc(x.loc))+'</span></div>':'';
-        var pdesc=x.desc?'<p class="cf-desc cf-pass-desc">'+esc(x.desc).replace(/\n/g,'<br>')+'</p><button type="button" class="read-more-btn" style="display:none;">Read more \u2193</button>':'';
+        var pbody=x.desc?'<p class="cf-pass-text">'+esc(x.desc).replace(/\n/g,'<br>')+'</p>':'';
+        var extra=pmeta+pbody;
+        var toggle=extra?'<button type="button" class="cf-pass-toggle" onclick="cfPassToggle(this)">Read more \u2193</button>':'';
         return '<article class="article-card cf-passing"><div class="cf-body cf-pass-wrap">'+
           '<div class="cf-pass-photo">'+photo+'</div>'+
           '<div class="cf-row1">'+pdline+'</div>'+
           '<div class="cf-tags"><span class="cf-tag cf-type-passing">'+esc(TYPE.passing)+'</span></div>'+
-          '<h2 class="article-headline">'+esc(x.title)+'</h2>'+pmeta+pdesc+
+          '<h2 class="article-headline">'+esc(x.title)+'</h2>'+
+          (extra?'<div class="cf-pass-extra">'+extra+'</div>':'')+
+          toggle+
           '</div></article>';
       }
       var up=x.date?(x.date>=today):true;
@@ -2028,8 +2036,7 @@
         var btn=p.nextElementSibling;
         if(!btn||!btn.classList.contains('read-more-btn'))return;
         var lh=parseFloat(getComputedStyle(p).lineHeight)||22;
-        var lines=p.classList.contains('cf-pass-desc')?3:5;
-        if(p.scrollHeight>lh*lines+2){p.classList.add('clamped');btn.style.display='inline-block';
+        if(p.scrollHeight>lh*5+2){p.classList.add('clamped');btn.style.display='inline-block';
           btn.onclick=function(){if(p.classList.contains('clamped')){p.classList.remove('clamped');btn.textContent='Read less \u2191';}else{p.classList.add('clamped');btn.textContent='Read more \u2193';}};}
         else{btn.style.display='none';}
       });
