@@ -818,9 +818,10 @@
     border-radius: 4px;
     cursor: pointer;
     white-space: nowrap;
+    text-decoration: none;
     transition: background .15s;
   }
-  .submit-hero-btn:hover { background: #a87828; }
+  .submit-hero-btn:hover { background: #a87828; color: #fff; }
 
   /* Filter bar */
   .filter-bar {
@@ -973,11 +974,6 @@
   .free-toggle:hover { background: #f1f9ee; }
   .free-toggle.active { background: #2c6e1a; color: #fff; border-color: #2c6e1a; }
   .free-toggle.active .free-dot { opacity: 1; }
-  .submit-act-cta { text-align: center; margin: 16px 0 4px; }
-  .submit-act-cta .lead { font-family: sans-serif; font-size: 13px; color: #5a5a5a; margin-bottom: 9px; }
-  .submit-act-btn { display: inline-flex; align-items: center; gap: 8px; font-family: sans-serif; font-size: 14px; font-weight: 700; color: #fff; background: #1f3f6e; padding: 11px 24px; border-radius: 24px; text-decoration: none; box-shadow: 0 2px 7px rgba(31,63,110,.28); transition: transform .15s, box-shadow .15s, background .15s; }
-  .submit-act-btn:hover { background: #16304f; transform: translateY(-1px); box-shadow: 0 5px 14px rgba(31,63,110,.32); }
-  .submit-act-btn:active { transform: translateY(0); }
   .syn-tab { font-family: sans-serif; font-size: 14px; font-weight: 700; padding: 9px 20px; border: none; border-radius: 6px; background: transparent; color: #6b6256; cursor: pointer; transition: all .15s; }
   .syn-tab:hover { color: var(--navy); }
   .syn-tab.active { background: var(--navy); color: #fff; box-shadow: 0 1px 4px rgba(0,0,0,.15); }
@@ -1179,6 +1175,7 @@
         <h1>🎡 Things to Do Around Houston</h1>
         <p>Where to eat out and fun activities for the whole family across Greater Houston.</p>
       </div>
+      <a href="/contact/#activity" class="submit-hero-btn" style="display:inline-block;"><span style="font-size:15px;vertical-align:-1px;">+</span> Submit an Activity</a>
     </div>
   </div>
 </div>
@@ -1228,10 +1225,6 @@
     </div>
     <div class="act-freebar">
       <button class="free-toggle" id="free-toggle" onclick="toggleFree(this)" aria-pressed="false"><span class="free-dot">✓</span> Free only</button>
-    </div>
-    <div class="submit-act-cta">
-      <div class="lead">Know a family-friendly activity we're missing?</div>
-      <a href="/contact/#activity" class="submit-act-btn">➕ Submit an Activity</a>
     </div>
     <div class="results-bar">Showing <strong id="act-count">0</strong> activities</div>
     <div class="ttd-grid" id="act-grid">
