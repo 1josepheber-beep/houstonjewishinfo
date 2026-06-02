@@ -1050,6 +1050,7 @@
           <option value="mazaltov">🎉 &nbsp; Submit a Mazal Tov</option>
           <option value="business">🏢 &nbsp; Submit a Business Listing</option>
           <option value="realestate">🏠 &nbsp; Post a Real Estate Listing</option>
+          <option value="activity">🎡 &nbsp; Submit an Activity</option>
           <option value="advertise">💼 &nbsp; Advertise with HJI</option>
         </select>
         <span class="type-select-arrow">▼</span>
@@ -1218,6 +1219,46 @@
           <div class="form-success-title">Listing submitted!</div>
           <div class="form-success-sub">We'll review and publish within 1–2 business days.</div>
           <button class="form-success-back" onclick="resetForm('business')">← Submit another</button>
+        </div>
+      </div>
+
+      <!-- SUBMIT ACTIVITY -->
+      <div class="form-panel" id="panel-activity">
+        <div class="form-header">
+          <span class="form-header-icon">🎡</span>
+          <div>
+            <div class="form-header-title">Submit an Activity</div>
+            <div class="form-header-sub">Share a family-friendly activity with the community</div>
+          </div>
+        </div>
+        <div class="form-body" id="activity-wrap">
+          <div class="form-group"><label class="form-label">Activity Name *</label><input type="text" name="activity_name" class="form-input" placeholder="e.g. Houston Zoo, Evelyn's Park splash pad"></div>
+          <div class="form-row">
+            <div class="form-group"><label class="form-label">Category</label>
+              <select name="category" class="form-select"><option value="Playgrounds">Playgrounds &amp; Splash Pads</option><option value="Outdoor">Outdoor &amp; Parks</option><option value="Little Kids">Little Kids</option><option value="Big Kids">Big Kids &amp; Teens</option><option value="Museums">Museums</option><option value="Attraction Pass">Attraction Pass</option><option value="Other">Other</option></select>
+            </div>
+            <div class="form-group"><label class="form-label">Indoor or Outdoor</label>
+              <select name="indoor_outdoor" class="form-select"><option value="">—</option><option>Indoor</option><option>Outdoor</option><option>Both</option></select>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group"><label class="form-label">Free</label>
+              <select name="free" class="form-select"><option value="">—</option><option>Yes</option><option>No</option></select>
+            </div>
+            <div class="form-group"><label class="form-label">Address or Location</label><input type="text" name="address" class="form-input" placeholder="Street address or area, Houston TX"></div>
+          </div>
+          <div class="form-group"><label class="form-label">Link or Website</label><input type="text" name="url" class="form-input" placeholder="https://..."></div>
+          <div class="form-row">
+            <div class="form-group"><label class="form-label">Your Name *</label><input type="text" name="name" class="form-input" placeholder="Your name"></div>
+            <div class="form-group"><label class="form-label">Your Email *</label><input type="email" name="email" class="form-input" placeholder="you@example.com"></div>
+          </div>
+          <button class="btn-primary" onclick="submitForm('activity-wrap','activity-ok','Activity Submission')">Submit for Review</button>
+        </div>
+        <div class="form-success" id="activity-ok">
+          <div class="form-success-icon">✅</div>
+          <div class="form-success-title">Activity submitted!</div>
+          <div class="form-success-sub">We'll review and publish within 1–2 business days.</div>
+          <button class="form-success-back" onclick="resetForm('activity')">← Submit another</button>
         </div>
       </div>
 
@@ -1442,6 +1483,14 @@
     // Reset inputs
     panel.querySelectorAll('input, textarea').forEach(function(el) { el.value = ''; });
   }
+
+  // Auto-open a form when arriving via a hash, e.g. /contact/#activity
+  (function(){
+    var h=(location.hash||'').replace('#','').trim();
+    if(!h) return;
+    var sel=document.getElementById('contact-type');
+    if(sel && sel.querySelector('option[value="'+h+'"]')){ sel.value=h; showForm(h); }
+  })();
 </script>
 <div class="mobile-menu-overlay" id="mob-overlay" onclick="closeMobileMenu()"></div>
 <div class="mobile-menu" id="mob-menu">
