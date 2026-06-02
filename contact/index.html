@@ -1012,7 +1012,7 @@
           <a href="/">Home</a><div class="nav-dd" id="nav-jewish"><button type="button" class="nav-dd-btn" aria-haspopup="true" aria-expanded="false" onclick="hjiToggleJewish(event)">Jewish <span class="nav-dd-caret">▾</span></button></div>
           <a href="/services">Services</a>
           <a href="/jobs" target="_blank">Jobs</a>
-          <a href="/classifieds">Real Estate</a>
+          <a href="/real-estate">Real Estate</a>
           <a href="/things-to-do">Things to Do</a>
         <a href="/charities">Charities</a>
           <a href="/contact" class="active">Contact / Submit</a>
@@ -1518,7 +1518,6 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape')closeMobileM
     if (p.indexOf('/events')>-1)     return 'Events';
     if (p.indexOf('/jobs')>-1)       return 'Jobs';
     if (p.indexOf('/real-estate')>-1)return 'Real Estate';
-    if (p.indexOf('/classifieds')>-1)return 'Classifieds';
     return 'Home';
   }
   function clean(s){ return (s||'').replace(/\s+/g,' ').trim().slice(0,100); }
