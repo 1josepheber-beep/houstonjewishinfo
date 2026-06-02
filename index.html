@@ -1868,6 +1868,7 @@
     var SHEET_ID='1in7Ac7zknqyR9neWKOCAjOAG4jXCIVTJQfU6jJ72CV8';
     var STORY_IMG='https://houstonjewishinfo.com/images/stories/';
     var EVENT_IMG='https://houstonjewishinfo.com/images/events/';
+    var ADS_IMG='https://houstonjewishinfo.com/images/ads/';
     var PER_PAGE=6;
     var MOBILE_AD_SLOTS=['mobile-1','mobile-2','mobile-3','mobile-4','mobile-5'];
     var MAZAL_AD_SLOTS=['mazaltov-1','mazaltov-2','mazaltov-3','mazaltov-4','mazaltov-5'];
@@ -2179,6 +2180,9 @@
     // If it's a different spreadsheet, paste that spreadsheet's ID here.
     var AD_SHEET_ID  = '1in7Ac7zknqyR9neWKOCAjOAG4jXCIVTJQfU6jJ72CV8';
     var AD_SHEET_TAB = 'Ads'; // must match the tab name exactly
+    var AD_IMG_BASE  = 'https://houstonjewishinfo.com/images/ads/';
+    // accept either a bare filename (uses the ads folder) or a full http(s) URL
+    function adImg(v){ v=String(v||'').trim(); if(!v) return ''; return /^https?:\/\//i.test(v)?v:AD_IMG_BASE+v; }
     var url = 'https://docs.google.com/spreadsheets/d/' + AD_SHEET_ID +
               '/gviz/tq?tqx=out:json&sheet=' + encodeURIComponent(AD_SHEET_TAB) + '&headers=1';
     fetch(url)
@@ -2207,7 +2211,7 @@
             el.innerHTML = '<a href="' + (d.linkurl || '#') + '" target="_blank" rel="noopener" aria-label="' + alt + '" ' +
                            'onclick="' + onclk + '" ' +
                            'style="display:block;margin:0 0 16px;border:1px solid #c8a882;border-radius:6px;overflow:hidden;text-decoration:none;">' +
-                           '<img src="' + d.imageurl + '" alt="' + alt + '" style="width:100%;height:auto;display:block;"></a>';
+                           '<img src="' + adImg(d.imageurl) + '" alt="' + alt + '" style="width:100%;height:auto;display:block;"></a>';
             trackAdView(el, String(d.advertiser || 'Advertisement'), slotName);
           } else {                     // no active ad for this placement -> stays empty (collapses)
             el.innerHTML = '';
