@@ -973,10 +973,15 @@
       <div class="edu-tile-name">Orthodox Schools</div>
       <div class="edu-tile-count" id="count-kids">—</div>
     </div>
-    <div class="edu-tile" data-cat="adultlearning" onclick="showEduCat('adultlearning', this)">
+    <div class="edu-tile" data-cat="adult" onclick="showEduCat('adult', this)">
       <div class="edu-tile-icon">📚</div>
       <div class="edu-tile-name">Adult Learning</div>
-      <div class="edu-tile-count" id="count-adultlearning">—</div>
+      <div class="edu-tile-count" id="count-adult">—</div>
+    </div>
+    <div class="edu-tile" data-cat="kollel" onclick="showEduCat('kollel', this)">
+      <div class="edu-tile-icon">📖</div>
+      <div class="edu-tile-name">Kollel</div>
+      <div class="edu-tile-count" id="count-kollel">—</div>
     </div>
   </div>
 
@@ -1075,13 +1080,14 @@
         else cat='kids';
         window.EDU_BY_CAT[cat].push(d);
       });
-      window.EDU_BY_CAT.adultlearning = window.EDU_BY_CAT.adult.concat(window.EDU_BY_CAT.kollel);
-      ['kids','adultlearning'].forEach(function(k){ window.EDU_BY_CAT[k].sort(function(a,b){ return String(a.name||'').localeCompare(String(b.name||''), undefined, {sensitivity:'base'}); }); });
-      document.getElementById('count-kids').textContent = window.EDU_BY_CAT.kids.length + ' listed';
-      document.getElementById('count-adultlearning').textContent = window.EDU_BY_CAT.adultlearning.length + ' listed';
+      document.getElementById('count-kids').textContent  = window.EDU_BY_CAT.kids.length + ' listed';
+      document.getElementById('count-adult').textContent = window.EDU_BY_CAT.adult.length + ' listed';
+      document.getElementById('count-kollel').textContent= window.EDU_BY_CAT.kollel.length + ' listed';
+      ['kids','adult','kollel'].forEach(function(k){ window.EDU_BY_CAT[k].sort(function(a,b){ return String(a.name||'').localeCompare(String(b.name||''), undefined, {sensitivity:'base'}); }); });
       // deep-link: open the right category from the URL hash (#schools, #adult-learning)
       var h=(location.hash||'').toLowerCase();
-      if(h.indexOf('adult')>=0 || h.indexOf('kollel')>=0){ showEduCat('adultlearning', document.querySelector('.edu-tile[data-cat="adultlearning"]')); }
+      if(h.indexOf('adult')>=0){ showEduCat('adult', document.querySelector('.edu-tile[data-cat="adult"]')); }
+      else if(h.indexOf('kollel')>=0){ showEduCat('kollel', document.querySelector('.edu-tile[data-cat="kollel"]')); }
       else { renderEduCat('kids'); }
     }).catch(function(){
       var grid=document.getElementById('school-grid');
@@ -1097,7 +1103,7 @@
     };
   })();
 
-  var EDU_LABELS={ kids:"Orthodox Schools", adultlearning:"Adult Learning" };
+  var EDU_LABELS={ kids:"Orthodox Schools", adult:"Adult Learning", kollel:"Kollel" };
   function showEduCat(cat, tile){
     document.querySelectorAll('.edu-tile').forEach(function(t){ t.classList.remove('active'); });
     if(tile) tile.classList.add('active');
@@ -1165,7 +1171,7 @@
 <div class="m-jewish-sub">
 <a href="/education#schools">Orthodox Schools</a>
 <a href="/synagogues">Orthodox Shuls</a>
-<a href="/synagogues#mikvah">Mikvahs</a>
+<a href="/mikvah">Mikvahs</a>
 <a href="/education#adult-learning">Adult Learning</a>
 </div>
     <a href="/services">🛠️ Services</a>
@@ -1286,7 +1292,7 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape')closeMobileM
 <div class="nav-dd-menu" id="hji-jewish-menu" role="menu">
 <a href="/education#schools" role="menuitem">Orthodox Schools</a>
 <a href="/synagogues" role="menuitem">Orthodox Shuls</a>
-<a href="/synagogues#mikvah" role="menuitem">Mikvahs</a>
+<a href="/mikvah" role="menuitem">Mikvahs</a>
 <a href="/education#adult-learning" role="menuitem">Adult Learning</a>
 </div>
 <script>
@@ -1294,6 +1300,7 @@ function hjiToggleJewish(e){e.stopPropagation();var m=document.getElementById('h
 function hjiToggleMJewish(b){var s=b.nextElementSibling;if(!s)return;var o=s.classList.toggle('open');var c=b.querySelector('.m-jewish-caret');if(c)c.textContent=o?'\u25b4':'\u25be';}
 document.addEventListener('click',function(ev){var m=document.getElementById('hji-jewish-menu');if(m&&m.classList.contains('open')&&!m.contains(ev.target)&&!(ev.target.closest&&ev.target.closest('.nav-dd-btn')))m.classList.remove('open');});
 window.addEventListener('resize',function(){var m=document.getElementById('hji-jewish-menu');if(m)m.classList.remove('open');});
+(function(){var EVMAP={'Orthodox Schools':'menu_orthodox_schools','Orthodox Shuls':'menu_orthodox_shuls','Mikvahs':'menu_mikvahs','Adult Learning':'menu_adult_learning'};document.addEventListener('click',function(ev){var a=ev.target.closest&&ev.target.closest('#hji-jewish-menu a, .m-jewish-sub a');if(!a)return;var label=(a.textContent||'').trim();var name=EVMAP[label];if(name&&typeof gtag==='function'){gtag('event',name,{menu:'Jewish',item:label});}});})();
 </script>
 </body>
 </html>
