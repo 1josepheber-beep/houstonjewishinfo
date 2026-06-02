@@ -1037,7 +1037,7 @@
   }
   .gem-card:hover { box-shadow: 0 3px 12px rgba(0,0,0,.09); }
   .gem-card-banner { height: 8px; background: linear-gradient(90deg,#0d7d7d,#16a8a8); }
-  .gem-card-body { padding: 16px 20px; display: flex; flex-direction: column; }
+  .gem-card-body { padding: 16px 20px; display: flex; flex-direction: column; flex: 1; }
   .gem-cat {
     display: inline-block; align-self: flex-start;
     font-family: sans-serif; font-size: 9px; font-weight: 700;
@@ -1063,12 +1063,22 @@
     border: 1px solid var(--border);
     border-radius: 6px;
     padding: 16px;
+    padding-top: 20px;
     transition: box-shadow .2s;
     display: flex;
     flex-direction: column;
     gap: 6px;
+    position: relative;
+    overflow: hidden;
   }
-  .biz-card:hover { box-shadow: 0 3px 12px rgba(0,0,0,.09); }
+  .biz-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 8px;
+    background: linear-gradient(90deg, var(--navy), var(--gold));
+  }
+  .biz-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,.12); }
   .biz-card-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
   .biz-badge {
     display: inline-block; font-family: sans-serif; font-size: 9px; font-weight: 700;
@@ -2302,7 +2312,7 @@ function gemSCard(d){
   var hours=d.hours?'<div class="gem-detail" style="color:#888;">🕐 '+gemsEsc(d.hours)+'</div>':'';
   var notes=d.notes?'<div class="gem-detail" style="color:#777;font-style:italic;margin-top:4px;">'+gemsEsc(d.notes)+'</div>':'';
   var website=d.website
-    ? '<div style="margin-top:10px;"><a href="'+gemsEsc(/^https?:\/\//i.test(d.website)?d.website:'https://'+d.website)+'" target="_blank" rel="noopener" class="gem-website-btn">Visit Website →</a></div>'
+    ? '<div style="margin-top:auto;padding-top:12px;text-align:right;"><a href="'+gemsEsc(/^https?:\/\//i.test(d.website)?d.website:'https://'+d.website)+'" target="_blank" rel="noopener" class="gem-website-btn">Visit Website →</a></div>'
     : '';
   return '<div class="gem-card">'+
     '<div class="gem-card-banner"></div>'+
