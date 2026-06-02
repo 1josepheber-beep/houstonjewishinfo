@@ -930,6 +930,9 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape')closeMobileM
   (function() {
     var AD_SHEET_ID  = '1in7Ac7zknqyR9neWKOCAjOAG4jXCIVTJQfU6jJ72CV8';
     var AD_SHEET_TAB = 'Ads';
+    var AD_IMG_BASE  = 'https://houstonjewishinfo.com/images/ads/';
+    // accept either a bare filename (uses the ads folder) or a full http(s) URL
+    function adImg(v){ v=String(v||'').trim(); if(!v) return ''; return /^https?:\/\//i.test(v)?v:AD_IMG_BASE+v; }
     var url = 'https://docs.google.com/spreadsheets/d/' + AD_SHEET_ID + '/gviz/tq?tqx=out:json&sheet=' + encodeURIComponent(AD_SHEET_TAB) + '&headers=1';
     fetch(url).then(function(r){ return r.text(); }).then(function(text){
       var json = JSON.parse(text.substring(47, text.length - 2));
@@ -951,7 +954,7 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape')closeMobileM
           var reTrack = String(d.advertiser||'Advertisement').replace(/'/g,"\\'");
           var reSlot = el.getAttribute('data-ad-slot');
           var reOnclk = "try{if(typeof gtag==='function'){gtag('event','ad_click',{ad_name:'"+reTrack+"',ad_placement:'"+reSlot+"'});}}catch(e){}";
-          el.innerHTML = '<a href="'+(d.linkurl||'#')+'" target="_blank" rel="noopener" aria-label="'+alt+'" onclick="'+reOnclk+'" style="display:block;margin:0 0 16px;border:1px solid #c8a882;border-radius:6px;overflow:hidden;text-decoration:none;"><img src="'+d.imageurl+'" alt="'+alt+'" style="width:100%;height:auto;display:block;"></a>';
+          el.innerHTML = '<a href="'+(d.linkurl||'#')+'" target="_blank" rel="noopener" aria-label="'+alt+'" onclick="'+reOnclk+'" style="display:block;margin:0 0 16px;border:1px solid #c8a882;border-radius:6px;overflow:hidden;text-decoration:none;"><img src="'+adImg(d.imageurl)+'" alt="'+alt+'" style="width:100%;height:auto;display:block;"></a>';
           trackAdView(el, String(d.advertiser||'Advertisement'), reSlot);
         } else { el.innerHTML=''; }
       });
