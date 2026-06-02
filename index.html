@@ -1843,7 +1843,7 @@
       var group = el.closest ? el.closest('.form-group') : null;
       var lblEl = group ? group.querySelector('.form-label, label') : null;
       var label = (lblEl ? lblEl.textContent : '') || el.getAttribute('placeholder') || el.name || type;
-      label = label.replace(/\*/g, '').trim();
+      label = label.replace(/\*/g, '').replace(/\([^)]*\)/g, '').replace(/\s+/g, ' ').trim();
       var value;
       if (type === 'checkbox') {
         if (!el.checked) return;
