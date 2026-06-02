@@ -1347,11 +1347,28 @@
         <option value="books-gifts">Books &amp; Gifts</option>
         <option value="catering">Catering &amp; Events</option>
         <option value="community-org">Community Organizations</option>
-        <option value="security">Security Services</option>
+        <option value="security">Security</option>
         <option value="marketing">Marketing &amp; Digital</option>
         <option value="trades">Trades</option>
+        <option value="medical">Medical / Healthcare</option>
+        <option value="legal">Attorney / Legal</option>
+        <option value="financial">Financial / Accounting</option>
+        <option value="realestate">Real Estate</option>
+        <option value="therapy">Therapy &amp; Counseling</option>
+        <option value="tutoring">Tutoring</option>
+        <option value="plumbing">Plumbing</option>
+        <option value="electric">Electrician</option>
+        <option value="hvac">HVAC</option>
+        <option value="construction">Construction</option>
+        <option value="photography">Photography</option>
+        <option value="funeral">Funeral Home</option>
+        <option value="travel">Travel Agency</option>
+        <option value="insurance">Insurance</option>
+        <option value="24hour">24 Hour Services</option>
+        <option value="jfs">Jewish Family Service</option>
       </select>
     </div>
+    <div style="font-family:sans-serif;font-size:11px;color:var(--muted);margin:-6px 0 14px;">Search by name, service, or keyword — e.g. &ldquo;plumber&rdquo;, &ldquo;kosher&rdquo;, &ldquo;security&rdquo;.</div>
 
     <div class="cat-pills">
       <button class="cat-pill active" onclick="setCat('all', this)">All</button>
@@ -2313,24 +2330,90 @@ function preloadServiceCounts() {
 }
 preloadServiceCounts();
 
+/* Collapse any category text to a comparable key: lowercase, strip the
+ * word "services", punctuation and spaces. So "Security", "security",
+ * and "Security Services" all become "security". */
+function catKey(s){
+  return String(s||'').toLowerCase()
+    .replace(/&/g,' and ')
+    .replace(/\bservices?\b/g,'')
+    .replace(/[^a-z0-9]/g,'')
+    .trim();
+}
+
+/* Friendly search synonyms -> the canonical category key, so a visitor
+ * can type natural words and still find the right businesses. */
+var SEARCH_SYNONYMS = {
+  plumber:'plumbing', plumbers:'plumbing',
+  electrician:'electric', electrical:'electric',
+  lawyer:'legal', attorney:'legal', attorneys:'legal',
+  doctor:'medical', healthcare:'medical', health:'medical', clinic:'medical',
+  accountant:'financial', accounting:'financial', taxes:'financial', tax:'financial',
+  realtor:'realestate', realty:'realestate', homes:'realestate', house:'realestate',
+  counselor:'therapy', counseling:'therapy', therapist:'therapy',
+  tutor:'tutoring', teacher:'tutoring',
+  ac:'hvac', heating:'hvac', cooling:'hvac', airconditioning:'hvac',
+  caterer:'catering', caterers:'catering', food:'catering',
+  photographer:'photography', photos:'photography',
+  guard:'security', guards:'security', alarm:'security',
+  funerals:'funeral', burial:'funeral', cemetery:'funeral',
+  flights:'travel', flight:'travel', vacation:'travel',
+  grocery:'kosher-market', market:'kosher-market', supermarket:'kosher-market',
+  restaurant:'kosher-restaurant', restaurants:'kosher-restaurant', dining:'kosher-restaurant', eat:'kosher-restaurant',
+  book:'books-gifts', books:'books-gifts', gift:'books-gifts', gifts:'books-gifts', judaica:'books-gifts',
+  nonprofit:'community-org', organization:'community-org', shul:'community-org',
+  digital:'marketing', advertising:'marketing', ads:'marketing'
+};
+
 function filterBiz() {
-  var query = (document.getElementById('biz-search').value||'').toLowerCase();
+  var raw = (document.getElementById('biz-search').value||'').toLowerCase().trim();
   var cat = document.getElementById('biz-cat-select').value;
-  if(query === '') {
-    // No search query — use renderBizGrid so nudge shows for empty categories
+
+  if(raw === '') {
     renderBizGrid(cat);
     return;
   }
-  // Has search query — filter across all listings
+
+  // Expand the query with any synonym (e.g. "plumber" also matches "plumbing").
+  var synonymKey = SEARCH_SYNONYMS[raw] || '';
+  var qKey = catKey(raw);
+  var selectedKey = catKey(cat);
+
   var filtered = allBizListings.filter(function(item) {
-    var nameMatch = (item.name||'').toLowerCase().indexOf(query) > -1 ||
-                    (item.description||'').toLowerCase().indexOf(query) > -1;
-    var catMatch = cat === 'all' || item._cat === cat;
-    return nameMatch && catMatch;
+    // Text the listing carries.
+    var name = (item.name||'').toLowerCase();
+    var desc = (item.description||'').toLowerCase();
+    var itemCatText = (item.category||'').toLowerCase();
+    var itemCatKey  = catKey(item.category || item._cat || '');
+    var tabKey      = catKey(item._cat || '');
+
+    // 1) free-text match against name, description, and category text
+    var textMatch = name.indexOf(raw) > -1 ||
+                    desc.indexOf(raw) > -1 ||
+                    itemCatText.indexOf(raw) > -1;
+
+    // 2) category-key match (tolerant of "Security" vs "Security Services")
+    var keyMatch = (qKey && (itemCatKey.indexOf(qKey) > -1 || tabKey.indexOf(qKey) > -1));
+
+    // 3) synonym match (e.g. typed "plumber" -> plumbing)
+    var synMatch = synonymKey &&
+                   (itemCatKey.indexOf(catKey(synonymKey)) > -1 ||
+                    tabKey.indexOf(catKey(synonymKey)) > -1 ||
+                    item._cat === synonymKey);
+
+    var queryMatch = textMatch || keyMatch || synMatch;
+
+    // Respect the dropdown filter, also tolerantly.
+    var catMatch = (cat === 'all') ||
+                   item._cat === cat ||
+                   (selectedKey && (itemCatKey.indexOf(selectedKey) > -1 || tabKey.indexOf(selectedKey) > -1));
+
+    return queryMatch && catMatch;
   });
+
   document.getElementById('biz-count').textContent = filtered.length;
   if(filtered.length === 0) {
-    document.getElementById('biz-grid').innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:40px;font-family:sans-serif;color:var(--muted);">No results found for \"' + query + '\".</div>';
+    document.getElementById('biz-grid').innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:40px;font-family:sans-serif;color:var(--muted);">No results found for \"' + raw + '\". Try a different word, or browse the <strong>Find a Service</strong> tab.</div>';
   } else {
     document.getElementById('biz-grid').innerHTML = filtered.map(buildBizCard).join('');
   }
