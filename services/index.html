@@ -1079,6 +1079,29 @@
     background: linear-gradient(90deg, var(--navy), var(--gold));
   }
   .biz-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,.12); }
+  /* Premium image listing: business-card image is the whole card, clickable to site */
+  .biz-card-premium { padding: 0; }
+  .biz-card-premium::before { display: none; }   /* no banner stripe on premium */
+  .biz-premium-link { display: block; text-decoration: none; color: inherit; }
+  .biz-premium-img {
+    display: block; width: 100%;
+    aspect-ratio: 1.75 / 1;          /* standard business-card proportions */
+    object-fit: cover;
+    background: #f4f1ea;
+  }
+  .biz-premium-meta {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 8px; padding: 8px 14px; border-top: 1px solid var(--border);
+  }
+  .biz-premium-name {
+    font-family: sans-serif; font-size: 12px; font-weight: 700; color: var(--navy);
+  }
+  .biz-premium-cat {
+    font-family: sans-serif; font-size: 9px; font-weight: 700;
+    letter-spacing: .06em; text-transform: uppercase;
+    color: var(--gold); white-space: nowrap;
+  }
+  .biz-card-premium:hover { box-shadow: 0 6px 20px rgba(0,0,0,.16); }
   .biz-card-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
   .biz-badge {
     display: inline-block; font-family: sans-serif; font-size: 9px; font-weight: 700;
@@ -2314,6 +2337,18 @@ function gemSCard(d){
   var website=d.website
     ? '<div style="margin-top:auto;padding-top:12px;text-align:right;"><a href="'+gemsEsc(/^https?:\/\//i.test(d.website)?d.website:'https://'+d.website)+'" target="_blank" rel="noopener" class="gem-website-btn">Visit Website →</a></div>'
     : '';
+  // PREMIUM image card (if CardImage set), clickable to website.
+  if (d.cardimage) {
+    var gimg=d.cardimage;
+    if (gimg.indexOf('http')!==0 && gimg.indexOf('images/')!==0) gimg='images/cards/'+gimg;
+    var ginner='<img class="biz-premium-img" src="'+gemsEsc(gimg)+'" alt="'+gemsEsc(d.name)+' card" loading="lazy">'+
+      '<div class="biz-premium-meta"><span class="biz-premium-name">'+gemsEsc(d.name)+'</span>'+
+      (d.category?'<span class="biz-premium-cat">'+gemsEsc(d.category)+'</span>':'')+'</div>';
+    var glink=d.website
+      ? '<a class="biz-premium-link" href="'+gemsEsc(/^https?:\/\//i.test(d.website)?d.website:'https://'+d.website)+'" target="_blank" rel="noopener">'+ginner+'</a>'
+      : ginner;
+    return '<div class="gem-card biz-card-premium">'+glink+'</div>';
+  }
   return '<div class="gem-card">'+
     '<div class="gem-card-banner"></div>'+
     '<div class="gem-card-body">'+
@@ -2373,6 +2408,22 @@ function charCatList(cat){
   return String(cat||'').split(/[,;/]+/).map(function(s){return s.trim();}).filter(Boolean).map(charCatInfo);
 }
 function buildCharityCard(d){
+  // PREMIUM image card (if CardImage set), clickable to donate/website.
+  if (d.cardimage) {
+    var pimg=d.cardimage;
+    if (pimg.indexOf('http')!==0 && pimg.indexOf('images/')!==0) pimg='images/cards/'+pimg;
+    var plink=d.donateurl||d.website||'';
+    if (plink && !/^https?:\/\//i.test(plink)) plink='https://'+plink;
+    var pinner='<img class="biz-premium-img" src="'+charEsc(pimg)+'" alt="'+charEsc(d.name)+' card" loading="lazy">'+
+      '<div class="biz-premium-meta"><span class="biz-premium-name">'+charEsc(d.name)+'</span>'+
+      (d.category?'<span class="biz-premium-cat">'+charEsc(d.category)+'</span>':'')+'</div>';
+    var pcard=plink
+      ? '<a class="biz-premium-link" href="'+charEsc(plink)+'" target="_blank" rel="noopener">'+pinner+'</a>'
+      : pinner;
+    var pcats=charCatList(d.category);
+    var pkeys=pcats.length?pcats.map(function(c){return c.key;}).join('|'):charCatInfo(d.category).key;
+    return '<div class="charity-card biz-card-premium" data-cat="'+charEsc(pkeys)+'">'+pcard+'</div>';
+  }
   var cats=charCatList(d.category);
   var ci=cats.length?cats[0]:charCatInfo(d.category);
   var allKeys=cats.length?cats.map(function(c){return c.key;}).join('|'):ci.key;
@@ -2564,6 +2615,24 @@ function buildBizCard(item) {
   var website = item.website || '';
   if(website && website.indexOf('http') !== 0) website = 'https://' + website;
   var cat = item.category || item._cat || '';
+
+  // PREMIUM image card: if a CardImage is provided, show the business card
+  // image as the whole listing, clickable straight to their website. Name and
+  // category remain present (visually subtle) so search + accessibility still work.
+  if (item.cardimage) {
+    var img = item.cardimage;
+    if (img.indexOf('http') !== 0 && img.indexOf('images/') !== 0) img = 'images/cards/' + img;
+    var inner =
+      '<img class="biz-premium-img" src="' + img + '" alt="' + item.name + ' business card" loading="lazy">' +
+      '<div class="biz-premium-meta"><span class="biz-premium-name">' + item.name + '</span>' +
+      (cat ? '<span class="biz-premium-cat">' + cat + '</span>' : '') + '</div>';
+    var card = website
+      ? '<a class="biz-premium-link" href="' + website + '" target="_blank" rel="noopener">' + inner + '</a>'
+      : inner;
+    return '<div class="biz-card biz-card-premium" data-cat="' + item._cat + '" data-name="' + item.name + '">' +
+      card + '</div>';
+  }
+
   return '<div class="biz-card" data-cat="' + item._cat + '" data-name="' + item.name + '">' +
     '<div class="biz-card-top"><div>' +
     '<div class="biz-category">' + cat + '</div>' +
