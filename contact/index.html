@@ -1449,15 +1449,19 @@
         </div>
         <div class="form-body" id="advertise-wrap">
           <div class="form-group"><label class="form-label">Business Name *</label><input type="text" name="business_name" class="form-input" placeholder="Your business or organization"></div>
-          <div class="form-group"><label class="form-label">Ad Slot</label>
-            <select name="ad_slot" class="form-select"><option>Sidebar Large (300×250)</option><option>Sidebar Medium (300×150)</option><option>Mobile Strip Banner</option><option>Sponsored Article</option></select>
+          <div class="form-group"><label class="form-label">Where would you like to advertise?</label>
+            <select name="ad_slot" class="form-select"><option>Premium Listing (business card)</option><option>Main page ad</option><option>Real estate page ad</option><option>Jobs page ad (free)</option><option>Custom (describe below)</option></select>
           </div>
           <div class="form-row">
             <div class="form-group"><label class="form-label">Your Name *</label><input type="text" name="name" class="form-input" placeholder="Contact name"></div>
             <div class="form-group"><label class="form-label">Phone</label><input type="tel" name="phone" class="form-input" placeholder="(713) 000-0000"></div>
           </div>
           <div class="form-group"><label class="form-label">Email *</label><input type="email" name="email" class="form-input" placeholder="you@example.com"></div>
-          <div class="form-group"><label class="form-label">Message or Questions</label><textarea name="message" class="form-textarea" placeholder="Tell us about your ad, target dates, budget..."></textarea></div>
+          <div class="form-group"><label class="form-label">Message or Questions</label><textarea name="message" class="form-textarea" placeholder="If you chose Custom, describe where you'd like your ad. Otherwise, tell us about target dates, budget, or any questions..."></textarea></div>
+          <div style="background:#f4f1ea;border:1px solid var(--border);border-radius:6px;padding:14px 16px;margin-bottom:6px;font-family:sans-serif;font-size:12.5px;color:#555;line-height:1.6;">
+            <strong style="color:var(--navy);">📧 Have a graphic or business card?</strong> Email your image to <a href="mailto:info@houstonjewishinfo.com" style="color:var(--gold);font-weight:700;">info@houstonjewishinfo.com</a> after submitting this form.
+            <span style="display:block;margin-top:8px;color:#777;">Image requirements: <strong>1050 × 600 px</strong> (landscape) &nbsp;•&nbsp; JPG or PNG &nbsp;•&nbsp; max <strong>2 MB</strong></span>
+          </div>
           <button class="btn-primary" onclick="submitForm('advertise-wrap','advertise-ok','Advertising Inquiry')">Send Inquiry</button>
         </div>
         <div class="form-success" id="advertise-ok">
