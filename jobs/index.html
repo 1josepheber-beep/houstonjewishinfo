@@ -1180,7 +1180,7 @@ function loadJobs(){
         var obj={};
         cols.forEach(function(col,i){obj[col]=safeVal(row.c?row.c[i]:null);});
         return obj;
-      }).filter(function(r){return r.title;}).reverse();
+      }).filter(function(r){return r.title && String(r.approved||'').toLowerCase().trim()==='yes';}).reverse();
       renderJobs();
     }).catch(function(e){
       console.error('Jobs error:',e);

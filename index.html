@@ -1790,25 +1790,43 @@
   });
 
   /* -- Form submission (demo — shows success state) -- */
+  var HJI_INTAKE_URL = 'https://script.google.com/macros/s/AKfycbwoXT7inGzJkFFsNwEZMeijGmdy0NMipcApcWWgH4Haamgr4n-qTotDnatI_yrV378i/exec';
   function submitForm(formId, successId) {
-    var formEl = document.getElementById(formId);
-    var inputs = formEl.querySelectorAll('input, select, textarea');
-    var data = {};
-    inputs.forEach(function(el) {
-      var key = el.name || el.placeholder || el.type;
-      if (key) data[key] = el.value;
+    var wrap = document.getElementById(formId);
+    if (!wrap) return;
+    var els = wrap.querySelectorAll('input, select, textarea');
+    var fields = [];
+    els.forEach(function(el) {
+      var type = (el.type || '').toLowerCase();
+      if (type === 'button' || type === 'submit') return;
+      var group = el.closest ? el.closest('.form-group') : null;
+      var lblEl = group ? group.querySelector('.form-label, label') : null;
+      var label = (lblEl ? lblEl.textContent : '') || el.getAttribute('placeholder') || el.name || type;
+      label = label.replace(/\*/g, '').trim();
+      var value;
+      if (type === 'checkbox') {
+        if (!el.checked) return;
+        value = (el.value && el.value.toLowerCase() !== 'on') ? el.value
+          : (el.closest('label') ? el.closest('label').textContent.trim() : 'Yes');
+      } else if (type === 'radio') {
+        if (!el.checked) return;
+        value = el.value;
+      } else {
+        value = (el.value || '').trim();
+      }
+      if (value === '') return;
+      fields.push({ label: label, value: value });
     });
-    data['_form_id'] = formId;
-    data['_subject'] = 'HJI Submission: ' + formId.replace(/-/g,' ');
-    fetch('https://formspree.io/f/xkoevogn', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-      body: JSON.stringify(data)
+    var payload = { form_id: formId, fields: fields, page: location.href, submitted_at: new Date().toString() };
+    fetch(HJI_INTAKE_URL, {
+      method: 'POST', mode: 'no-cors',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify(payload)
     })
-    .then(function(r) { return r.json(); })
     .then(function() {
-      formEl.style.display = 'none';
-      document.getElementById(successId).style.display = 'block';
+      wrap.style.display = 'none';
+      var s = document.getElementById(successId);
+      if (s) s.style.display = 'block';
     })
     .catch(function() {
       alert('Sorry, there was an error submitting. Please try again.');

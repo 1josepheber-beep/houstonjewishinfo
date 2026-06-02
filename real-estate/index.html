@@ -852,9 +852,9 @@ function submitListing(){
   var amenities=[];
   document.querySelectorAll('.re-amenity:checked').forEach(function(cb){ amenities.push(cb.value); });
   var data={
-    'Listing Type':type,'Title':title,'Price / Rent':price,'Address / Neighborhood':address,
+    'Listing Type':type,'Property Title':title,'Price / Rent':price,'Address / Neighborhood':address,
     'Bedrooms':g('re-beds'),'Bathrooms':g('re-baths'),'Sq Ft':g('re-sqft'),
-    'Property Type':g('re-ptype'),'Amenities':amenities.join(', '),
+    'Property Type':g('re-ptype'),'Amenities & Features':amenities.join(', '),
     'Description':desc,'Photo Link':g('re-photo'),
     'Name':name,'Email':email,'Phone':g('re-phone'),
     'Zelle (for $15 request)':zelle,
@@ -862,12 +862,19 @@ function submitListing(){
   };
   var btn=document.querySelector('#listing-form-wrap .btn-primary');
   if(btn){ btn.disabled=true; btn.textContent='Submitting\u2026'; }
-  fetch('https://formspree.io/f/xkoevogn',{
-    method:'POST',
-    headers:{'Content-Type':'application/json','Accept':'application/json'},
-    body:JSON.stringify(data)
+  var HJI_INTAKE_URL='https://script.google.com/macros/s/AKfycbwoXT7inGzJkFFsNwEZMeijGmdy0NMipcApcWWgH4Haamgr4n-qTotDnatI_yrV378i/exec';
+  var fields=[];
+  Object.keys(data).forEach(function(k){
+    if(k.charAt(0)==='_') return;            // skip _subject / _replyto
+    var v=(''+data[k]).trim();
+    if(v!=='') fields.push({label:k, value:v});
+  });
+  var payload={form_id:'listing-form-wrap', fields:fields, page:location.href, submitted_at:new Date().toString()};
+  fetch(HJI_INTAKE_URL,{
+    method:'POST', mode:'no-cors',
+    headers:{'Content-Type':'text/plain;charset=utf-8'},
+    body:JSON.stringify(payload)
   })
-  .then(function(r){ if(!r.ok) throw new Error('bad'); return r.json(); })
   .then(function(){
     document.getElementById('listing-form-wrap').style.display='none';
     document.getElementById('listing-success').style.display='block';
