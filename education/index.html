@@ -1115,6 +1115,11 @@
     if(tile) tile.classList.add('active');
     document.getElementById('edu-cat-label').textContent=EDU_LABELS[cat]||cat;
     if(window.renderEduCat) window.renderEduCat(cat);
+    // On mobile, scroll down to the results so it's clear the list loaded.
+    if(window.innerWidth <= 768){
+      var bar=document.querySelector('.results-bar');
+      if(bar){ setTimeout(function(){ bar.scrollIntoView({behavior:'smooth', block:'start'}); }, 80); }
+    }
   }
 
   function openModal(id) { document.getElementById(id).classList.add('open'); document.body.style.overflow = 'hidden'; }
