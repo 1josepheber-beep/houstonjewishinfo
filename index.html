@@ -1618,6 +1618,7 @@
       #community-feed .cf-type-news{background:#dde8f6;color:#185fa5;}
       #community-feed .cf-type-event{background:#f3e6c8;color:#8a5a12;}
       #community-feed .cf-type-mazal{background:#f6dde6;color:#a3375a;}
+      #community-feed .cf-type-passing{background:#e7e9ee;color:#4b5563;}
       #community-feed .cf-cat{background:#ede9e2;color:#5f5a51;}
       #community-feed .cf-tag-mz{background:#eee9df;color:#7a6a3f;}
       #community-feed .cf-up{background:#e3efe0;color:#3b6d11;}
@@ -1651,6 +1652,7 @@
           <button type="button" class="cf-pill" data-f="news"><span class="cf-dot" style="background:#185fa5;"></span>News</button>
           <button type="button" class="cf-pill" data-f="event"><span class="cf-dot" style="background:#b8923a;"></span>Events</button>
           <button type="button" class="cf-pill" data-f="mazal"><span class="cf-dot" style="background:#c4537e;"></span>Mazal Tov</button>
+          <button type="button" class="cf-pill" data-f="passing"><span class="cf-dot" style="background:#64748b;"></span>Passings</button>
         </div>
         <div class="cf-seg" id="cf-seg" style="display:none;">
           <button type="button" id="cf-vlist" class="on" onclick="cfSetView('list')">List</button>
@@ -1890,7 +1892,7 @@
     var PER_PAGE=6;
     var MOBILE_AD_SLOTS=['mobile-1','mobile-2','mobile-3','mobile-4','mobile-5'];
     var MAZAL_AD_SLOTS=['mazaltov-1','mazaltov-2','mazaltov-3','mazaltov-4','mazaltov-5'];
-    var TYPE={news:'News',event:'Event',mazal:'Mazal Tov'};
+    var TYPE={news:'News',event:'Event',mazal:'Mazal Tov',passing:'In Memoriam'};
     var MONTHS=['January','February','March','April','May','June','July','August','September','October','November','December'];
 
     var items=[], filter='all', view='list', showWomen=false, page=1, wired=false;
@@ -1922,7 +1924,7 @@
     });}
     function active(o){return String(o.status||'').toLowerCase().trim()==='active';}
 
-    function buildItems(stories,events,mazals){
+    function buildItems(stories,events,mazals,passings){
       var out=[];
       stories.forEach(function(r){if(!active(r)||!r.headline)return;
         out.push({type:'news',date:parseDate(r._cells.date),time:'',title:r.headline,cat:r.label||'',org:r.byline||'',loc:'',desc:r.excerpt||'',img:imgURL(r.image,STORY_IMG),link:r.linkurl||'',linkText:r.linktext||'Read More \u2192',women:false});});
@@ -1930,6 +1932,12 @@
         out.push({type:'event',date:parseDate(r._cells.date),time:r.time||'',title:r.title,cat:r.category||'Event',org:r.presenter||'',loc:r.location||'',desc:r.description||'',img:imgURL(r.imageurl,EVENT_IMG),link:r.ticketurl||'',linkText:(r.buttontext||'More Details'),women:String(r.women||'').toLowerCase().trim()==='yes'});});
       mazals.forEach(function(r){if(!active(r)||!r.name)return;
         out.push({type:'mazal',date:parseDate(r._cells.date),time:'',title:r.name,cat:r.type||'',org:'',loc:r.city||'',desc:r.message||'',img:'',link:'',linkText:'',women:false});});
+      (passings||[]).forEach(function(r){if(!active(r)||!r.name)return;
+        var parts=[];
+        if(r.levaya)parts.push('Levaya: '+r.levaya);
+        if(r.shiva)parts.push('Shiva: '+r.shiva);
+        if(r.message)parts.push(r.message);
+        out.push({type:'passing',date:parseDate(r._cells.date),time:'',title:r.name,cat:'',org:'',loc:r.city||'',desc:parts.join('\n'),img:'',link:'',linkText:'',women:false});});
       return out;
     }
 
@@ -1980,6 +1988,7 @@
         if(x.women&&!showWomen)return false;
         if(filter==='news')return x.type==='news';
         if(filter==='mazal')return x.type==='mazal';
+        if(filter==='passing')return x.type==='passing';
         if(filter==='event')return x.type==='event'&&(!x.date||x.date>=today);
         if(x.type==='event')return (!x.date||x.date>=today);
         return true;
@@ -2087,8 +2096,8 @@
 
     document.getElementById('cf-list').innerHTML='<div class="cf-empty">Loading the community feed\u2026</div>';
     wireUp();
-    Promise.all([getTab('Stories'),getTab('Events'),getTab('MazalTov')])
-      .then(function(res){items=buildItems(res[0],res[1],res[2]);renderList();})
+    Promise.all([getTab('Stories'),getTab('Events'),getTab('MazalTov'),getTab('Passings').catch(function(){return [];})])
+      .then(function(res){items=buildItems(res[0],res[1],res[2],res[3]);renderList();})
       .catch(function(){document.getElementById('cf-list').innerHTML='<div class="cf-empty">The feed is taking a moment to load. Please refresh.</div>';if(typeof loadAds==='function')loadAds();});
   })();
 
