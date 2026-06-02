@@ -1370,18 +1370,6 @@
     </div>
     <div style="font-family:sans-serif;font-size:11px;color:var(--muted);margin:-6px 0 14px;">Search by name, service, or keyword — e.g. &ldquo;plumber&rdquo;, &ldquo;kosher&rdquo;, &ldquo;security&rdquo;.</div>
 
-    <div class="cat-pills">
-      <button class="cat-pill active" onclick="setCat('all', this)">All</button>
-      <button class="cat-pill" onclick="setCat('kosher-restaurant', this)">🍽️ Kosher Restaurants</button>
-      <button class="cat-pill" onclick="setCat('kosher-market', this)">🛒 Kosher Markets</button>
-      <button class="cat-pill" onclick="setCat('books-gifts', this)">📚 Books &amp; Gifts</button>
-      <button class="cat-pill" onclick="setCat('catering', this)">🍽️ Catering &amp; Events</button>
-      <button class="cat-pill" onclick="setCat('community-org', this)">🏛️ Community Organizations</button>
-      <button class="cat-pill" onclick="setCat('security', this)">🛡️ Security</button>
-      <button class="cat-pill" onclick="setCat('marketing', this)">📱 Marketing</button>
-      <button class="cat-pill" onclick="setCat('trades', this)">🔌 Trades</button>
-    </div>
-
     <div class="results-bar">Showing <strong id="biz-count">25</strong> listings</div>
 
     <div class="biz-grid" id="biz-grid">
@@ -2220,15 +2208,26 @@ function fetchBizTab(tabName, cat) {
           cols.forEach(function(col, i) {
             obj[col] = safeVal(row.c ? row.c[i] : null);
           });
-          // The catch-all "Services" tab holds many different categories
-          // (electric, medical, funeral, ...). Give each row a _cat based on
-          // its OWN category value so the dropdown filters find it. Other
-          // tabs keep the single fixed category passed in.
+          // Build a LIST of category keys for this row so a business can
+          // belong to several categories at once (e.g. "construction, electric").
+          // Other tabs get their single fixed category.
+          var keys = [];
           if (cat === 'services') {
-            obj._cat = mapServiceCat(obj.category) || 'services';
+            (obj.category || '').split(/[,;/]+/).forEach(function(part){
+              var mapped = mapServiceCat(part);
+              if (mapped) keys.push(mapped);
+            });
+            if (!keys.length) keys.push('services');
           } else {
-            obj._cat = cat;
+            keys.push(cat);
+            // also honor extra categories typed into the row's own Category cell
+            (obj.category || '').split(/[,;/]+/).forEach(function(part){
+              var mapped = mapServiceCat(part);
+              if (mapped && keys.indexOf(mapped) === -1) keys.push(mapped);
+            });
           }
+          obj._cats = keys;
+          obj._cat  = keys[0];   // kept for backward compatibility
           return obj;
         }).filter(function(r) {
           return r.name && r.name.length > 0 && r.status.toLowerCase().trim() === 'active';
@@ -2308,7 +2307,9 @@ function renderBizGrid(cat) {
   var grid = document.getElementById('biz-grid');
   var filtered = cat === 'all'
     ? allBizListings
-    : allBizListings.filter(function(i) { return i._cat === cat; });
+    : allBizListings.filter(function(i) {
+        return (i._cats && i._cats.indexOf(cat) > -1) || i._cat === cat;
+      });
   filtered = filtered.slice().sort(function(a,b){ return String(a.name||a.businessname||'').localeCompare(String(b.name||b.businessname||''), undefined, {sensitivity:'base'}); });
   document.getElementById('biz-count').textContent = filtered.length;
   if(filtered.length === 0) {
@@ -2438,17 +2439,20 @@ function filterBiz() {
     // 2) category-key match (tolerant of "Security" vs "Security Services")
     var keyMatch = (qKey && (itemCatKey.indexOf(qKey) > -1 || tabKey.indexOf(qKey) > -1));
 
+    var cats = item._cats || (item._cat ? [item._cat] : []);
+
     // 3) synonym match (e.g. typed "plumber" -> plumbing)
     var synMatch = synonymKey &&
                    (itemCatKey.indexOf(catKey(synonymKey)) > -1 ||
                     tabKey.indexOf(catKey(synonymKey)) > -1 ||
-                    item._cat === synonymKey);
+                    cats.indexOf(synonymKey) > -1);
 
     var queryMatch = textMatch || keyMatch || synMatch;
 
-    // Respect the dropdown filter, also tolerantly.
+    // Respect the dropdown filter, also tolerantly (checks every category
+    // the listing belongs to, so multi-tagged businesses match either filter).
     var catMatch = (cat === 'all') ||
-                   item._cat === cat ||
+                   cats.indexOf(cat) > -1 ||
                    (selectedKey && (itemCatKey.indexOf(selectedKey) > -1 || tabKey.indexOf(selectedKey) > -1));
 
     return queryMatch && catMatch;
