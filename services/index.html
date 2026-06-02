@@ -970,6 +970,60 @@
     gap: 16px;
     margin-bottom: 32px;
   }
+  /* Charity cards (match the Charities page design) */
+  .charity-card {
+    background: var(--white);
+    border: 1px solid #222;
+    border-radius: 8px;
+    overflow: hidden;
+    transition: box-shadow .2s;
+    display: flex;
+    flex-direction: column;
+  }
+  .charity-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,.12); }
+  .charity-card-banner { height: 8px; }
+  .charity-card-top {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 12px; margin-bottom: 0;
+  }
+  .charity-logo {
+    height: 40px; max-width: 50%; object-fit: contain;
+    object-position: left center; display: block;
+  }
+  .charity-card-body { padding: 16px 20px; flex: 1; display: flex; flex-direction: column; }
+  .charity-category {
+    margin-left: auto; display: inline-block;
+    font-family: sans-serif; font-size: 9px; font-weight: 700;
+    letter-spacing: .08em; text-transform: uppercase;
+    padding: 3px 9px; border-radius: 3px;
+    background: #eef3fb; color: var(--navy); white-space: nowrap;
+  }
+  .charity-category.emergency { background: #fde8e8; color: #c0391b; }
+  .charity-category.education { background: #edf7ed; color: #2a7a2a; }
+  .charity-category.medical { background: #fdf3e0; color: #7a4a0a; }
+  .charity-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px; font-weight: 700;
+    color: var(--navy); line-height: 1.2; text-align: center;
+  }
+  .charity-desc {
+    font-size: 13px; color: #555; line-height: 1.65;
+    flex: 1; text-align: center; margin-top: 6px;
+  }
+  .charity-footer {
+    display: flex; align-items: center; justify-content: space-between;
+    padding-top: 12px; border-top: 1px solid var(--border);
+    margin-top: 12px; flex-wrap: wrap; gap: 8px;
+  }
+  .charity-meta { font-family: sans-serif; font-size: 11px; color: var(--muted); }
+  .charity-donate-btn {
+    background: var(--navy); color: #fff;
+    font-family: sans-serif; font-size: 10px; font-weight: 700;
+    letter-spacing: .08em; text-transform: uppercase;
+    padding: 8px 18px; border-radius: 4px;
+    text-decoration: none; transition: background .15s; white-space: nowrap;
+  }
+  .charity-donate-btn:hover { background: var(--gold); color: #fff; }
   .biz-card {
     background: var(--white);
     border: 1px solid var(--border);
@@ -2249,22 +2303,45 @@ function renderGemS(){
     });
 })();
 
-// ===== CHARITIES (mirror of the Charities page, shown on Services) =====
+// ===== CHARITIES (matches the Charities page card design) =====
 var CHAR_ALL = [];
-function charEsc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+var CHAR_LOGO_BASE = 'https://houstonjewishinfo.com/images/charities/';
+var CHAR_CATS = {
+  'emergency':{key:'emergency',label:'🚨 Emergency',grad:'linear-gradient(90deg,#c0391b,#e05030)'},
+  'education':{key:'education',label:'🎓 Education',grad:'linear-gradient(90deg,#1e7a1e,#37a637)'},
+  'community':{key:'community',label:'🤝 Community',grad:'linear-gradient(90deg,#1e4d9b,#3a70c0)'},
+  'medical':{key:'medical',label:'🏥 Medical',grad:'linear-gradient(90deg,#b8923a,#d9b35e)'}
+};
+function charEsc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 function charVal(cell){ return cell?(cell.f!=null?String(cell.f):(cell.v==null?'':String(cell.v))):''; }
-function charSCard(d){
-  var phone=d.phone?'<div class="biz-detail" style="font-family:sans-serif;font-size:12.5px;color:#555;margin-bottom:3px;">📞 <a href="tel:'+charEsc(String(d.phone).replace(/[^0-9+]/g,''))+'" style="color:inherit;">'+charEsc(d.phone)+'</a></div>':'';
-  var site=d.website?'<div class="biz-detail" style="font-family:sans-serif;font-size:12.5px;color:#555;margin-bottom:3px;">🔗 <a href="'+charEsc(/^https?:\/\//.test(d.website)?d.website:'https://'+d.website)+'" target="_blank" rel="noopener" style="color:inherit;">'+charEsc(d.website)+'</a></div>':'';
-  var donate=d.donateurl?'<div style="margin-top:10px;"><a href="'+charEsc(/^https?:\/\//.test(d.donateurl)?d.donateurl:'https://'+d.donateurl)+'" target="_blank" rel="noopener" class="hero-submit-btn" style="display:inline-block;text-decoration:none;font-size:11px;padding:8px 18px;">❤️ Donate</a></div>':'';
-  var desc=d.description?'<div class="biz-desc" style="font-family:sans-serif;font-size:13px;color:#444;margin:8px 0;line-height:1.5;">'+charEsc(d.description)+'</div>':'';
-  return '<div class="biz-card" data-cat="charity" data-name="'+charEsc(d.name)+'">'+
-    '<div class="biz-card-top"><div>'+
-    '<div class="biz-category">'+charEsc(d.category||'Charity')+'</div>'+
-    '<div class="biz-name">'+charEsc(d.name)+'</div>'+
-    '</div></div>'+
-    desc+phone+site+donate+
-    '</div>';
+function charLogoURL(v){ v=String(v||'').trim(); if(!v) return ''; return /^https?:\/\//i.test(v)?v:CHAR_LOGO_BASE+v; }
+function charCatInfo(cat){
+  var k=String(cat||'').toLowerCase().trim();
+  for(var name in CHAR_CATS){ if(k.indexOf(name)>=0) return CHAR_CATS[name]; }
+  return {key:(k||'other'),label:(cat||'Charity'),grad:'linear-gradient(90deg,#1f3f6e,#3a70c0)'};
+}
+function charCatList(cat){
+  return String(cat||'').split(/[,;/]+/).map(function(s){return s.trim();}).filter(Boolean).map(charCatInfo);
+}
+function buildCharityCard(d){
+  var cats=charCatList(d.category);
+  var ci=cats.length?cats[0]:charCatInfo(d.category);
+  var allKeys=cats.length?cats.map(function(c){return c.key;}).join('|'):ci.key;
+  var labelTags=(cats.length?cats:[ci]).map(function(c){ return '<span class="charity-category '+charEsc(c.key)+'">'+charEsc(c.label)+'</span>'; }).join(' ');
+  var logo=charLogoURL(d.logo);
+  var logoBlock=logo?'<img class="charity-logo" src="'+charEsc(logo)+'" alt="'+charEsc(d.name)+' logo" loading="lazy">':'';
+  var meta=[d.website,d.phone].filter(Boolean).join(' · ');
+  var donate=d.donateurl
+    ? '<a href="'+charEsc(/^https?:\/\//i.test(d.donateurl)?d.donateurl:'https://'+d.donateurl)+'" target="_blank" rel="noopener" class="charity-donate-btn">Donate →</a>'
+    : (d.website ? '<a href="'+charEsc(/^https?:\/\//i.test(d.website)?d.website:'https://'+d.website)+'" target="_blank" rel="noopener" class="charity-donate-btn">Visit →</a>' : '');
+  return '<div class="charity-card" data-cat="'+charEsc(allKeys)+'">'+
+    '<div class="charity-card-banner" style="background:'+ci.grad+';"></div>'+
+    '<div class="charity-card-body">'+
+      '<div class="charity-card-top">'+logoBlock+labelTags+'</div>'+
+      '<div class="charity-name">'+charEsc(d.name)+'</div>'+
+      '<div class="charity-desc">'+charEsc(d.description)+'</div>'+
+      '<div class="charity-footer"><span class="charity-meta">'+charEsc(meta)+'</span>'+donate+'</div>'+
+    '</div></div>';
 }
 function renderCharS(){
   var q=(function(){ var el=document.getElementById('charS-search'); return el?(el.value||'').toLowerCase().trim():''; })();
@@ -2275,7 +2352,7 @@ function renderCharS(){
   });
   var grid=document.getElementById('charS-grid');
   if(!grid) return;
-  grid.innerHTML = list.length ? list.map(charSCard).join('')
+  grid.innerHTML = list.length ? list.map(buildCharityCard).join('')
     : '<div style="grid-column:1/-1;text-align:center;font-family:sans-serif;font-size:13px;color:var(--muted);padding:40px;">No charities match your search.</div>';
   var c=document.getElementById('charS-count'); if(c) c.textContent=list.length;
 }
