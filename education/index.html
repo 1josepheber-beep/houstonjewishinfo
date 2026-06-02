@@ -1020,6 +1020,18 @@
   // ===== SCHOOLS — Google Sheets driven =====
   (function() {
     var SCH_SHEET_ID  = '1in7Ac7zknqyR9neWKOCAjOAG4jXCIVTJQfU6jJ72CV8';
+
+// ===== Sheet data cache (within-visit, 5 min) =====
+var SHEET_CACHE_MS = 5 * 60 * 1000;
+var _sheetCache = {};
+function cachedFetchText(u){
+  var now = Date.now(), hit = _sheetCache[u];
+  if (hit && (now - hit.t) < SHEET_CACHE_MS) return Promise.resolve(hit.v);
+  return fetch(u).then(function(r){ return r.text(); }).then(function(txt){
+    _sheetCache[u] = { t: Date.now(), v: txt }; return txt;
+  });
+}
+
     var SCH_SHEET_TAB = 'Education';
     var SCH_IMG_BASE  = 'https://houstonjewishinfo.com/images/education/';
 
@@ -1071,7 +1083,7 @@
     }
 
     var url='https://docs.google.com/spreadsheets/d/'+SCH_SHEET_ID+'/gviz/tq?tqx=out:json&sheet='+encodeURIComponent(SCH_SHEET_TAB)+'&headers=1';
-    fetch(url).then(function(r){return r.text();}).then(function(text){
+    cachedFetchText(url).then(function(text){
       var json=JSON.parse(text.substring(47,text.length-2));
       var cols=json.table.cols.map(function(c){return (c.label||'').toLowerCase().trim();});
       window.EDU_BY_CAT={ kids:[], adult:[], kollel:[] };

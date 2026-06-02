@@ -1284,12 +1284,24 @@
 
   // ===== THINGS TO DO — shared helpers =====
   var TTD_SHEET_ID='1in7Ac7zknqyR9neWKOCAjOAG4jXCIVTJQfU6jJ72CV8';
+
+// ===== Sheet data cache (within-visit, 5 min) =====
+var SHEET_CACHE_MS = 5 * 60 * 1000;
+var _sheetCache = {};
+function cachedFetchText(u){
+  var now = Date.now(), hit = _sheetCache[u];
+  if (hit && (now - hit.t) < SHEET_CACHE_MS) return Promise.resolve(hit.v);
+  return fetch(u).then(function(r){ return r.text(); }).then(function(txt){
+    _sheetCache[u] = { t: Date.now(), v: txt }; return txt;
+  });
+}
+
   function ttdEsc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
   function ttdAttr(s){ return ttdEsc(s).replace(/"/g,'&quot;'); }
   function ttdVal(cell){ return cell?(cell.f!=null?String(cell.f):(cell.v==null?'':String(cell.v))):''; }
   function ttdRows(tab,cb){
     var url='https://docs.google.com/spreadsheets/d/'+TTD_SHEET_ID+'/gviz/tq?tqx=out:json&headers=1&sheet='+encodeURIComponent(tab);
-    fetch(url).then(function(r){return r.text();}).then(function(text){
+    cachedFetchText(url).then(function(text){
       var json=JSON.parse(text.substring(47,text.length-2));
       var cols=json.table.cols.map(function(c){return (c.label||'').toLowerCase().trim();});
       var out=json.table.rows.map(function(row){

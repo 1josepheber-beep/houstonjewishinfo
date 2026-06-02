@@ -659,14 +659,25 @@ document.addEventListener('keydown',function(e){ if(e.key==='Escape') closeMobil
 
 // ── LISTINGS ──
 var SHEET_ID = '1in7Ac7zknqyR9neWKOCAjOAG4jXCIVTJQfU6jJ72CV8';
+
+// ===== Sheet data cache (within-visit, 5 min) =====
+var SHEET_CACHE_MS = 5 * 60 * 1000;
+var _sheetCache = {};
+function cachedFetchText(u){
+  var now = Date.now(), hit = _sheetCache[u];
+  if (hit && (now - hit.t) < SHEET_CACHE_MS) return Promise.resolve(hit.v);
+  return fetch(u).then(function(r){ return r.text(); }).then(function(txt){
+    _sheetCache[u] = { t: Date.now(), v: txt }; return txt;
+  });
+}
+
 var allListings = [];
 var currentTab = 'all';
 
 function safeVal(cell){ if(!cell) return ''; if(cell.f!=null) return String(cell.f); if(cell.v===null||cell.v===undefined) return ''; return String(cell.v); }
 
 function loadListings(){
-  fetch('https://docs.google.com/spreadsheets/d/'+SHEET_ID+'/gviz/tq?tqx=out:json&headers=1&sheet=RealEstate')
-    .then(function(r){ return r.text(); })
+  cachedFetchText('https://docs.google.com/spreadsheets/d/'+SHEET_ID+'/gviz/tq?tqx=out:json&headers=1&sheet=RealEstate')
     .then(function(text){
       var json=JSON.parse(text.substring(47,text.length-2));
       // Only show data if this is actually the RealEstate sheet.
@@ -942,7 +953,7 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape')closeMobileM
     // accept either a bare filename (uses the ads folder) or a full http(s) URL
     function adImg(v){ v=String(v||'').trim(); if(!v) return ''; return /^https?:\/\//i.test(v)?v:AD_IMG_BASE+v; }
     var url = 'https://docs.google.com/spreadsheets/d/' + AD_SHEET_ID + '/gviz/tq?tqx=out:json&sheet=' + encodeURIComponent(AD_SHEET_TAB) + '&headers=1';
-    fetch(url).then(function(r){ return r.text(); }).then(function(text){
+    cachedFetchText(url).then(function(text){
       var json = JSON.parse(text.substring(47, text.length - 2));
       var cols = json.table.cols.map(function(c){ return (c.label||'').toLowerCase().trim(); });
       var slots = {};
