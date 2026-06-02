@@ -2626,6 +2626,7 @@ function fetchBizTab(tabName, cat) {
       if(tabsLoaded === TOTAL_TABS) {
         var loader = document.getElementById('biz-loading');
         if(loader) loader.style.display = 'none';
+        allBizListings = dedupeBizListings(allBizListings);
         document.getElementById('biz-count').textContent = allBizListings.length;
         renderBizGrid('all');
       }
@@ -2639,6 +2640,37 @@ function fetchBizTab(tabName, cat) {
         renderBizGrid('all');
       }
     });
+}
+
+// Merge duplicate businesses that appear in more than one tab (same business
+// entered under multiple categories). Combines their categories so the single
+// card stays searchable under each, and keeps the best row to display:
+// a premium (CardImage) row wins; otherwise the most complete row.
+function dedupeBizListings(list) {
+  function normName(n){ return String(n||'').toLowerCase().replace(/[^a-z0-9]/g,''); }
+  function completeness(o){
+    var c=0, f=['description','address','phone','email','website','hours','badge','cardimage'];
+    f.forEach(function(k){ if(o[k] && String(o[k]).trim()) c++; });
+    return c;
+  }
+  var groups = {};
+  list.forEach(function(item){
+    var key = normName(item.name);
+    if(!key) return;
+    if(!groups[key]){ groups[key] = item; return; }
+    var keep = groups[key];
+    var pooled = (keep._cats || []).slice();
+    (item._cats || []).forEach(function(c){ if(pooled.indexOf(c) === -1) pooled.push(c); });
+    var keepPrem = !!(keep.cardimage && String(keep.cardimage).trim());
+    var itemPrem = !!(item.cardimage && String(item.cardimage).trim());
+    var winner = keep;
+    if(itemPrem && !keepPrem) winner = item;
+    else if(keepPrem === itemPrem && completeness(item) > completeness(keep)) winner = item;
+    winner._cats = pooled;
+    winner._cat = pooled[0] || winner._cat;
+    groups[key] = winner;
+  });
+  return Object.keys(groups).map(function(k){ return groups[k]; });
 }
 
 function getBadgeClass(badge) {
