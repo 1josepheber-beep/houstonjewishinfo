@@ -1611,13 +1611,13 @@
       #community-feed .cf-banner{width:100%;height:180px;overflow:hidden;}
       #community-feed .cf-banner img{width:100%;height:100%;object-fit:cover;display:block;}
       #community-feed .cf-body{padding:16px 18px;}
-      #community-feed .cf-pass-row{display:flex;gap:16px;align-items:flex-start;}
-      #community-feed .cf-pass-photo{flex:0 0 104px;}
-      #community-feed .cf-pass-photo img{width:104px;height:126px;object-fit:cover;border-radius:8px;border:1px solid var(--border);display:block;background:#faf8f3;}
-      #community-feed .cf-pass-candle{width:104px;height:126px;border-radius:8px;border:1px solid var(--border);background:#faf8f3;display:flex;align-items:center;justify-content:center;}
+      #community-feed .cf-pass-row{display:flex;gap:16px;align-items:stretch;}
+      #community-feed .cf-pass-photo{flex:0 0 104px;align-self:stretch;}
+      #community-feed .cf-pass-photo img{width:104px;height:100%;min-height:126px;object-fit:cover;object-position:center top;border-radius:8px;border:1px solid var(--border);display:block;background:#faf8f3;}
+      #community-feed .cf-pass-candle{width:104px;height:100%;min-height:126px;border-radius:8px;border:1px solid var(--border);background:#faf8f3;display:flex;align-items:center;justify-content:center;}
       #community-feed .cf-pass-candle svg{width:60px;height:104px;display:block;}
       #community-feed .cf-pass-main{flex:1 1 auto;min-width:0;}
-      @media (max-width:420px){#community-feed .cf-pass-photo{flex-basis:84px;}#community-feed .cf-pass-photo img,#community-feed .cf-pass-candle{width:84px;height:104px;}}
+      @media (max-width:420px){#community-feed .cf-pass-photo{flex-basis:84px;}#community-feed .cf-pass-photo img,#community-feed .cf-pass-candle{width:84px;}}
       #community-feed .cf-row1{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;}
       #community-feed .cf-dateline{font-family:sans-serif;color:var(--navy);font-weight:700;font-size:13px;}
       #community-feed .cf-tags{display:flex;gap:7px;margin:9px 0 4px;flex-wrap:wrap;}
@@ -1634,6 +1634,7 @@
       #community-feed .cf-meta{display:flex;flex-wrap:wrap;gap:14px;color:var(--muted);font-family:sans-serif;font-size:13px;margin:6px 0 8px;}
       #community-feed .cf-desc{font-family:sans-serif;color:#444;font-size:14px;line-height:1.6;margin:0;}
       #community-feed .cf-desc.clamped{display:-webkit-box;-webkit-line-clamp:5;-webkit-box-orient:vertical;overflow:hidden;}
+      #community-feed .cf-pass-desc.clamped{-webkit-line-clamp:3;}
       #community-feed .cf-foot{display:flex;gap:16px;align-items:center;margin-top:12px;flex-wrap:wrap;}
       #community-feed .article-read-more{font-family:sans-serif;font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;background:var(--navy);color:#fff;padding:9px 16px;border-radius:6px;text-decoration:none;display:inline-block;}
       #community-feed .article-read-more:hover{background:var(--gold);color:#fff;}
@@ -1967,7 +1968,7 @@
         var photo=x.img?'<img src="'+attr(x.img)+'" alt="'+attr(x.title)+'" loading="lazy">':CANDLE_SVG;
         var pdline=x.date?'<span class="cf-dateline">'+esc(fmtDate(x.date))+'</span>':'<span class="cf-dateline"></span>';
         var pmeta=x.loc?'<div class="cf-meta"><span>\uD83D\uDCCD '+esc(cleanLoc(x.loc))+'</span></div>':'';
-        var pdesc=x.desc?'<p class="cf-desc">'+esc(x.desc).replace(/\n/g,'<br>')+'</p><button type="button" class="read-more-btn" style="display:none;">Read more \u2193</button>':'';
+        var pdesc=x.desc?'<p class="cf-desc cf-pass-desc">'+esc(x.desc).replace(/\n/g,'<br>')+'</p><button type="button" class="read-more-btn" style="display:none;">Read more \u2193</button>':'';
         return '<article class="article-card cf-passing"><div class="cf-body"><div class="cf-pass-row">'+
           '<div class="cf-pass-photo">'+photo+'</div>'+
           '<div class="cf-pass-main"><div class="cf-row1">'+pdline+'</div>'+
@@ -2028,7 +2029,8 @@
         var btn=p.nextElementSibling;
         if(!btn||!btn.classList.contains('read-more-btn'))return;
         var lh=parseFloat(getComputedStyle(p).lineHeight)||22;
-        if(p.scrollHeight>lh*5+2){p.classList.add('clamped');btn.style.display='inline-block';
+        var lines=p.classList.contains('cf-pass-desc')?3:5;
+        if(p.scrollHeight>lh*lines+2){p.classList.add('clamped');btn.style.display='inline-block';
           btn.onclick=function(){if(p.classList.contains('clamped')){p.classList.remove('clamped');btn.textContent='Read less \u2191';}else{p.classList.add('clamped');btn.textContent='Read more \u2193';}};}
         else{btn.style.display='none';}
       });
