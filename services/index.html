@@ -2340,7 +2340,7 @@ function gemSCard(d){
   // PREMIUM image card (if CardImage set), clickable to website.
   if (d.cardimage) {
     var gimg=d.cardimage;
-    if (gimg.indexOf('http')!==0 && gimg.indexOf('images/')!==0) gimg='images/cards/'+gimg;
+    if (gimg.indexOf('http')!==0 && gimg.indexOf('images/')!==0) gimg='https://houstonjewishinfo.com/images/cards/'+gimg;
     var ginner='<img class="biz-premium-img" src="'+gemsEsc(gimg)+'" alt="'+gemsEsc(d.name)+' card" loading="lazy">'+
       '<div class="biz-premium-meta"><span class="biz-premium-name">'+gemsEsc(d.name)+'</span>'+
       (d.category?'<span class="biz-premium-cat">'+gemsEsc(d.category)+'</span>':'')+'</div>';
@@ -2411,7 +2411,7 @@ function buildCharityCard(d){
   // PREMIUM image card (if CardImage set), clickable to donate/website.
   if (d.cardimage) {
     var pimg=d.cardimage;
-    if (pimg.indexOf('http')!==0 && pimg.indexOf('images/')!==0) pimg='images/cards/'+pimg;
+    if (pimg.indexOf('http')!==0 && pimg.indexOf('images/')!==0) pimg='https://houstonjewishinfo.com/images/cards/'+pimg;
     var plink=d.donateurl||d.website||'';
     if (plink && !/^https?:\/\//i.test(plink)) plink='https://'+plink;
     var pinner='<img class="biz-premium-img" src="'+charEsc(pimg)+'" alt="'+charEsc(d.name)+' card" loading="lazy">'+
@@ -2621,7 +2621,7 @@ function buildBizCard(item) {
   // category remain present (visually subtle) so search + accessibility still work.
   if (item.cardimage) {
     var img = item.cardimage;
-    if (img.indexOf('http') !== 0 && img.indexOf('images/') !== 0) img = 'images/cards/' + img;
+    if (img.indexOf('http') !== 0 && img.indexOf('images/') !== 0) img = 'https://houstonjewishinfo.com/images/cards/' + img;
     var inner =
       '<img class="biz-premium-img" src="' + img + '" alt="' + item.name + ' business card" loading="lazy">' +
       '<div class="biz-premium-meta"><span class="biz-premium-name">' + item.name + '</span>' +
