@@ -663,6 +663,28 @@
     border-color: var(--navy);
   }
   .form-textarea { resize: vertical; min-height: 80px; }
+  .cat-checks {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+    gap: 6px 14px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 12px;
+    max-height: 220px;
+    overflow-y: auto;
+    background: var(--white);
+  }
+  .cat-checks label {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-family: sans-serif;
+    font-size: 13px;
+    color: var(--ink);
+    cursor: pointer;
+    font-weight: 400;
+  }
+  .cat-checks input[type="checkbox"] { width: auto; margin: 0; cursor: pointer; }
   .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
   .btn-primary {
     background: var(--navy);
@@ -1183,35 +1205,34 @@
           </select>
         </div>
         <div class="form-group">
-          <label class="form-label">Category *</label>
-          <select class="form-select">
-            <option value="">Select...</option>
-            <option>24 Hour Services</option>
-            <option>Attorney / Legal</option>
-            <option>Catering &amp; Events</option>
-            <option>Community Organization</option>
-            <option>Construction</option>
-            <option>Electrician</option>
-            <option>Financial / Accounting</option>
-            <option>Funeral Home</option>
-            <option>HVAC</option>
-            <option>Insurance</option>
-            <option>Jewish Books &amp; Gifts</option>
-            <option>Jewish Family Service</option>
-            <option>Kosher Market / Grocery</option>
-            <option>Kosher Restaurant</option>
-            <option>Marketing &amp; Digital</option>
-            <option>Medical / Healthcare</option>
-            <option>Photography</option>
-            <option>Plumbing</option>
-            <option>Real Estate</option>
-            <option>Security Services</option>
-            <option>Therapy &amp; Counseling</option>
-            <option>Trades</option>
-            <option>Travel Agency</option>
-            <option>Tutoring</option>
-            <option>Other</option>
-          </select>
+          <label class="form-label">Category * <span style="font-weight:400;color:var(--muted);font-size:11px;">(check all that apply)</span></label>
+          <div class="cat-checks">
+            <label><input type="checkbox" name="category" value="24 Hour Services"> 24 Hour Services</label>
+            <label><input type="checkbox" name="category" value="Attorney / Legal"> Attorney / Legal</label>
+            <label><input type="checkbox" name="category" value="Catering & Events"> Catering &amp; Events</label>
+            <label><input type="checkbox" name="category" value="Community Organization"> Community Organization</label>
+            <label><input type="checkbox" name="category" value="Construction"> Construction</label>
+            <label><input type="checkbox" name="category" value="Electrician"> Electrician</label>
+            <label><input type="checkbox" name="category" value="Financial / Accounting"> Financial / Accounting</label>
+            <label><input type="checkbox" name="category" value="Funeral Home"> Funeral Home</label>
+            <label><input type="checkbox" name="category" value="HVAC"> HVAC</label>
+            <label><input type="checkbox" name="category" value="Insurance"> Insurance</label>
+            <label><input type="checkbox" name="category" value="Jewish Books & Gifts"> Jewish Books &amp; Gifts</label>
+            <label><input type="checkbox" name="category" value="Jewish Family Service"> Jewish Family Service</label>
+            <label><input type="checkbox" name="category" value="Kosher Market / Grocery"> Kosher Market / Grocery</label>
+            <label><input type="checkbox" name="category" value="Kosher Restaurant"> Kosher Restaurant</label>
+            <label><input type="checkbox" name="category" value="Marketing & Digital"> Marketing &amp; Digital</label>
+            <label><input type="checkbox" name="category" value="Medical / Healthcare"> Medical / Healthcare</label>
+            <label><input type="checkbox" name="category" value="Photography"> Photography</label>
+            <label><input type="checkbox" name="category" value="Plumbing"> Plumbing</label>
+            <label><input type="checkbox" name="category" value="Real Estate"> Real Estate</label>
+            <label><input type="checkbox" name="category" value="Security Services"> Security Services</label>
+            <label><input type="checkbox" name="category" value="Therapy & Counseling"> Therapy &amp; Counseling</label>
+            <label><input type="checkbox" name="category" value="Trades"> Trades</label>
+            <label><input type="checkbox" name="category" value="Travel Agency"> Travel Agency</label>
+            <label><input type="checkbox" name="category" value="Tutoring"> Tutoring</label>
+            <label><input type="checkbox" name="category" value="Other"> Other</label>
+          </div>
         </div>
       </div>
       <div class="form-group">
