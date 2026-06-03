@@ -2969,6 +2969,14 @@ function openService(type) {
           serviceCache[cat].push(obj);
         });
       });
+      // Financial tile also surfaces mortgage brokers automatically, so a
+      // business tagged just "mortgage" still appears under Financial.
+      if(serviceCache['mortgage']){
+        if(!serviceCache['financial']) serviceCache['financial'] = [];
+        serviceCache['mortgage'].forEach(function(b){
+          if(serviceCache['financial'].indexOf(b) === -1) serviceCache['financial'].push(b);
+        });
+      }
       // Update tile counts dynamically
       document.querySelectorAll('.service-card').forEach(function(card) {
         var onclick = card.getAttribute('onclick') || '';
