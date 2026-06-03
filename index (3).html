@@ -17,18 +17,18 @@
 </script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Houston Shuls &amp; Synagogues — Orthodox &amp; Chabad | Houston Jewish Info</title>
-<meta name="description" content="A directory of Houston shuls and synagogues — Orthodox, Chabad, and community minyanim across Meyerland, Bellaire, Fondren Southwest and Greater Houston.">
-<link rel="canonical" href="https://houstonjewishinfo.com/shuls/">
+<title>Houston Mikvah Directory — Mikvaot Near You | Houston Jewish Info</title>
+<meta name="description" content="Find a mikvah in Houston — locations, hours, and contact details for mikvaot serving the Jewish community across Meyerland, Bellaire and Greater Houston.">
+<link rel="canonical" href="https://houstonjewishinfo.com/mikvahs/">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Houston Jewish Info">
-<meta property="og:title" content="Houston Shuls &amp; Synagogues — Orthodox &amp; Chabad | Houston Jewish Info">
-<meta property="og:description" content="A directory of Houston shuls and synagogues — Orthodox, Chabad, and community minyanim across Meyerland, Bellaire, Fondren Southwest and Greater Houston.">
-<meta property="og:url" content="https://houstonjewishinfo.com/shuls/">
+<meta property="og:title" content="Houston Mikvah Directory — Mikvaot Near You | Houston Jewish Info">
+<meta property="og:description" content="Find a mikvah in Houston — locations, hours, and contact details for mikvaot serving the Jewish community across Meyerland, Bellaire and Greater Houston.">
+<meta property="og:url" content="https://houstonjewishinfo.com/mikvahs/">
 <meta property="og:image" content="https://houstonjewishinfo.com/apple-touch-icon.png">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Houston Shuls &amp; Synagogues — Orthodox &amp; Chabad | Houston Jewish Info">
-<meta name="twitter:description" content="A directory of Houston shuls and synagogues — Orthodox, Chabad, and community minyanim across Meyerland, Bellaire, Fondren Southwest and Greater Houston.">
+<meta name="twitter:title" content="Houston Mikvah Directory — Mikvaot Near You | Houston Jewish Info">
+<meta name="twitter:description" content="Find a mikvah in Houston — locations, hours, and contact details for mikvaot serving the Jewish community across Meyerland, Bellaire and Greater Houston.">
 <meta name="twitter:image" content="https://houstonjewishinfo.com/apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -933,6 +933,22 @@
   .mikvah-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-bottom: 20px; }
   @media (max-width: 700px){ .mikvah-grid { grid-template-columns: 1fr; } }
   .mikvah-card { background: var(--white); border: 1px solid var(--border); border-radius: 8px; padding: 16px 18px; }
+  .mikvah-website-btn {
+    display: inline-block;
+    margin-top: 12px;
+    font-family: sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    color: var(--gold);
+    border: 1px solid var(--gold);
+    padding: 5px 12px;
+    border-radius: 3px;
+    text-decoration: none;
+    transition: all .15s;
+  }
+  .mikvah-website-btn:hover { background: var(--gold); color: #fff; }
   .mikvah-tag { display: inline-block; font-family: sans-serif; font-size: 9px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; padding: 3px 9px; border-radius: 3px; background: #e6f1fb; color: #185fa5; margin-bottom: 8px; }
   .mikvah-name { font-family: 'Playfair Display', serif; font-size: 18px; font-weight: 700; color: var(--navy); margin-bottom: 8px; }
   .mikvah-detail { font-family: sans-serif; font-size: 13px; color: #555; line-height: 1.5; margin-bottom: 4px; }
@@ -1081,53 +1097,6 @@
   </div>
 </div>
 
-<!-- ERUV MAP MODAL -->
-<div class="modal-overlay" id="modal-eruv">
-  <div class="modal" style="max-width:780px;width:94%;">
-    <button class="modal-close" onclick="closeModal('modal-eruv')">×</button>
-    <div class="modal-title">🗺️ Houston Community Eruv</div>
-    <div class="modal-sub">The map below shows the boundary of the Houston community eruv. Use the buttons to jump to an area.</div>
-    <div id="eruv-area-buttons" style="display:flex;flex-wrap:wrap;gap:8px;margin:12px 0 10px;"></div>
-    <div style="border:1px solid #ddd;border-radius:8px;overflow:hidden;margin:0 0 12px;">
-      <iframe id="eruv-map-frame" src="https://www.google.com/maps/d/embed?mid=1eCMUSdSQYatZxVpHVPvOuHz_Ru-HkPs&ehbc=2E312F" style="width:100%;height:430px;border:0;display:block;" loading="lazy" title="Houston Community Eruv Map"></iframe>
-    </div>
-    <p style="font-family:sans-serif;font-size:12px;color:#8a6d1a;background:#fff8e6;border:1px solid #f0d98a;border-radius:6px;padding:9px 11px;line-height:1.5;margin-bottom:12px;">⚠️ An eruv's status can change week to week. Always confirm the eruv is up before relying on it for Shabbat.</p>
-    <div style="display:flex;flex-wrap:wrap;gap:16px;font-family:sans-serif;font-size:12px;font-weight:700;">
-      <a href="https://www.google.com/maps/d/viewer?mid=1eCMUSdSQYatZxVpHVPvOuHz_Ru-HkPs" target="_blank" rel="noopener" style="color:var(--navy,#1f3f6e);">Open full map in Google Maps →</a>
-    </div>
-    <script>
-      // ── Eruv area jump buttons ──────────────────────────────────────
-      // To add/edit an area: give it a label, latitude, longitude, and zoom
-      // (13 = wider view, 15 = closer). Get lat/lng by right-clicking the spot
-      // in Google Maps and copying the numbers. "All areas" resets to full view.
-      var ERUV_MID = '1eCMUSdSQYatZxVpHVPvOuHz_Ru-HkPs';
-      var ERUV_AREAS = [
-        { label: 'All areas', full: true },
-        { label: 'Chabad – Young Israel – Torchwood',     lat: 29.660012473297257, lng: -95.51293073887385, zoom: 15 },
-        { label: 'Chabad of West Houston',    lat: 29.748821560376232, lng: -95.6026576208174,  zoom: 15 }
-      ];
-      (function buildEruvButtons(){
-        var wrap = document.getElementById('eruv-area-buttons');
-        if(!wrap) return;
-        ERUV_AREAS.forEach(function(a){
-          var b = document.createElement('button');
-          b.type = 'button';
-          b.textContent = a.label;
-          b.style.cssText = 'font-family:sans-serif;font-size:12px;font-weight:700;padding:6px 13px;border-radius:5px;border:1px solid var(--navy,#1f3f6e);background:#fff;color:var(--navy,#1f3f6e);cursor:pointer;';
-          b.onclick = function(){
-            var f = document.getElementById('eruv-map-frame');
-            var base = 'https://www.google.com/maps/d/embed?mid=' + ERUV_MID + '&ehbc=2E312F';
-            f.src = a.full ? base : base + '&ll=' + a.lat + ',' + a.lng + '&z=' + (a.zoom || 14);
-            // highlight the active button
-            wrap.querySelectorAll('button').forEach(function(x){ x.style.background='#fff'; x.style.color='var(--navy,#1f3f6e)'; });
-            b.style.background = 'var(--navy,#1f3f6e)'; b.style.color = '#fff';
-          };
-          wrap.appendChild(b);
-        });
-      })();
-    </script>
-  </div>
-</div>
 
 <!-- HEADER -->
 <header>
@@ -1166,44 +1135,27 @@
   <div class="portal">
     <div class="page-hero-inner">
       <div>
-        <h1>✡️ Houston Shul Directory</h1>
-        <p>Find congregations across Greater Houston — from Meyerland to the Woodlands, representing every movement in Jewish life.</p>
+        <h1>💧 Houston Mikvah Directory</h1>
+        <p>Houston’s mikvaot — ritual baths serving the community.</p>
       </div>
     </div>
   </div>
 </div>
 
-<!-- ERUV BANNER -->
-<div class="portal" style="padding-top:2px;padding-bottom:18px;">
-  <button type="button" class="eruv-banner" onclick="openModal('modal-eruv')" aria-label="View the Houston community eruv map">
-    <span class="eruv-banner-text">🗺️ <strong>Houston Community Eruv</strong> — view the eruv boundary map</span>
-    <span class="eruv-banner-cta">View Map →</span>
-  </button>
-</div>
-
 <!-- MAIN -->
 <div class="portal">
 
-  <!-- SYNAGOGUE VIEW -->
-  <div id="syn-view">
-  <!-- FILTER BAR -->
-  <div class="filter-bar">
-    <span class="filter-label">Filter:</span>
-    <button class="filter-btn active" onclick="filterSyn('all', this)">All</button>
-    <button class="filter-btn" onclick="filterSyn('orthodox', this)">Orthodox</button>
-    <button class="filter-btn" onclick="filterSyn('chabad', this)">Chabad</button>
-    <button class="filter-btn" onclick="filterSyn('ashkenaz', this)">Ashkenaz</button>
-    <button class="filter-btn" onclick="filterSyn('sefard', this)">Sefard</button>
-    <button class="filter-btn" onclick="filterSyn('nusach ari', this)">Nusach Ari</button>
+  <!-- MIKVAOT VIEW -->
+  <div class="mikvah-section" id="mikvah-view">
+    <div class="mikvah-head">
+      <span style="font-size:22px;">💧</span>
+      <span>Mikvaot in Houston</span>
+    </div>
+    <div class="mikvah-sub">Ritual baths serving the community</div>
+    <div class="mikvah-grid" id="mikvah-grid">
+      <!-- Loaded dynamically from the Mikvaot sheet tab -->
+    </div>
   </div>
-
-  <div class="results-bar">Showing <strong id="syn-count">10</strong> congregations in Greater Houston</div>
-
-  <!-- SYNAGOGUE GRID -->
-  <div class="syn-grid" id="syn-grid">
-    <!-- Cards loaded dynamically from the Synagogues sheet tab -->
-  </div><!-- end syn-grid -->
-  </div><!-- end syn-view -->
 
 
 </div><!-- end portal -->
@@ -1232,96 +1184,44 @@
     document.getElementById('today-date').textContent = days[now.getDay()] + ', ' + months[now.getMonth()] + ' ' + now.getDate() + ', ' + now.getFullYear();
   })();
 
-  // ===== SYNAGOGUES — Google Sheets driven =====
+  // ===== MIKVAOT — Google Sheets driven =====
   (function() {
-    var SYN_SHEET_ID  = '1in7Ac7zknqyR9neWKOCAjOAG4jXCIVTJQfU6jJ72CV8';
+    var MIK_SHEET_ID  = '1in7Ac7zknqyR9neWKOCAjOAG4jXCIVTJQfU6jJ72CV8';
 
 
-    var SYN_SHEET_TAB = 'Shuls';
-    var SYN_IMG_BASE  = 'https://houstonjewishinfo.com/images/synagogues/';
-
-    var DENOM = {
-      'reform':       { cls:'denom-reform',   label:'Reform',       grad:'#e8f0fb,#7a99cc' },
-      'conservative': { cls:'denom-conserv',  label:'Conservative', grad:'#fdf3e0,#d4a060' },
-      'orthodox':     { cls:'denom-orthodox', label:'Orthodox',     grad:'#edf7ed,#5aa85a' },
-      'chabad':       { cls:'denom-chabad',   label:'Chabad',       grad:'#fce8e8,#d05a5a' },
-      'other':        { cls:'denom-other',    label:'Other',        grad:'#eceae4,#bdbcb4' }
-    };
+    var MIK_SHEET_TAB = 'Mikvahs';
     function esc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-    function attr(s){ return esc(s).replace(/"/g,'&quot;'); }
-    function imgURL(v){ v=String(v||'').trim(); if(!v) return ''; return /^https?:\/\//i.test(v)?v:SYN_IMG_BASE+v; }
-    function webDisplay(u){ return String(u||'').replace(/^https?:\/\//i,'').replace(/^www\./i,'').replace(/\/+$/,''); }
-    function detail(icon,val){ return val ? '<div class="syn-detail"><span class="syn-detail-icon">'+icon+'</span> '+esc(val)+'</div>' : ''; }
-
-    function cardHTML(d){
-      var key=String(d.denomination||'other').toLowerCase().trim();
-      var dn=DENOM[key]||DENOM['other'];
-      var img=imgURL(d.image);
-      var imgBlock=img
-        ? '<div class="syn-card-img" style="padding:0;overflow:hidden;"><img src="'+attr(img)+'" alt="'+attr(d.name)+'" loading="lazy" decoding="async" style="width:100%;height:100%;object-fit:cover;display:block;"></div>'
-        : '<div class="syn-card-img" style="background:linear-gradient(135deg,'+dn.grad+');">\uD83D\uDD4D</div>';
-      var web=String(d.website||'').trim();
-      var webLine=web ? '<div class="syn-detail"><span class="syn-detail-icon">\uD83C\uDF10</span> <a href="'+attr(web)+'" target="_blank">'+esc(webDisplay(web))+'</a></div>' : '';
-      var btn=web ? '<a href="'+attr(web)+'" target="_blank" class="syn-website-btn" style="white-space:nowrap;flex-shrink:0;">Visit Website \u2192</a>' : '';
-      var times=d.servicetimes ? '<div class="syn-service-times">'+esc(d.servicetimes)+'</div>' : '';
-      var nusach=String(d.nusach||'').trim();
-      var nusachList=nusach.split(/[,;/]+/).map(function(s){return s.trim();}).filter(Boolean);
-      var nusachTag=nusachList.map(function(nz){ return '<span class="syn-nusach">'+esc(nz)+'</span>'; }).join('');
-      var nusachData=nusachList.map(function(nz){return nz.toLowerCase();}).join('|');
-      return '<div class="syn-card" data-denom="'+attr(key)+'" data-nusach="'+attr(nusachData)+'">'+imgBlock+
-        '<div class="syn-card-body">'+
-          '<span class="syn-denom '+dn.cls+'">'+esc(dn.label)+'</span>'+nusachTag+
-          '<div class="syn-name">'+esc(d.name)+'</div>'+
-          detail('\uD83D\uDCCD',d.address)+detail('\uD83D\uDCDE',d.phone)+detail('\uD83D\uDC64',d.rabbi)+webLine+
-          '<hr class="syn-divider">'+
-          '<div style="display:flex;align-items:center;justify-content:space-between;gap:10px;">'+
-            '<div><div class="syn-services">Shabbat Services</div>'+times+'</div>'+btn+
-          '</div>'+
-        '</div></div>';
+    function mikWeb(u){u=String(u||'').trim();return u?(/^https?:\/\//i.test(u)?u:'https://'+u):'';}
+    function mikCard(d){
+      var phone=d.phone?'<div class="mikvah-detail">\uD83D\uDCDE '+esc(d.phone)+'</div>':'';
+      var email=d.email?'<div class="mikvah-detail">\u2709\uFE0F <a href="mailto:'+esc(d.email)+'">'+esc(d.email)+'</a></div>':'';
+      var addr=d.address?'<div class="mikvah-detail">\uD83D\uDCCD '+esc(d.address)+'</div>':'';
+      var notes=d.notes?'<div class="mikvah-detail" style="color:#777;">'+esc(d.notes)+'</div>':'';
+      var website=d.website?'<a href="'+esc(mikWeb(d.website))+'" target="_blank" rel="noopener" class="mikvah-website-btn">Visit Website \u2192</a>':'';
+      return '<div class="mikvah-card"><span class="mikvah-tag">Mikvah</span>'+
+        '<div class="mikvah-name">'+esc(d.name)+'</div>'+addr+phone+email+notes+website+'</div>';
     }
-
-    var url='https://docs.google.com/spreadsheets/d/'+SYN_SHEET_ID+'/gviz/tq?tqx=out:json&sheet='+encodeURIComponent(SYN_SHEET_TAB)+'&headers=1';
+    var url='https://docs.google.com/spreadsheets/d/'+MIK_SHEET_ID+'/gviz/tq?tqx=out:json&sheet='+encodeURIComponent(MIK_SHEET_TAB)+'&headers=1';
     fetch(url).then(function(r){return r.text();}).then(function(text){
       var json=JSON.parse(text.substring(47,text.length-2));
       var cols=json.table.cols.map(function(c){return (c.label||'').toLowerCase().trim();});
       var html='', n=0;
-      var synRows=[];
       json.table.rows.forEach(function(row){
         var d={};
         cols.forEach(function(col,i){ var cell=row.c[i]; d[col]=cell?(cell.f!=null?cell.f:(cell.v==null?'':cell.v)):''; });
-        if(String(d.status||'').toLowerCase().trim()!=='active') return;
         if(!d.name) return;
-        synRows.push(d);
+        if(String(d.status||'').toLowerCase().trim()==='inactive') return;
+        html+=mikCard(d); n++;
       });
-      synRows.sort(function(a,b){ return String(a.name||'').localeCompare(String(b.name||''), undefined, {sensitivity:'base'}); });
-      synRows.forEach(function(d){ html+=cardHTML(d); n++; });
-      var grid=document.getElementById('syn-grid');
-      grid.innerHTML=html || '<div style="grid-column:1/-1;font-family:sans-serif;font-size:14px;color:var(--muted);text-align:center;padding:40px 0;">No congregations listed yet.</div>';
-      var cnt=document.getElementById('syn-count'); if(cnt) cnt.textContent=n;
+      var grid=document.getElementById('mikvah-grid');
+      if(!grid) return;
+      if(n){ grid.innerHTML=html; }
+      else { grid.innerHTML='<div style="grid-column:1/-1;font-family:sans-serif;font-size:14px;color:var(--muted);text-align:center;padding:30px 0;">No mikvaot listed yet — check back soon.</div>'; }
     }).catch(function(){
-      var grid=document.getElementById('syn-grid');
-      grid.innerHTML='<div style="grid-column:1/-1;font-family:sans-serif;font-size:14px;color:var(--muted);text-align:center;padding:40px 0;">Congregations are taking a moment to load. Please refresh.</div>';
+      var grid=document.getElementById('mikvah-grid');
+      if(grid) grid.innerHTML='<div style="grid-column:1/-1;font-family:sans-serif;font-size:14px;color:var(--muted);text-align:center;padding:30px 0;">Mikvaot are taking a moment to load. Please refresh.</div>';
     });
   })();
-
-  // Filter — matches by denomination OR nusach
-  function filterSyn(val, btn) {
-    document.querySelectorAll('.filter-btn').forEach(function(b) { b.classList.remove('active'); });
-    btn.classList.add('active');
-    var cards = document.querySelectorAll('.syn-card');
-    var count = 0;
-    cards.forEach(function(card) {
-      var denom = card.dataset.denom || '';
-      var nusachVals = (card.dataset.nusach || '').split('|');
-      if (val === 'all' || denom === val || nusachVals.indexOf(val) > -1) {
-        card.style.display = '';
-        count++;
-      } else {
-        card.style.display = 'none';
-      }
-    });
-    document.getElementById('syn-count').textContent = count;
-  }
 
   // Modals
   function openModal(id) { document.getElementById(id).classList.add('open'); document.body.style.overflow = 'hidden'; }

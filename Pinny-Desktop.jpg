@@ -16,23 +16,41 @@
   gtag('config', 'G-LQFZ69SZRS');
 </script>
 <meta charset="UTF-8">
+<meta name="google-site-verification" content="MwceOOI5b8PhTvokYIgP4PKdbdLZiMlWjdMDfCvy-wg" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Houston Shuls &amp; Synagogues — Orthodox &amp; Chabad | Houston Jewish Info</title>
-<meta name="description" content="A directory of Houston shuls and synagogues — Orthodox, Chabad, and community minyanim across Meyerland, Bellaire, Fondren Southwest and Greater Houston.">
-<link rel="canonical" href="https://houstonjewishinfo.com/shuls/">
+<title>Houston Jewish Info — Your Frum Community Hub</title>
+<meta name="description" content="The central hub for Houston's frum Jewish community — kosher restaurants, shuls, mikvaot, schools, businesses, gemachim, charities, jobs, and events across Meyerland, Bellaire, Fondren Southwest and Greater Houston.">
+<link rel="canonical" href="https://houstonjewishinfo.com/">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Houston Jewish Info">
-<meta property="og:title" content="Houston Shuls &amp; Synagogues — Orthodox &amp; Chabad | Houston Jewish Info">
-<meta property="og:description" content="A directory of Houston shuls and synagogues — Orthodox, Chabad, and community minyanim across Meyerland, Bellaire, Fondren Southwest and Greater Houston.">
-<meta property="og:url" content="https://houstonjewishinfo.com/shuls/">
+<meta property="og:title" content="Houston Jewish Info — Your Frum Community Hub">
+<meta property="og:description" content="The central hub for Houston's frum Jewish community — kosher restaurants, shuls, mikvaot, schools, businesses, gemachim, charities, jobs, and events across Meyerland, Bellaire, Fondren Southwest and Greater Houston.">
+<meta property="og:url" content="https://houstonjewishinfo.com/">
 <meta property="og:image" content="https://houstonjewishinfo.com/apple-touch-icon.png">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Houston Shuls &amp; Synagogues — Orthodox &amp; Chabad | Houston Jewish Info">
-<meta name="twitter:description" content="A directory of Houston shuls and synagogues — Orthodox, Chabad, and community minyanim across Meyerland, Bellaire, Fondren Southwest and Greater Houston.">
+<meta name="twitter:title" content="Houston Jewish Info — Your Frum Community Hub">
+<meta name="twitter:description" content="The central hub for Houston's frum Jewish community — kosher restaurants, shuls, mikvaot, schools, businesses, gemachim, charities, jobs, and events across Meyerland, Bellaire, Fondren Southwest and Greater Houston.">
 <meta name="twitter:image" content="https://houstonjewishinfo.com/apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,400&display=swap" rel="stylesheet">
+
+<!-- ============================================================
+     COMMUNITY GAZETTE — Editable HTML Template
+     ============================================================
+     HOW TO CUSTOMIZE:
+     1. SITE NAME:     Search for "Houston Jewish Info" and replace
+     2. LOGO:          Replace the .masthead-logo <img> src with your file path
+     3. COLORS:        Edit the CSS variables in :root (lines ~30-40)
+     4. NAV LINKS:     Edit the <nav class="nav-bar"> section
+     5. NEWS STORIES:  Edit the <main class="news-center"> section
+     6. JOB LISTINGS:  Edit job cards inside #jobs-hire and #jobs-seek
+     7. RESOURCES:     Edit .resource-item entries in the left sidebar
+     8. ADS:           Replace .ad-placeholder divs with <img> tags or code
+     9. POLL:          Edit the poll question and options in .poll-box
+    10. FOOTER:        Edit text at the bottom of the page
+     ============================================================ -->
+
 <style>
   /* ============================================================
      CSS VARIABLES — Change colors here to retheme the whole site
@@ -206,6 +224,7 @@
     border-bottom: 2px solid var(--gold);
     padding-bottom: 5px;
     margin-bottom: 14px;
+    text-align: center;
   }
 
   /* ============================================================
@@ -223,6 +242,7 @@
     border-radius: 4px;
     overflow: hidden;
     margin-bottom: 12px;
+    width: 100%;
   }
   .job-tab {
     flex: 1;
@@ -249,6 +269,7 @@
     margin-bottom: 10px;
     background: var(--white);
     transition: box-shadow .15s;
+    text-align: center;
   }
   .job-card:hover { box-shadow: 0 2px 8px rgba(0,0,0,.08); }
   .job-card-title {
@@ -297,6 +318,7 @@
     border-radius: 3px;
     text-align: center;
     transition: background .15s;
+    cursor: pointer;
   }
   .sidebar-btn:hover { background: #263d6e; color: var(--white); }
 
@@ -305,21 +327,23 @@
     display: flex;
     align-items: center;
     gap: 10px;
-    padding: 9px 0;
+    padding: 9px 8px;
     border-bottom: 1px solid var(--border);
     cursor: pointer;
     transition: background .1s;
     border-radius: 3px;
+    justify-content: flex-start;
+    text-decoration: none;
   }
   .resource-item:last-of-type { border-bottom: none; }
   .resource-item:hover .resource-label { color: var(--gold); }
   .resource-icon {
-    width: 30px; height: 30px;
+    width: 32px; height: 32px;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 14px;
+    font-size: 15px;
     flex-shrink: 0;
   }
   .resource-label {
@@ -487,33 +511,123 @@
 
   /* -- Weather Box -- */
   .weather-box {
-    background: var(--navy);
+    background: linear-gradient(160deg, #1f3a6b 0%, var(--navy) 70%);
     color: var(--white);
-    border-radius: 4px;
-    padding: 14px 12px;
+    border-radius: 8px;
+    padding: 16px 14px 14px;
     margin-bottom: 16px;
     text-align: center;
+    transition: background .4s ease;
   }
+  .weather-box.is-clear  { background: linear-gradient(160deg, #2f7fc4 0%, #1f3a6b 80%); }
+  .weather-box.is-cloud  { background: linear-gradient(160deg, #4a5a72 0%, var(--navy) 80%); }
+  .weather-box.is-rain   { background: linear-gradient(160deg, #3a4a63 0%, #16233f 80%); }
+  .weather-box.is-storm  { background: linear-gradient(160deg, #2c2f4a 0%, #14152a 80%); }
+  .weather-box.is-snow   { background: linear-gradient(160deg, #6b7d96 0%, #3a4a63 80%); }
   .weather-city {
     font-family: sans-serif;
     font-size: 9px;
     letter-spacing: .12em;
     text-transform: uppercase;
     opacity: .7;
-    margin-bottom: 4px;
+    margin-bottom: 6px;
   }
+  .weather-main {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+  }
+  .weather-icon { font-size: 34px; line-height: 1; flex-shrink: 0; position: relative; top: 1px; }
   .weather-temp {
     font-family: 'Playfair Display', serif;
-    font-size: 36px;
+    font-size: 42px;
     font-weight: 700;
     line-height: 1;
+    font-variant-numeric: lining-nums;
+    font-feature-settings: "lnum" 1;
+    position: relative;
+  }
+  .weather-temp .deg {
+    font-size: 20px;
+    font-weight: 700;
+    position: absolute;
+    top: 2px;
+    margin-left: 2px;
   }
   .weather-desc {
     font-size: 12px;
-    opacity: .8;
+    opacity: .85;
     font-family: sans-serif;
-    margin-top: 3px;
+    margin-top: 4px;
   }
+  .weather-meta {
+    font-family: sans-serif;
+    font-size: 11px;
+    opacity: .7;
+    margin-top: 6px;
+  }
+  .weather-shabbos {
+    margin-top: 10px;
+    padding-top: 9px;
+    border-top: 1px solid rgba(255,255,255,.18);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    font-family: sans-serif;
+  }
+  .weather-shabbos-label {
+    font-size: 9px; letter-spacing: .1em; text-transform: uppercase;
+    opacity: .7;
+  }
+  .weather-shabbos-val { font-size: 12px; font-weight: 700; }
+
+  /* Mobile weather bar — hidden on desktop, shown via media query on mobile */
+  .mobile-weather {
+    display: none;
+    background: linear-gradient(90deg, #1f3a6b, var(--navy));
+    color: #fff;
+    cursor: pointer;
+    border-bottom: 1px solid rgba(255,255,255,.12);
+    -webkit-tap-highlight-color: transparent;
+    transition: background .4s ease;
+  }
+  .mobile-weather.is-clear { background: linear-gradient(90deg, #2f7fc4, #1f3a6b); }
+  .mobile-weather.is-cloud { background: linear-gradient(90deg, #4a5a72, var(--navy)); }
+  .mobile-weather.is-rain  { background: linear-gradient(90deg, #3a4a63, #16233f); }
+  .mobile-weather.is-storm { background: linear-gradient(90deg, #2c2f4a, #14152a); }
+  .mobile-weather.is-snow  { background: linear-gradient(90deg, #6b7d96, #3a4a63); }
+  .mw-bar {
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    padding: 8px 16px; font-family: sans-serif; font-size: 13px;
+    max-width: 1000px; margin: 0 auto; position: relative;
+  }
+  .mw-icon { font-size: 17px; line-height: 1; }
+  .mw-temp { font-weight: 700; font-size: 14px; }
+  .mw-desc { opacity: .9; }
+  .mw-feels { opacity: .65; font-size: 11px; }
+  .mw-chev {
+    position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
+    opacity: .7; transition: transform .25s ease;
+    display: flex; align-items: center; justify-content: center;
+    height: 14px;
+  }
+  .mw-chev svg { display: block; }
+  .mobile-weather.open .mw-chev { transform: translateY(-50%) rotate(180deg); }
+  .mw-expand {
+    max-height: 0; overflow: hidden;
+    transition: max-height .3s ease;
+    font-family: sans-serif;
+    max-width: 1000px; margin: 0 auto;
+  }
+  .mobile-weather.open .mw-expand { max-height: 120px; }
+  .mw-row {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 7px 16px; font-size: 12px;
+    border-top: 1px solid rgba(255,255,255,.12);
+  }
+  .mw-row-label { font-size: 9px; letter-spacing: .1em; text-transform: uppercase; opacity: .7; }
 
   /* -- Advertisement Slots --
      Replace the .ad-placeholder div content with:
@@ -675,6 +789,22 @@
     border-color: var(--navy);
   }
   .form-textarea { resize: vertical; min-height: 80px; }
+  .cat-checks {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+    gap: 6px 14px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 12px;
+    max-height: 220px;
+    overflow-y: auto;
+    background: #fff;
+  }
+  .cat-checks label {
+    display: flex; align-items: center; gap: 7px;
+    font-family: sans-serif; font-size: 13px; cursor: pointer; font-weight: 400;
+  }
+  .cat-checks input[type="checkbox"] { width: auto; margin: 0; cursor: pointer; }
   .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
   .btn-primary {
     background: var(--navy);
@@ -693,6 +823,18 @@
     margin-top: 6px;
   }
   .btn-primary:hover { background: #263d6e; }
+  .btn-primary:disabled:hover { background: var(--navy); }
+  .hji-spinner {
+    display: inline-block;
+    width: 13px; height: 13px;
+    margin-right: 8px;
+    vertical-align: -2px;
+    border: 2px solid rgba(255,255,255,.4);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: hji-spin .6s linear infinite;
+  }
+  @keyframes hji-spin { to { transform: rotate(360deg); } }
   .success-msg {
     display: none;
     text-align: center;
@@ -733,283 +875,369 @@
   /* ============================================================
      RESPONSIVE — basic mobile collapse
      ============================================================ */
-  @media (max-width: 900px) {
-    .main-grid { grid-template-columns: 1fr; }
-    .sidebar-left { border-right: none; padding-right: 0; border-bottom: 1px solid var(--border); padding-bottom: 20px; }
-    .sidebar-right { border-left: none; padding-left: 0; border-top: 1px solid var(--border); padding-top: 20px; }
-    .masthead-side { display: none; }
-    .masthead-title { font-size: 36px; }
+  /* ── HAMBURGER BUTTON ── */
+  .hamburger {
+    display: none;
+    flex-direction: column;
+    gap: 5px;
+    cursor: pointer;
+    padding: 8px;
+    background: none;
+    border: none;
+    z-index: 300;
+    position: absolute;
+    top: 8px;
+    right: 8px;
   }
-  @media (max-width: 600px) {
-    .story-grid { grid-template-columns: 1fr; }
-    .lead-headline { font-size: 24px; }
-    .form-row { grid-template-columns: 1fr; }
+  .hamburger span {
+    display: block;
+    width: 24px;
+    height: 2px;
+    background: var(--navy);
+    border-radius: 2px;
+    transition: all .3s;
   }
-
-  .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; padding: 8px; background: none; border: none; z-index: 300; position: absolute; top: 8px; right: 8px; }
-  .hamburger span { display: block; width: 24px; height: 2px; background: var(--navy); border-radius: 2px; transition: all .3s; }
   .hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
   .hamburger.open span:nth-child(2) { opacity: 0; }
   .hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
-  .mobile-menu-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.45); z-index: 400; }
-  .mobile-menu-overlay.open { display: block; }
-  .mobile-menu { position: fixed; top: 0; right: -280px; width: 280px; height: 100%; background: var(--white,#fff); z-index: 500; box-shadow: -4px 0 20px rgba(0,0,0,.2); transition: right .3s ease; overflow-y: auto; display: flex; flex-direction: column; }
-  .mobile-menu.open { right: 0; }
-  .mobile-menu-head { background: var(--navy,#1a2744); padding: 20px 18px 16px; display: flex; align-items: center; justify-content: space-between; }
-  .mobile-menu-title { font-family: 'Playfair Display', serif; font-size: 18px; font-weight: 700; color: #fff; }
-  .mobile-menu-close { background: none; border: none; color: #fff; font-size: 24px; cursor: pointer; line-height: 1; padding: 4px; }
-  .mobile-menu-links { padding: 8px 0; flex: 1; }
-  .mobile-menu-links a { display: block; padding: 15px 20px; font-family: sans-serif; font-size: 14px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: var(--navy,#1a2744); border-bottom: 1px solid var(--border,#ddd); text-decoration: none; transition: background .15s; }
-  .mobile-menu-links a:hover { background: #eef3fb; }
-  .mobile-menu-links a.active { color: #c0391b; }
-  .mobile-menu-footer { padding: 16px 20px; border-top: 1px solid var(--border,#ddd); font-family: sans-serif; font-size: 11px; color: var(--muted,#888); text-align: center; }
-  @media (max-width: 768px) {
-    .masthead { position: relative !important; padding: 12px 0 0 !important; }
-    .masthead-inner { display: flex !important; flex-direction: column !important; align-items: center !important; justify-content: center !important; padding: 0 48px 10px !important; gap: 4px !important; text-align: center !important; margin-bottom: 0 !important; }
-    .masthead-side { display: flex !important; flex-direction: column !important; align-items: center !important; width: auto !important; }
-    .masthead-side img { height: 60px !important; width: auto !important; }
-    .masthead-side.right { display: none !important; }
-    .masthead-logo { text-align: center !important; width: 100% !important; }
-    .masthead-title { font-size: 30px !important; line-height: 1.2 !important; }
-    .masthead-tagline { display: block !important; font-size: 12px !important; margin-top: 0 !important; }
-    .masthead-date { font-size: 10px !important; text-align: center !important; margin-bottom: 0 !important; }
-    .hamburger { display: flex !important; }
-    .nav-arrow { display: none !important; }
-    .nav-bar { margin-top: 0 !important; border-top: 2px solid var(--navy) !important; border-bottom: 2px solid var(--navy) !important; }
-    .nav-bar a { font-size: 10px !important; padding: 8px 8px !important; }
-  }
-  @media (max-width: 420px) {
-    .masthead-title { font-size: 26px !important; }
-    .masthead-side img { height: 50px !important; }
-  }
 
-  .nav-bar { margin-top: 0 !important; }
-  /* Center masthead title — balance logo on left with invisible spacer on right */
-  .masthead-inner::after { content: ''; width: 140px; flex-shrink: 0; }
-</style>
-<style>
-  /* ── SYNAGOGUE PAGE EXTRAS ── */
-  .page-hero {
-    background: linear-gradient(135deg, #1a2744 0%, #2a407a 100%);
-    color: #fff;
-    padding: 28px 0 22px;
-    margin-bottom: 14px;
-    border-bottom: 3px solid var(--gold);
+  /* ── MOBILE SLIDE-OUT MENU OVERLAY ── */
+  .mobile-menu-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.45);
+    z-index: 400;
   }
-  .page-hero h1 {
-    font-family: 'Playfair Display', serif;
-    font-size: 36px;
-    font-weight: 900;
-    margin-bottom: 6px;
+  .mobile-menu-overlay.open { display: block; }
+
+  .mobile-menu {
+    position: fixed;
+    top: 0; right: -280px;
+    width: 280px;
+    height: 100%;
+    background: var(--white);
+    z-index: 500;
+    box-shadow: -4px 0 20px rgba(0,0,0,.2);
+    transition: right .3s ease;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
   }
-  .page-hero p {
-    font-size: 14px;
-    opacity: .8;
-    font-family: sans-serif;
-    max-width: 560px;
-  }
-  .page-hero-inner {
+  .mobile-menu.open { right: 0; }
+
+  .mobile-menu-head {
+    background: var(--navy);
+    padding: 20px 18px 16px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 20px;
-    flex-wrap: wrap;
   }
-  .submit-hero-btn {
-    background: var(--gold);
-    color: #fff;
-    border: none;
-    font-family: sans-serif;
-    font-size: 11px;
+  .mobile-menu-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 18px;
     font-weight: 700;
-    letter-spacing: .08em;
-    text-transform: uppercase;
-    padding: 11px 22px;
-    border-radius: 4px;
+    color: #fff;
+  }
+  .mobile-menu-close {
+    background: none;
+    border: none;
+    color: #fff;
+    font-size: 24px;
     cursor: pointer;
-    white-space: nowrap;
+    line-height: 1;
+    padding: 4px;
+  }
+  .mobile-menu-links { padding: 8px 0; flex: 1; }
+  .mobile-menu-links a {
+    display: block;
+    padding: 15px 20px;
+    font-family: sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    color: var(--navy);
+    border-bottom: 1px solid var(--border);
+    text-decoration: none;
     transition: background .15s;
   }
-  .submit-hero-btn:hover { background: #a87828; }
-
-  /* Filter bar */
-  .filter-bar {
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
-    margin-bottom: 24px;
-    align-items: center;
-  }
-  .filter-label {
+  .mobile-menu-links a:hover { background: var(--light-blue, #eef3fb); }
+  .mobile-menu-links a.active { color: var(--orange, #c0391b); }
+  .mobile-menu-footer {
+    padding: 16px 20px;
+    border-top: 1px solid var(--border);
     font-family: sans-serif;
     font-size: 11px;
-    font-weight: 700;
-    letter-spacing: .06em;
-    text-transform: uppercase;
     color: var(--muted);
-    margin-right: 4px;
+    text-align: center;
   }
-  .filter-btn {
-    font-family: sans-serif;
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: .05em;
-    text-transform: uppercase;
-    padding: 6px 14px;
-    border-radius: 20px;
-    border: 1px solid var(--border);
-    background: transparent;
-    color: var(--navy);
-    cursor: pointer;
-    transition: all .15s;
-  }
-  .filter-btn:hover, .filter-btn.active { background: var(--navy); color: #fff; border-color: var(--navy); }
 
-  /* Synagogue grid */
-  .syn-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 20px;
-    margin-bottom: 32px;
-  }
-  .syn-card {
+  /* Hide mobile ad strip on desktop */
+  #mobile-ad-strip { display: none; }
+  /* Z Biltong between-stories ad: mobile only */
+  .zb-mobile-ad { display: none; }
+
+  /* Mobile ad slots — between articles, hidden on desktop */
+  .mobile-ad-slot {
+    display: none;
+    width: 100%;
     background: var(--white);
-    border: 1px solid var(--border);
+    border: 1px dashed var(--border);
+    border-radius: 6px;
+    text-align: center;
+    padding: 20px 16px;
+    font-family: sans-serif;
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: .08em;
+    text-transform: uppercase;
+  }
+
+  /* ── TABLET (max 900px) ── */
+  @media (max-width: 900px) {
+    .main-grid { grid-template-columns: 1fr; gap: 16px; padding: 12px 0 24px; }
+    .sidebar-left { border-right: none; padding-right: 0; border-bottom: 1px solid var(--border); padding-bottom: 16px; }
+    .sidebar-right { border-left: none; padding-left: 0; border-top: 1px solid var(--border); padding-top: 16px; }
+    .masthead-side { display: none; }
+    .masthead-title { font-size: 32px; }
+    .article-grid-2 { grid-template-columns: 1fr; gap: 12px; }
+  }
+
+  /* ── MOBILE (max 768px) ── */
+  @media (max-width: 768px) {
+
+    /* Portal */
+    .portal { padding: 0 12px; }
+
+    /* Mobile weather bar — visible only on mobile */
+    .mobile-weather { display: block !important; }
+
+    /* Mobile ad strip */
+    #mobile-ad-strip { display: block !important; }
+    .mobile-ad-slot  { display: block !important; }
+    .zb-mobile-ad    { display: block !important; }
+
+    /* Shabbat strip on mobile — compact, centered, wraps cleanly */
+    #shabbat-strip { padding: 0 !important; }
+    #shabbat-strip .portal { padding: 0 !important; }
+    #shabbat-strip .portal > div > div { gap: 14px !important; padding: 7px 12px !important; justify-content: center !important; align-items: center !important; flex-wrap: wrap !important; }
+    #shabbat-strip .portal > div > div > div[style*="width:1px"] { display: none !important; }
+    #shabbat-strip span[style*="font-size:16px"] { font-size: 13px !important; }
+    #shabbat-strip span[style*="font-size:14px"] { font-size: 13px !important; }
+    #strip-candles, #strip-havdalah { font-size: 12px !important; }
+    #strip-candles-date, #strip-havdalah-date { display: none !important; }
+    #strip-parasha { font-size: 11px !important; }
+    #shabbat-strip .portal span[style*="text-transform:uppercase"] { display: none !important; }
+
+    /* Masthead — centered layout, hamburger top right */
+    .masthead { position: relative; padding: 12px 0 0; }
+    .masthead-inner {
+      display: flex !important;
+      flex-direction: column !important;
+      align-items: center !important;
+      justify-content: center !important;
+      padding: 0 48px 10px !important;
+      gap: 6px !important;
+      text-align: center;
+    }
+    .masthead-side {
+      display: flex !important;
+      flex-direction: column !important;
+      align-items: center !important;
+      width: auto !important;
+    }
+    .masthead-side img { height: 60px !important; width: auto !important; }
+    .masthead-side .social-links { display: flex !important; justify-content: center; margin-top: 4px; }
+    .masthead-side.right { display: none !important; }
+    .masthead-logo { text-align: center; width: 100%; }
+    .masthead-title { font-size: 30px !important; line-height: 1.2; }
+    .masthead-tagline { display: block !important; font-size: 12px; }
+    .masthead-date { font-size: 10px; text-align: center; }
+
+    /* Show hamburger */
+    .hamburger { display: flex !important; }
+    .nav-arrow { display: none !important; }
+
+    /* Desktop nav — hide it, use mobile menu instead */
+    .nav-bar {
+      display: flex !important;
+      overflow-x: auto !important;
+      scrollbar-width: none !important;
+      -webkit-overflow-scrolling: touch;
+      flex-wrap: nowrap !important;
+      border-top: 2px solid var(--navy);
+      padding: 0 4px;
+    }
+    .nav-bar::-webkit-scrollbar { display: none; }
+    .nav-bar a {
+      font-size: 10px !important;
+      padding: 8px 8px !important;
+      white-space: nowrap !important;
+      flex-shrink: 0;
+    }
+
+    /* HIDE both sidebars completely on mobile */
+    .sidebar-left { display: none !important; }
+    .sidebar-right { display: none !important; }
+    aside.sidebar-right { display: none !important; }
+    .main-grid > aside { display: none !important; }
+
+    /* Main grid — just the news, full width */
+    .main-grid {
+      grid-template-columns: 1fr !important;
+      gap: 0 !important;
+      padding: 0px 0 24px !important;
+    }
+    .news-center { width: 100%; }
+
+    /* Article cards */
+    .article-card { margin-bottom: 16px; border-radius: 4px; }
+    .article-banner { height: 180px !important; font-size: 48px !important; }
+    .article-body { padding: 14px 16px !important; }
+    .article-headline { font-size: 18px !important; }
+    .article-excerpt { font-size: 13px !important; line-height: 1.6 !important; }
+    .article-grid-2 { grid-template-columns: 1fr !important; gap: 12px; }
+    .article-banner-small { height: 140px !important; font-size: 36px !important; }
+    .article-body-small { padding: 12px 14px !important; }
+    .article-headline-small { font-size: 15px !important; }
+    .article-excerpt-small { font-size: 12px !important; }
+    .article-footer { flex-wrap: wrap; gap: 8px; }
+    .article-read-more { font-size: 10px; padding: 7px 14px; }
+
+    /* Forms */
+    .form-row { grid-template-columns: 1fr !important; }
+    .modal { padding: 20px 16px; max-height: 88vh; overflow-y: auto; }
+    .modal-title { font-size: 18px; }
+  }
+
+  /* ── SMALL MOBILE (max 420px) ── */
+  @media (max-width: 420px) {
+    .masthead-title { font-size: 26px !important; }
+    .masthead-side img { height: 50px !important; }
+    .article-banner { height: 150px !important; }
+    .article-headline { font-size: 16px !important; }
+    .nav-bar a { font-size: 10px !important; padding: 9px 10px !important; }
+  }
+
+  /* ── ARTICLE CARDS ── */
+  .article-card {
+    background: #ffffff;
+    border: 1px solid #222222;
     border-radius: 6px;
     overflow: hidden;
-    transition: box-shadow .2s;
+    margin-bottom: 20px;
   }
-  .syn-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,.10); }
-  .syn-card-img {
+  .article-card-small {
+    background: #ffffff;
+    border: 1px solid #222222;
+    border-radius: 6px;
+    overflow: hidden;
+  }
+  .article-grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+  .article-banner {
+    width: 100%;
+    height: 300px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 72px;
+    overflow: hidden;
+  }
+  .article-banner-small {
     width: 100%;
     height: 160px;
-    background: linear-gradient(135deg, #c5d5ee, #8aaad4);
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 48px;
+    overflow: hidden;
   }
-  .syn-card-body {
-    padding: 16px;
-  }
-  .syn-denom {
-    display: inline-block;
-    font-family: sans-serif;
-    font-size: 9px;
-    font-weight: 700;
-    letter-spacing: .08em;
-    text-transform: uppercase;
-    padding: 3px 9px;
-    border-radius: 3px;
+  .article-body { padding: 18px 22px; }
+  .article-body-small { padding: 14px 16px; }
+  .article-meta-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
     margin-bottom: 8px;
   }
-  .denom-reform    { background: #e8f0fb; color: #1a3a7a; }
-  .denom-conserv   { background: #fdf3e0; color: #7a4a0a; }
-  .denom-orthodox  { background: #edf7ed; color: #1a5a1a; }
-  .denom-chabad    { background: #fce8e8; color: #8b2020; }
-  .denom-other     { background: #f0f0f0; color: #555; }
-  .syn-nusach {
-    display: inline-block;
+  .article-label {
     font-family: sans-serif;
-    font-size: 9px;
+    font-size: 10px;
     font-weight: 700;
-    letter-spacing: .08em;
+    letter-spacing: .1em;
     text-transform: uppercase;
-    padding: 3px 9px;
-    border-radius: 3px;
-    margin-bottom: 8px;
-    margin-left: 6px;
-    background: #efeaf7; color: #5b3a8c;
-    border: 1px solid #ddd2ee;
+    color: var(--gold);
   }
-  .syn-tabs { display: inline-flex; gap: 4px; background: #f0ece3; padding: 5px; border-radius: 9px; margin-bottom: 22px; }
-  .syn-tab { font-family: sans-serif; font-size: 14px; font-weight: 700; padding: 9px 20px; border: none; border-radius: 6px; background: transparent; color: #6b6256; cursor: pointer; transition: all .15s; }
-  .syn-tab:hover { color: var(--navy); }
-  .syn-tab.active { background: var(--navy); color: #fff; box-shadow: 0 1px 4px rgba(0,0,0,.15); }
-  @media (max-width: 480px){ .syn-tab { padding: 9px 14px; font-size: 13px; } }
-  .mikvah-section { margin-top: 36px; }
-  #mikvah-view.mikvah-section { margin-top: 0; }  .mikvah-head { display: flex; align-items: center; gap: 10px; font-family: 'Playfair Display', serif; font-size: 26px; font-weight: 900; color: var(--navy); }
-  .mikvah-sub { font-family: sans-serif; font-size: 13px; color: var(--muted); margin: 2px 0 16px; padding-bottom: 14px; border-bottom: 2px solid var(--gold); }
-  .mikvah-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-bottom: 20px; }
-  @media (max-width: 700px){ .mikvah-grid { grid-template-columns: 1fr; } }
-  .mikvah-card { background: var(--white); border: 1px solid var(--border); border-radius: 8px; padding: 16px 18px; }
-  .mikvah-tag { display: inline-block; font-family: sans-serif; font-size: 9px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; padding: 3px 9px; border-radius: 3px; background: #e6f1fb; color: #185fa5; margin-bottom: 8px; }
-  .mikvah-name { font-family: 'Playfair Display', serif; font-size: 18px; font-weight: 700; color: var(--navy); margin-bottom: 8px; }
-  .mikvah-detail { font-family: sans-serif; font-size: 13px; color: #555; line-height: 1.5; margin-bottom: 4px; }
-  .syn-name {
+  .article-date { font-family: sans-serif; font-size: 11px; color: var(--muted); }
+  .article-headline {
     font-family: 'Playfair Display', serif;
-    font-size: 18px;
+    font-size: 24px;
     font-weight: 700;
     color: var(--navy);
-    line-height: 1.2;
+    line-height: 1.3;
     margin-bottom: 10px;
   }
-  .syn-detail {
-    display: flex;
-    gap: 7px;
-    align-items: flex-start;
-    font-family: sans-serif;
-    font-size: 12px;
-    color: var(--muted);
-    margin-bottom: 5px;
-    line-height: 1.4;
-  }
-  .syn-detail-icon { flex-shrink: 0; margin-top: 1px; }
-  .syn-detail a { color: var(--gold); }
-  .syn-detail a:hover { color: var(--navy); }
-  .syn-divider {
-    border: none;
-    border-top: 1px solid var(--border);
-    margin: 12px 0;
-  }
-  .syn-services {
-    font-family: sans-serif;
-    font-size: 11px;
+  .article-headline-small {
+    font-family: 'Playfair Display', serif;
+    font-size: 16px;
+    font-weight: 700;
     color: var(--navy);
-    font-weight: 600;
-    margin-bottom: 4px;
+    line-height: 1.3;
+    margin-bottom: 8px;
   }
-  .syn-service-times {
-    font-family: sans-serif;
-    font-size: 11px;
-    color: var(--muted);
-    line-height: 1.6;
+  .article-excerpt { font-size: 14px; color: #555; line-height: 1.7; margin-bottom: 16px; }
+  .article-excerpt-small { font-size: 12px; color: #555; line-height: 1.6; margin-bottom: 12px; }
+  /* Read-more clamp: collapse long text to 5 lines until expanded */
+  .article-excerpt.clamped {
+    display: -webkit-box;
+    -webkit-line-clamp: 5;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
   }
-  .syn-website-btn {
+  .read-more-btn {
     display: inline-block;
-    margin-top: 12px;
+    background: none;
+    border: none;
+    padding: 0;
+    margin: -6px 0 16px;
+    font-family: sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--navy, #1f3f6e);
+    cursor: pointer;
+  }
+  .read-more-btn:hover { text-decoration: underline; }
+  .article-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 10px;
+    border-top: 1px solid var(--border);
+  }
+  .article-byline { font-family: sans-serif; font-size: 11px; color: var(--muted); }
+  .article-read-more {
     font-family: sans-serif;
     font-size: 10px;
     font-weight: 700;
     letter-spacing: .06em;
     text-transform: uppercase;
-    color: var(--gold);
-    border: 1px solid var(--gold);
-    padding: 5px 12px;
-    border-radius: 3px;
-    transition: all .15s;
+    background: var(--navy);
+    color: #fff;
+    padding: 7px 14px;
+    border-radius: 4px;
+    transition: background .15s;
+    text-decoration: none;
+    white-space: nowrap;
   }
-  .syn-website-btn:hover { background: var(--gold); color: #fff; }
-
-  /* Count bar */
-  .results-bar {
-    font-family: sans-serif;
-    font-size: 12px;
-    color: var(--muted);
-    margin-bottom: 16px;
-    padding-bottom: 10px;
-    border-bottom: 1px solid var(--border);
-  }
-  .results-bar strong { color: var(--navy); }
-  .eruv-banner { width:100%; display:flex; align-items:center; justify-content:space-between; gap:12px; background:#eef3fb; border:1px solid var(--gold,#c8a882); border-radius:8px; padding:12px 16px; cursor:pointer; text-align:left; font-family:sans-serif; transition:background .15s; }
-  .eruv-banner:hover { background:#e3ecf9; }
-  .eruv-banner-text { font-size:14px; color:var(--navy,#1f3f6e); }
-  .eruv-banner-cta { font-size:12px; font-weight:700; color:#fff; background:var(--navy,#1f3f6e); padding:7px 14px; border-radius:5px; white-space:nowrap; }
-  @media (max-width:600px){ .eruv-banner{ flex-direction:column; align-items:flex-start; } }
-
-  @media (max-width: 700px) {
-    .syn-grid { grid-template-columns: 1fr; }
-    .page-hero h1 { font-size: 26px; }
+  .article-read-more:hover { background: var(--gold); color: #fff; }
+  @media (max-width: 600px) {
+    .article-grid-2 { grid-template-columns: 1fr; }
   }
 
   /* ── NAV SCROLL WRAPPER ── */
@@ -1017,6 +1245,7 @@
     position: relative;
     display: flex;
     align-items: stretch;
+    width: 100%;
   }
   .nav-arrow {
     display: none;
@@ -1036,8 +1265,59 @@
   }
   .nav-arrow:hover { opacity: 1; }
   @media (max-width: 768px) {
-    .nav-arrow { display: flex; }
+    .nav-arrow { display: none !important; }
   }
+
+  /* ── PAGINATION ── */
+  .pagination {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 0;
+    border-top: 1px solid var(--border);
+    margin-top: 8px;
+  }
+  .page-arrow {
+    font-family: sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: .04em;
+    padding: 8px 16px;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+    background: var(--white);
+    color: var(--navy);
+    cursor: pointer;
+    transition: all .15s;
+  }
+  .page-arrow:hover:not(:disabled) { background: var(--navy); color: #fff; border-color: var(--navy); }
+  .page-arrow:disabled { color: var(--muted); border-color: var(--border); cursor: default; opacity: .5; }
+  .page-indicator {
+    font-family: sans-serif;
+    font-size: 12px;
+    color: var(--muted);
+  }
+
+
+  @media (max-width: 768px) {
+    .masthead-inner { gap: 4px !important; margin-bottom: 0 !important; padding-bottom: 8px !important; }
+    .masthead-title { font-size: 30px !important; }
+    .masthead-tagline { margin-top: 0 !important; }
+    .masthead-date { margin-bottom: 0 !important; }
+    .masthead-side img { height: 60px !important; }
+    .hamburger { display: flex !important; }
+    .nav-arrow { display: none !important; }
+    .nav-bar { margin-top: 0 !important; border-top: 2px solid var(--navy) !important; border-bottom: 2px solid var(--navy) !important; }
+    .nav-bar a { font-size: 10px !important; padding: 8px 8px !important; }
+  }
+  @media (max-width: 420px) {
+    .masthead-title { font-size: 26px !important; }
+    .masthead-side img { height: 50px !important; }
+  }
+
+  .nav-bar { margin-top: 0 !important; }
+  /* Center masthead title — balance logo on left with invisible spacer on right */
+  .masthead-inner::after { content: ''; width: 140px; flex-shrink: 0; }
 </style>
 <style>
 /* Jewish dropdown (added) */
@@ -1058,78 +1338,220 @@
 .m-jewish-caret{font-size:11px;color:var(--gold);}
 </style>
 </head>
-<body>
+<body style="-webkit-tap-highlight-color: transparent;">
 
-<!-- ADVERTISE MODAL -->
+<!-- ============================================================
+     MODALS
+     ============================================================ -->
+
+<!-- Business Submission Modal -->
+<div class="modal-overlay" id="modal-business">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('modal-business')">×</button>
+    <div id="biz-form-wrap">
+      <div class="modal-title">Submit Your Business</div>
+      <div class="modal-sub">Add your service to the Community Resources directory. Submissions are reviewed before publishing.</div>
+      <div class="form-group">
+        <label class="form-label">Business Name *</label>
+        <input name="e.g._mike" type="text" class="form-input" placeholder="e.g. Mike's Plumbing Services">
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Category * <span style="font-weight:400;color:#888;font-size:11px;">(check all that apply)</span></label>
+          <div class="cat-checks">
+            <label><input type="checkbox" name="category" value="24 Hour Services"> 24 Hour Services</label>
+            <label><input type="checkbox" name="category" value="Attorney / Legal"> Attorney / Legal</label>
+            <label><input type="checkbox" name="category" value="Catering & Events"> Catering &amp; Events</label>
+            <label><input type="checkbox" name="category" value="Community Organization"> Community Organization</label>
+            <label><input type="checkbox" name="category" value="Construction"> Construction</label>
+            <label><input type="checkbox" name="category" value="Electrician"> Electrician</label>
+            <label><input type="checkbox" name="category" value="Financial / Accounting"> Financial / Accounting</label>
+            <label><input type="checkbox" name="category" value="Funeral Home"> Funeral Home</label>
+            <label><input type="checkbox" name="category" value="HVAC"> HVAC</label>
+            <label><input type="checkbox" name="category" value="Insurance"> Insurance</label>
+            <label><input type="checkbox" name="category" value="Jewish Books & Gifts"> Jewish Books &amp; Gifts</label>
+            <label><input type="checkbox" name="category" value="Jewish Family Service"> Jewish Family Service</label>
+            <label><input type="checkbox" name="category" value="Kosher Market / Grocery"> Kosher Market / Grocery</label>
+            <label><input type="checkbox" name="category" value="Kosher Restaurant"> Kosher Restaurant</label>
+            <label><input type="checkbox" name="category" value="Marketing & Digital"> Marketing &amp; Digital</label>
+            <label><input type="checkbox" name="category" value="Medical / Healthcare"> Medical / Healthcare</label>
+            <label><input type="checkbox" name="category" value="Photography"> Photography</label>
+            <label><input type="checkbox" name="category" value="Plumbing"> Plumbing</label>
+            <label><input type="checkbox" name="category" value="Real Estate"> Real Estate</label>
+            <label><input type="checkbox" name="category" value="Security Services"> Security Services</label>
+            <label><input type="checkbox" name="category" value="Therapy & Counseling"> Therapy &amp; Counseling</label>
+            <label><input type="checkbox" name="category" value="Trades"> Trades</label>
+            <label><input type="checkbox" name="category" value="Travel Agency"> Travel Agency</label>
+            <label><input type="checkbox" name="category" value="Tutoring"> Tutoring</label>
+            <label><input type="checkbox" name="category" value="Other"> Other</label>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Phone Number *</label>
+          <input name="(555)_000-0000" type="tel" class="form-input" placeholder="(555) 000-0000">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Website or Social Media</label>
+        <input name="https:__..." type="text" class="form-input" placeholder="https://...">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Service Area</label>
+        <input name="e.g._greater_houston_area" type="text" class="form-input" placeholder="e.g. Greater Houston area">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Description</label>
+        <textarea name="tell_the_community_about_your_" class="form-textarea" placeholder="Tell the community about your services, hours, and anything special..."></textarea>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Your Name *</label>
+          <input name="contact_name" type="text" class="form-input" placeholder="Contact name">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Your Email *</label>
+          <input name="you@example.com" type="email" class="form-input" placeholder="you@example.com">
+        </div>
+      </div>
+      <button class="btn-primary" onclick="submitForm('biz-form-wrap','biz-success')">Submit for Review</button>
+    </div>
+    <div class="success-msg" id="biz-success">
+      <div class="check">✅</div>
+      <p>Thank you! Your business has been submitted.</p>
+      <small>We'll review and publish it within 1–2 business days.</small>
+      <div style="margin-top:18px;"><button class="btn-primary" style="width:auto;padding:11px 22px;" onclick="resetForm('biz-form-wrap','biz-success')">+ Submit Another Listing</button></div>
+    </div>
+  </div>
+</div>
+
+<!-- Job Listing Modal -->
+<div class="modal-overlay" id="modal-job">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('modal-job')">×</button>
+    <div id="job-form-wrap">
+      <div class="modal-title">Post a Job Listing</div>
+      <div class="modal-sub">Whether you're hiring or looking for work, we'll add your listing to the board.</div>
+      <div class="form-group">
+        <label class="form-label">Listing Type *</label>
+        <select class="form-select">
+          <option>I'm Hiring</option>
+          <option>I'm Looking for Work</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Job Title / Role *</label>
+        <input name="e.g._part-time_receptionist_or" type="text" class="form-input" placeholder="e.g. Part-time Receptionist or Experienced Plumber available">
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Company / Your Name *</label>
+          <input name="company_or_name" type="text" class="form-input" placeholder="Company or name">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Category</label>
+          <select class="form-select">
+            <option>Education</option>
+            <option>Shuls</option>
+            <option>Nonprofit</option>
+            <option>Healthcare</option>
+            <option>Office / Admin</option>
+            <option>Food Service</option>
+            <option>Tech</option>
+            <option>Trades</option>
+            <option>Other</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Job Type</label>
+          <select class="form-select">
+            <option>Full-time</option>
+            <option>Part-time</option>
+            <option>Contract</option>
+            <option>Flexible</option>
+            <option>Seasonal</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Pay / Rate</label>
+          <input name="e.g._$18_hr_or_negotiable" type="text" class="form-input" placeholder="e.g. $18/hr or Negotiable">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Description</label>
+        <textarea name="describe_the_role,_requirement" class="form-textarea" placeholder="Describe the role, requirements, or your skills and experience..."></textarea>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Contact Email *</label>
+        <input name="you@example.com" type="email" class="form-input" placeholder="you@example.com">
+      </div>
+      <button class="btn-primary" onclick="submitForm('job-form-wrap','job-success')">Submit Listing</button>
+    </div>
+    <div class="success-msg" id="job-success">
+      <div class="check">✅</div>
+      <p>Your listing has been submitted!</p>
+      <small>It will appear on the jobs board after review.</small>
+      <div style="margin-top:18px;"><button class="btn-primary" style="width:auto;padding:11px 22px;" onclick="resetForm('job-form-wrap','job-success')">+ Submit Another Listing</button></div>
+    </div>
+  </div>
+</div>
+
+<!-- Advertise Modal -->
 <div class="modal-overlay" id="modal-ad">
   <div class="modal">
     <button class="modal-close" onclick="closeModal('modal-ad')">×</button>
     <div id="ad-form-wrap">
       <div class="modal-title">Advertise with Us</div>
-      <div class="modal-sub">Reach Houston's Jewish community on every page of HJI.</div>
-      <div class="form-group"><label class="form-label">Business Name *</label><input name="your_business_or_organization" type="text" class="form-input" placeholder="Your business or organization"></div>
-      <div class="form-group"><label class="form-label">Ad Slot</label>
-        <select class="form-select"><option>Sidebar Large (300×250)</option><option>Sidebar Medium (300×150)</option><option>Sponsored Listing</option></select>
+      <div class="modal-sub">Reach Houston's Jewish community. Our ad slots appear on every page of HJI.</div>
+      <div class="form-group">
+        <label class="form-label">Business Name *</label>
+        <input name="your_business_or_organization" type="text" class="form-input" placeholder="Your business or organization">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Ad Slot</label>
+        <select class="form-select">
+          <option>Top Banner (728×90)</option>
+          <option>Sidebar Large (300×250)</option>
+          <option>Sidebar Medium (300×150)</option>
+          <option>Sidebar Small (300×100)</option>
+          <option>Sponsored Story / Native Ad</option>
+        </select>
       </div>
       <div class="form-row">
-        <div class="form-group"><label class="form-label">Your Name *</label><input name="contact_name" type="text" class="form-input" placeholder="Contact name"></div>
-        <div class="form-group"><label class="form-label">Email *</label><input name="you@example.com" type="email" class="form-input" placeholder="you@example.com"></div>
+        <div class="form-group">
+          <label class="form-label">Your Name *</label>
+          <input name="contact_name" type="text" class="form-input" placeholder="Contact name">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Email *</label>
+          <input name="you@example.com" type="email" class="form-input" placeholder="you@example.com">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Phone</label>
+        <input name="(555)_000-0000" type="tel" class="form-input" placeholder="(555) 000-0000">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Message or Questions</label>
+        <textarea name="tell_us_about_your_ad,_target_" class="form-textarea" placeholder="Tell us about your ad, target dates, budget, etc."></textarea>
       </div>
       <button class="btn-primary" onclick="submitForm('ad-form-wrap','ad-success')">Send Inquiry</button>
     </div>
-    <div class="success-msg" id="ad-success"><div class="check">✅</div><p>We'll be in touch shortly!</p><small>Our team will contact you within 24 hours.</small></div>
+    <div class="success-msg" id="ad-success">
+      <div class="check">✅</div>
+      <p>We'll be in touch shortly!</p>
+      <small>Our team will contact you within 24 hours.</small>
+    </div>
+  </div>
   </div>
 </div>
 
-<!-- ERUV MAP MODAL -->
-<div class="modal-overlay" id="modal-eruv">
-  <div class="modal" style="max-width:780px;width:94%;">
-    <button class="modal-close" onclick="closeModal('modal-eruv')">×</button>
-    <div class="modal-title">🗺️ Houston Community Eruv</div>
-    <div class="modal-sub">The map below shows the boundary of the Houston community eruv. Use the buttons to jump to an area.</div>
-    <div id="eruv-area-buttons" style="display:flex;flex-wrap:wrap;gap:8px;margin:12px 0 10px;"></div>
-    <div style="border:1px solid #ddd;border-radius:8px;overflow:hidden;margin:0 0 12px;">
-      <iframe id="eruv-map-frame" src="https://www.google.com/maps/d/embed?mid=1eCMUSdSQYatZxVpHVPvOuHz_Ru-HkPs&ehbc=2E312F" style="width:100%;height:430px;border:0;display:block;" loading="lazy" title="Houston Community Eruv Map"></iframe>
-    </div>
-    <p style="font-family:sans-serif;font-size:12px;color:#8a6d1a;background:#fff8e6;border:1px solid #f0d98a;border-radius:6px;padding:9px 11px;line-height:1.5;margin-bottom:12px;">⚠️ An eruv's status can change week to week. Always confirm the eruv is up before relying on it for Shabbat.</p>
-    <div style="display:flex;flex-wrap:wrap;gap:16px;font-family:sans-serif;font-size:12px;font-weight:700;">
-      <a href="https://www.google.com/maps/d/viewer?mid=1eCMUSdSQYatZxVpHVPvOuHz_Ru-HkPs" target="_blank" rel="noopener" style="color:var(--navy,#1f3f6e);">Open full map in Google Maps →</a>
-    </div>
-    <script>
-      // ── Eruv area jump buttons ──────────────────────────────────────
-      // To add/edit an area: give it a label, latitude, longitude, and zoom
-      // (13 = wider view, 15 = closer). Get lat/lng by right-clicking the spot
-      // in Google Maps and copying the numbers. "All areas" resets to full view.
-      var ERUV_MID = '1eCMUSdSQYatZxVpHVPvOuHz_Ru-HkPs';
-      var ERUV_AREAS = [
-        { label: 'All areas', full: true },
-        { label: 'Chabad – Young Israel – Torchwood',     lat: 29.660012473297257, lng: -95.51293073887385, zoom: 15 },
-        { label: 'Chabad of West Houston',    lat: 29.748821560376232, lng: -95.6026576208174,  zoom: 15 }
-      ];
-      (function buildEruvButtons(){
-        var wrap = document.getElementById('eruv-area-buttons');
-        if(!wrap) return;
-        ERUV_AREAS.forEach(function(a){
-          var b = document.createElement('button');
-          b.type = 'button';
-          b.textContent = a.label;
-          b.style.cssText = 'font-family:sans-serif;font-size:12px;font-weight:700;padding:6px 13px;border-radius:5px;border:1px solid var(--navy,#1f3f6e);background:#fff;color:var(--navy,#1f3f6e);cursor:pointer;';
-          b.onclick = function(){
-            var f = document.getElementById('eruv-map-frame');
-            var base = 'https://www.google.com/maps/d/embed?mid=' + ERUV_MID + '&ehbc=2E312F';
-            f.src = a.full ? base : base + '&ll=' + a.lat + ',' + a.lng + '&z=' + (a.zoom || 14);
-            // highlight the active button
-            wrap.querySelectorAll('button').forEach(function(x){ x.style.background='#fff'; x.style.color='var(--navy,#1f3f6e)'; });
-            b.style.background = 'var(--navy,#1f3f6e)'; b.style.color = '#fff';
-          };
-          wrap.appendChild(b);
-        });
-      })();
-    </script>
-  </div>
-</div>
 
-<!-- HEADER -->
+
+<!-- ============================================================
+     PAGE HEADER
+     ============================================================ -->
 <header>
   <div class="portal">
     <div class="masthead">
@@ -1144,10 +1566,16 @@
           <div class="masthead-tagline">Your Houston Frum Community Hub</div>
         </div>
         
-            <button class="hamburger" id="hamburger-btn" aria-label="Toggle navigation" onclick="openMobileMenu()"><span></span><span></span><span></span></button>
-</div>
-      <nav class="nav-bar" aria-label="Main navigation">
-        <a href="/">Home</a><div class="nav-dd active" id="nav-jewish"><button type="button" class="nav-dd-btn" aria-haspopup="true" aria-expanded="false" onclick="hjiToggleJewish(event)">Jewish <span class="nav-dd-caret">▾</span></button></div>
+      </div>
+
+      <!-- NAVIGATION — edit links here -->
+      <button class="hamburger" id="hamburger-btn" aria-label="Toggle navigation" onclick="openMobileMenu()">
+        <span></span><span></span><span></span>
+      </button>
+      <div class="nav-wrapper">
+        <button class="nav-arrow left" aria-label="Scroll nav left">&#8249;</button>
+        <nav class="nav-bar" id="main-nav" aria-label="Main navigation">
+        <a href="/" class="active">Home</a><div class="nav-dd" id="nav-jewish"><button type="button" class="nav-dd-btn" aria-haspopup="true" aria-expanded="false" onclick="hjiToggleJewish(event)">Jewish <span class="nav-dd-caret">▾</span></button></div>
         <a href="/services">Services</a>
         <a href="/jobs">Jobs</a>
         <a href="/real-estate">Real Estate</a>
@@ -1161,54 +1589,310 @@
   </div>
 </header>
 
-<!-- PAGE HERO -->
-<div class="page-hero">
-  <div class="portal">
-    <div class="page-hero-inner">
+<!-- SHABBAT TIMES STRIP — visible on all screen sizes -->
+<div id="shabbat-strip" style="background:var(--navy);color:#fff;padding:0;margin-top:0;">
+  <div class="portal" style="padding:0;">
+  <div style="background:var(--navy);border-bottom:2px solid var(--gold);">
+  <div style="padding:8px 16px;display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:wrap;max-width:1000px;margin:0 auto;">
+    <div style="display:flex;align-items:center;gap:8px;">
+      <span style="font-size:16px;">🕯️</span>
       <div>
-        <h1>✡️ Houston Shul Directory</h1>
-        <p>Find congregations across Greater Houston — from Meyerland to the Woodlands, representing every movement in Jewish life.</p>
+        <span style="font-family:sans-serif;font-size:9px;letter-spacing:.1em;text-transform:uppercase;opacity:.7;">Candle Lighting &nbsp;</span>
+        <span id="strip-candles" style="font-family:sans-serif;font-size:13px;font-weight:700;">–</span>
+        <span id="strip-candles-date" style="font-family:sans-serif;font-size:11px;opacity:.75;margin-left:4px;"></span>
       </div>
+    </div>
+    <div style="width:1px;height:20px;background:rgba(255,255,255,.25);flex-shrink:0;"></div>
+    <div style="display:flex;align-items:center;gap:8px;">
+      <span style="font-size:16px;">✨</span>
+      <div>
+        <span style="font-family:sans-serif;font-size:9px;letter-spacing:.1em;text-transform:uppercase;opacity:.7;">Havdalah &nbsp;</span>
+        <span id="strip-havdalah" style="font-family:sans-serif;font-size:13px;font-weight:700;">–</span>
+        <span id="strip-havdalah-date" style="font-family:sans-serif;font-size:11px;opacity:.75;margin-left:4px;"></span>
+      </div>
+    </div>
+    <div style="width:1px;height:20px;background:rgba(255,255,255,.25);flex-shrink:0;"></div>
+    <div style="display:flex;align-items:center;gap:6px;">
+      <span style="font-size:14px;">📖</span>
+      <span id="strip-parasha" style="font-family:sans-serif;font-size:11px;opacity:.85;"></span>
+    </div>
+  </div>
+  </div>
+  </div>
+
+  <!-- MOBILE-ONLY weather bar (collapsible). Hidden on desktop where the sidebar widget shows. -->
+  <div id="mobile-weather" class="mobile-weather" role="button" tabindex="0" aria-expanded="false" onclick="toggleMobileWeather()" onkeypress="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleMobileWeather();}">
+    <div class="mw-bar">
+      <span class="mw-icon" id="mw-icon">⛅</span>
+      <span class="mw-temp" id="mw-temp">--°</span>
+      <span class="mw-desc" id="mw-desc">Loading…</span>
+      <span class="mw-feels" id="mw-feels"></span>
+      <span class="mw-chev" id="mw-chev" aria-hidden="true"><svg viewBox="0 0 16 16" width="14" height="14"><path d="M4 6l4 4 4-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="mw-expand" id="mw-expand">
+      <div class="mw-row"><span class="mw-row-label">Today</span><span id="mw-hilo">H --° L --°</span></div>
+      <div class="mw-row" id="mw-shabbos-row" style="display:none;"><span class="mw-row-label">Shabbos</span><span id="mw-shabbos">—</span></div>
     </div>
   </div>
 </div>
 
-<!-- ERUV BANNER -->
-<div class="portal" style="padding-top:2px;padding-bottom:18px;">
-  <button type="button" class="eruv-banner" onclick="openModal('modal-eruv')" aria-label="View the Houston community eruv map">
-    <span class="eruv-banner-text">🗺️ <strong>Houston Community Eruv</strong> — view the eruv boundary map</span>
-    <span class="eruv-banner-cta">View Map →</span>
-  </button>
-</div>
 
-<!-- MAIN -->
+
+<!-- ============================================================
+     MAIN CONTENT
+     ============================================================ -->
 <div class="portal">
+  <div class="main-grid">
 
-  <!-- SYNAGOGUE VIEW -->
-  <div id="syn-view">
-  <!-- FILTER BAR -->
-  <div class="filter-bar">
-    <span class="filter-label">Filter:</span>
-    <button class="filter-btn active" onclick="filterSyn('all', this)">All</button>
-    <button class="filter-btn" onclick="filterSyn('orthodox', this)">Orthodox</button>
-    <button class="filter-btn" onclick="filterSyn('chabad', this)">Chabad</button>
-    <button class="filter-btn" onclick="filterSyn('ashkenaz', this)">Ashkenaz</button>
-    <button class="filter-btn" onclick="filterSyn('sefard', this)">Sefard</button>
-    <button class="filter-btn" onclick="filterSyn('nusach ari', this)">Nusach Ari</button>
-  </div>
+    <!-- ========================================================
+         LEFT SIDEBAR — Jobs & Community Resources
+         ======================================================== -->
+    <aside class="sidebar-left" aria-label="Jobs and community resources">
 
-  <div class="results-bar">Showing <strong id="syn-count">10</strong> congregations in Greater Houston</div>
+      <!-- JOB BOARD -->
+      <div class="section-head">Jobs Board</div>
+      <div class="job-tabs">
+        <button class="job-tab active" onclick="showJobs('hire', this)">Now Hiring</button>
+        <button class="job-tab" onclick="showJobs('seek', this)">Job Seekers</button>
+      </div>
 
-  <!-- SYNAGOGUE GRID -->
-  <div class="syn-grid" id="syn-grid">
-    <!-- Cards loaded dynamically from the Synagogues sheet tab -->
-  </div><!-- end syn-grid -->
-  </div><!-- end syn-view -->
+      <!-- HIRING listings — edit or add .job-card items here -->
+      <div id="jobs-hire">
+        <div id="hiring-cards">
+          <div style="font-family:sans-serif;font-size:12px;color:var(--muted);text-align:center;padding:12px;">Loading...</div>
+        </div>
+      </div>
+
+      <!-- JOB SEEKERS listings — edit or add .job-card items here -->
+      <div id="jobs-seek" style="display:none">
+        <div id="seeking-cards">
+          <div style="font-family:sans-serif;font-size:12px;color:var(--muted);text-align:center;padding:12px;">Loading...</div>
+        </div>
+      </div>
+
+      <button class="sidebar-btn" onclick="location.href='/contact/#job'">+ Post a Listing</button>
+
+      <!-- COMMUNITY RESOURCES — edit .resource-item entries here -->
+      <div class="section-head" style="margin-top:22px">Community Resources</div>
+
+      <a class="resource-item" href="/shuls">
+        <div class="resource-icon" style="background:#e8f0fb">✡️</div>
+        <div>
+          <div class="resource-label">Shuls</div>
+          <div class="resource-sub">Find a congregation</div>
+        </div>
+      </a>
+      <a class="resource-item" href="/shuls">
+        <div class="resource-icon" style="background:#eafbe8">🗺️</div>
+        <div>
+          <div class="resource-label">Houston Eruv Map</div>
+          <div class="resource-sub">View the eruv boundary</div>
+        </div>
+      </a>
+      <a class="resource-item" href="/services">
+        <div class="resource-icon" style="background:#fdf3e0">🍽️</div>
+        <div>
+          <div class="resource-label">Kosher Dining</div>
+          <div class="resource-sub">Restaurants &amp; markets</div>
+        </div>
+      </a>
+      <a class="resource-item" href="/education">
+        <div class="resource-icon" style="background:#e8f0fb">🏫</div>
+        <div>
+          <div class="resource-label">Education</div>
+          <div class="resource-sub">Schools, adult ed &amp; kollel</div>
+        </div>
+      </a>
+      <a class="resource-item" href="https://www.erjcchouston.org/" target="_blank">
+        <div class="resource-icon" style="background:#fdf3e0">🏊</div>
+        <div>
+          <div class="resource-label">JCC Houston</div>
+          <div class="resource-sub">Jewish Community Center</div>
+        </div>
+      </a>
+      <a class="resource-item" href="https://www.jfshouston.org/" target="_blank">
+        <div class="resource-icon" style="background:#e8f0fb">🤝</div>
+        <div>
+          <div class="resource-label">Jewish Family Service</div>
+          <div class="resource-sub">Counseling &amp; support</div>
+        </div>
+      </a>
+      <a class="resource-item" href="/services">
+        <div class="resource-icon" style="background:#fdf3e0">🏥</div>
+        <div>
+          <div class="resource-label">Health &amp; Wellness</div>
+          <div class="resource-sub">Jewish-friendly providers</div>
+        </div>
+      </a>
+      <a class="resource-item" href="/services">
+        <div class="resource-icon" style="background:#e8f0fb">📦</div>
+        <div>
+          <div class="resource-label">Food Pantry / Gemach</div>
+          <div class="resource-sub">Community giving</div>
+        </div>
+      </a>
+      <a class="resource-item" href="https://www.houstonchaverim.org" target="_blank">
+        <div class="resource-icon" style="background:#fde8e8">🚗</div>
+        <div>
+          <div class="resource-label">Chaverim</div>
+          <div class="resource-sub">(281) 800-8235 · 24/6 roadside help</div>
+        </div>
+      </a>
+      <a class="resource-item" href="https://www.houstonhatzalah.org" target="_blank">
+        <div class="resource-icon" style="background:#fde8e8">🚑</div>
+        <div>
+          <div class="resource-label">Hatzalah</div>
+          <div class="resource-sub">(832) 743-0111 · 24/7 emergency EMS</div>
+        </div>
+      </a>
+      <button class="sidebar-btn" onclick="location.href='/contact/#business'">+ Submit Your Business</button>
+    </aside>
 
 
-</div><!-- end portal -->
+    <!-- ========================================================
+         CENTER — News Stories
+         ======================================================== -->
+    <main class="news-center" aria-label="Community feed">
+    <style>
+      #community-feed{font-family:inherit;}
+      #community-feed .cf-title-main{font-family:'Playfair Display',serif;font-size:30px;font-weight:700;color:var(--navy);text-align:center;margin:0;padding:0;}
+      #community-feed .cf-rule{border-top:2px solid var(--navy);border-bottom:1px solid var(--border);height:4px;margin:10px 0 16px;}
+      #community-feed .cf-controls{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:10px;}
+      #community-feed .cf-pills{display:flex;gap:8px;flex-wrap:wrap;}
+      #community-feed .cf-pill{font-family:sans-serif;font-size:12px;font-weight:700;padding:6px 14px;border-radius:999px;border:1px solid var(--border);background:#fff;color:var(--navy);cursor:pointer;display:inline-flex;align-items:center;gap:6px;}
+      #community-feed .cf-pill.on{background:var(--navy);color:#fff;border-color:var(--navy);}
+      #community-feed .cf-dot{width:7px;height:7px;border-radius:50%;display:inline-block;}
+      #community-feed .cf-seg{display:inline-flex;border:1px solid var(--border);border-radius:6px;overflow:hidden;background:#fff;}
+      #community-feed .cf-seg button{font-family:sans-serif;border:none;background:#fff;color:var(--navy);font-size:12px;font-weight:700;padding:7px 14px;cursor:pointer;}
+      #community-feed .cf-seg button.on{background:var(--navy);color:#fff;}
+      #community-feed .cf-women{display:flex;align-items:center;gap:8px;margin-bottom:18px;font-family:sans-serif;font-size:13px;color:#333;}
+      #community-feed .cf-muted{color:var(--muted);}
+      #community-feed .cf-switch{width:34px;height:20px;border-radius:999px;background:#cfc7b6;border:none;position:relative;cursor:pointer;padding:0;flex:0 0 auto;transition:background .15s;}
+      #community-feed .cf-switch.on{background:var(--gold);}
+      #community-feed .cf-switch i{position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:#fff;transition:left .15s;}
+      #community-feed .cf-switch.on i{left:16px;}
+      #community-feed .article-card{border:1px solid var(--border);border-radius:12px;margin-bottom:14px;overflow:hidden;background:#fff;}
+      #community-feed .cf-banner{width:100%;height:180px;overflow:hidden;}
+      #community-feed .cf-banner img{width:100%;height:100%;object-fit:cover;display:block;}
+      #community-feed .cf-body{padding:16px 18px;}
+      #community-feed .cf-pass-wrap::after{content:"";display:table;clear:both;}
+      #community-feed .cf-pass-photo{float:left;width:104px;margin:2px 16px 10px 0;}
+      #community-feed .cf-pass-photo img{width:104px;height:126px;object-fit:cover;object-position:center top;border-radius:8px;border:1px solid var(--border);display:block;background:#faf8f3;}
+      #community-feed .cf-pass-candle{width:104px;height:126px;border-radius:8px;border:1px solid var(--border);background:#faf8f3;display:flex;align-items:center;justify-content:center;}
+      #community-feed .cf-pass-candle svg{width:60px;height:104px;display:block;}
+      @media (max-width:420px){#community-feed .cf-pass-photo{width:84px;}#community-feed .cf-pass-photo img,#community-feed .cf-pass-candle{width:84px;height:104px;}}
+      #community-feed .cf-row1{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;}
+      #community-feed .cf-dateline{font-family:sans-serif;color:var(--navy);font-weight:700;font-size:13px;}
+      #community-feed .cf-tags{display:flex;gap:7px;margin:9px 0 4px;flex-wrap:wrap;}
+      #community-feed .cf-tag{font-family:sans-serif;font-size:10px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;padding:3px 9px;border-radius:5px;white-space:nowrap;}
+      #community-feed .cf-type-news{background:#dde8f6;color:#185fa5;}
+      #community-feed .cf-type-event{background:#f3e6c8;color:#8a5a12;}
+      #community-feed .cf-type-mazal{background:#f6dde6;color:#a3375a;}
+      #community-feed .cf-type-passing{background:#e7e9ee;color:#4b5563;}
+      #community-feed .cf-cat{background:#ede9e2;color:#5f5a51;}
+      #community-feed .cf-tag-mz{background:#eee9df;color:#7a6a3f;}
+      #community-feed .cf-up{background:#e3efe0;color:#3b6d11;}
+      #community-feed .cf-past{background:#efece6;color:#6b6b6b;}
+      #community-feed .article-headline{font-family:'Playfair Display',serif;font-size:21px;font-weight:700;color:var(--navy);line-height:1.25;margin:4px 0;}
+      #community-feed .cf-meta{display:flex;flex-wrap:wrap;gap:14px;color:var(--muted);font-family:sans-serif;font-size:13px;margin:6px 0 8px;}
+      #community-feed .cf-desc{font-family:sans-serif;color:#444;font-size:14px;line-height:1.6;margin:0;}
+      #community-feed .desc-inline-link{color:#b8860b;font-weight:700;text-decoration:underline;text-underline-offset:2px;}
+      #community-feed .desc-inline-link:hover{color:#1a2744;}
+      #community-feed .cf-desc.clamped{display:-webkit-box;-webkit-line-clamp:5;-webkit-box-orient:vertical;overflow:hidden;}
+      #community-feed .cf-pass-extra{display:none;}
+      #community-feed .cf-pass-extra.open{display:block;}
+      #community-feed .cf-pass-text{font-family:sans-serif;color:#444;font-size:14px;line-height:1.6;margin:0;}
+      #community-feed .cf-pass-toggle{clear:both;display:inline-block;font-family:sans-serif;font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;background:none;border:none;color:var(--gold);cursor:pointer;padding:0;margin-top:12px;}
+      #community-feed .cf-foot{display:flex;gap:16px;align-items:center;margin-top:12px;flex-wrap:wrap;}
+      #community-feed .article-read-more{font-family:sans-serif;font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;background:var(--navy);color:#fff;padding:9px 16px;border-radius:6px;text-decoration:none;display:inline-block;}
+      #community-feed .article-read-more:hover{background:var(--gold);color:#fff;}
+      #community-feed .cf-addcal{font-family:sans-serif;background:none;border:none;color:var(--gold);font-size:13px;font-weight:700;cursor:pointer;padding:0;}
+      #community-feed .cf-empty{font-family:sans-serif;text-align:center;color:var(--muted);padding:40px 0;}
+      #community-feed .cf-calhead{display:flex;justify-content:center;align-items:center;gap:18px;margin:6px 0 12px;}
+      #community-feed .cf-calnav{background:#fff;border:1px solid var(--border);border-radius:6px;padding:6px 12px;cursor:pointer;color:var(--navy);font-weight:700;}
+      #community-feed .cf-calmonth{font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:var(--navy);}
+      #community-feed table.cf-caltable{width:100%;border-collapse:collapse;}
+      #community-feed .cf-caltable th{font-family:sans-serif;font-size:11px;color:var(--muted);font-weight:700;padding:4px;}
+      #community-feed .cf-caltable td{height:46px;text-align:center;vertical-align:top;font-size:13px;border:1px solid var(--border);padding:4px;font-family:sans-serif;color:#333;width:14.28%;}
+      #community-feed .cf-caltable td.empty{background:var(--cream);}
+      #community-feed .cf-caltable td.has{font-weight:700;cursor:pointer;color:var(--navy);}
+      #community-feed .cf-cdot{width:6px;height:6px;border-radius:50%;background:var(--gold);margin:3px auto 0;}
+      #community-feed .cf-cal-day{margin-top:14px;}
+    </style>
+    <section id="community-feed">
+      <h1 class="cf-title-main">Community Feed</h1>
+      <div class="cf-rule"></div>
+      <div class="cf-controls">
+        <div class="cf-pills" id="cf-pills">
+          <button type="button" class="cf-pill on" data-f="all">All</button>
+          <button type="button" class="cf-pill" data-f="news"><span class="cf-dot" style="background:#185fa5;"></span>News</button>
+          <button type="button" class="cf-pill" data-f="event"><span class="cf-dot" style="background:#b8923a;"></span>Events</button>
+          <button type="button" class="cf-pill" data-f="mazal"><span class="cf-dot" style="background:#c4537e;"></span>Mazal Tov</button>
+          <button type="button" class="cf-pill" data-f="passing"><span class="cf-dot" style="background:#64748b;"></span>Passings</button>
+        </div>
+        <div class="cf-seg" id="cf-seg" style="display:none;">
+          <button type="button" id="cf-vlist" class="on" onclick="cfSetView('list')">List</button>
+          <button type="button" id="cf-vcal" onclick="cfSetView('cal')">Calendar</button>
+        </div>
+      </div>
+      <div class="cf-women">
+        <button type="button" class="cf-switch" id="cf-wsw" onclick="cfToggleWomen()" aria-pressed="false" aria-label="Toggle women's events"><i></i></button>
+        <span>Women's events <span class="cf-muted">(off by default)</span></span>
+      </div>
+      <div id="cf-ad-mazal"></div>
+      <div id="cf-list"></div>
+      <div class="pagination" id="cf-pager" style="display:none;">
+        <button class="page-arrow" id="cf-prev" onclick="cfPage(-1)" disabled>&#8592; Previous</button>
+        <span class="page-indicator" id="cf-pind">Page 1 of 1</span>
+        <button class="page-arrow" id="cf-next" onclick="cfPage(1)">Next &#8594;</button>
+      </div>
+      <div id="cf-cal" style="display:none;"></div>
+    </section>
+    </main>
 
-<!-- FOOTER -->
+
+    <!-- ========================================================
+         RIGHT SIDEBAR — Weather, Ads, Poll
+         ======================================================== -->
+    <aside class="sidebar-right" aria-label="Ads and extras">
+
+      <!-- WEATHER — live via Open-Meteo -->
+      <div class="weather-box" id="weather-box">
+        <div class="weather-city">Houston, TX</div>
+        <div class="weather-main">
+          <span class="weather-icon" id="weather-icon">⛅</span>
+          <span class="weather-temp" id="weather-temp">--°</span>
+        </div>
+        <div class="weather-desc" id="weather-desc">Loading…</div>
+        <div class="weather-meta" id="weather-meta"></div>
+        <div class="weather-shabbos" id="weather-shabbos" style="display:none;">
+          <span class="weather-shabbos-label">Shabbos</span>
+          <span class="weather-shabbos-val" id="weather-shabbos-val"></span>
+        </div>
+      </div>
+
+      <!-- AD SLOT 1 — managed via Ads sheet | placement="right-sidebar-1" | default below = Brian Gavin Diamonds -->
+      <div class="section-head">Advertise</div>
+      <div class="ad-managed" data-ad-slot="right-sidebar-1"></div>
+
+      <!-- AD SLOT 2 — managed via Ads sheet | placement="right-sidebar-2" | default below = Z Biltong -->
+      <div class="ad-managed" data-ad-slot="right-sidebar-2"></div>
+
+      <!-- AD SLOT 3 -->
+      <div class="ad-managed" data-ad-slot="right-sidebar-3"></div>
+
+      <!-- AD SLOT 4 -->
+      <div class="ad-managed" data-ad-slot="right-sidebar-4"></div>
+
+    </aside>
+
+  </div><!-- end .main-grid -->
+</div><!-- end .portal -->
+
+
+<!-- ============================================================
+     FOOTER — edit links and copyright text
+     ============================================================ -->
 <footer>
   <div class="portal">
     <div style="margin-bottom:6px">
@@ -1223,115 +1907,75 @@
   </div>
 </footer>
 
+
+<!-- ============================================================
+     JAVASCRIPT
+     ============================================================ -->
 <script>
-  // Date
+  /* -- Live date in masthead -- */
   (function() {
     var days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
     var months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
     var now = new Date();
-    document.getElementById('today-date').textContent = days[now.getDay()] + ', ' + months[now.getMonth()] + ' ' + now.getDate() + ', ' + now.getFullYear();
+    document.getElementById('today-date').innerHTML =
+      days[now.getDay()] + ', ' + months[now.getMonth()] + ' ' + now.getDate() + ', ' + now.getFullYear();
   })();
 
-  // ===== SYNAGOGUES — Google Sheets driven =====
-  (function() {
-    var SYN_SHEET_ID  = '1in7Ac7zknqyR9neWKOCAjOAG4jXCIVTJQfU6jJ72CV8';
-
-
-    var SYN_SHEET_TAB = 'Shuls';
-    var SYN_IMG_BASE  = 'https://houstonjewishinfo.com/images/synagogues/';
-
-    var DENOM = {
-      'reform':       { cls:'denom-reform',   label:'Reform',       grad:'#e8f0fb,#7a99cc' },
-      'conservative': { cls:'denom-conserv',  label:'Conservative', grad:'#fdf3e0,#d4a060' },
-      'orthodox':     { cls:'denom-orthodox', label:'Orthodox',     grad:'#edf7ed,#5aa85a' },
-      'chabad':       { cls:'denom-chabad',   label:'Chabad',       grad:'#fce8e8,#d05a5a' },
-      'other':        { cls:'denom-other',    label:'Other',        grad:'#eceae4,#bdbcb4' }
-    };
-    function esc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-    function attr(s){ return esc(s).replace(/"/g,'&quot;'); }
-    function imgURL(v){ v=String(v||'').trim(); if(!v) return ''; return /^https?:\/\//i.test(v)?v:SYN_IMG_BASE+v; }
-    function webDisplay(u){ return String(u||'').replace(/^https?:\/\//i,'').replace(/^www\./i,'').replace(/\/+$/,''); }
-    function detail(icon,val){ return val ? '<div class="syn-detail"><span class="syn-detail-icon">'+icon+'</span> '+esc(val)+'</div>' : ''; }
-
-    function cardHTML(d){
-      var key=String(d.denomination||'other').toLowerCase().trim();
-      var dn=DENOM[key]||DENOM['other'];
-      var img=imgURL(d.image);
-      var imgBlock=img
-        ? '<div class="syn-card-img" style="padding:0;overflow:hidden;"><img src="'+attr(img)+'" alt="'+attr(d.name)+'" loading="lazy" decoding="async" style="width:100%;height:100%;object-fit:cover;display:block;"></div>'
-        : '<div class="syn-card-img" style="background:linear-gradient(135deg,'+dn.grad+');">\uD83D\uDD4D</div>';
-      var web=String(d.website||'').trim();
-      var webLine=web ? '<div class="syn-detail"><span class="syn-detail-icon">\uD83C\uDF10</span> <a href="'+attr(web)+'" target="_blank">'+esc(webDisplay(web))+'</a></div>' : '';
-      var btn=web ? '<a href="'+attr(web)+'" target="_blank" class="syn-website-btn" style="white-space:nowrap;flex-shrink:0;">Visit Website \u2192</a>' : '';
-      var times=d.servicetimes ? '<div class="syn-service-times">'+esc(d.servicetimes)+'</div>' : '';
-      var nusach=String(d.nusach||'').trim();
-      var nusachList=nusach.split(/[,;/]+/).map(function(s){return s.trim();}).filter(Boolean);
-      var nusachTag=nusachList.map(function(nz){ return '<span class="syn-nusach">'+esc(nz)+'</span>'; }).join('');
-      var nusachData=nusachList.map(function(nz){return nz.toLowerCase();}).join('|');
-      return '<div class="syn-card" data-denom="'+attr(key)+'" data-nusach="'+attr(nusachData)+'">'+imgBlock+
-        '<div class="syn-card-body">'+
-          '<span class="syn-denom '+dn.cls+'">'+esc(dn.label)+'</span>'+nusachTag+
-          '<div class="syn-name">'+esc(d.name)+'</div>'+
-          detail('\uD83D\uDCCD',d.address)+detail('\uD83D\uDCDE',d.phone)+detail('\uD83D\uDC64',d.rabbi)+webLine+
-          '<hr class="syn-divider">'+
-          '<div style="display:flex;align-items:center;justify-content:space-between;gap:10px;">'+
-            '<div><div class="syn-services">Shabbat Services</div>'+times+'</div>'+btn+
-          '</div>'+
-        '</div></div>';
-    }
-
-    var url='https://docs.google.com/spreadsheets/d/'+SYN_SHEET_ID+'/gviz/tq?tqx=out:json&sheet='+encodeURIComponent(SYN_SHEET_TAB)+'&headers=1';
-    fetch(url).then(function(r){return r.text();}).then(function(text){
-      var json=JSON.parse(text.substring(47,text.length-2));
-      var cols=json.table.cols.map(function(c){return (c.label||'').toLowerCase().trim();});
-      var html='', n=0;
-      var synRows=[];
-      json.table.rows.forEach(function(row){
-        var d={};
-        cols.forEach(function(col,i){ var cell=row.c[i]; d[col]=cell?(cell.f!=null?cell.f:(cell.v==null?'':cell.v)):''; });
-        if(String(d.status||'').toLowerCase().trim()!=='active') return;
-        if(!d.name) return;
-        synRows.push(d);
-      });
-      synRows.sort(function(a,b){ return String(a.name||'').localeCompare(String(b.name||''), undefined, {sensitivity:'base'}); });
-      synRows.forEach(function(d){ html+=cardHTML(d); n++; });
-      var grid=document.getElementById('syn-grid');
-      grid.innerHTML=html || '<div style="grid-column:1/-1;font-family:sans-serif;font-size:14px;color:var(--muted);text-align:center;padding:40px 0;">No congregations listed yet.</div>';
-      var cnt=document.getElementById('syn-count'); if(cnt) cnt.textContent=n;
-    }).catch(function(){
-      var grid=document.getElementById('syn-grid');
-      grid.innerHTML='<div style="grid-column:1/-1;font-family:sans-serif;font-size:14px;color:var(--muted);text-align:center;padding:40px 0;">Congregations are taking a moment to load. Please refresh.</div>';
-    });
-  })();
-
-  // Filter — matches by denomination OR nusach
-  function filterSyn(val, btn) {
-    document.querySelectorAll('.filter-btn').forEach(function(b) { b.classList.remove('active'); });
+  /* -- Job board tab toggle -- */
+  function showJobs(type, btn) {
+    document.getElementById('jobs-hire').style.display = type === 'hire' ? 'block' : 'none';
+    document.getElementById('jobs-seek').style.display = type === 'seek' ? 'block' : 'none';
+    document.querySelectorAll('.job-tab').forEach(function(t){ t.classList.remove('active'); });
     btn.classList.add('active');
-    var cards = document.querySelectorAll('.syn-card');
-    var count = 0;
-    cards.forEach(function(card) {
-      var denom = card.dataset.denom || '';
-      var nusachVals = (card.dataset.nusach || '').split('|');
-      if (val === 'all' || denom === val || nusachVals.indexOf(val) > -1) {
-        card.style.display = '';
-        count++;
-      } else {
-        card.style.display = 'none';
-      }
-    });
-    document.getElementById('syn-count').textContent = count;
   }
 
-  // Modals
-  function openModal(id) { document.getElementById(id).classList.add('open'); document.body.style.overflow = 'hidden'; }
-  function closeModal(id) { document.getElementById(id).classList.remove('open'); document.body.style.overflow = ''; }
+  /* -- Reader poll vote -- */
+  function vote(btn) {
+    var opts = document.querySelectorAll('.poll-opt');
+    var allOpts = [];
+    opts.forEach(function(o) {
+      allOpts.push({ label: o.dataset.label, pct: parseInt(o.dataset.pct), voted: o === btn });
+    });
+    var container = document.getElementById('poll-opts');
+    container.innerHTML = '';
+    allOpts.forEach(function(item) {
+      var div = document.createElement('div');
+      div.className = 'poll-result' + (item.voted ? ' winner' : '');
+      div.innerHTML =
+        '<div class="poll-result-label">' +
+          '<span style="font-weight:' + (item.voted ? '700' : '400') + ';color:' + (item.voted ? 'var(--navy)' : 'var(--muted)') + '">' + item.label + '</span>' +
+          '<span style="color:var(--navy);font-weight:600">' + item.pct + '%</span>' +
+        '</div>' +
+        '<div class="poll-result-bar-bg"><div class="poll-result-bar-fill" style="width:' + item.pct + '%"></div></div>';
+      container.appendChild(div);
+    });
+  }
+
+  /* -- Modal open/close -- */
+  function openModal(id) {
+    document.getElementById(id).classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeModal(id) {
+    document.getElementById(id).classList.remove('open');
+    document.body.style.overflow = '';
+  }
+  /* Close modal on overlay click */
   document.querySelectorAll('.modal-overlay').forEach(function(overlay) {
-    overlay.addEventListener('click', function(e) { if (e.target === overlay) closeModal(overlay.id); });
+    overlay.addEventListener('click', function(e) {
+      if (e.target === overlay) closeModal(overlay.id);
+    });
   });
+  /* Close modal on Escape key */
   document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape') document.querySelectorAll('.modal-overlay.open').forEach(function(m) { closeModal(m.id); });
+    if (e.key === 'Escape') {
+      document.querySelectorAll('.modal-overlay.open').forEach(function(m) {
+        closeModal(m.id);
+      });
+    }
   });
+
+  /* -- Form submission (demo — shows success state) -- */
   var HJI_INTAKE_URL = 'https://script.google.com/macros/s/AKfycbx8tvtMJr9MAbo3aU1TwGdbB6y2R7I5hF_CVEYIuq2VJgcYf1QkFVxwEj5e1-OhnE9z/exec';
   function submitForm(formId, successId) {
     var wrap = document.getElementById(formId);
@@ -1344,7 +1988,7 @@
       var group = el.closest ? el.closest('.form-group') : null;
       var lblEl = group ? group.querySelector('.form-label, label') : null;
       var label = (lblEl ? lblEl.textContent : '') || el.getAttribute('placeholder') || el.name || type;
-      label = label.replace(/\*/g, '').trim();
+      label = label.replace(/\*/g, '').replace(/\([^)]*\)/g, '').replace(/\s+/g, ' ').trim();
       var value;
       if (type === 'checkbox') {
         if (!el.checked) return;
@@ -1360,42 +2004,682 @@
       fields.push({ label: label, value: value });
     });
     var payload = { form_id: formId, fields: fields, page: location.href, submitted_at: new Date().toString() };
+
+    // Loading state on the submit button while the send is in flight (~2s),
+    // so the user sees progress and can't double-submit.
+    var btn = wrap.querySelector('.btn-primary') ||
+              wrap.querySelector('button[onclick*="submitForm"]') ||
+              wrap.querySelector('button');
+    var originalBtnText = '';
+    if (btn) {
+      originalBtnText = btn.innerHTML;
+      btn.disabled = true;
+      btn.style.opacity = '0.7';
+      btn.style.cursor = 'wait';
+      btn.innerHTML = '<span class="hji-spinner" aria-hidden="true"></span>Submitting\u2026';
+    }
+    function restoreBtn() {
+      if (!btn) return;
+      btn.disabled = false;
+      btn.style.opacity = '';
+      btn.style.cursor = '';
+      btn.innerHTML = originalBtnText;
+    }
+
     fetch(HJI_INTAKE_URL, {
       method: 'POST', mode: 'no-cors',
       headers: { 'Content-Type': 'text/plain;charset=utf-8' },
       body: JSON.stringify(payload)
     })
     .then(function() {
+      restoreBtn();
       wrap.style.display = 'none';
       var s = document.getElementById(successId);
       if (s) s.style.display = 'block';
     })
     .catch(function() {
-      alert('Sorry, there was an error submitting your form. Please try again.');
+      restoreBtn();
+      alert('Sorry, there was an error submitting. Please try again.');
     });
   }
 
-  // Nav scroll arrows
+  // Reset a form after success so the user can submit another without reloading.
+  function resetForm(formId, successId) {
+    var wrap = document.getElementById(formId);
+    if (wrap) {
+      wrap.querySelectorAll('input, select, textarea').forEach(function(el) {
+        var type = (el.type || '').toLowerCase();
+        if (type === 'checkbox' || type === 'radio') {
+          el.checked = false;
+        } else if (el.tagName === 'SELECT') {
+          el.selectedIndex = 0;
+        } else if (type !== 'button' && type !== 'submit') {
+          el.value = '';
+        }
+      });
+      wrap.style.display = 'block';
+    }
+    var s = document.getElementById(successId);
+    if (s) s.style.display = 'none';
+  }
+
+  /* -- Shabbat Times via HebCal API (Houston coordinates) -- */
   (function() {
-    var nav = document.getElementById('main-nav');
-    if (!nav) return;
-    var leftBtn = document.querySelector('.nav-arrow.left');
-    var rightBtn = document.querySelector('.nav-arrow.right');
-    if (!leftBtn || !rightBtn) return;
-    var scrollAmt = 100;
-    leftBtn.addEventListener('click', function() {
-      nav.scrollBy({ left: -scrollAmt, behavior: 'smooth' });
-    });
-    rightBtn.addEventListener('click', function() {
-      nav.scrollBy({ left: scrollAmt, behavior: 'smooth' });
-    });
+    // Houston lat/lng, candle lighting 18 min before sunset (matches Chabad),
+    // Havdalah at nightfall / tzeit 8.5° (matches Chabad.org's method, not a fixed offset)
+    var url = 'https://www.hebcal.com/shabbat?cfg=json&geonameid=4699066&b=18&M=on';
+    fetch(url)
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        var candles = null, havdalah = null, parasha = null;
+        data.items.forEach(function(item) {
+          if (item.category === 'candles') candles = item;
+          if (item.category === 'havdalah') havdalah = item;
+          if (item.category === 'parashat') parasha = item;
+        });
+
+        function formatTime(dateStr) {
+          var d = new Date(dateStr);
+          var hours = d.getHours();
+          var mins = d.getMinutes();
+          var ampm = hours >= 12 ? 'PM' : 'AM';
+          hours = hours % 12 || 12;
+          return hours + ':' + (mins < 10 ? '0' : '') + mins + ' ' + ampm;
+        }
+        function formatDate(dateStr) {
+          var d = new Date(dateStr);
+          var days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+          var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+          return days[d.getDay()] + ', ' + months[d.getMonth()] + ' ' + d.getDate();
+        }
+
+        // Populate the strip
+        if (candles) {
+          document.getElementById('strip-candles').textContent = formatTime(candles.date);
+          document.getElementById('strip-candles-date').textContent = formatDate(candles.date);
+        }
+        if (havdalah) {
+          document.getElementById('strip-havdalah').textContent = formatTime(havdalah.date);
+          document.getElementById('strip-havdalah-date').textContent = formatDate(havdalah.date);
+        }
+        if (parasha) {
+          document.getElementById('strip-parasha').textContent = parasha.title;
+        }
+      })
+      .catch(function() {
+        document.getElementById('shabbat-loading').textContent = 'Times unavailable';
+      });
   })();
-  </script>
+
+  // ===== COMMUNITY FEED — Stories + Events + Mazal Tov (Google Sheets driven) =====
+  (function(){
+    var SHEET_ID='1in7Ac7zknqyR9neWKOCAjOAG4jXCIVTJQfU6jJ72CV8';
+
+
+    var STORY_IMG='https://houstonjewishinfo.com/images/stories/';
+    var EVENT_IMG='https://houstonjewishinfo.com/images/events/';
+    var PASSING_IMG='https://houstonjewishinfo.com/images/passings/';
+    var CANDLE_SVG='<div class="cf-pass-candle"><svg viewBox="0 0 64 104" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Memorial candle"><defs><radialGradient id="cfGlow" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#f6d68a" stop-opacity="0.9"/><stop offset="100%" stop-color="#f6d68a" stop-opacity="0"/></radialGradient><linearGradient id="cfFlame" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#fff3c4"/><stop offset="45%" stop-color="#f4b740"/><stop offset="100%" stop-color="#e08a1e"/></linearGradient></defs><circle cx="32" cy="26" r="22" fill="url(#cfGlow)"/><path d="M32 8 C 38 18, 40 24, 32 34 C 24 24, 26 18, 32 8 Z" fill="url(#cfFlame)"/><path d="M32 18 C 35 23, 35 27, 32 32 C 29 27, 29 23, 32 18 Z" fill="#fff6da" opacity="0.85"/><rect x="31" y="33" width="2" height="5" rx="1" fill="#6b5a3e"/><rect x="20" y="38" width="24" height="58" rx="3" fill="#f1ece0"/><rect x="20" y="38" width="7" height="58" rx="3" fill="#ffffff" opacity="0.5"/><rect x="38" y="38" width="6" height="58" rx="3" fill="#d9d2c4" opacity="0.6"/><ellipse cx="32" cy="38" rx="12" ry="3.5" fill="#f7f3ea"/><rect x="16" y="94" width="32" height="6" rx="2" fill="#cfc7b6"/></svg></div>';
+    var ADS_IMG='https://houstonjewishinfo.com/images/ads/';
+    var PER_PAGE=6;
+    var MOBILE_AD_SLOTS=['mobile-1','mobile-2','mobile-3','mobile-4','mobile-5'];
+    var MAZAL_AD_SLOTS=['mazaltov-1','mazaltov-2','mazaltov-3','mazaltov-4','mazaltov-5'];
+    var TYPE={news:'News',event:'Event',mazal:'Mazal Tov',passing:'In Memoriam'};
+    var MONTHS=['January','February','March','April','May','June','July','August','September','October','November','December'];
+
+    var items=[], filter='all', view='list', showWomen=false, page=1, wired=false;
+    var calM, calY;
+
+    function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+    function attr(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/"/g,'&quot;');}
+    // Normalize an external link: if it has no protocol, assume https:// so a
+    // partial URL like "example.com/tickets" doesn't resolve as a broken
+    // relative path. Leaves mailto:, tel:, and full http(s) links untouched.
+    function extURL(v){
+      v=String(v||'').trim();
+      if(!v) return '';
+      if(/^(https?:\/\/|mailto:|tel:|\/)/i.test(v)) return v;
+      return 'https://'+v;
+    }
+    // Render a description safely, converting [link:Text|url] shortcodes into
+    // clickable links. Everything is escaped first (so no raw HTML from the
+    // sheet can run), then ONLY the shortcode pattern becomes a real link.
+    function descHTML(text){
+      var safe = esc(String(text||'')).replace(/\n/g,'<br>');
+      // After escaping, the shortcode looks like: [link:Label|https://...]
+      return safe.replace(/\[link:([^\|\]]+)\|([^\]]+)\]/gi, function(m, label, url){
+        var u = extURL(url.trim());
+        // only allow http(s)/mailto/tel/internal targets through extURL
+        if(!/^(https?:\/\/|mailto:|tel:|\/)/i.test(u)) return esc(label);
+        return '<a href="'+attr(u)+'" target="_blank" rel="noopener" class="desc-inline-link">'+label.trim()+'</a>';
+      });
+    }
+    function firstLine(s){return String(s||'').split('\n')[0].trim();}
+    function cleanLoc(s){return String(s||'').replace(/\s*\n\s*/g,', ').replace(/,\s*$/,'').trim();}
+    function imgURL(v,base){v=String(v||'').trim();if(!v)return '';return /^https?:\/\//i.test(v)?v:base+v;}
+    function cfToday(){var d=new Date();d.setHours(0,0,0,0);return d;}
+    function fmtDate(d){return d?d.toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'}).toUpperCase():'';}
+
+    function parseDate(cell){
+      if(!cell)return null;
+      var v=cell.v,f=cell.f;
+      if(typeof v==='string'&&/^Date\(/.test(v)){var n=v.match(/\d+/g);if(n)return new Date(+n[0],+n[1],+(n[2]||1));}
+      if(Object.prototype.toString.call(v)==='[object Date]')return v;
+      if(typeof f==='string'){var t=Date.parse(f);if(!isNaN(t))return new Date(t);}
+      if(typeof v==='string'){var t2=Date.parse(v);if(!isNaN(t2))return new Date(t2);}
+      return null;
+    }
+    function cellStr(c){if(!c)return '';return c.f!=null?c.f:(c.v==null?'':c.v);}
+    function tabURL(tab){return 'https://docs.google.com/spreadsheets/d/'+SHEET_ID+'/gviz/tq?tqx=out:json&headers=1&sheet='+encodeURIComponent(tab);}
+    function getTab(tab){return fetch(tabURL(tab)).then(function(r){return r.text();}).then(function(text){
+      var json=JSON.parse(text.substring(47,text.length-2));
+      var cols=json.table.cols.map(function(c){return (c.label||'').toLowerCase().trim();});
+      return (json.table.rows||[]).map(function(row){var o={_cells:{}};cols.forEach(function(col,i){var c=row.c?row.c[i]:null;o[col]=cellStr(c);o._cells[col]=c;});return o;});
+    });}
+    function active(o){return String(o.status||'').toLowerCase().trim()==='active';}
+
+    function buildItems(stories,events,mazals,passings){
+      var out=[];
+      stories.forEach(function(r){if(!active(r)||!r.headline)return;
+        out.push({type:'news',date:parseDate(r._cells.date),time:'',title:r.headline,cat:r.label||'',org:r.byline||'',loc:'',desc:r.excerpt||'',img:imgURL(r.image,STORY_IMG),link:r.linkurl||'',linkText:r.linktext||'Read More \u2192',women:false});});
+      events.forEach(function(r){if(!active(r)||!r.title)return;
+        out.push({type:'event',date:parseDate(r._cells.date),time:r.time||'',title:r.title,cat:r.category||'Event',org:r.presenter||'',loc:r.location||'',desc:r.description||'',img:imgURL(r.imageurl,EVENT_IMG),link:r.ticketurl||'',linkText:(r.buttontext||'More Details'),women:String(r.women||'').toLowerCase().trim()==='yes'});});
+      mazals.forEach(function(r){if(!active(r)||!r.name)return;
+        out.push({type:'mazal',date:parseDate(r._cells.date),time:'',title:r.name,cat:r.type||'',org:'',loc:r.city||'',desc:r.message||'',img:'',link:'',linkText:'',women:false});});
+      (passings||[]).forEach(function(r){if(!active(r)||!r.name)return;
+        var parts=[];
+        if(r.levaya)parts.push('Levaya: '+r.levaya);
+        if(r.shiva)parts.push('Shiva: '+r.shiva);
+        if(r.message)parts.push(r.message);
+        out.push({type:'passing',date:parseDate(r._cells.date),time:'',title:r.name,cat:'',org:'',loc:r.city||'',desc:parts.join('\n'),img:imgURL(r.image,PASSING_IMG),link:'',linkText:'',women:false});});
+      return out;
+    }
+
+    function pad(n){return (n<10?'0':'')+n;}
+    function gcal(x){
+      if(!x.date)return '';
+      var s=''+x.date.getFullYear()+pad(x.date.getMonth()+1)+pad(x.date.getDate());
+      var e2=new Date(x.date.getTime()+86400000);
+      var e=''+e2.getFullYear()+pad(e2.getMonth()+1)+pad(e2.getDate());
+      var det=(x.time?x.time+'\n':'')+(x.desc||'');
+      return 'https://calendar.google.com/calendar/render?action=TEMPLATE&text='+encodeURIComponent(x.title)+'&dates='+s+'/'+e+'&details='+encodeURIComponent(det)+'&location='+encodeURIComponent(cleanLoc(x.loc));
+    }
+    window.cfAddCal=function(enc){try{window.open(decodeURIComponent(enc),'_blank');}catch(e){}};
+    window.cfPassToggle=function(btn){var wrap=btn.parentNode;var extra=wrap.querySelector('.cf-pass-extra');if(!extra)return;var open=extra.classList.toggle('open');btn.innerHTML=open?'Read less \u2191':'Read more \u2193';};
+
+    function cfCard(x){
+      var today=cfToday();
+      if(x.type==='passing'){
+        var photo=x.img?'<img src="'+attr(x.img)+'" alt="'+attr(x.title)+'" loading="lazy">':CANDLE_SVG;
+        var pdline=x.date?'<span class="cf-dateline">'+esc(fmtDate(x.date))+'</span>':'<span class="cf-dateline"></span>';
+        var pmeta=x.loc?'<div class="cf-meta"><span>\uD83D\uDCCD '+esc(cleanLoc(x.loc))+'</span></div>':'';
+        var pbody=x.desc?'<p class="cf-pass-text">'+esc(x.desc).replace(/\n/g,'<br>')+'</p>':'';
+        var extra=pmeta+pbody;
+        var toggle=extra?'<button type="button" class="cf-pass-toggle" onclick="cfPassToggle(this)">Read more \u2193</button>':'';
+        return '<article class="article-card cf-passing"><div class="cf-body cf-pass-wrap">'+
+          '<div class="cf-pass-photo">'+photo+'</div>'+
+          '<div class="cf-row1">'+pdline+'</div>'+
+          '<div class="cf-tags"><span class="cf-tag cf-type-passing">'+esc(TYPE.passing)+'</span></div>'+
+          '<h2 class="article-headline">'+esc(x.title)+'</h2>'+
+          (extra?'<div class="cf-pass-extra">'+extra+'</div>':'')+
+          toggle+
+          '</div></article>';
+      }
+      var up=x.date?(x.date>=today):true;
+      var banner=x.img?'<div class="cf-banner"><img src="'+attr(x.img)+'" alt="'+attr(x.title)+'" loading="lazy"></div>':'';
+      var badge='';
+      if(x.type==='event')badge='<span class="cf-tag '+(up?'cf-up':'cf-past')+'">'+(up?'UPCOMING':'PAST')+'</span>';
+      else if(x.type==='mazal'&&x.cat)badge='<span class="cf-tag cf-tag-mz">'+esc(x.cat).toUpperCase()+'</span>';
+      var dline=x.date?'<span class="cf-dateline">\uD83D\uDCC5 '+esc(fmtDate(x.date))+(firstLine(x.time)?' \u00b7 '+esc(firstLine(x.time)):'')+'</span>':'<span class="cf-dateline"></span>';
+      var typeTag='<span class="cf-tag cf-type-'+x.type+'">'+esc(TYPE[x.type])+'</span>';
+      var catTag=(x.cat&&x.type!=='mazal')?'<span class="cf-tag cf-cat">'+esc(x.cat).toUpperCase()+'</span>':'';
+      var mi=[];
+      if(x.loc)mi.push('<span>\uD83D\uDCCD '+esc(cleanLoc(x.loc))+'</span>');
+      if(x.org)mi.push('<span>\u270D\uFE0F '+esc(x.org)+'</span>');
+      var meta=mi.length?'<div class="cf-meta">'+mi.join('')+'</div>':'';
+      var descBody=(x.type==='event'||x.type==='news')?descHTML(x.desc):esc(x.desc).replace(/\n/g,'<br>');
+      var desc=x.desc?'<p class="cf-desc">'+descBody+'</p><button type="button" class="read-more-btn" style="display:none;">Read more \u2193</button>':'';
+      var foot='';
+      if(x.type==='event'){
+        var primary=x.link?'<a href="'+attr(extURL(x.link))+'" target="_blank" rel="noopener" class="article-read-more">'+esc(x.linkText||'More Details')+'</a>':'';
+        var gc=gcal(x);
+        var addcal=gc?'<button type="button" class="cf-addcal" onclick="cfAddCal(\''+encodeURIComponent(gc)+'\')">\uD83D\uDCC5 Add to calendar</button>':'';
+        if(primary||addcal)foot='<div class="cf-foot">'+primary+addcal+'</div>';
+      }else if(x.type==='news'&&x.link){
+        foot='<div class="cf-foot"><a href="'+attr(extURL(x.link))+'" target="_blank" rel="noopener" class="article-read-more">'+esc(x.linkText||'Read More \u2192')+'</a></div>';
+      }
+      return '<article class="article-card">'+banner+'<div class="cf-body"><div class="cf-row1">'+dline+badge+'</div><div class="cf-tags">'+typeTag+catTag+'</div><h2 class="article-headline">'+esc(x.title)+'</h2>'+meta+desc+foot+'</div></article>';
+    }
+
+    function adSlot(name){var id=(name==='mobile-1')?' id="mobile-ad-strip"':'';var cls=(name==='mobile-1')?'ad-managed':'zb-mobile-ad ad-managed';return '<div'+id+' class="'+cls+'" data-ad-slot="'+name+'"></div>';}
+    function mazalSlot(name){return '<div class="ad-managed" data-ad-slot="'+name+'"></div>';}
+
+    function currentList(){
+      var today=cfToday();
+      var arr=items.filter(function(x){
+        if(x.women&&!showWomen)return false;
+        if(filter==='news')return x.type==='news';
+        if(filter==='mazal')return x.type==='mazal';
+        if(filter==='passing')return x.type==='passing';
+        if(filter==='event')return x.type==='event'&&(!x.date||x.date>=today);
+        if(x.type==='event')return (!x.date||x.date>=today);
+        return true;
+      });
+      arr.sort(function(a,b){
+        var at=a.date?a.date.getTime():null, bt=b.date?b.date.getTime():null;
+        if(at==null&&bt==null)return 0; if(at==null)return 1; if(bt==null)return -1;
+        return (filter==='event')?(at-bt):(bt-at);
+      });
+      return arr;
+    }
+
+    function cfReadMore(scope){
+      var ps=(scope||document).querySelectorAll('#cf-list .cf-desc, #cf-cal .cf-desc');
+      Array.prototype.forEach.call(ps,function(p){
+        var btn=p.nextElementSibling;
+        if(!btn||!btn.classList.contains('read-more-btn'))return;
+        var lh=parseFloat(getComputedStyle(p).lineHeight)||22;
+        if(p.scrollHeight>lh*5+2){p.classList.add('clamped');btn.style.display='inline-block';
+          btn.onclick=function(){if(p.classList.contains('clamped')){p.classList.remove('clamped');btn.textContent='Read less \u2191';}else{p.classList.add('clamped');btn.textContent='Read more \u2193';}};}
+        else{btn.style.display='none';}
+      });
+    }
+
+    function renderList(){
+      var arr=currentList();
+      var pages=Math.max(1,Math.ceil(arr.length/PER_PAGE));
+      if(page>pages)page=pages; if(page<1)page=1;
+      var slice=arr.slice((page-1)*PER_PAGE,page*PER_PAGE);
+      document.getElementById('cf-ad-mazal').innerHTML=(filter==='mazal')?mazalSlot('mazaltov-1'):'';
+      var html='';
+      if(!slice.length){html='<div class="cf-empty">Nothing here right now \u2014 check back soon.</div>';}
+      else if(page===1){
+        html+=adSlot(MOBILE_AD_SLOTS[0]);
+        var mob=1, mz=1;
+        slice.forEach(function(x){
+          html+=cfCard(x);
+          if(filter==='mazal'&&mz<MAZAL_AD_SLOTS.length){html+=mazalSlot(MAZAL_AD_SLOTS[mz]);mz++;}
+          if(mob<MOBILE_AD_SLOTS.length){html+=adSlot(MOBILE_AD_SLOTS[mob]);mob++;}
+        });
+        while(mob<MOBILE_AD_SLOTS.length){html+=adSlot(MOBILE_AD_SLOTS[mob]);mob++;}
+      }else{slice.forEach(function(x){html+=cfCard(x);});}
+      document.getElementById('cf-list').innerHTML=html;
+      var pg=document.getElementById('cf-pager');
+      if(view==='list'&&pages>1){pg.style.display='';document.getElementById('cf-pind').textContent='Page '+page+' of '+pages;
+        document.getElementById('cf-prev').disabled=(page===1);document.getElementById('cf-next').disabled=(page===pages);}
+      else{pg.style.display='none';}
+      if(typeof loadAds==='function')loadAds();
+      cfReadMore(document.getElementById('cf-list'));
+    }
+
+    function cfRenderCal(){
+      if(calM==null){var t=cfToday();calM=t.getMonth();calY=t.getFullYear();}
+      var evs=items.filter(function(x){return x.type==='event'&&x.date&&!(x.women&&!showWomen);});
+      var byDay={};
+      evs.forEach(function(x){if(x.date.getMonth()===calM&&x.date.getFullYear()===calY){var k=x.date.getDate();(byDay[k]=byDay[k]||[]).push(x);}});
+      window.__cfByDay=byDay;
+      var dows=['Su','Mo','Tu','We','Th','Fr','Sa'];
+      var head='<div class="cf-calhead"><button type="button" class="cf-calnav" onclick="cfCalNav(-1)">&#8249;</button><span class="cf-calmonth">'+MONTHS[calM]+' '+calY+'</span><button type="button" class="cf-calnav" onclick="cfCalNav(1)">&#8250;</button></div>';
+      var t='<table class="cf-caltable"><thead><tr>';
+      dows.forEach(function(d){t+='<th>'+d+'</th>';});
+      t+='</tr></thead><tbody>';
+      var first=new Date(calY,calM,1).getDay(), days=new Date(calY,calM+1,0).getDate(), cell=0, dayNum=0;
+      for(var w=0;w<6;w++){t+='<tr>';for(var dow=0;dow<7;dow++){dayNum=cell-first+1;
+        if(cell<first||dayNum>days){t+='<td class="empty"></td>';}
+        else{var has=byDay[dayNum];t+='<td'+(has?' class="has" onclick="cfCalDay('+dayNum+')"':'')+'>'+dayNum+(has?'<div class="cf-cdot"></div>':'')+'</td>';}
+        cell++;}t+='</tr>';if(dayNum>=days)break;}
+      t+='</tbody></table>';
+      document.getElementById('cf-cal').innerHTML=head+t+'<div id="cf-cal-day" class="cf-cal-day"><div class="cf-empty" style="padding:18px 0;">Tap a highlighted day to see its events.</div></div>';
+    }
+    window.cfCalNav=function(d){calM+=d;if(calM<0){calM=11;calY--;}if(calM>11){calM=0;calY++;}cfRenderCal();};
+    window.cfCalDay=function(n){var its=(window.__cfByDay||{})[n]||[];var box=document.getElementById('cf-cal-day');
+      box.innerHTML=its.length?its.map(cfCard).join(''):'';if(typeof loadAds==='function')loadAds();cfReadMore(document.getElementById('cf-cal'));};
+
+    window.cfPage=function(d){page+=d;renderList();var sec=document.getElementById('community-feed');if(sec)sec.scrollIntoView({behavior:'smooth',block:'start'});};
+
+    window.cfSetView=function(v){view=v;
+      document.getElementById('cf-vlist').classList.toggle('on',v==='list');
+      document.getElementById('cf-vcal').classList.toggle('on',v==='cal');
+      if(v==='cal'){document.getElementById('cf-list').style.display='none';document.getElementById('cf-pager').style.display='none';document.getElementById('cf-ad-mazal').style.display='none';document.getElementById('cf-cal').style.display='';cfRenderCal();}
+      else{document.getElementById('cf-cal').style.display='none';document.getElementById('cf-ad-mazal').style.display='';document.getElementById('cf-list').style.display='';renderList();}
+    };
+
+    window.cfToggleWomen=function(){showWomen=!showWomen;var sw=document.getElementById('cf-wsw');sw.classList.toggle('on',showWomen);sw.setAttribute('aria-pressed',showWomen?'true':'false');page=1;if(view==='cal')cfRenderCal();else renderList();};
+
+    function wireUp(){
+      if(wired)return; wired=true;
+      var pills=document.querySelectorAll('#cf-pills .cf-pill');
+      Array.prototype.forEach.call(pills,function(b){
+        b.addEventListener('click',function(){
+          Array.prototype.forEach.call(pills,function(x){x.classList.remove('on');});
+          b.classList.add('on'); filter=b.getAttribute('data-f'); page=1;
+          try{ if(typeof gtag==='function'){ gtag('event','feed_filter',{filter:filter, filter_name:(b.textContent||'').trim(), section:'Home'}); } }catch(e){}
+          var isEv=(filter==='event');
+          document.getElementById('cf-seg').style.display=isEv?'':'none';
+          view='list';
+          document.getElementById('cf-vlist').classList.add('on'); document.getElementById('cf-vcal').classList.remove('on');
+          document.getElementById('cf-cal').style.display='none';
+          document.getElementById('cf-ad-mazal').style.display='';
+          document.getElementById('cf-list').style.display='';
+          renderList();
+        });
+      });
+    }
+
+    document.getElementById('cf-list').innerHTML='<div class="cf-empty">Loading the community feed\u2026</div>';
+    wireUp();
+    Promise.all([getTab('Stories'),getTab('Events'),getTab('MazalTov'),getTab('Passings').catch(function(){return [];})])
+      .then(function(res){items=buildItems(res[0],res[1],res[2],res[3]);renderList();})
+      .catch(function(){document.getElementById('cf-list').innerHTML='<div class="cf-empty">The feed is taking a moment to load. Please refresh.</div>';if(typeof loadAds==='function')loadAds();});
+  })();
+
+  /* -- Mobile weather bar expand/collapse -- */
+  function toggleMobileWeather(){
+    var mw=document.getElementById('mobile-weather');
+    if(!mw) return;
+    var open=mw.classList.toggle('open');
+    mw.setAttribute('aria-expanded', open?'true':'false');
+  }
+
+  /* -- Live weather via Open-Meteo (free, no API key needed) -- */
+  (function(){
+    var WX = {
+      0:['Clear sky','☀️','is-clear'], 1:['Mainly clear','🌤️','is-clear'],
+      2:['Partly cloudy','⛅','is-cloud'], 3:['Overcast','☁️','is-cloud'],
+      45:['Foggy','🌫️','is-cloud'], 48:['Icy fog','🌫️','is-cloud'],
+      51:['Light drizzle','🌦️','is-rain'], 53:['Drizzle','🌦️','is-rain'], 55:['Drizzle','🌧️','is-rain'],
+      61:['Light rain','🌦️','is-rain'], 63:['Rain','🌧️','is-rain'], 65:['Heavy rain','🌧️','is-rain'],
+      66:['Freezing rain','🌧️','is-rain'], 67:['Freezing rain','🌧️','is-rain'],
+      71:['Light snow','🌨️','is-snow'], 73:['Snow','❄️','is-snow'], 75:['Heavy snow','❄️','is-snow'], 77:['Snow grains','🌨️','is-snow'],
+      80:['Rain showers','🌦️','is-rain'], 81:['Showers','🌧️','is-rain'], 82:['Heavy showers','🌧️','is-rain'],
+      85:['Snow showers','🌨️','is-snow'], 86:['Snow showers','❄️','is-snow'],
+      95:['Thunderstorm','⛈️','is-storm'], 96:['Thunderstorm','⛈️','is-storm'], 99:['Thunderstorm','⛈️','is-storm']
+    };
+    function look(code){ return WX[code] || ['See forecast','🌡️','is-cloud']; }
+    function el(id){ return document.getElementById(id); }
+
+    var url='https://api.open-meteo.com/v1/forecast?latitude=29.7604&longitude=-95.3698'
+      +'&current=temperature_2m,apparent_temperature,weathercode,precipitation'
+      +'&daily=weathercode,temperature_2m_max,temperature_2m_min'
+      +'&temperature_unit=fahrenheit&timezone=America%2FChicago&forecast_days=7';
+
+    function renderWeather(data){
+      var cur=data.current, daily=data.daily;
+      var temp=Math.round(cur.temperature_2m);
+      var feels=Math.round(cur.apparent_temperature);
+      var info=look(cur.weathercode);
+      // Precipitation override: if rain is actually falling now, show Rain even
+      // when the (slower) weather code still says cloudy/overcast. Don't override
+      // an existing storm/snow code — only upgrade dry-looking codes to rain.
+      var precip = (typeof cur.precipitation === 'number') ? cur.precipitation : 0;
+      if(precip > 0 && info[2] !== 'is-storm' && info[2] !== 'is-snow' && info[2] !== 'is-rain'){
+        info = (precip >= 0.1) ? ['Rain','🌧️','is-rain'] : ['Light rain','🌦️','is-rain'];
+      }
+      var hi=Math.round(daily.temperature_2m_max[0]);
+      var lo=Math.round(daily.temperature_2m_min[0]);
+
+      el('weather-temp').innerHTML=temp+'<span class="deg">°</span>';
+      el('weather-icon').textContent=info[1];
+      el('weather-desc').textContent=info[0];
+      el('weather-meta').textContent='Feels '+feels+'°  ·  H '+hi+'°  L '+lo+'°';
+      var box=el('weather-box');
+      box.className='weather-box '+info[2];
+
+      // Mobile bar (same data)
+      if(el('mw-temp')){
+        el('mw-temp').textContent=temp+'°';
+        el('mw-icon').textContent=info[1];
+        el('mw-desc').textContent=info[0];
+        el('mw-feels').textContent='Feels '+feels+'°';
+        el('mw-hilo').textContent='H '+hi+'°  L '+lo+'°';
+        var mw=el('mobile-weather');
+        if(mw) mw.className='mobile-weather '+info[2]+(mw.classList.contains('open')?' open':'');
+      }
+
+      // Shabbos (upcoming Saturday) forecast from the daily arrays
+      var times=daily.time || [];
+      for(var i=0;i<times.length;i++){
+        var d=new Date(times[i]+'T12:00:00');
+        if(d.getDay()===6){ // Saturday
+          var sInfo=look(daily.weathercode[i]);
+          var sHi=Math.round(daily.temperature_2m_max[i]);
+          var sLo=Math.round(daily.temperature_2m_min[i]);
+          el('weather-shabbos-val').textContent=sInfo[1]+'  '+sHi+'° / '+sLo+'°';
+          el('weather-shabbos').style.display='flex';
+          if(el('mw-shabbos')){
+            el('mw-shabbos').textContent=sInfo[1]+'  '+sHi+'° / '+sLo+'°';
+            el('mw-shabbos-row').style.display='flex';
+          }
+          break;
+        }
+      }
+    }
+
+    function fetchWeather(timeoutMs){
+      // AbortController cancels the request if it takes too long, so the
+      // widget never hangs waiting behind other page traffic.
+      var ctrl = (typeof AbortController!=='undefined') ? new AbortController() : null;
+      var timer = ctrl ? setTimeout(function(){ ctrl.abort(); }, timeoutMs) : null;
+      var opts = ctrl ? {signal:ctrl.signal} : {};
+      return fetch(url, opts).then(function(r){ if(timer) clearTimeout(timer); return r.json(); });
+    }
+
+    function loadWeather(){
+      fetchWeather(7000)
+        .then(renderWeather)
+        .catch(function(){
+          // First attempt timed out or failed — try once more with a longer window.
+          fetchWeather(12000)
+            .then(renderWeather)
+            .catch(function(){
+              var t=el('weather-temp'); if(t) t.textContent='--°';
+              var d=el('weather-desc'); if(d) d.textContent='Unavailable';
+            });
+        });
+    }
+    loadWeather();
+  })();
+
+  // Jobs Board — Google Sheets
+  (function() {
+    var JOBS_SHEET_ID  = '1in7Ac7zknqyR9neWKOCAjOAG4jXCIVTJQfU6jJ72CV8';
+    var JOBS_SHEET_TAB = 'Jobs'; // <-- must match your jobs tab name EXACTLY (case-sensitive)
+    var url = 'https://docs.google.com/spreadsheets/d/' + JOBS_SHEET_ID +
+              '/gviz/tq?tqx=out:json&sheet=' + encodeURIComponent(JOBS_SHEET_TAB) + '&headers=1';
+    fetch(url)
+      .then(function(r){ return r.text(); })
+      .then(function(text) {
+        // Strip Google's wrapper
+        var json = JSON.parse(text.substring(47, text.length - 2));
+        var rows = json.table.rows || [];
+        var cols = json.table.cols.map(function(c) { return c.label.toLowerCase(); });
+
+        var MAX_PER_SECTION = 3;
+        var hiringCards = '';
+        var seekingCards = '';
+        var hiringCount = 0;
+        var seekingCount = 0;
+        var hiringTotal = 0;
+        var seekingTotal = 0;
+
+        // Build a row object, newest first (bottom of the sheet = latest submission)
+        var parsed = rows.map(function(row) {
+          var data = {};
+          cols.forEach(function(col, i) {
+            data[col] = row.c[i] ? (row.c[i].v || '') : '';
+          });
+          return data;
+        }).filter(function(data) {
+          // Only approved listings with a title (matches the full Jobs page)
+          return data.title && String(data.approved || '').toLowerCase().trim() === 'yes';
+        }).reverse();
+
+        parsed.forEach(function(data) {
+          var status = (data.status || '').toLowerCase().trim();
+          // Count totals for the "see all" logic
+          if (status === 'hiring') hiringTotal++;
+          else if (status === 'seeking') seekingTotal++;
+
+          // Pick tag color based on category
+          var tagClass = 'job-card-tag';
+          var cat = (data.category || '').toLowerCase();
+          if (cat === 'nonprofit' || cat === 'office') tagClass += ' orange';
+          else if (cat === 'food service' || cat === 'trades') tagClass += ' green';
+
+          var contact = '';
+          if (data.phone) contact += '<a href="tel:' + data.phone + '" style="display:block;font-family:sans-serif;font-size:11px;color:var(--navy);margin-top:4px;">📞 ' + data.phone + '</a>';
+          if (data.email) contact += '<a href="mailto:' + data.email + '" style="display:block;font-family:sans-serif;font-size:11px;color:var(--gold);margin-top:2px;">✉️ ' + data.email + '</a>';
+
+          var card = '<div class="job-card">' +
+            '<div class="job-card-title">' + data.title + '</div>' +
+            '<div class="job-card-meta">' + (data.organization || '') +
+            (data.type ? ' &nbsp;·&nbsp; ' + data.type : '') + '</div>' +
+            '<span class="' + tagClass + '">' + (data.category || '') + '</span>' +
+            (data.pay ? '<div style="font-family:sans-serif;font-size:11px;font-weight:700;color:var(--navy);margin-top:4px;">💰 ' + data.pay + '</div>' : '') +
+            contact +
+            '<a href="/jobs" style="display:inline-block;margin-top:8px;font-family:sans-serif;font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--gold);text-decoration:none;">See Full Listing →</a>' +
+            '</div>';
+
+          // Only render up to MAX_PER_SECTION cards per section
+          if (status === 'hiring' && hiringCount < MAX_PER_SECTION) { hiringCards += card; hiringCount++; }
+          else if (status === 'seeking' && seekingCount < MAX_PER_SECTION) { seekingCards += card; seekingCount++; }
+        });
+
+        // "See all" link appears when a section has more than we showed
+        var seeAll = '<a href="/jobs" style="display:block;width:100%;box-sizing:border-box;text-align:center;margin-top:10px;font-family:sans-serif;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#fff;background:var(--navy);border-radius:3px;padding:9px;text-decoration:none;">See all jobs →</a>';
+
+        document.getElementById('hiring-cards').innerHTML =
+          (hiringCards || '<div style="font-family:sans-serif;font-size:12px;color:var(--muted);text-align:center;padding:12px;">No listings yet.</div>')
+          + (hiringTotal > MAX_PER_SECTION ? seeAll : '');
+        document.getElementById('seeking-cards').innerHTML =
+          (seekingCards || '<div style="font-family:sans-serif;font-size:12px;color:var(--muted);text-align:center;padding:12px;">No listings yet.</div>')
+          + (seekingTotal > MAX_PER_SECTION ? seeAll : '');
+      })
+      .catch(function() {
+        document.getElementById('hiring-cards').innerHTML =
+          '<div style="font-family:sans-serif;font-size:12px;color:var(--muted);text-align:center;padding:12px;">Could not load listings.</div>';
+        document.getElementById('seeking-cards').innerHTML =
+          '<div style="font-family:sans-serif;font-size:12px;color:var(--muted);text-align:center;padding:12px;">Could not load listings.</div>';
+      });
+  })();
+
+  // Ads — Google Sheets driven (mirrors the Jobs Board loader above)
+  // Fire an ad_view event once, when the ad actually scrolls into view (>=50% visible)
+  function trackAdView(el, adName, slotName){
+    if(!('IntersectionObserver' in window)){ return; } // older browsers: skip view tracking, clicks still work
+    var fired=false;
+    var obs=new IntersectionObserver(function(entries){
+      entries.forEach(function(en){
+        if(!fired && en.isIntersecting && en.intersectionRatio>=0.5){
+          fired=true; obs.disconnect();
+          try{ if(typeof gtag==='function'){ gtag('event','ad_view',{ad_name:adName, ad_placement:slotName}); } }catch(e){}
+        }
+      });
+    }, {threshold:[0.5]});
+    obs.observe(el);
+  }
+  function loadAds() {
+    // If your Ads tab lives in the SAME workbook as the Jobs Board, leave this ID as-is.
+    // If it's a different spreadsheet, paste that spreadsheet's ID here.
+    var AD_SHEET_ID  = '1in7Ac7zknqyR9neWKOCAjOAG4jXCIVTJQfU6jJ72CV8';
+    var AD_SHEET_TAB = 'Ads'; // must match the tab name exactly
+    var AD_IMG_BASE  = 'https://houstonjewishinfo.com/images/ads/';
+    // accept either a bare filename (uses the ads folder) or a full http(s) URL
+    function adImg(v){ v=String(v||'').trim(); if(!v) return ''; return /^https?:\/\//i.test(v)?v:AD_IMG_BASE+v; }
+    var url = 'https://docs.google.com/spreadsheets/d/' + AD_SHEET_ID +
+              '/gviz/tq?tqx=out:json&sheet=' + encodeURIComponent(AD_SHEET_TAB) + '&headers=1';
+    fetch(url)
+      .then(function(r){ return r.text(); })
+      .then(function(text) {
+        var json = JSON.parse(text.substring(47, text.length - 2));
+        var cols = json.table.cols.map(function(c) { return (c.label || '').toLowerCase().trim(); });
+        var slots = {}; // placement -> { active: rowData | null }
+        json.table.rows.forEach(function(row) {
+          var d = {};
+          cols.forEach(function(col, i) { d[col] = row.c[i] ? (row.c[i].v || '') : ''; });
+          var slot = (d.placement || '').toLowerCase().trim();
+          if (!slot) return;
+          if (!slots[slot]) slots[slot] = { active: null };
+          var isActive = (d.status || '').toLowerCase().trim() === 'active';
+          if (isActive && d.imageurl && !slots[slot].active) slots[slot].active = d;
+        });
+                document.querySelectorAll('[data-ad-slot]').forEach(function(el) {
+          var info = slots[el.getAttribute('data-ad-slot').toLowerCase().trim()];
+          if (info && info.active) {   // active row -> show the ad (border + spacing injected here)
+            var d = info.active;
+            var alt = String(d.advertiser || 'Advertisement').replace(/"/g, '&quot;');
+            var slotName = el.getAttribute('data-ad-slot');
+            var trackName = String(d.advertiser || 'Advertisement').replace(/'/g, "\\'");
+            var onclk = "try{if(typeof gtag==='function'){gtag('event','ad_click',{ad_name:'" + trackName + "',ad_placement:'" + slotName + "'});}}catch(e){}";
+            el.innerHTML = '<a href="' + (d.linkurl || '#') + '" target="_blank" rel="noopener" aria-label="' + alt + '" ' +
+                           'onclick="' + onclk + '" ' +
+                           'style="display:block;margin:0 0 16px;border:1px solid #c8a882;border-radius:6px;overflow:hidden;text-decoration:none;">' +
+                           '<img src="' + adImg(d.imageurl) + '" alt="' + alt + '" style="width:100%;height:auto;display:block;"></a>';
+            trackAdView(el, String(d.advertiser || 'Advertisement'), slotName);
+          } else {                     // no active ad for this placement -> stays empty (collapses)
+            el.innerHTML = '';
+          }
+        });
+      })
+      .catch(function() { /* on any error, keep the built-in default ads */ });
+  }
+  loadAds();
+
+  // Mobile menu
+  function openMobileMenu() {
+    document.getElementById('mob-menu').classList.add('open');
+    document.getElementById('mob-overlay').classList.add('open');
+    document.getElementById('hamburger-btn').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeMobileMenu() {
+    document.getElementById('mob-menu').classList.remove('open');
+    document.getElementById('mob-overlay').classList.remove('open');
+    document.getElementById('hamburger-btn').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+  // Close on ESC
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') closeMobileMenu();
+  });
+</script>
+
+<!-- MOBILE MENU OVERLAY -->
+<div class="mobile-menu-overlay" id="mob-overlay" onclick="closeMobileMenu()"></div>
+
+<!-- MOBILE SLIDE-OUT MENU -->
+<div class="mobile-menu" id="mob-menu">
+  <div class="mobile-menu-head">
+    <div class="mobile-menu-title">Houston Jewish Info</div>
+    <button class="mobile-menu-close" onclick="closeMobileMenu()">×</button>
+  </div>
+  <div class="mobile-menu-links">
+    <a href="/" class="active">🏠 Home</a>
+<button type="button" class="m-jewish-btn" onclick="hjiToggleMJewish(this)">✢ Jewish <span class="m-jewish-caret">▾</span></button>
+<div class="m-jewish-sub">
+<a href="/education#schools">Orthodox Schools</a>
+<a href="/shuls">Orthodox Shuls</a>
+<a href="/mikvahs">Mikvahs</a>
+<a href="/education#adult-learning">Adult Learning</a>
+</div>
+    <a href="/services">🛠️ Services</a>
+    <a href="/jobs">💼 Jobs</a>
+    <a href="/real-estate">🏡 Real Estate</a>
+    <a href="/things-to-do">🎡 Things to Do</a>
+    <a href="/charities">💛 Charities</a>
+    <a href="/contact">📬 Contact / Submit</a>
+  </div>
+  <div class="mobile-menu-footer">
+    © 2026 Houston Jewish Info<br>
+    Serving the Houston Jewish community 🌟
+  </div>
+</div>
+
 <div class="mobile-menu-overlay" id="mob-overlay" onclick="closeMobileMenu()"></div>
 <div class="mobile-menu" id="mob-menu">
   <div class="mobile-menu-head"><div class="mobile-menu-title">Houston Jewish Info</div><button class="mobile-menu-close" onclick="closeMobileMenu()">×</button></div>
   <div class="mobile-menu-links">
-    <a href="/">🏠 Home</a>
+    <a href="/" class="active">🏠 Home</a>
 <button type="button" class="m-jewish-btn" onclick="hjiToggleMJewish(this)">✢ Jewish <span class="m-jewish-caret">▾</span></button>
 <div class="m-jewish-sub">
 <a href="/education#schools">Orthodox Schools</a>
