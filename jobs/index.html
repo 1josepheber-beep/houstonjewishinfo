@@ -960,6 +960,14 @@
     display: -webkit-box; -webkit-line-clamp: 2;
     -webkit-box-orient: vertical; overflow: hidden;
   }
+  .job-read-more {
+    font-family: sans-serif; font-size: 11px; font-weight: 700;
+    color: var(--gold); background: none; border: none; padding: 4px 0 0;
+    cursor: pointer; letter-spacing: .02em;
+  }
+  .job-read-more:hover { color: var(--navy); text-decoration: underline; }
+  .job-desc-link { color: var(--gold); font-weight: 700; text-decoration: underline; text-underline-offset: 2px; }
+  .job-desc-link:hover { color: var(--navy); }
   .job-pay {
     font-family: sans-serif; font-size: 12px; font-weight: 700;
     color: var(--navy);
@@ -1259,6 +1267,24 @@ function getCheckedValues(name){
   return checked;
 }
 
+// Safe description rendering: escape text, support [link:Label|url] shortcode,
+// and a "Read more" toggle when the text is long.
+function jobEsc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function jobExtURL(v){
+  v=String(v||'').trim();
+  if(!v) return '';
+  if(/^(https?:\/\/|mailto:|tel:|\/)/i.test(v)) return v;
+  return 'https://'+v;
+}
+function jobDescHTML(text){
+  var safe = jobEsc(String(text||'')).replace(/\n/g,'<br>');
+  return safe.replace(/\[link:([^\|\]]+)\|([^\]]+)\]/gi, function(m, label, url){
+    var u = jobExtURL(url.trim());
+    if(!/^(https?:\/\/|mailto:|tel:|\/)/i.test(u)) return jobEsc(label);
+    return '<a href="'+String(u).replace(/"/g,'&quot;')+'" target="_blank" rel="noopener" class="job-desc-link">'+label.trim()+'</a>';
+  });
+}
+
 function buildJobCard(job){
   var status=(job.status||'').toLowerCase().trim();
   var type=(job.type||'').toLowerCase();
@@ -1293,13 +1319,47 @@ function buildJobCard(job){
     '<div class="job-title">'+job.title+'</div>'+
     (org?'<div class="job-org">'+org+'</div>':'')+
     '<div class="job-tags">'+tagHtml+'</div>'+
-    (desc?'<div class="job-desc">'+desc+'</div>':'')+
+    (desc?'<div class="job-desc" data-clamped="1">'+jobDescHTML(desc)+'</div><button type="button" class="job-read-more" onclick="toggleJobDesc(this)">Read more ↓</button>':'')+
     '</div>'+
     '<div class="job-listing-right">'+
     (pay?'<div class="job-pay">💰 '+pay+'</div>':'')+
     (contact?'<div class="job-contact">'+contact+'</div>':'')+
     '</div>'+
     '</div>';
+}
+
+// Expand/collapse a clamped job description.
+function toggleJobDesc(btn){
+  var desc = btn.previousElementSibling;
+  if(!desc) return;
+  var clamped = desc.getAttribute('data-clamped') === '1';
+  if(clamped){
+    desc.style.webkitLineClamp = 'unset';
+    desc.style.display = 'block';
+    desc.setAttribute('data-clamped','0');
+    btn.textContent = 'Read less ↑';
+  } else {
+    desc.style.webkitLineClamp = '2';
+    desc.style.display = '-webkit-box';
+    desc.setAttribute('data-clamped','1');
+    btn.textContent = 'Read more ↓';
+  }
+}
+
+// After cards render, hide the "Read more" button on descriptions that aren't
+// actually long enough to be clamped (so short jobs don't show a pointless link).
+function pruneJobReadMore(){
+  document.querySelectorAll('.job-desc').forEach(function(d){
+    var btn = d.nextElementSibling;
+    if(btn && btn.classList.contains('job-read-more')){
+      // If the content fits within the clamp, no overflow -> hide the button.
+      if(d.scrollHeight <= d.clientHeight + 2){
+        btn.style.display = 'none';
+      } else {
+        btn.style.display = '';
+      }
+    }
+  });
 }
 
 function renderJobs(){
@@ -1362,6 +1422,7 @@ function renderJobs(){
     return;
   }
   document.getElementById('jobs-grid').innerHTML=filtered.map(buildJobCard).join('');
+  pruneJobReadMore();
 }
 
 function switchJobsTab(tab,btn){
