@@ -16,6 +16,7 @@
   gtag('config', 'G-LQFZ69SZRS');
 </script>
 <meta charset="UTF-8">
+<meta name="google-site-verification" content="MwceOOI5b8PhTvokYIgP4PKdbdLZiMlWjdMDfCvy-wg" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Houston Jewish Info — Your Frum Community Hub</title>
 <meta name="description" content="The central hub for Houston's frum Jewish community — kosher restaurants, shuls, mikvaot, schools, businesses, gemachim, charities, jobs, and events across Meyerland, Bellaire, Fondren Southwest and Greater Houston.">
@@ -134,6 +135,7 @@
     color: var(--navy);
     line-height: 1;
     letter-spacing: -2px;
+    margin: 0;
   }
   .masthead-tagline {
     font-size: 13px;
@@ -510,33 +512,123 @@
 
   /* -- Weather Box -- */
   .weather-box {
-    background: var(--navy);
+    background: linear-gradient(160deg, #1f3a6b 0%, var(--navy) 70%);
     color: var(--white);
-    border-radius: 4px;
-    padding: 14px 12px;
+    border-radius: 8px;
+    padding: 16px 14px 14px;
     margin-bottom: 16px;
     text-align: center;
+    transition: background .4s ease;
   }
+  .weather-box.is-clear  { background: linear-gradient(160deg, #2f7fc4 0%, #1f3a6b 80%); }
+  .weather-box.is-cloud  { background: linear-gradient(160deg, #4a5a72 0%, var(--navy) 80%); }
+  .weather-box.is-rain   { background: linear-gradient(160deg, #3a4a63 0%, #16233f 80%); }
+  .weather-box.is-storm  { background: linear-gradient(160deg, #2c2f4a 0%, #14152a 80%); }
+  .weather-box.is-snow   { background: linear-gradient(160deg, #6b7d96 0%, #3a4a63 80%); }
   .weather-city {
     font-family: sans-serif;
     font-size: 9px;
     letter-spacing: .12em;
     text-transform: uppercase;
     opacity: .7;
-    margin-bottom: 4px;
+    margin-bottom: 6px;
   }
+  .weather-main {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+  }
+  .weather-icon { font-size: 34px; line-height: 1; flex-shrink: 0; position: relative; top: 1px; }
   .weather-temp {
     font-family: 'Playfair Display', serif;
-    font-size: 36px;
+    font-size: 42px;
     font-weight: 700;
     line-height: 1;
+    font-variant-numeric: lining-nums;
+    font-feature-settings: "lnum" 1;
+    position: relative;
+  }
+  .weather-temp .deg {
+    font-size: 20px;
+    font-weight: 700;
+    position: absolute;
+    top: 2px;
+    margin-left: 2px;
   }
   .weather-desc {
     font-size: 12px;
-    opacity: .8;
+    opacity: .85;
     font-family: sans-serif;
-    margin-top: 3px;
+    margin-top: 4px;
   }
+  .weather-meta {
+    font-family: sans-serif;
+    font-size: 11px;
+    opacity: .7;
+    margin-top: 6px;
+  }
+  .weather-shabbos {
+    margin-top: 10px;
+    padding-top: 9px;
+    border-top: 1px solid rgba(255,255,255,.18);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    font-family: sans-serif;
+  }
+  .weather-shabbos-label {
+    font-size: 9px; letter-spacing: .1em; text-transform: uppercase;
+    opacity: .7;
+  }
+  .weather-shabbos-val { font-size: 12px; font-weight: 700; }
+
+  /* Mobile weather bar — hidden on desktop, shown via media query on mobile */
+  .mobile-weather {
+    display: none;
+    background: linear-gradient(90deg, #1f3a6b, var(--navy));
+    color: #fff;
+    cursor: pointer;
+    border-bottom: 1px solid rgba(255,255,255,.12);
+    -webkit-tap-highlight-color: transparent;
+    transition: background .4s ease;
+  }
+  .mobile-weather.is-clear { background: linear-gradient(90deg, #2f7fc4, #1f3a6b); }
+  .mobile-weather.is-cloud { background: linear-gradient(90deg, #4a5a72, var(--navy)); }
+  .mobile-weather.is-rain  { background: linear-gradient(90deg, #3a4a63, #16233f); }
+  .mobile-weather.is-storm { background: linear-gradient(90deg, #2c2f4a, #14152a); }
+  .mobile-weather.is-snow  { background: linear-gradient(90deg, #6b7d96, #3a4a63); }
+  .mw-bar {
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    padding: 8px 16px; font-family: sans-serif; font-size: 13px;
+    max-width: 1000px; margin: 0 auto; position: relative;
+  }
+  .mw-icon { font-size: 17px; line-height: 1; }
+  .mw-temp { font-weight: 700; font-size: 14px; }
+  .mw-desc { opacity: .9; }
+  .mw-feels { opacity: .65; font-size: 11px; }
+  .mw-chev {
+    position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
+    opacity: .7; transition: transform .25s ease;
+    display: flex; align-items: center; justify-content: center;
+    height: 14px;
+  }
+  .mw-chev svg { display: block; }
+  .mobile-weather.open .mw-chev { transform: translateY(-50%) rotate(180deg); }
+  .mw-expand {
+    max-height: 0; overflow: hidden;
+    transition: max-height .3s ease;
+    font-family: sans-serif;
+    max-width: 1000px; margin: 0 auto;
+  }
+  .mobile-weather.open .mw-expand { max-height: 120px; }
+  .mw-row {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 7px 16px; font-size: 12px;
+    border-top: 1px solid rgba(255,255,255,.12);
+  }
+  .mw-row-label { font-size: 9px; letter-spacing: .1em; text-transform: uppercase; opacity: .7; }
 
   /* -- Advertisement Slots --
      Replace the .ad-placeholder div content with:
@@ -918,6 +1010,9 @@
 
     /* Portal */
     .portal { padding: 0 12px; }
+
+    /* Mobile weather bar — visible only on mobile */
+    .mobile-weather { display: block !important; }
 
     /* Mobile ad strip */
     #mobile-ad-strip { display: block !important; }
@@ -1468,7 +1563,7 @@
         </div>
         <div class="masthead-logo">
           <div class="masthead-date" id="today-date"></div>
-          <div class="masthead-title">Houston Jewish Info</div>
+          <h1 class="masthead-title">Houston Jewish Info</h1>
           <div class="masthead-tagline">Your Houston Frum Community Hub</div>
         </div>
         
@@ -1524,6 +1619,21 @@
     </div>
   </div>
   </div>
+  </div>
+
+  <!-- MOBILE-ONLY weather bar (collapsible). Hidden on desktop where the sidebar widget shows. -->
+  <div id="mobile-weather" class="mobile-weather" role="button" tabindex="0" aria-expanded="false" onclick="toggleMobileWeather()" onkeypress="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleMobileWeather();}">
+    <div class="mw-bar">
+      <span class="mw-icon" id="mw-icon">⛅</span>
+      <span class="mw-temp" id="mw-temp">--°</span>
+      <span class="mw-desc" id="mw-desc">Loading…</span>
+      <span class="mw-feels" id="mw-feels"></span>
+      <span class="mw-chev" id="mw-chev" aria-hidden="true"><svg viewBox="0 0 16 16" width="14" height="14"><path d="M4 6l4 4 4-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="mw-expand" id="mw-expand">
+      <div class="mw-row"><span class="mw-row-label">Today</span><span id="mw-hilo">H --° L --°</span></div>
+      <div class="mw-row" id="mw-shabbos-row" style="display:none;"><span class="mw-row-label">Shabbos</span><span id="mw-shabbos">—</span></div>
+    </div>
   </div>
 </div>
 
@@ -1646,7 +1756,7 @@
     <main class="news-center" aria-label="Community feed">
     <style>
       #community-feed{font-family:inherit;}
-      #community-feed .cf-title-main{font-family:'Playfair Display',serif;font-size:30px;font-weight:700;color:var(--navy);text-align:center;margin:0;}
+      #community-feed .cf-title-main{font-family:'Playfair Display',serif;font-size:30px;font-weight:700;color:var(--navy);text-align:center;margin:0;padding:0;}
       #community-feed .cf-rule{border-top:2px solid var(--navy);border-bottom:1px solid var(--border);height:4px;margin:10px 0 16px;}
       #community-feed .cf-controls{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:10px;}
       #community-feed .cf-pills{display:flex;gap:8px;flex-wrap:wrap;}
@@ -1687,6 +1797,8 @@
       #community-feed .article-headline{font-family:'Playfair Display',serif;font-size:21px;font-weight:700;color:var(--navy);line-height:1.25;margin:4px 0;}
       #community-feed .cf-meta{display:flex;flex-wrap:wrap;gap:14px;color:var(--muted);font-family:sans-serif;font-size:13px;margin:6px 0 8px;}
       #community-feed .cf-desc{font-family:sans-serif;color:#444;font-size:14px;line-height:1.6;margin:0;}
+      #community-feed .desc-inline-link{color:#b8860b;font-weight:700;text-decoration:underline;text-underline-offset:2px;}
+      #community-feed .desc-inline-link:hover{color:#1a2744;}
       #community-feed .cf-desc.clamped{display:-webkit-box;-webkit-line-clamp:5;-webkit-box-orient:vertical;overflow:hidden;}
       #community-feed .cf-pass-extra{display:none;}
       #community-feed .cf-pass-extra.open{display:block;}
@@ -1709,7 +1821,7 @@
       #community-feed .cf-cal-day{margin-top:14px;}
     </style>
     <section id="community-feed">
-      <h1 class="cf-title-main">Community Feed</h1>
+      <h2 class="cf-title-main">Community Feed</h2>
       <div class="cf-rule"></div>
       <div class="cf-controls">
         <div class="cf-pills" id="cf-pills">
@@ -1745,11 +1857,19 @@
          ======================================================== -->
     <aside class="sidebar-right" aria-label="Ads and extras">
 
-      <!-- WEATHER — update city name and figures manually, or connect to a weather API -->
-      <div class="weather-box">
+      <!-- WEATHER — live via Open-Meteo -->
+      <div class="weather-box" id="weather-box">
         <div class="weather-city">Houston, TX</div>
-        <div class="weather-temp" id="weather-temp">--°F</div>
-        <div class="weather-desc" id="weather-desc">Loading...</div>
+        <div class="weather-main">
+          <span class="weather-icon" id="weather-icon">⛅</span>
+          <span class="weather-temp" id="weather-temp">--°</span>
+        </div>
+        <div class="weather-desc" id="weather-desc">Loading…</div>
+        <div class="weather-meta" id="weather-meta"></div>
+        <div class="weather-shabbos" id="weather-shabbos" style="display:none;">
+          <span class="weather-shabbos-label">Shabbos</span>
+          <span class="weather-shabbos-val" id="weather-shabbos-val"></span>
+        </div>
       </div>
 
       <!-- AD SLOT 1 — managed via Ads sheet | placement="right-sidebar-1" | default below = Brian Gavin Diamonds -->
@@ -1996,16 +2116,6 @@
   (function(){
     var SHEET_ID='1in7Ac7zknqyR9neWKOCAjOAG4jXCIVTJQfU6jJ72CV8';
 
-// ===== Sheet data cache (within-visit, 5 min) =====
-var SHEET_CACHE_MS = 5 * 60 * 1000;
-var _sheetCache = {};
-function cachedFetchText(u){
-  var now = Date.now(), hit = _sheetCache[u];
-  if (hit && (now - hit.t) < SHEET_CACHE_MS) return Promise.resolve(hit.v);
-  return fetch(u).then(function(r){ return r.text(); }).then(function(txt){
-    _sheetCache[u] = { t: Date.now(), v: txt }; return txt;
-  });
-}
 
     var STORY_IMG='https://houstonjewishinfo.com/images/stories/';
     var EVENT_IMG='https://houstonjewishinfo.com/images/events/';
@@ -2023,6 +2133,28 @@ function cachedFetchText(u){
 
     function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
     function attr(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/"/g,'&quot;');}
+    // Normalize an external link: if it has no protocol, assume https:// so a
+    // partial URL like "example.com/tickets" doesn't resolve as a broken
+    // relative path. Leaves mailto:, tel:, and full http(s) links untouched.
+    function extURL(v){
+      v=String(v||'').trim();
+      if(!v) return '';
+      if(/^(https?:\/\/|mailto:|tel:|\/)/i.test(v)) return v;
+      return 'https://'+v;
+    }
+    // Render a description safely, converting [link:Text|url] shortcodes into
+    // clickable links. Everything is escaped first (so no raw HTML from the
+    // sheet can run), then ONLY the shortcode pattern becomes a real link.
+    function descHTML(text){
+      var safe = esc(String(text||'')).replace(/\n/g,'<br>');
+      // After escaping, the shortcode looks like: [link:Label|https://...]
+      return safe.replace(/\[link:([^\|\]]+)\|([^\]]+)\]/gi, function(m, label, url){
+        var u = extURL(url.trim());
+        // only allow http(s)/mailto/tel/internal targets through extURL
+        if(!/^(https?:\/\/|mailto:|tel:|\/)/i.test(u)) return esc(label);
+        return '<a href="'+attr(u)+'" target="_blank" rel="noopener" class="desc-inline-link">'+label.trim()+'</a>';
+      });
+    }
     function firstLine(s){return String(s||'').split('\n')[0].trim();}
     function cleanLoc(s){return String(s||'').replace(/\s*\n\s*/g,', ').replace(/,\s*$/,'').trim();}
     function imgURL(v,base){v=String(v||'').trim();if(!v)return '';return /^https?:\/\//i.test(v)?v:base+v;}
@@ -2040,7 +2172,7 @@ function cachedFetchText(u){
     }
     function cellStr(c){if(!c)return '';return c.f!=null?c.f:(c.v==null?'':c.v);}
     function tabURL(tab){return 'https://docs.google.com/spreadsheets/d/'+SHEET_ID+'/gviz/tq?tqx=out:json&headers=1&sheet='+encodeURIComponent(tab);}
-    function getTab(tab){return cachedFetchText(tabURL(tab)).then(function(text){
+    function getTab(tab){return fetch(tabURL(tab)).then(function(r){return r.text();}).then(function(text){
       var json=JSON.parse(text.substring(47,text.length-2));
       var cols=json.table.cols.map(function(c){return (c.label||'').toLowerCase().trim();});
       return (json.table.rows||[]).map(function(row){var o={_cells:{}};cols.forEach(function(col,i){var c=row.c?row.c[i]:null;o[col]=cellStr(c);o._cells[col]=c;});return o;});
@@ -2106,15 +2238,16 @@ function cachedFetchText(u){
       if(x.loc)mi.push('<span>\uD83D\uDCCD '+esc(cleanLoc(x.loc))+'</span>');
       if(x.org)mi.push('<span>\u270D\uFE0F '+esc(x.org)+'</span>');
       var meta=mi.length?'<div class="cf-meta">'+mi.join('')+'</div>':'';
-      var desc=x.desc?'<p class="cf-desc">'+esc(x.desc).replace(/\n/g,'<br>')+'</p><button type="button" class="read-more-btn" style="display:none;">Read more \u2193</button>':'';
+      var descBody=(x.type==='event'||x.type==='news')?descHTML(x.desc):esc(x.desc).replace(/\n/g,'<br>');
+      var desc=x.desc?'<p class="cf-desc">'+descBody+'</p><button type="button" class="read-more-btn" style="display:none;">Read more \u2193</button>':'';
       var foot='';
       if(x.type==='event'){
-        var primary=x.link?'<a href="'+attr(x.link)+'" target="_blank" rel="noopener" class="article-read-more">'+esc(x.linkText||'More Details')+'</a>':'';
+        var primary=x.link?'<a href="'+attr(extURL(x.link))+'" target="_blank" rel="noopener" class="article-read-more">'+esc(x.linkText||'More Details')+'</a>':'';
         var gc=gcal(x);
         var addcal=gc?'<button type="button" class="cf-addcal" onclick="cfAddCal(\''+encodeURIComponent(gc)+'\')">\uD83D\uDCC5 Add to calendar</button>':'';
         if(primary||addcal)foot='<div class="cf-foot">'+primary+addcal+'</div>';
       }else if(x.type==='news'&&x.link){
-        foot='<div class="cf-foot"><a href="'+attr(x.link)+'" target="_blank" rel="noopener" class="article-read-more">'+esc(x.linkText||'Read More \u2192')+'</a></div>';
+        foot='<div class="cf-foot"><a href="'+attr(extURL(x.link))+'" target="_blank" rel="noopener" class="article-read-more">'+esc(x.linkText||'Read More \u2192')+'</a></div>';
       }
       return '<article class="article-card">'+banner+'<div class="cf-body"><div class="cf-row1">'+dline+badge+'</div><div class="cf-tags">'+typeTag+catTag+'</div><h2 class="article-headline">'+esc(x.title)+'</h2>'+meta+desc+foot+'</div></article>';
     }
@@ -2241,27 +2374,112 @@ function cachedFetchText(u){
       .catch(function(){document.getElementById('cf-list').innerHTML='<div class="cf-empty">The feed is taking a moment to load. Please refresh.</div>';if(typeof loadAds==='function')loadAds();});
   })();
 
+  /* -- Mobile weather bar expand/collapse -- */
+  function toggleMobileWeather(){
+    var mw=document.getElementById('mobile-weather');
+    if(!mw) return;
+    var open=mw.classList.toggle('open');
+    mw.setAttribute('aria-expanded', open?'true':'false');
+  }
+
   /* -- Live weather via Open-Meteo (free, no API key needed) -- */
-  fetch('https://api.open-meteo.com/v1/forecast?latitude=29.7604&longitude=-95.3698&current=temperature_2m,weathercode&temperature_unit=fahrenheit')
-    .then(function(r) { return r.json(); })
-    .then(function(data) {
-      var temp = Math.round(data.current.temperature_2m);
-      var code = data.current.weathercode;
-      var descs = {
-        0:'Clear sky', 1:'Mainly clear', 2:'Partly cloudy', 3:'Overcast',
-        45:'Foggy', 48:'Icy fog', 51:'Light drizzle', 53:'Drizzle',
-        61:'Light rain', 63:'Rain', 65:'Heavy rain',
-        71:'Light snow', 73:'Snow', 75:'Heavy snow',
-        80:'Rain showers', 81:'Showers', 82:'Heavy showers',
-        95:'Thunderstorm', 96:'Thunderstorm', 99:'Thunderstorm'
-      };
-      document.getElementById('weather-temp').textContent = temp + '°F';
-      document.getElementById('weather-desc').textContent = descs[code] || 'See forecast';
-    })
-    .catch(function() {
-      document.getElementById('weather-temp').textContent = '--°F';
-      document.getElementById('weather-desc').textContent = 'Unavailable';
-    });
+  (function(){
+    var WX = {
+      0:['Clear sky','☀️','is-clear'], 1:['Mainly clear','🌤️','is-clear'],
+      2:['Partly cloudy','⛅','is-cloud'], 3:['Overcast','☁️','is-cloud'],
+      45:['Foggy','🌫️','is-cloud'], 48:['Icy fog','🌫️','is-cloud'],
+      51:['Light drizzle','🌦️','is-rain'], 53:['Drizzle','🌦️','is-rain'], 55:['Drizzle','🌧️','is-rain'],
+      61:['Light rain','🌦️','is-rain'], 63:['Rain','🌧️','is-rain'], 65:['Heavy rain','🌧️','is-rain'],
+      66:['Freezing rain','🌧️','is-rain'], 67:['Freezing rain','🌧️','is-rain'],
+      71:['Light snow','🌨️','is-snow'], 73:['Snow','❄️','is-snow'], 75:['Heavy snow','❄️','is-snow'], 77:['Snow grains','🌨️','is-snow'],
+      80:['Rain showers','🌦️','is-rain'], 81:['Showers','🌧️','is-rain'], 82:['Heavy showers','🌧️','is-rain'],
+      85:['Snow showers','🌨️','is-snow'], 86:['Snow showers','❄️','is-snow'],
+      95:['Thunderstorm','⛈️','is-storm'], 96:['Thunderstorm','⛈️','is-storm'], 99:['Thunderstorm','⛈️','is-storm']
+    };
+    function look(code){ return WX[code] || ['See forecast','🌡️','is-cloud']; }
+    function el(id){ return document.getElementById(id); }
+
+    var url='https://api.open-meteo.com/v1/forecast?latitude=29.7604&longitude=-95.3698'
+      +'&current=temperature_2m,apparent_temperature,weathercode,precipitation'
+      +'&daily=weathercode,temperature_2m_max,temperature_2m_min'
+      +'&temperature_unit=fahrenheit&timezone=America%2FChicago&forecast_days=7';
+
+    function renderWeather(data){
+      var cur=data.current, daily=data.daily;
+      var temp=Math.round(cur.temperature_2m);
+      var feels=Math.round(cur.apparent_temperature);
+      var info=look(cur.weathercode);
+      // Precipitation override: if rain is actually falling now, show Rain even
+      // when the (slower) weather code still says cloudy/overcast. Don't override
+      // an existing storm/snow code — only upgrade dry-looking codes to rain.
+      var precip = (typeof cur.precipitation === 'number') ? cur.precipitation : 0;
+      if(precip > 0 && info[2] !== 'is-storm' && info[2] !== 'is-snow' && info[2] !== 'is-rain'){
+        info = (precip >= 0.1) ? ['Rain','🌧️','is-rain'] : ['Light rain','🌦️','is-rain'];
+      }
+      var hi=Math.round(daily.temperature_2m_max[0]);
+      var lo=Math.round(daily.temperature_2m_min[0]);
+
+      el('weather-temp').innerHTML=temp+'<span class="deg">°</span>';
+      el('weather-icon').textContent=info[1];
+      el('weather-desc').textContent=info[0];
+      el('weather-meta').textContent='Feels '+feels+'°  ·  H '+hi+'°  L '+lo+'°';
+      var box=el('weather-box');
+      box.className='weather-box '+info[2];
+
+      // Mobile bar (same data)
+      if(el('mw-temp')){
+        el('mw-temp').textContent=temp+'°';
+        el('mw-icon').textContent=info[1];
+        el('mw-desc').textContent=info[0];
+        el('mw-feels').textContent='Feels '+feels+'°';
+        el('mw-hilo').textContent='H '+hi+'°  L '+lo+'°';
+        var mw=el('mobile-weather');
+        if(mw) mw.className='mobile-weather '+info[2]+(mw.classList.contains('open')?' open':'');
+      }
+
+      // Shabbos (upcoming Saturday) forecast from the daily arrays
+      var times=daily.time || [];
+      for(var i=0;i<times.length;i++){
+        var d=new Date(times[i]+'T12:00:00');
+        if(d.getDay()===6){ // Saturday
+          var sInfo=look(daily.weathercode[i]);
+          var sHi=Math.round(daily.temperature_2m_max[i]);
+          var sLo=Math.round(daily.temperature_2m_min[i]);
+          el('weather-shabbos-val').textContent=sInfo[1]+'  '+sHi+'° / '+sLo+'°';
+          el('weather-shabbos').style.display='flex';
+          if(el('mw-shabbos')){
+            el('mw-shabbos').textContent=sInfo[1]+'  '+sHi+'° / '+sLo+'°';
+            el('mw-shabbos-row').style.display='flex';
+          }
+          break;
+        }
+      }
+    }
+
+    function fetchWeather(timeoutMs){
+      // AbortController cancels the request if it takes too long, so the
+      // widget never hangs waiting behind other page traffic.
+      var ctrl = (typeof AbortController!=='undefined') ? new AbortController() : null;
+      var timer = ctrl ? setTimeout(function(){ ctrl.abort(); }, timeoutMs) : null;
+      var opts = ctrl ? {signal:ctrl.signal} : {};
+      return fetch(url, opts).then(function(r){ if(timer) clearTimeout(timer); return r.json(); });
+    }
+
+    function loadWeather(){
+      fetchWeather(7000)
+        .then(renderWeather)
+        .catch(function(){
+          // First attempt timed out or failed — try once more with a longer window.
+          fetchWeather(12000)
+            .then(renderWeather)
+            .catch(function(){
+              var t=el('weather-temp'); if(t) t.textContent='--°';
+              var d=el('weather-desc'); if(d) d.textContent='Unavailable';
+            });
+        });
+    }
+    loadWeather();
+  })();
 
   // Jobs Board — Google Sheets
   (function() {
@@ -2269,24 +2487,39 @@ function cachedFetchText(u){
     var JOBS_SHEET_TAB = 'Jobs'; // <-- must match your jobs tab name EXACTLY (case-sensitive)
     var url = 'https://docs.google.com/spreadsheets/d/' + JOBS_SHEET_ID +
               '/gviz/tq?tqx=out:json&sheet=' + encodeURIComponent(JOBS_SHEET_TAB) + '&headers=1';
-    cachedFetchText(url)
+    fetch(url)
+      .then(function(r){ return r.text(); })
       .then(function(text) {
         // Strip Google's wrapper
         var json = JSON.parse(text.substring(47, text.length - 2));
-        var rows = json.table.rows;
+        var rows = json.table.rows || [];
         var cols = json.table.cols.map(function(c) { return c.label.toLowerCase(); });
 
+        var MAX_PER_SECTION = 3;
         var hiringCards = '';
         var seekingCards = '';
+        var hiringCount = 0;
+        var seekingCount = 0;
+        var hiringTotal = 0;
+        var seekingTotal = 0;
 
-        rows.forEach(function(row) {
+        // Build a row object, newest first (bottom of the sheet = latest submission)
+        var parsed = rows.map(function(row) {
           var data = {};
           cols.forEach(function(col, i) {
             data[col] = row.c[i] ? (row.c[i].v || '') : '';
           });
+          return data;
+        }).filter(function(data) {
+          // Only approved listings with a title (matches the full Jobs page)
+          return data.title && String(data.approved || '').toLowerCase().trim() === 'yes';
+        }).reverse();
 
-          // Skip empty rows
-          if (!data.title) return;
+        parsed.forEach(function(data) {
+          var status = (data.status || '').toLowerCase().trim();
+          // Count totals for the "see all" logic
+          if (status === 'hiring') hiringTotal++;
+          else if (status === 'seeking') seekingTotal++;
 
           // Pick tag color based on category
           var tagClass = 'job-card-tag';
@@ -2308,15 +2541,20 @@ function cachedFetchText(u){
             '<a href="/jobs" style="display:inline-block;margin-top:8px;font-family:sans-serif;font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--gold);text-decoration:none;">See Full Listing →</a>' +
             '</div>';
 
-          var status = (data.status || '').toLowerCase().trim();
-          if (status === 'hiring') hiringCards += card;
-          else if (status === 'seeking') seekingCards += card;
+          // Only render up to MAX_PER_SECTION cards per section
+          if (status === 'hiring' && hiringCount < MAX_PER_SECTION) { hiringCards += card; hiringCount++; }
+          else if (status === 'seeking' && seekingCount < MAX_PER_SECTION) { seekingCards += card; seekingCount++; }
         });
 
-        document.getElementById('hiring-cards').innerHTML = hiringCards ||
-          '<div style="font-family:sans-serif;font-size:12px;color:var(--muted);text-align:center;padding:12px;">No listings yet.</div>';
-        document.getElementById('seeking-cards').innerHTML = seekingCards ||
-          '<div style="font-family:sans-serif;font-size:12px;color:var(--muted);text-align:center;padding:12px;">No listings yet.</div>';
+        // "See all" link appears when a section has more than we showed
+        var seeAll = '<a href="/jobs" style="display:block;width:100%;box-sizing:border-box;text-align:center;margin-top:10px;font-family:sans-serif;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#fff;background:var(--navy);border-radius:3px;padding:9px;text-decoration:none;">See all jobs →</a>';
+
+        document.getElementById('hiring-cards').innerHTML =
+          (hiringCards || '<div style="font-family:sans-serif;font-size:12px;color:var(--muted);text-align:center;padding:12px;">No listings yet.</div>')
+          + (hiringTotal > MAX_PER_SECTION ? seeAll : '');
+        document.getElementById('seeking-cards').innerHTML =
+          (seekingCards || '<div style="font-family:sans-serif;font-size:12px;color:var(--muted);text-align:center;padding:12px;">No listings yet.</div>')
+          + (seekingTotal > MAX_PER_SECTION ? seeAll : '');
       })
       .catch(function() {
         document.getElementById('hiring-cards').innerHTML =
@@ -2351,7 +2589,8 @@ function cachedFetchText(u){
     function adImg(v){ v=String(v||'').trim(); if(!v) return ''; return /^https?:\/\//i.test(v)?v:AD_IMG_BASE+v; }
     var url = 'https://docs.google.com/spreadsheets/d/' + AD_SHEET_ID +
               '/gviz/tq?tqx=out:json&sheet=' + encodeURIComponent(AD_SHEET_TAB) + '&headers=1';
-    cachedFetchText(url)
+    fetch(url)
+      .then(function(r){ return r.text(); })
       .then(function(text) {
         var json = JSON.parse(text.substring(47, text.length - 2));
         var cols = json.table.cols.map(function(c) { return (c.label || '').toLowerCase().trim(); });

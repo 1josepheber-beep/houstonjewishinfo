@@ -1521,37 +1521,30 @@
       <input name="🔍__search_businesses..." type="text" class="search-input" id="biz-search" placeholder="🔍  Search businesses..." oninput="filterBiz()">
       <select class="search-select" id="biz-cat-select" onchange="filterBiz()">
         <option value="all">All Categories</option>
-        <option value="24hour">24 Hour Services</option>
-        <option value="legal">Attorney / Legal</option>
-        <option value="beauty">Beauty, Sheitels &amp; Alterations</option>
+        <option value="kosher-restaurant">Kosher Restaurant</option>
+        <option value="kosher-market">Kosher Market</option>
         <option value="books-gifts">Books &amp; Gifts</option>
         <option value="catering">Catering &amp; Events</option>
-        <option value="coaching">Coaching</option>
         <option value="community-org">Community Organizations</option>
-        <option value="construction">Construction</option>
-        <option value="doors">Doors &amp; Hardware</option>
-        <option value="electric">Electrician</option>
-        <option value="financial">Financial / Accounting</option>
-        <option value="funeral">Funeral Home</option>
-        <option value="hvac">HVAC</option>
-        <option value="insurance">Insurance</option>
-        <option value="jewelry">Jewelry</option>
-        <option value="jfs">Jewish Family Service</option>
-        <option value="kosher-market">Kosher Market</option>
-        <option value="kosher-restaurant">Kosher Restaurant</option>
-        <option value="marketing">Marketing &amp; Digital</option>
-        <option value="medical">Medical / Healthcare</option>
-        <option value="mortgage">Mortgage Broker</option>
-        <option value="photography">Photography</option>
-        <option value="plumbing">Plumbing</option>
-        <option value="realestate">Real Estate</option>
-        <option value="recruiting">Recruiting &amp; Staffing</option>
         <option value="security">Security</option>
-        <option value="shipping">Shipping &amp; Courier</option>
-        <option value="therapy">Therapy &amp; Counseling</option>
+        <option value="marketing">Marketing &amp; Digital</option>
         <option value="trades">Trades</option>
-        <option value="travel">Travel Agency</option>
+        <option value="medical">Medical / Healthcare</option>
+        <option value="legal">Attorney / Legal</option>
+        <option value="financial">Financial / Accounting</option>
+        <option value="realestate">Real Estate</option>
+        <option value="therapy">Therapy &amp; Counseling</option>
         <option value="tutoring">Tutoring</option>
+        <option value="plumbing">Plumbing</option>
+        <option value="electric">Electrician</option>
+        <option value="hvac">HVAC</option>
+        <option value="construction">Construction</option>
+        <option value="photography">Photography</option>
+        <option value="funeral">Funeral Home</option>
+        <option value="travel">Travel Agency</option>
+        <option value="insurance">Insurance</option>
+        <option value="24hour">24 Hour Services</option>
+        <option value="jfs">Jewish Family Service</option>
       </select>
     </div>
     <div style="font-family:sans-serif;font-size:11px;color:var(--muted);margin:-6px 0 14px;">Search by name, service, or keyword — e.g. &ldquo;plumber&rdquo;, &ldquo;kosher&rdquo;, &ldquo;security&rdquo;.</div>
@@ -1566,12 +1559,6 @@
         Loading directory...
       </div>
     </div><!-- end biz-grid -->
-
-    <div id="biz-pager" style="display:none;align-items:center;justify-content:center;gap:16px;margin:18px 0 8px;font-family:sans-serif;">
-      <button id="biz-prev" onclick="goBizPage(-1)" style="font-size:13px;font-weight:700;padding:8px 16px;border-radius:6px;border:1px solid var(--border);background:#fff;color:var(--navy);cursor:pointer;">‹ Prev</button>
-      <span id="biz-page-label" style="font-size:12px;color:var(--muted);min-width:90px;text-align:center;">Page 1 of 1</span>
-      <button id="biz-next" onclick="goBizPage(1)" style="font-size:13px;font-weight:700;padding:8px 16px;border-radius:6px;border:1px solid var(--border);background:#fff;color:var(--navy);cursor:pointer;">Next ›</button>
-    </div>
 
     <!-- SUBMIT CTA -->
     <div style="background:var(--navy);color:#fff;border-radius:6px;padding:20px 24px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:16px;">
@@ -2391,6 +2378,22 @@ function closeMobileMenu() {
 // ── BROWSE BUSINESSES — Google Sheets ──
 var SHEET_ID = '1in7Ac7zknqyR9neWKOCAjOAG4jXCIVTJQfU6jJ72CV8';
 
+// ===== Sheet data cache (within-visit, 5 min) =====
+// Speeds up tab switches and refetches by reusing recently-fetched sheet data.
+// A hard refresh (Ctrl+Shift+R) always pulls fresh. Affects freshness only, never visibility.
+var SHEET_CACHE_MS = 5 * 60 * 1000;
+var _sheetCache = {};
+function cachedFetchText(url){
+  var now = Date.now();
+  var hit = _sheetCache[url];
+  if (hit && (now - hit.t) < SHEET_CACHE_MS) {
+    return Promise.resolve(hit.v);
+  }
+  return fetch(url).then(function(r){ return r.text(); }).then(function(txt){
+    _sheetCache[url] = { t: Date.now(), v: txt };
+    return txt;
+  });
+}
 
 // ===== GEMACHIM (mirror of the Charities Gemachim tab) =====
 var GEMS_ALL = [];
@@ -2442,7 +2445,7 @@ function renderGemS(){
   var c=document.getElementById('gemS-count'); if(c) c.textContent=list.length;
 }
 (function loadGemS(){
-  fetch('https://docs.google.com/spreadsheets/d/'+SHEET_ID+'/gviz/tq?tqx=out:json&headers=1&sheet=Gemachim').then(function(r){return r.text();}).then(function(text){
+  cachedFetchText('https://docs.google.com/spreadsheets/d/'+SHEET_ID+'/gviz/tq?tqx=out:json&headers=1&sheet=Gemachim').then(function(text){
       var json=JSON.parse(text.substring(47,text.length-2));
       var cols=json.table.cols.map(function(c){return (c.label||'').toLowerCase().trim();});
       var rows=json.table.rows.map(function(row){ var o={}; cols.forEach(function(col,i){ o[col]=gemsVal(row.c?row.c[i]:null); }); return o; })
@@ -2525,7 +2528,7 @@ function renderCharS(){
   var c=document.getElementById('charS-count'); if(c) c.textContent=list.length;
 }
 (function loadCharS(){
-  fetch('https://docs.google.com/spreadsheets/d/'+SHEET_ID+'/gviz/tq?tqx=out:json&headers=1&sheet=Charities').then(function(r){return r.text();}).then(function(text){
+  cachedFetchText('https://docs.google.com/spreadsheets/d/'+SHEET_ID+'/gviz/tq?tqx=out:json&headers=1&sheet=Charities').then(function(text){
       var json=JSON.parse(text.substring(47,text.length-2));
       var cols=json.table.cols.map(function(c){return (c.label||'').toLowerCase().trim();});
       var rows=json.table.rows.map(function(row){ var o={}; cols.forEach(function(col,i){ o[col]=charVal(row.c?row.c[i]:null); }); return o; })
@@ -2569,15 +2572,7 @@ function mapServiceCat(v){
     koshermarket:'kosher-market', koshermarketgrocery:'kosher-market',
     booksgifts:'books-gifts', jewishbooksandgifts:'books-gifts',
     communityorganization:'community-org', communityorg:'community-org',
-    trades:'trades',
-    shipping:'shipping', shippingandcourier:'shipping', courier:'shipping', logistics:'shipping',
-    jewelry:'jewelry', jeweler:'jewelry', diamonds:'jewelry',
-    beauty:'beauty', beautysheitelsandalterations:'beauty', sheitel:'beauty', sheitels:'beauty',
-    wig:'beauty', wigs:'beauty', alterations:'beauty', tailor:'beauty', nails:'beauty', nailtech:'beauty',
-    doors:'doors', doorsandhardware:'doors', locks:'doors', hardware:'doors',
-    mortgage:'mortgage', mortgagebroker:'mortgage',
-    recruiting:'recruiting', recruitingandstaffing:'recruiting', recruiter:'recruiting', staffing:'recruiting',
-    coaching:'coaching', coach:'coaching'
+    trades:'trades'
   };
   return M[k] || '';
 }
@@ -2647,7 +2642,6 @@ function fetchBizTab(tabName, cat) {
       if(tabsLoaded === TOTAL_TABS) {
         var loader = document.getElementById('biz-loading');
         if(loader) loader.style.display = 'none';
-        allBizListings = dedupeBizListings(allBizListings);
         document.getElementById('biz-count').textContent = allBizListings.length;
         renderBizGrid('all');
       }
@@ -2661,37 +2655,6 @@ function fetchBizTab(tabName, cat) {
         renderBizGrid('all');
       }
     });
-}
-
-// Merge duplicate businesses that appear in more than one tab (same business
-// entered under multiple categories). Combines their categories so the single
-// card stays searchable under each, and keeps the best row to display:
-// a premium (CardImage) row wins; otherwise the most complete row.
-function dedupeBizListings(list) {
-  function normName(n){ return String(n||'').toLowerCase().replace(/[^a-z0-9]/g,''); }
-  function completeness(o){
-    var c=0, f=['description','address','phone','email','website','hours','badge','cardimage'];
-    f.forEach(function(k){ if(o[k] && String(o[k]).trim()) c++; });
-    return c;
-  }
-  var groups = {};
-  list.forEach(function(item){
-    var key = normName(item.name);
-    if(!key) return;
-    if(!groups[key]){ groups[key] = item; return; }
-    var keep = groups[key];
-    var pooled = (keep._cats || []).slice();
-    (item._cats || []).forEach(function(c){ if(pooled.indexOf(c) === -1) pooled.push(c); });
-    var keepPrem = !!(keep.cardimage && String(keep.cardimage).trim());
-    var itemPrem = !!(item.cardimage && String(item.cardimage).trim());
-    var winner = keep;
-    if(itemPrem && !keepPrem) winner = item;
-    else if(keepPrem === itemPrem && completeness(item) > completeness(keep)) winner = item;
-    winner._cats = pooled;
-    winner._cat = pooled[0] || winner._cat;
-    groups[key] = winner;
-  });
-  return Object.keys(groups).map(function(k){ return groups[k]; });
 }
 
 function getBadgeClass(badge) {
@@ -2760,10 +2723,6 @@ function buildBizCard(item) {
     '</div></div>';
 }
 
-var BIZ_PER_PAGE = 24;
-var bizPageList = [];   // current filtered+sorted list
-var bizPageNum = 1;     // current page (1-based)
-
 function renderBizGrid(cat) {
   var grid = document.getElementById('biz-grid');
   var filtered = cat === 'all'
@@ -2773,9 +2732,7 @@ function renderBizGrid(cat) {
       });
   filtered = filtered.slice().sort(function(a,b){ return String(a.name||a.businessname||'').localeCompare(String(b.name||b.businessname||''), undefined, {sensitivity:'base'}); });
   document.getElementById('biz-count').textContent = filtered.length;
-
   if(filtered.length === 0) {
-    var pager0 = document.getElementById('biz-pager'); if(pager0) pager0.style.display = 'none';
     var serviceFinderMap = {'catering':'catering','security':'security','marketing':'marketing','trades':'electric'};
     var serviceType = serviceFinderMap[cat];
     var sel = document.getElementById('biz-cat-select');
@@ -2792,50 +2749,7 @@ function renderBizGrid(cat) {
     }
     return;
   }
-
-  // Paginate
-  bizPageList = filtered;
-  bizPageNum = 1;
-  renderBizPage();
-}
-
-function renderBizPage() {
-  var grid = document.getElementById('biz-grid');
-  var total = bizPageList.length;
-  var totalPages = Math.max(1, Math.ceil(total / BIZ_PER_PAGE));
-  if(bizPageNum > totalPages) bizPageNum = totalPages;
-  if(bizPageNum < 1) bizPageNum = 1;
-
-  var start = (bizPageNum - 1) * BIZ_PER_PAGE;
-  var pageItems = bizPageList.slice(start, start + BIZ_PER_PAGE);
-  grid.innerHTML = pageItems.map(buildBizCard).join('');
-
-  // Pager controls: only show if more than one page
-  var pager = document.getElementById('biz-pager');
-  if(pager) {
-    if(totalPages <= 1) {
-      pager.style.display = 'none';
-    } else {
-      pager.style.display = 'flex';
-      document.getElementById('biz-page-label').textContent = 'Page ' + bizPageNum + ' of ' + totalPages;
-      var prev = document.getElementById('biz-prev');
-      var next = document.getElementById('biz-next');
-      prev.disabled = (bizPageNum === 1);
-      next.disabled = (bizPageNum === totalPages);
-      prev.style.opacity = prev.disabled ? '.4' : '1';
-      next.style.opacity = next.disabled ? '.4' : '1';
-      prev.style.cursor = prev.disabled ? 'default' : 'pointer';
-      next.style.cursor = next.disabled ? 'default' : 'pointer';
-    }
-  }
-}
-
-function goBizPage(dir) {
-  bizPageNum += dir;
-  renderBizPage();
-  // Scroll back up to the top of the listings so you're not stranded at the bottom
-  var grid = document.getElementById('biz-grid');
-  if(grid && grid.scrollIntoView) grid.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  grid.innerHTML = filtered.map(buildBizCard).join('');
 }
 
 // Start loading all tabs
@@ -2845,8 +2759,7 @@ bizTabKeys.forEach(function(cat) {
 
 // Pre-load Services sheet on page load to show counts immediately
 function preloadServiceCounts() {
-  fetch('https://docs.google.com/spreadsheets/d/' + SHEET_ID + '/gviz/tq?tqx=out:json&headers=1&sheet=Services')
-    .then(function(r){ return r.text(); })
+  cachedFetchText('https://docs.google.com/spreadsheets/d/' + SHEET_ID + '/gviz/tq?tqx=out:json&headers=1&sheet=Services')
     .then(function(text){
       var json = JSON.parse(text.substring(47, text.length - 2));
       var cols = json.table.cols.map(function(c){return(c.label||'').toLowerCase().trim();});
@@ -2966,13 +2879,9 @@ function filterBiz() {
 
   document.getElementById('biz-count').textContent = filtered.length;
   if(filtered.length === 0) {
-    var pagerE = document.getElementById('biz-pager'); if(pagerE) pagerE.style.display = 'none';
     document.getElementById('biz-grid').innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:40px;font-family:sans-serif;color:var(--muted);">No results found for \"' + raw + '\". Try a different word, or browse the <strong>Find a Service</strong> tab.</div>';
   } else {
-    filtered = filtered.slice().sort(function(a,b){ return String(a.name||a.businessname||'').localeCompare(String(b.name||b.businessname||''), undefined, {sensitivity:'base'}); });
-    bizPageList = filtered;
-    bizPageNum = 1;
-    renderBizPage();
+    document.getElementById('biz-grid').innerHTML = filtered.map(buildBizCard).join('');
   }
 }
 
@@ -2997,11 +2906,7 @@ var serviceLabels = {
   jfs:'Jewish Family Service',
   construction:'Construction',
   '24hour':'24 Hour Services',
-  photography:'Photography',
-  doors:'Doors & Hardware', jewelry:'Jewelry',
-  beauty:'Beauty, Sheitels & Alterations', mortgage:'Mortgage Broker',
-  shipping:'Shipping & Courier', recruiting:'Recruiting & Staffing',
-  coaching:'Coaching'
+  photography:'Photography'
 };
 
 function openService(type) {
@@ -3020,8 +2925,7 @@ function openService(type) {
 
   bodyEl.innerHTML = '<div class="placeholder-card"><strong>Loading providers...</strong></div>';
 
-  fetch('https://docs.google.com/spreadsheets/d/' + SHEET_ID + '/gviz/tq?tqx=out:json&headers=1&sheet=Services')
-    .then(function(r){ return r.text(); })
+  cachedFetchText('https://docs.google.com/spreadsheets/d/' + SHEET_ID + '/gviz/tq?tqx=out:json&headers=1&sheet=Services')
     .then(function(text) {
       var json = JSON.parse(text.substring(47, text.length - 2));
       var cols = json.table.cols.map(function(c) { return (c.label||'').toLowerCase().trim(); });
@@ -3036,14 +2940,6 @@ function openService(type) {
           serviceCache[cat].push(obj);
         });
       });
-      // Financial tile also surfaces mortgage brokers automatically, so a
-      // business tagged just "mortgage" still appears under Financial.
-      if(serviceCache['mortgage']){
-        if(!serviceCache['financial']) serviceCache['financial'] = [];
-        serviceCache['mortgage'].forEach(function(b){
-          if(serviceCache['financial'].indexOf(b) === -1) serviceCache['financial'].push(b);
-        });
-      }
       // Update tile counts dynamically
       document.querySelectorAll('.service-card').forEach(function(card) {
         var onclick = card.getAttribute('onclick') || '';

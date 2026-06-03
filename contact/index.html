@@ -679,18 +679,13 @@
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
     gap: 6px 14px;
-    border: 1px solid #b9b1a0;
-    border-radius: 6px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
     padding: 12px;
     max-height: 220px;
     overflow-y: auto;
-    background: #faf8f3;
-    box-shadow: inset 0 -8px 8px -8px rgba(0,0,0,.12);
+    background: #fff;
   }
-  .cat-checks::-webkit-scrollbar { width: 10px; }
-  .cat-checks::-webkit-scrollbar-track { background: #ece7db; border-radius: 0 6px 6px 0; }
-  .cat-checks::-webkit-scrollbar-thumb { background: #b9b1a0; border-radius: 6px; border: 2px solid #ece7db; }
-  .cat-checks::-webkit-scrollbar-thumb:hover { background: #9a917e; }
   .cat-checks label {
     display: flex; align-items: center; gap: 7px;
     font-family: sans-serif; font-size: 13px; cursor: pointer; font-weight: 400;
@@ -1250,31 +1245,24 @@
             <div class="cat-checks">
               <label><input type="checkbox" name="category" value="24 Hour Services"> 24 Hour Services</label>
               <label><input type="checkbox" name="category" value="Attorney / Legal"> Attorney / Legal</label>
-              <label><input type="checkbox" name="category" value="Beauty, Sheitels & Alterations"> Beauty, Sheitels &amp; Alterations</label>
               <label><input type="checkbox" name="category" value="Catering & Events"> Catering &amp; Events</label>
-              <label><input type="checkbox" name="category" value="Coaching"> Coaching</label>
               <label><input type="checkbox" name="category" value="Community Organization"> Community Organization</label>
               <label><input type="checkbox" name="category" value="Construction"> Construction</label>
-              <label><input type="checkbox" name="category" value="Doors & Hardware"> Doors &amp; Hardware</label>
               <label><input type="checkbox" name="category" value="Electrician"> Electrician</label>
               <label><input type="checkbox" name="category" value="Financial / Accounting"> Financial / Accounting</label>
               <label><input type="checkbox" name="category" value="Funeral Home"> Funeral Home</label>
               <label><input type="checkbox" name="category" value="HVAC"> HVAC</label>
               <label><input type="checkbox" name="category" value="Insurance"> Insurance</label>
-              <label><input type="checkbox" name="category" value="Jewelry"> Jewelry</label>
               <label><input type="checkbox" name="category" value="Jewish Books & Gifts"> Jewish Books &amp; Gifts</label>
               <label><input type="checkbox" name="category" value="Jewish Family Service"> Jewish Family Service</label>
               <label><input type="checkbox" name="category" value="Kosher Market / Grocery"> Kosher Market / Grocery</label>
               <label><input type="checkbox" name="category" value="Kosher Restaurant"> Kosher Restaurant</label>
               <label><input type="checkbox" name="category" value="Marketing & Digital"> Marketing &amp; Digital</label>
               <label><input type="checkbox" name="category" value="Medical / Healthcare"> Medical / Healthcare</label>
-              <label><input type="checkbox" name="category" value="Mortgage Broker"> Mortgage Broker</label>
               <label><input type="checkbox" name="category" value="Photography"> Photography</label>
               <label><input type="checkbox" name="category" value="Plumbing"> Plumbing</label>
               <label><input type="checkbox" name="category" value="Real Estate"> Real Estate</label>
-              <label><input type="checkbox" name="category" value="Recruiting & Staffing"> Recruiting &amp; Staffing</label>
               <label><input type="checkbox" name="category" value="Security Services"> Security Services</label>
-              <label><input type="checkbox" name="category" value="Shipping & Courier"> Shipping &amp; Courier</label>
               <label><input type="checkbox" name="category" value="Therapy & Counseling"> Therapy &amp; Counseling</label>
               <label><input type="checkbox" name="category" value="Trades"> Trades</label>
               <label><input type="checkbox" name="category" value="Travel Agency"> Travel Agency</label>
