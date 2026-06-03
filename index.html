@@ -1688,6 +1688,8 @@
       #community-feed .article-headline{font-family:'Playfair Display',serif;font-size:21px;font-weight:700;color:var(--navy);line-height:1.25;margin:4px 0;}
       #community-feed .cf-meta{display:flex;flex-wrap:wrap;gap:14px;color:var(--muted);font-family:sans-serif;font-size:13px;margin:6px 0 8px;}
       #community-feed .cf-desc{font-family:sans-serif;color:#444;font-size:14px;line-height:1.6;margin:0;}
+      #community-feed .desc-inline-link{color:#b8860b;font-weight:700;text-decoration:underline;text-underline-offset:2px;}
+      #community-feed .desc-inline-link:hover{color:#1a2744;}
       #community-feed .cf-desc.clamped{display:-webkit-box;-webkit-line-clamp:5;-webkit-box-orient:vertical;overflow:hidden;}
       #community-feed .cf-pass-extra{display:none;}
       #community-feed .cf-pass-extra.open{display:block;}
@@ -2023,6 +2025,19 @@
       if(/^(https?:\/\/|mailto:|tel:|\/)/i.test(v)) return v;
       return 'https://'+v;
     }
+    // Render a description safely, converting [link:Text|url] shortcodes into
+    // clickable links. Everything is escaped first (so no raw HTML from the
+    // sheet can run), then ONLY the shortcode pattern becomes a real link.
+    function descHTML(text){
+      var safe = esc(String(text||'')).replace(/\n/g,'<br>');
+      // After escaping, the shortcode looks like: [link:Label|https://...]
+      return safe.replace(/\[link:([^\|\]]+)\|([^\]]+)\]/gi, function(m, label, url){
+        var u = extURL(url.trim());
+        // only allow http(s)/mailto/tel/internal targets through extURL
+        if(!/^(https?:\/\/|mailto:|tel:|\/)/i.test(u)) return esc(label);
+        return '<a href="'+attr(u)+'" target="_blank" rel="noopener" class="desc-inline-link">'+label.trim()+'</a>';
+      });
+    }
     function firstLine(s){return String(s||'').split('\n')[0].trim();}
     function cleanLoc(s){return String(s||'').replace(/\s*\n\s*/g,', ').replace(/,\s*$/,'').trim();}
     function imgURL(v,base){v=String(v||'').trim();if(!v)return '';return /^https?:\/\//i.test(v)?v:base+v;}
@@ -2106,7 +2121,8 @@
       if(x.loc)mi.push('<span>\uD83D\uDCCD '+esc(cleanLoc(x.loc))+'</span>');
       if(x.org)mi.push('<span>\u270D\uFE0F '+esc(x.org)+'</span>');
       var meta=mi.length?'<div class="cf-meta">'+mi.join('')+'</div>':'';
-      var desc=x.desc?'<p class="cf-desc">'+esc(x.desc).replace(/\n/g,'<br>')+'</p><button type="button" class="read-more-btn" style="display:none;">Read more \u2193</button>':'';
+      var descBody=(x.type==='event'||x.type==='news')?descHTML(x.desc):esc(x.desc).replace(/\n/g,'<br>');
+      var desc=x.desc?'<p class="cf-desc">'+descBody+'</p><button type="button" class="read-more-btn" style="display:none;">Read more \u2193</button>':'';
       var foot='';
       if(x.type==='event'){
         var primary=x.link?'<a href="'+attr(extURL(x.link))+'" target="_blank" rel="noopener" class="article-read-more">'+esc(x.linkText||'More Details')+'</a>':'';
