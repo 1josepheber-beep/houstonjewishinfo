@@ -933,6 +933,7 @@
     display: flex; flex-direction: column;
     align-items: flex-end; gap: 8px;
     flex-shrink: 0;
+    height: 100%;
   }
   .job-title {
     font-family: 'Playfair Display', serif;
@@ -969,12 +970,17 @@
   .job-desc-link { color: var(--gold); font-weight: 700; text-decoration: underline; text-underline-offset: 2px; }
   .job-desc-link:hover { color: var(--navy); }
   .job-apply-btn {
-    display: inline-block; margin-top: 8px;
+    display: inline-block; margin-top: auto;
     font-family: sans-serif; font-size: 12px; font-weight: 700;
     letter-spacing: .03em; text-decoration: none;
-    color: #fff; background: linear-gradient(90deg,#3b6d11,#63991f);
+    color: #fff !important; background: linear-gradient(90deg,#3b6d11,#63991f);
     padding: 8px 18px; border-radius: 6px; white-space: nowrap;
-    transition: filter .15s;
+    transition: filter .15s, box-shadow .15s;
+  }
+  .job-apply-btn:hover {
+    color: #fff !important;
+    filter: brightness(1.12);
+    box-shadow: 0 2px 8px rgba(59,109,17,.35);
   }
   .job-apply-btn:hover { filter: brightness(1.08); }
   .job-pay {
@@ -1324,9 +1330,21 @@ function buildJobCard(job){
   if(job.email) contact+='<a href="mailto:'+job.email+'">✉️ '+job.email+'</a>';
 
   var applyRaw = job.applyurl || job.applylink || job.apply || '';
-  var applyURL = jobExtURL(applyRaw);
-  var applyBtn = applyURL
-    ? '<a class="job-apply-btn" href="'+String(applyURL).replace(/"/g,'&quot;')+'" target="_blank" rel="noopener">Apply →</a>'
+  applyRaw = String(applyRaw).trim();
+  var applyHref = '';
+  if(applyRaw){
+    // Check for an explicit mailto:/http(s) prefix first, then a bare email,
+    // otherwise treat it as a web address.
+    if(/^(mailto:|https?:\/\/|tel:|\/)/i.test(applyRaw)){
+      applyHref = applyRaw;
+    } else if(/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(applyRaw)){
+      applyHref = 'mailto:' + applyRaw;
+    } else {
+      applyHref = jobExtURL(applyRaw);
+    }
+  }
+  var applyBtn = applyHref
+    ? '<a class="job-apply-btn" href="'+String(applyHref).replace(/"/g,'&quot;')+'"'+(/^mailto:/i.test(applyHref)?'':' target="_blank" rel="noopener"')+'>Apply →</a>'
     : '';
 
   return '<div class="job-listing'+(status==='seeking'?' seeking':'')+'">'+
