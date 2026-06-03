@@ -933,6 +933,16 @@
     outline: none;
     cursor: pointer;
   }
+  /* Attempt to cap the open dropdown height so it scrolls within a compact
+     box rather than expanding very tall (a shorter popup is less likely to
+     flip upward). Browser support for this on a native <select> varies. */
+  #biz-cat-select {
+    -webkit-appearance: menulist;
+    appearance: menulist;
+  }
+  #biz-cat-select option {
+    padding: 4px 8px;
+  }
   .search-btn {
     background: var(--navy);
     color: #fff;
