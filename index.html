@@ -2403,7 +2403,7 @@
       +'&daily=weathercode,temperature_2m_max,temperature_2m_min'
       +'&temperature_unit=fahrenheit&timezone=America%2FChicago&forecast_days=7';
 
-    fetch(url).then(function(r){ return r.json(); }).then(function(data){
+    function renderWeather(data){
       var cur=data.current, daily=data.daily;
       var temp=Math.round(cur.temperature_2m);
       var feels=Math.round(cur.apparent_temperature);
@@ -2431,9 +2431,6 @@
 
       // Shabbos (upcoming Saturday) forecast from the daily arrays
       var times=daily.time || [];
-      var todayIdx=0; // Open-Meteo daily[0] is today
-      // find the next Saturday within the forecast window
-      var now=new Date();
       for(var i=0;i<times.length;i++){
         var d=new Date(times[i]+'T12:00:00');
         if(d.getDay()===6){ // Saturday
@@ -2449,10 +2446,31 @@
           break;
         }
       }
-    }).catch(function(){
-      var t=el('weather-temp'); if(t) t.textContent='--°';
-      var d=el('weather-desc'); if(d) d.textContent='Unavailable';
-    });
+    }
+
+    function fetchWeather(timeoutMs){
+      // AbortController cancels the request if it takes too long, so the
+      // widget never hangs waiting behind other page traffic.
+      var ctrl = (typeof AbortController!=='undefined') ? new AbortController() : null;
+      var timer = ctrl ? setTimeout(function(){ ctrl.abort(); }, timeoutMs) : null;
+      var opts = ctrl ? {signal:ctrl.signal} : {};
+      return fetch(url, opts).then(function(r){ if(timer) clearTimeout(timer); return r.json(); });
+    }
+
+    function loadWeather(){
+      fetchWeather(7000)
+        .then(renderWeather)
+        .catch(function(){
+          // First attempt timed out or failed — try once more with a longer window.
+          fetchWeather(12000)
+            .then(renderWeather)
+            .catch(function(){
+              var t=el('weather-temp'); if(t) t.textContent='--°';
+              var d=el('weather-desc'); if(d) d.textContent='Unavailable';
+            });
+        });
+    }
+    loadWeather();
   })();
 
   // Jobs Board — Google Sheets
@@ -2466,20 +2484,34 @@
       .then(function(text) {
         // Strip Google's wrapper
         var json = JSON.parse(text.substring(47, text.length - 2));
-        var rows = json.table.rows;
+        var rows = json.table.rows || [];
         var cols = json.table.cols.map(function(c) { return c.label.toLowerCase(); });
 
+        var MAX_PER_SECTION = 3;
         var hiringCards = '';
         var seekingCards = '';
+        var hiringCount = 0;
+        var seekingCount = 0;
+        var hiringTotal = 0;
+        var seekingTotal = 0;
 
-        rows.forEach(function(row) {
+        // Build a row object, newest first (bottom of the sheet = latest submission)
+        var parsed = rows.map(function(row) {
           var data = {};
           cols.forEach(function(col, i) {
             data[col] = row.c[i] ? (row.c[i].v || '') : '';
           });
+          return data;
+        }).filter(function(data) {
+          // Only approved listings with a title (matches the full Jobs page)
+          return data.title && String(data.approved || '').toLowerCase().trim() === 'yes';
+        }).reverse();
 
-          // Skip empty rows
-          if (!data.title) return;
+        parsed.forEach(function(data) {
+          var status = (data.status || '').toLowerCase().trim();
+          // Count totals for the "see all" logic
+          if (status === 'hiring') hiringTotal++;
+          else if (status === 'seeking') seekingTotal++;
 
           // Pick tag color based on category
           var tagClass = 'job-card-tag';
@@ -2501,15 +2533,20 @@
             '<a href="/jobs" style="display:inline-block;margin-top:8px;font-family:sans-serif;font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--gold);text-decoration:none;">See Full Listing →</a>' +
             '</div>';
 
-          var status = (data.status || '').toLowerCase().trim();
-          if (status === 'hiring') hiringCards += card;
-          else if (status === 'seeking') seekingCards += card;
+          // Only render up to MAX_PER_SECTION cards per section
+          if (status === 'hiring' && hiringCount < MAX_PER_SECTION) { hiringCards += card; hiringCount++; }
+          else if (status === 'seeking' && seekingCount < MAX_PER_SECTION) { seekingCards += card; seekingCount++; }
         });
 
-        document.getElementById('hiring-cards').innerHTML = hiringCards ||
-          '<div style="font-family:sans-serif;font-size:12px;color:var(--muted);text-align:center;padding:12px;">No listings yet.</div>';
-        document.getElementById('seeking-cards').innerHTML = seekingCards ||
-          '<div style="font-family:sans-serif;font-size:12px;color:var(--muted);text-align:center;padding:12px;">No listings yet.</div>';
+        // "See all" link appears when a section has more than we showed
+        var seeAll = '<a href="/jobs" style="display:block;text-align:center;margin-top:10px;font-family:sans-serif;font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:#fff;background:var(--navy);border-radius:6px;padding:9px 12px;text-decoration:none;">See all jobs →</a>';
+
+        document.getElementById('hiring-cards').innerHTML =
+          (hiringCards || '<div style="font-family:sans-serif;font-size:12px;color:var(--muted);text-align:center;padding:12px;">No listings yet.</div>')
+          + (hiringTotal > MAX_PER_SECTION ? seeAll : '');
+        document.getElementById('seeking-cards').innerHTML =
+          (seekingCards || '<div style="font-family:sans-serif;font-size:12px;color:var(--muted);text-align:center;padding:12px;">No listings yet.</div>')
+          + (seekingTotal > MAX_PER_SECTION ? seeAll : '');
       })
       .catch(function() {
         document.getElementById('hiring-cards').innerHTML =
