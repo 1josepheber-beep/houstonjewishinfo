@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Search — Houston Jewish Info</title>
+<meta name="description" content="Search Houston Jewish Info — shuls, mikvahs, kosher food, jobs, charities, schools, events, and community posts including past Mazal Tovs.">
+<link rel="canonical" href="https://houstonjewishinfo.com/search/">
+<meta name="robots" content="noindex,follow">
+<link rel="icon" href="/favicon.ico">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<style>
+  :root{--navy:#1a2744;--gold:#c9933a;--cream:#faf8f3;--ink:#1c1c1c;--muted:#6b6b6b;--border:#e0dbd0;--white:#fff;--red:#b83030;}
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--cream);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;line-height:1.5;}
+  a{color:var(--navy);}
+  .s-head{background:var(--navy);color:var(--white);}
+  .s-head-inner{max-width:1080px;margin:0 auto;padding:14px 18px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;}
+  .s-brand{display:flex;flex-direction:column;text-decoration:none;color:var(--white);}
+  .s-brand-title{font-family:Georgia,"Times New Roman",serif;font-size:24px;font-weight:700;letter-spacing:-.5px;line-height:1;}
+  .s-brand-tag{font-size:11px;color:#cdd3e0;letter-spacing:.04em;margin-top:3px;}
+  .s-nav{display:flex;flex-wrap:wrap;gap:14px;}
+  .s-nav a{color:#dfe3ee;text-decoration:none;font-size:13px;font-weight:600;}
+  .s-nav a:hover{color:var(--gold);}
+  .s-main{max-width:1080px;margin:0 auto;padding:26px 18px 60px;}
+  .s-h1{font-family:Georgia,"Times New Roman",serif;color:var(--navy);font-size:30px;margin:0 0 14px;}
+  .s-form{display:flex;gap:0;max-width:640px;margin:0 0 20px;}
+  .s-form input{flex:1;min-width:0;padding:13px 16px;font-size:16px;border:1.5px solid var(--border);border-right:none;border-radius:6px 0 0 6px;outline:none;background:var(--white);color:var(--ink);}
+  .s-form input:focus{border-color:var(--gold);}
+  .s-form button{padding:13px 22px;background:var(--navy);color:var(--white);border:1.5px solid var(--navy);border-radius:0 6px 6px 0;font-size:15px;font-weight:600;cursor:pointer;}
+  .s-form button:hover{background:#0f1a30;}
+  .s-suggest{margin:0 0 18px;display:flex;flex-direction:column;gap:8px;}
+  .s-suggest-card{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;background:#fff;border:1px solid var(--border);border-left:4px solid var(--gold);border-radius:6px;padding:12px 16px;}
+  .s-suggest-card span{color:var(--muted);font-size:14px;}
+  .s-suggest-card a{color:var(--navy);font-weight:700;text-decoration:none;font-size:15px;white-space:nowrap;}
+  .s-suggest-card a:hover{color:var(--gold);}
+  .s-status{color:var(--muted);font-size:14px;margin:0 0 16px;}
+  .s-results{display:grid;grid-template-columns:1fr;gap:14px;}
+  .s-card{background:var(--white);border:1px solid var(--border);border-radius:8px;padding:16px 18px;}
+  .s-card-top{display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:7px;}
+  .s-tag{font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;padding:3px 9px;border-radius:20px;color:var(--white);}
+  .s-tag-news{background:#3a6ea5;}
+  .s-tag-event{background:#2e7d52;}
+  .s-tag-mazal{background:#a3375a;}
+  .s-tag-passing{background:#5b5b5b;}
+  .s-badge{font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:3px 9px;border-radius:20px;background:#f3ead6;color:#8a6516;}
+  .s-date{margin-left:auto;font-size:12px;color:var(--muted);letter-spacing:.03em;}
+  .s-card-title{font-family:Georgia,"Times New Roman",serif;color:var(--navy);font-size:19px;margin:0 0 4px;}
+  .s-card-sub{font-size:13px;color:var(--muted);margin-bottom:6px;}
+  .s-card-body{font-size:14.5px;color:var(--ink);margin:6px 0 0;}
+  .s-card-link{display:inline-block;margin-top:10px;font-size:14px;font-weight:600;color:var(--navy);text-decoration:none;border-bottom:2px solid var(--gold);}
+  .s-card-link:hover{color:var(--gold);}
+  .s-cats{margin-top:8px;}
+  .s-cats-title{font-family:Georgia,serif;color:var(--navy);font-size:17px;margin:0 0 12px;}
+  .s-cats-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;}
+  .s-cats-grid a{display:block;background:#fff;border:1px solid var(--border);border-radius:6px;padding:14px 16px;text-decoration:none;color:var(--navy);font-weight:600;font-size:14.5px;}
+  .s-cats-grid a:hover{border-color:var(--gold);color:var(--gold);}
+  .s-foot{background:var(--navy);color:#c9cfdd;text-align:center;padding:22px 18px;font-size:13px;}
+  .s-foot a{color:#dfe3ee;}
+  @media(max-width:560px){.s-h1{font-size:25px;}.s-brand-title{font-size:20px;}.s-form input,.s-form button{padding:11px 14px;font-size:15px;}}
+</style>
+</head>
+<body>
+<header class="s-head">
+  <div class="s-head-inner">
+    <a class="s-brand" href="/">
+      <span class="s-brand-title">Houston Jewish Info</span>
+      <span class="s-brand-tag">Your Houston Frum Community Hub</span>
+    </a>
+    <nav class="s-nav">
+      <a href="/">Home</a>
+      <a href="/services">Services</a>
+      <a href="/shuls">Shuls</a>
+      <a href="/jobs">Jobs</a>
+      <a href="/charities">Charities</a>
+      <a href="/contact">Contact</a>
+    </nav>
+  </div>
+</header>
+
+<main class="s-main">
+  <h1 class="s-h1">Search</h1>
+  <form class="s-form" action="/search/" method="get" role="search">
+    <input id="q" type="search" name="q" placeholder="Search shuls, kosher food, jobs, a Mazal Tov name…" aria-label="Search Houston Jewish Info" autocomplete="off">
+    <button type="submit">Search</button>
+  </form>
+  <div id="suggest" class="s-suggest"></div>
+  <div id="status" class="s-status"></div>
+  <div id="results" class="s-results"></div>
+</main>
+
+<footer class="s-foot">
+  &copy; <span id="yr"></span> Houston Jewish Info &nbsp;·&nbsp; <a href="/">Home</a> &nbsp;·&nbsp; <a href="/contact">Contact</a>
+</footer>
+
+<script>
+(function(){
+  var SHEET_ID='1in7Ac7zknqyR9neWKOCAjOAG4jXCIVTJQfU6jJ72CV8';
+  var TODAY=new Date(); TODAY.setHours(0,0,0,0);
+  var MAZAL_CUTOFF=new Date(TODAY.getTime()-14*86400000);
+
+  var y=document.getElementById('yr'); if(y) y.textContent=new Date().getFullYear();
+
+  function qparam(){ try{ var m=location.search.match(/[?&]q=([^&]*)/); return m?decodeURIComponent(m[1].replace(/\+/g,' ')).trim():''; }catch(e){ return ''; } }
+  var Q=qparam();
+  var input=document.getElementById('q'); if(input){ input.value=Q; if(!Q) input.focus(); }
+  if(Q) document.title='Search: '+Q+' — Houston Jewish Info';
+
+  function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+  function norm(s){ return String(s==null?'':s).toLowerCase(); }
+  function trunc(s,n){ s=String(s==null?'':s).replace(/\s+/g,' ').trim(); return s.length>n? s.slice(0,n-1).trim()+'\u2026' : s; }
+  function extURL(u){ u=String(u||'').trim(); if(!u) return ''; if(/^(https?:\/\/|mailto:|tel:|\/)/i.test(u)) return u; return 'https://'+u; }
+
+  /* ---------- keyword router ---------- */
+  var ROUTES=[
+    {kw:['shul','shuls','synagogue','synagogues','minyan','minyanim','minyon','davening','daven','shacharis','mincha','maariv','congregation','temple','eruv','eiruv'],url:'/shuls',label:'Shuls, Synagogues & Eruv Map'},
+    {kw:['mikvah','mikvahs','mikvaot','mikveh','mikva','mikvas'],url:'/mikvahs',label:'Mikvahs'},
+    {kw:['school','schools','education','yeshiva','yeshivas','preschool','tutor','tutoring','learning','kollel'],url:'/education',label:'Schools & Education'},
+    {kw:['kosher','restaurant','restaurants','dining','food','eat','grocery','market','catering','caterer','bakery'],url:'/services',label:'Kosher Food & Services'},
+    {kw:['job','jobs','hiring','work','employment','position','career','careers'],url:'/jobs',label:'Jobs Board'},
+    {kw:['charity','charities','gemach','gemachim','tzedakah','donate','donation','nonprofit','chesed'],url:'/charities',label:'Charities & Gemachim'},
+    {kw:['real','realtor','realty','apartment','rent','rental','mortgage','property','house','home','homes'],url:'/real-estate',label:'Real Estate'},
+    {kw:['activities','attraction','attractions','outing','park','museum'],url:'/things-to-do',label:'Things to Do'},
+    {kw:['service','services','business','businesses','directory','plumber','electrician','attorney','lawyer','doctor','contractor','dentist'],url:'/services',label:'Community Services Directory'},
+    {kw:['contact','submit','advertise','advertising','sponsor'],url:'/contact',label:'Contact / Submit'}
+  ];
+  function routeMatches(){
+    if(!Q) return [];
+    var q=' '+norm(Q).replace(/[^a-z0-9 ]+/g,' ').replace(/\s+/g,' ').trim()+' ';
+    var seen={}, hits=[];
+    ROUTES.forEach(function(r){
+      for(var i=0;i<r.kw.length;i++){
+        if(q.indexOf(' '+r.kw[i]+' ')>-1){ if(!seen[r.url]){ seen[r.url]=1; hits.push(r); } break; }
+      }
+    });
+    return hits.slice(0,2);
+  }
+
+  var CATS=[
+    {url:'/services',label:'Services & Kosher Food'},
+    {url:'/shuls',label:'Shuls & Eruv Map'},
+    {url:'/mikvahs',label:'Mikvahs'},
+    {url:'/education',label:'Schools & Education'},
+    {url:'/jobs',label:'Jobs Board'},
+    {url:'/charities',label:'Charities & Gemachim'},
+    {url:'/real-estate',label:'Real Estate'},
+    {url:'/things-to-do',label:'Things to Do'},
+    {url:'/contact',label:'Contact / Submit'}
+  ];
+  function catsHTML(heading){
+    var h='<div class="s-cats"><div class="s-cats-title">'+esc(heading)+'</div><div class="s-cats-grid">';
+    CATS.forEach(function(c){ h+='<a href="'+esc(c.url)+'">'+esc(c.label)+'</a>'; });
+    return h+'</div></div>';
+  }
+
+  /* ---------- google sheet content search ---------- */
+  function cellStr(c){ if(!c) return ''; return c.f!=null? String(c.f) : (c.v==null?'':String(c.v)); }
+  function parseDate(c){
+    if(!c) return null;
+    var v=c.v,f=c.f;
+    if(typeof v==='string'&&/^Date\(/.test(v)){ var n=v.match(/\d+/g); if(n) return new Date(+n[0],+n[1],+(n[2]||1)); }
+    if(Object.prototype.toString.call(v)==='[object Date]') return v;
+    if(typeof f==='string'){ var t=Date.parse(f); if(!isNaN(t)) return new Date(t); }
+    if(typeof v==='string'){ var t2=Date.parse(v); if(!isNaN(t2)) return new Date(t2); }
+    return null;
+  }
+  function tabURL(tab){ return 'https://docs.google.com/spreadsheets/d/'+SHEET_ID+'/gviz/tq?tqx=out:json&headers=1&sheet='+encodeURIComponent(tab); }
+  function getTab(tab){
+    return fetch(tabURL(tab)).then(function(r){ return r.text(); }).then(function(text){
+      var json=JSON.parse(text.substring(47,text.length-2));
+      var cols=json.table.cols.map(function(c){ return (c.label||'').toLowerCase().trim(); });
+      return (json.table.rows||[]).map(function(row){
+        var o={_cells:{}};
+        cols.forEach(function(col,i){ var c=row.c?row.c[i]:null; o[col]=cellStr(c); o._cells[col]=c; });
+        return o;
+      });
+    }).catch(function(){ return []; });
+  }
+  function active(o){ return norm(o.status).trim()==='active'; }
+  function fmtDate(d){ return d? d.toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'}) : ''; }
+
+  var terms=norm(Q).split(/\s+/).filter(Boolean);
+  function hit(text){ text=norm(text); for(var i=0;i<terms.length;i++){ if(text.indexOf(terms[i])<0) return false; } return true; }
+
+  function build(stories,events,mazals,passings){
+    var out=[];
+    (stories||[]).forEach(function(r){ if(!active(r)||!r.headline) return;
+      if(hit([r.headline,r.label,r.byline,r.excerpt].join(' ')))
+        out.push({type:'news',label:'News',title:r.headline,date:parseDate(r._cells.date),sub:r.byline||r.label||'',body:r.excerpt||'',link:r.linkurl||'',badge:''});
+    });
+    (events||[]).forEach(function(r){ if(!active(r)||!r.title) return;
+      var d=parseDate(r._cells.date);
+      if(hit([r.title,r.category,r.presenter,r.location,r.description].join(' ')))
+        out.push({type:'event',label:'Event',title:r.title,date:d,sub:r.location||r.presenter||'',body:r.description||'',link:r.ticketurl||'',badge:(d&&d<TODAY)?'Past event':''});
+    });
+    (mazals||[]).forEach(function(r){ if(!active(r)||!r.name) return;
+      var d=parseDate(r._cells.date);
+      if(hit([r.name,r.type,r.city,r.message].join(' ')))
+        out.push({type:'mazal',label:r.type||'Mazal Tov',title:r.name,date:d,sub:r.city||'',body:r.message||'',link:'',badge:(d&&d<MAZAL_CUTOFF)?'Archived':''});
+    });
+    (passings||[]).forEach(function(r){ if(!active(r)||!r.name) return;
+      var parts=[]; if(r.levaya)parts.push('Levaya: '+r.levaya); if(r.shiva)parts.push('Shiva: '+r.shiva); if(r.message)parts.push(r.message);
+      if(hit([r.name,r.city,r.message].join(' ')))
+        out.push({type:'passing',label:'In Memoriam',title:r.name,date:parseDate(r._cells.date),sub:r.city||'',body:parts.join(' \u00b7 '),link:'',badge:''});
+    });
+    return out;
+  }
+
+  function cardHTML(x){
+    var top='<span class="s-tag s-tag-'+x.type+'">'+esc(x.label)+'</span>';
+    if(x.badge) top+='<span class="s-badge">'+esc(x.badge)+'</span>';
+    if(x.date) top+='<span class="s-date">'+esc(fmtDate(x.date))+'</span>';
+    var h='<article class="s-card"><div class="s-card-top">'+top+'</div>';
+    h+='<h3 class="s-card-title">'+esc(x.title)+'</h3>';
+    if(x.sub) h+='<div class="s-card-sub">'+esc(x.sub)+'</div>';
+    if(x.body) h+='<p class="s-card-body">'+esc(trunc(x.body,220))+'</p>';
+    var u=extURL(x.link);
+    if(u) h+='<a class="s-card-link" href="'+esc(u)+'" target="_blank" rel="noopener">Visit \u2197</a>';
+    return h+'</article>';
+  }
+
+  /* ---------- run ---------- */
+  var sug=document.getElementById('suggest');
+  var status=document.getElementById('status');
+  var results=document.getElementById('results');
+
+  var routes=routeMatches();
+  if(routes.length){
+    sug.innerHTML=routes.map(function(r){
+      return '<div class="s-suggest-card"><span>Looking for '+esc(r.label)+'?</span><a href="'+esc(r.url)+'">Go to '+esc(r.label)+' \u2192</a></div>';
+    }).join('');
+  }
+
+  if(!Q){
+    status.textContent='';
+    results.innerHTML=catsHTML('Browse a section');
+    return;
+  }
+
+  status.textContent='Searching\u2026';
+  Promise.all([getTab('Stories'),getTab('Events'),getTab('MazalTov'),getTab('Passings')]).then(function(res){
+    var items=build(res[0],res[1],res[2],res[3]);
+    items.sort(function(a,b){ var at=a.date?a.date.getTime():-Infinity, bt=b.date?b.date.getTime():-Infinity; return bt-at; });
+    if(items.length){
+      status.textContent='Found '+items.length+' result'+(items.length===1?'':'s')+' for \u201c'+Q+'\u201d';
+      results.innerHTML=items.map(cardHTML).join('');
+    } else {
+      status.textContent='No posts matched \u201c'+Q+'\u201d.';
+      results.innerHTML=(routes.length?'':'')+catsHTML('Try a section instead');
+    }
+  }).catch(function(){
+    status.textContent='Couldn\u2019t load results just now \u2014 please try again in a moment.';
+    results.innerHTML=catsHTML('Browse a section');
+  });
+})();
+</script>
+</body>
+</html>
