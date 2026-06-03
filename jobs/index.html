@@ -904,13 +904,26 @@
     background: var(--white);
     border: 1px solid var(--border);
     border-radius: 8px;
-    padding: 18px 20px;
+    padding: 22px 20px 18px;
     display: grid;
     grid-template-columns: 1fr auto;
     gap: 8px;
     transition: box-shadow .2s, border-color .2s;
     cursor: default;
+    position: relative;
+    overflow: hidden;
   }
+  .job-listing::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 8px;
+    background: linear-gradient(90deg, #3b6d11, #63991f);
+  }
+  .job-listing.seeking::before {
+    background: linear-gradient(90deg, #185fa5, #378add);
+  }
+  .job-listing:hover { box-shadow: 0 4px 16px rgba(0,0,0,.12); }
   .job-listing:hover {
     box-shadow: 0 4px 16px rgba(0,0,0,.1);
     border-color: var(--navy);
@@ -1257,8 +1270,8 @@ function buildJobCard(job){
   // Build tag pills
   var tagHtml='';
   // Status badge
-  if(status==='hiring') tagHtml+='<span class="job-tag tag-type">💼 Hiring</span>';
-  else if(status==='seeking') tagHtml+='<span class="job-tag tag-type" style="background:#f0f8f0;color:#2a7a2a;">🔍 Seeking</span>';
+  if(status==='hiring') tagHtml+='<span class="job-tag tag-type" style="background:#edf7ed;color:#2a6b2a;">💼 Hiring</span>';
+  else if(status==='seeking') tagHtml+='<span class="job-tag tag-type" style="background:#e6f1fb;color:#185fa5;">🔍 Seeking</span>';
 
   // Type
   if(type) tagHtml+='<span class="job-tag tag-cat">'+job.type+'</span>';
@@ -1275,7 +1288,7 @@ function buildJobCard(job){
   if(job.phone) contact+='<a href="tel:'+job.phone+'">📞 '+job.phone+'</a>';
   if(job.email) contact+='<a href="mailto:'+job.email+'">✉️ '+job.email+'</a>';
 
-  return '<div class="job-listing">'+
+  return '<div class="job-listing'+(status==='seeking'?' seeking':'')+'">'+
     '<div class="job-listing-left">'+
     '<div class="job-title">'+job.title+'</div>'+
     (org?'<div class="job-org">'+org+'</div>':'')+
