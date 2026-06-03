@@ -1521,37 +1521,37 @@
       <input name="🔍__search_businesses..." type="text" class="search-input" id="biz-search" placeholder="🔍  Search businesses..." oninput="filterBiz()">
       <select class="search-select" id="biz-cat-select" onchange="filterBiz()">
         <option value="all">All Categories</option>
-        <option value="kosher-restaurant">Kosher Restaurant</option>
-        <option value="kosher-market">Kosher Market</option>
+        <option value="24hour">24 Hour Services</option>
+        <option value="legal">Attorney / Legal</option>
+        <option value="beauty">Beauty, Sheitels &amp; Alterations</option>
         <option value="books-gifts">Books &amp; Gifts</option>
         <option value="catering">Catering &amp; Events</option>
-        <option value="community-org">Community Organizations</option>
-        <option value="security">Security</option>
-        <option value="marketing">Marketing &amp; Digital</option>
-        <option value="trades">Trades</option>
-        <option value="doors">Doors &amp; Hardware</option>
-        <option value="jewelry">Jewelry</option>
-        <option value="beauty">Beauty, Sheitels &amp; Alterations</option>
-        <option value="mortgage">Mortgage Broker</option>
-        <option value="shipping">Shipping &amp; Courier</option>
-        <option value="recruiting">Recruiting &amp; Staffing</option>
         <option value="coaching">Coaching</option>
-        <option value="medical">Medical / Healthcare</option>
-        <option value="legal">Attorney / Legal</option>
-        <option value="financial">Financial / Accounting</option>
-        <option value="realestate">Real Estate</option>
-        <option value="therapy">Therapy &amp; Counseling</option>
-        <option value="tutoring">Tutoring</option>
-        <option value="plumbing">Plumbing</option>
-        <option value="electric">Electrician</option>
-        <option value="hvac">HVAC</option>
+        <option value="community-org">Community Organizations</option>
         <option value="construction">Construction</option>
-        <option value="photography">Photography</option>
+        <option value="doors">Doors &amp; Hardware</option>
+        <option value="electric">Electrician</option>
+        <option value="financial">Financial / Accounting</option>
         <option value="funeral">Funeral Home</option>
-        <option value="travel">Travel Agency</option>
+        <option value="hvac">HVAC</option>
         <option value="insurance">Insurance</option>
-        <option value="24hour">24 Hour Services</option>
+        <option value="jewelry">Jewelry</option>
         <option value="jfs">Jewish Family Service</option>
+        <option value="kosher-market">Kosher Market</option>
+        <option value="kosher-restaurant">Kosher Restaurant</option>
+        <option value="marketing">Marketing &amp; Digital</option>
+        <option value="medical">Medical / Healthcare</option>
+        <option value="mortgage">Mortgage Broker</option>
+        <option value="photography">Photography</option>
+        <option value="plumbing">Plumbing</option>
+        <option value="realestate">Real Estate</option>
+        <option value="recruiting">Recruiting &amp; Staffing</option>
+        <option value="security">Security</option>
+        <option value="shipping">Shipping &amp; Courier</option>
+        <option value="therapy">Therapy &amp; Counseling</option>
+        <option value="trades">Trades</option>
+        <option value="travel">Travel Agency</option>
+        <option value="tutoring">Tutoring</option>
       </select>
     </div>
     <div style="font-family:sans-serif;font-size:11px;color:var(--muted);margin:-6px 0 14px;">Search by name, service, or keyword — e.g. &ldquo;plumber&rdquo;, &ldquo;kosher&rdquo;, &ldquo;security&rdquo;.</div>
@@ -2563,7 +2563,15 @@ function mapServiceCat(v){
     koshermarket:'kosher-market', koshermarketgrocery:'kosher-market',
     booksgifts:'books-gifts', jewishbooksandgifts:'books-gifts',
     communityorganization:'community-org', communityorg:'community-org',
-    trades:'trades'
+    trades:'trades',
+    shipping:'shipping', shippingandcourier:'shipping', courier:'shipping', logistics:'shipping',
+    jewelry:'jewelry', jeweler:'jewelry', diamonds:'jewelry',
+    beauty:'beauty', beautysheitelsandalterations:'beauty', sheitel:'beauty', sheitels:'beauty',
+    wig:'beauty', wigs:'beauty', alterations:'beauty', tailor:'beauty', nails:'beauty', nailtech:'beauty',
+    doors:'doors', doorsandhardware:'doors', locks:'doors', hardware:'doors',
+    mortgage:'mortgage', mortgagebroker:'mortgage',
+    recruiting:'recruiting', recruitingandstaffing:'recruiting', recruiter:'recruiting', staffing:'recruiting',
+    coaching:'coaching', coach:'coaching'
   };
   return M[k] || '';
 }
