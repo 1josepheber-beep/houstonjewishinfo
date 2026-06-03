@@ -51,6 +51,7 @@
   .s-tag-mazal{background:#a3375a;}
   .s-tag-passing{background:#5b5b5b;}
   .s-tag-dir{background:var(--navy);}
+  .s-tag-page{background:#f0e2c0;color:#7a5a14;}
   .s-badge{font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:3px 9px;border-radius:20px;background:#f3ead6;color:#8a6516;}
   .s-date{margin-left:auto;font-size:12px;color:var(--muted);letter-spacing:.03em;}
   .s-card-title{font-family:Georgia,"Times New Roman",serif;color:var(--navy);font-size:19px;margin:0 0 4px;}
@@ -129,7 +130,7 @@
     {kw:['shul','shuls','synagogue','synagogues','minyan','minyanim','minyon','davening','daven','shacharis','mincha','maariv','congregation','temple','eruv','eiruv'],url:'/shuls',label:'Shuls, Synagogues & Eruv Map'},
     {kw:['mikvah','mikvahs','mikvaot','mikveh','mikva','mikvas'],url:'/mikvahs',label:'Mikvahs'},
     {kw:['school','schools','education','yeshiva','yeshivas','preschool','tutor','tutoring','learning','kollel'],url:'/education',label:'Schools & Education'},
-    {kw:['kosher','restaurant','restaurants','dining','food','eat','grocery','market','catering','caterer','bakery'],url:'/services',label:'Kosher Food & Services'},
+    {kw:['kosher','restaurant','restaurants','dining','food','eat','grocery','groceries','market','markets','supermarket','supermarkets','store','stores','shop','shopping','catering','caterer','bakery'],url:'/services',label:'Kosher Food & Services'},
     {kw:['job','jobs','hiring','work','employment','position','career','careers'],url:'/jobs',label:'Jobs Board'},
     {kw:['charity','charities','gemach','gemachim','tzedakah','donate','donation','nonprofit','chesed'],url:'/charities',label:'Charities & Gemachim'},
     {kw:['real','realtor','realty','apartment','rent','rental','mortgage','property','house','home','homes'],url:'/real-estate',label:'Real Estate'},
@@ -245,10 +246,58 @@
   ];
   var FEED_KINDS={news:1,event:1,mazal:1,passing:1};
 
+  /* static pages / resources so searches like "eruv" return a real result */
+  var PAGES=[
+    {t:'Houston Eruv Map',lab:'Resource',link:'/shuls',kw:'eruv eiruv eruv map boundary'},
+    {t:'Shuls & Synagogues',lab:'Section',link:'/shuls',kw:'shul shuls synagogue synagogues minyan minyanim minyon davening daven congregation temple orthodox'},
+    {t:'Mikvahs',lab:'Section',link:'/mikvahs',kw:'mikvah mikvahs mikvaot mikveh mikva'},
+    {t:'Schools & Education',lab:'Section',link:'/education',kw:'school schools education yeshiva yeshivas preschool day school orthodox'},
+    {t:'Adult Learning',lab:'Section',link:'/education#adult-learning',kw:'adult learning kollel shiur shiurim classes torah learning'},
+    {t:'Jobs Board',lab:'Section',link:'/jobs',kw:'job jobs hiring employment work position positions career careers'},
+    {t:'Charities & Gemachim',lab:'Section',link:'/charities',kw:'charity charities gemach gemachim tzedakah donate donation chesed nonprofit'},
+    {t:'Kosher Food & Restaurants',lab:'Section',link:'/services',kw:'kosher restaurant restaurants food dining eat eatery cafe takeout catering bakery'},
+    {t:'Kosher Supermarkets & Groceries',lab:'Section',link:'/services',kw:'supermarket supermarkets grocery groceries market markets store stores shop shops shopping kosher market'},
+    {t:'Real Estate',lab:'Section',link:'/real-estate',kw:'real estate realtor realty apartment rent rental house home homes property mortgage'},
+    {t:'Things to Do',lab:'Section',link:'/things-to-do',kw:'things to do activities attraction attractions family outing fun'},
+    {t:'Community Services Directory',lab:'Section',link:'/services',kw:'services business businesses directory plumber electrician attorney lawyer doctor contractor dentist'},
+    {t:'Contact / Submit a Listing',lab:'Section',link:'/contact',kw:'contact submit advertise advertising sponsor add listing'}
+  ];
+  function pageItem(p){ var it=mk('page',p.lab,p.t,null,'','',''); it.section=p.link; it.searchText=norm(p.t+' '+p.kw); return it; }
+
   var ALL=[], LOADED=0, TOTAL=CONFIGS.length;
 
   /* ---------- search + render ---------- */
-  function hit(terms,text){ for(var i=0;i<terms.length;i++){ if(text.indexOf(terms[i])<0) return false; } return true; }
+  var SYN_GROUPS=[
+    ['supermarket','supermarkets','grocery','groceries','market','markets','store','stores','shop','shops','shopping'],
+    ['restaurant','restaurants','dining','eatery','eateries','cafe','cafes','diner','takeout','eats'],
+    ['shul','shuls','synagogue','synagogues','minyan','minyanim','minyon','davening','congregation','temple'],
+    ['mikvah','mikvahs','mikvaot','mikveh','mikva'],
+    ['school','schools','yeshiva','yeshivas','preschool','academy'],
+    ['doctor','doctors','physician','physicians','pediatrician','dentist','dentists'],
+    ['lawyer','lawyers','attorney','attorneys','legal'],
+    ['realtor','realtors','realty','apartment','apartments','rental','rentals','condo','mortgage'],
+    ['job','jobs','hiring','employment','position','positions','career','careers','vacancy'],
+    ['charity','charities','tzedakah','donation','donations','nonprofit','chesed'],
+    ['gemach','gemachim','gemachs'],
+    ['catering','caterer','caterers'],
+    ['bakery','bakeries','baker','challah'],
+    ['plumber','plumbing','electrician','handyman','contractor','contractors','hvac'],
+    ['cleaning','cleaner','cleaners','housekeeping','maid'],
+    ['security','alarm','camera','cameras'],
+    ['marketing','advertising','branding'],
+    ['judaica','seforim','sefarim','gifts','giftware'],
+    ['eruv','eiruv']
+  ];
+  var SYN={}; SYN_GROUPS.forEach(function(g){ g.forEach(function(w){ SYN[w]=g; }); });
+  var _re={};
+  function wordRe(w){ return _re[w] || (_re[w]=new RegExp('(^|[^a-z0-9])'+w.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+'([^a-z0-9]|$)')); }
+  function termMatch(text,term){
+    if(text.indexOf(term)>-1) return true;
+    var g=SYN[term]; if(!g) return false;
+    for(var i=0;i<g.length;i++){ if(g[i]!==term && wordRe(g[i]).test(text)) return true; }
+    return false;
+  }
+  function hit(terms,text){ for(var i=0;i<terms.length;i++){ if(!termMatch(text,terms[i])) return false; } return true; }
   function relScore(x,q){ var t=norm(x.title); if(t===q)return 4; if(t.indexOf(q)===0)return 3; if(t.indexOf(q)>-1)return 2; return 1; }
 
   function cardHTML(x){
@@ -360,10 +409,11 @@
   }
 
   /* init */
+  PAGES.forEach(function(p){ ALL.push(pageItem(p)); });
   var Q=qparam();
   input.value=Q;
-  if(Q){ document.title='Search: '+Q+' — Houston Jewish Info'; renderRoutes(Q); status.textContent='Searching\u2026'; }
-  else { input.focus(); results.innerHTML=catsHTML('Browse a section'); }
+  if(Q){ runSearch(Q); }
+  else { input.focus(); renderRoutes(''); results.innerHTML=catsHTML('Browse a section'); }
 
   CONFIGS.forEach(function(cfg){
     getTab(cfg.tab).then(function(rows){ ingest(cfg,rows); }).catch(function(){}).then(onProgress);
