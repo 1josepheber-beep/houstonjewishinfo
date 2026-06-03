@@ -511,33 +511,67 @@
 
   /* -- Weather Box -- */
   .weather-box {
-    background: var(--navy);
+    background: linear-gradient(160deg, #1f3a6b 0%, var(--navy) 70%);
     color: var(--white);
-    border-radius: 4px;
-    padding: 14px 12px;
+    border-radius: 8px;
+    padding: 16px 14px 14px;
     margin-bottom: 16px;
     text-align: center;
+    transition: background .4s ease;
   }
+  .weather-box.is-clear  { background: linear-gradient(160deg, #2f7fc4 0%, #1f3a6b 80%); }
+  .weather-box.is-cloud  { background: linear-gradient(160deg, #4a5a72 0%, var(--navy) 80%); }
+  .weather-box.is-rain   { background: linear-gradient(160deg, #3a4a63 0%, #16233f 80%); }
+  .weather-box.is-storm  { background: linear-gradient(160deg, #2c2f4a 0%, #14152a 80%); }
+  .weather-box.is-snow   { background: linear-gradient(160deg, #6b7d96 0%, #3a4a63 80%); }
   .weather-city {
     font-family: sans-serif;
     font-size: 9px;
     letter-spacing: .12em;
     text-transform: uppercase;
     opacity: .7;
-    margin-bottom: 4px;
+    margin-bottom: 6px;
   }
+  .weather-main {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+  }
+  .weather-icon { font-size: 38px; line-height: 1; }
   .weather-temp {
     font-family: 'Playfair Display', serif;
-    font-size: 36px;
+    font-size: 40px;
     font-weight: 700;
     line-height: 1;
   }
   .weather-desc {
     font-size: 12px;
-    opacity: .8;
+    opacity: .85;
     font-family: sans-serif;
-    margin-top: 3px;
+    margin-top: 4px;
   }
+  .weather-meta {
+    font-family: sans-serif;
+    font-size: 11px;
+    opacity: .7;
+    margin-top: 6px;
+  }
+  .weather-shabbos {
+    margin-top: 10px;
+    padding-top: 9px;
+    border-top: 1px solid rgba(255,255,255,.18);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    font-family: sans-serif;
+  }
+  .weather-shabbos-label {
+    font-size: 9px; letter-spacing: .1em; text-transform: uppercase;
+    opacity: .7;
+  }
+  .weather-shabbos-val { font-size: 12px; font-weight: 700; }
 
   /* -- Advertisement Slots --
      Replace the .ad-placeholder div content with:
@@ -1748,11 +1782,19 @@
          ======================================================== -->
     <aside class="sidebar-right" aria-label="Ads and extras">
 
-      <!-- WEATHER — update city name and figures manually, or connect to a weather API -->
-      <div class="weather-box">
+      <!-- WEATHER — live via Open-Meteo -->
+      <div class="weather-box" id="weather-box">
         <div class="weather-city">Houston, TX</div>
-        <div class="weather-temp" id="weather-temp">--°F</div>
-        <div class="weather-desc" id="weather-desc">Loading...</div>
+        <div class="weather-main">
+          <span class="weather-icon" id="weather-icon">⛅</span>
+          <span class="weather-temp" id="weather-temp">--°</span>
+        </div>
+        <div class="weather-desc" id="weather-desc">Loading…</div>
+        <div class="weather-meta" id="weather-meta"></div>
+        <div class="weather-shabbos" id="weather-shabbos" style="display:none;">
+          <span class="weather-shabbos-label">Shabbos</span>
+          <span class="weather-shabbos-val" id="weather-shabbos-val"></span>
+        </div>
       </div>
 
       <!-- AD SLOT 1 — managed via Ads sheet | placement="right-sidebar-1" | default below = Brian Gavin Diamonds -->
@@ -2258,26 +2300,63 @@
   })();
 
   /* -- Live weather via Open-Meteo (free, no API key needed) -- */
-  fetch('https://api.open-meteo.com/v1/forecast?latitude=29.7604&longitude=-95.3698&current=temperature_2m,weathercode&temperature_unit=fahrenheit')
-    .then(function(r) { return r.json(); })
-    .then(function(data) {
-      var temp = Math.round(data.current.temperature_2m);
-      var code = data.current.weathercode;
-      var descs = {
-        0:'Clear sky', 1:'Mainly clear', 2:'Partly cloudy', 3:'Overcast',
-        45:'Foggy', 48:'Icy fog', 51:'Light drizzle', 53:'Drizzle',
-        61:'Light rain', 63:'Rain', 65:'Heavy rain',
-        71:'Light snow', 73:'Snow', 75:'Heavy snow',
-        80:'Rain showers', 81:'Showers', 82:'Heavy showers',
-        95:'Thunderstorm', 96:'Thunderstorm', 99:'Thunderstorm'
-      };
-      document.getElementById('weather-temp').textContent = temp + '°F';
-      document.getElementById('weather-desc').textContent = descs[code] || 'See forecast';
-    })
-    .catch(function() {
-      document.getElementById('weather-temp').textContent = '--°F';
-      document.getElementById('weather-desc').textContent = 'Unavailable';
+  (function(){
+    var WX = {
+      0:['Clear sky','☀️','is-clear'], 1:['Mainly clear','🌤️','is-clear'],
+      2:['Partly cloudy','⛅','is-cloud'], 3:['Overcast','☁️','is-cloud'],
+      45:['Foggy','🌫️','is-cloud'], 48:['Icy fog','🌫️','is-cloud'],
+      51:['Light drizzle','🌦️','is-rain'], 53:['Drizzle','🌦️','is-rain'], 55:['Drizzle','🌧️','is-rain'],
+      61:['Light rain','🌦️','is-rain'], 63:['Rain','🌧️','is-rain'], 65:['Heavy rain','🌧️','is-rain'],
+      66:['Freezing rain','🌧️','is-rain'], 67:['Freezing rain','🌧️','is-rain'],
+      71:['Light snow','🌨️','is-snow'], 73:['Snow','❄️','is-snow'], 75:['Heavy snow','❄️','is-snow'], 77:['Snow grains','🌨️','is-snow'],
+      80:['Rain showers','🌦️','is-rain'], 81:['Showers','🌧️','is-rain'], 82:['Heavy showers','🌧️','is-rain'],
+      85:['Snow showers','🌨️','is-snow'], 86:['Snow showers','❄️','is-snow'],
+      95:['Thunderstorm','⛈️','is-storm'], 96:['Thunderstorm','⛈️','is-storm'], 99:['Thunderstorm','⛈️','is-storm']
+    };
+    function look(code){ return WX[code] || ['See forecast','🌡️','is-cloud']; }
+    function el(id){ return document.getElementById(id); }
+
+    var url='https://api.open-meteo.com/v1/forecast?latitude=29.7604&longitude=-95.3698'
+      +'&current=temperature_2m,apparent_temperature,weathercode'
+      +'&daily=weathercode,temperature_2m_max,temperature_2m_min'
+      +'&temperature_unit=fahrenheit&timezone=America%2FChicago&forecast_days=7';
+
+    fetch(url).then(function(r){ return r.json(); }).then(function(data){
+      var cur=data.current, daily=data.daily;
+      var temp=Math.round(cur.temperature_2m);
+      var feels=Math.round(cur.apparent_temperature);
+      var info=look(cur.weathercode);
+      var hi=Math.round(daily.temperature_2m_max[0]);
+      var lo=Math.round(daily.temperature_2m_min[0]);
+
+      el('weather-temp').textContent=temp+'°';
+      el('weather-icon').textContent=info[1];
+      el('weather-desc').textContent=info[0];
+      el('weather-meta').textContent='Feels '+feels+'°  ·  H '+hi+'°  L '+lo+'°';
+      var box=el('weather-box');
+      box.className='weather-box '+info[2];
+
+      // Shabbos (upcoming Saturday) forecast from the daily arrays
+      var times=daily.time || [];
+      var todayIdx=0; // Open-Meteo daily[0] is today
+      // find the next Saturday within the forecast window
+      var now=new Date();
+      for(var i=0;i<times.length;i++){
+        var d=new Date(times[i]+'T12:00:00');
+        if(d.getDay()===6){ // Saturday
+          var sInfo=look(daily.weathercode[i]);
+          var sHi=Math.round(daily.temperature_2m_max[i]);
+          var sLo=Math.round(daily.temperature_2m_min[i]);
+          el('weather-shabbos-val').textContent=sInfo[1]+'  '+sHi+'° / '+sLo+'°';
+          el('weather-shabbos').style.display='flex';
+          break;
+        }
+      }
+    }).catch(function(){
+      var t=el('weather-temp'); if(t) t.textContent='--°';
+      var d=el('weather-desc'); if(d) d.textContent='Unavailable';
     });
+  })();
 
   // Jobs Board — Google Sheets
   (function() {
