@@ -310,7 +310,7 @@
     if(x.body) h+='<p class="s-card-body">'+esc(trunc(x.body,220))+'</p>';
     var u=extURL(x.link);
     if(u) h+='<a class="s-card-link" href="'+esc(u)+'" target="_blank" rel="noopener">Visit \u2197</a>';
-    else if(x.section) h+='<a class="s-card-link" href="'+esc(x.section)+'">View on '+esc(SECTION_NAMES[x.section]||'page')+' \u2192</a>';
+    else if(x.section){ var href=(x.type==='dir')?(x.section+'?find='+encodeURIComponent(x.title)):x.section; h+='<a class="s-card-link" href="'+esc(href)+'">View on '+esc(SECTION_NAMES[x.section]||'page')+' \u2192</a>'; }
     return h+'</article>';
   }
 
