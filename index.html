@@ -2399,7 +2399,7 @@
     function el(id){ return document.getElementById(id); }
 
     var url='https://api.open-meteo.com/v1/forecast?latitude=29.7604&longitude=-95.3698'
-      +'&current=temperature_2m,apparent_temperature,weathercode'
+      +'&current=temperature_2m,apparent_temperature,weathercode,precipitation'
       +'&daily=weathercode,temperature_2m_max,temperature_2m_min'
       +'&temperature_unit=fahrenheit&timezone=America%2FChicago&forecast_days=7';
 
@@ -2408,6 +2408,13 @@
       var temp=Math.round(cur.temperature_2m);
       var feels=Math.round(cur.apparent_temperature);
       var info=look(cur.weathercode);
+      // Precipitation override: if rain is actually falling now, show Rain even
+      // when the (slower) weather code still says cloudy/overcast. Don't override
+      // an existing storm/snow code — only upgrade dry-looking codes to rain.
+      var precip = (typeof cur.precipitation === 'number') ? cur.precipitation : 0;
+      if(precip > 0 && info[2] !== 'is-storm' && info[2] !== 'is-snow' && info[2] !== 'is-rain'){
+        info = (precip >= 0.1) ? ['Rain','🌧️','is-rain'] : ['Light rain','🌦️','is-rain'];
+      }
       var hi=Math.round(daily.temperature_2m_max[0]);
       var lo=Math.round(daily.temperature_2m_min[0]);
 
