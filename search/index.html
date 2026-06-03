@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Search — Houston Jewish Info</title>
-<meta name="description" content="Search Houston Jewish Info — shuls, mikvahs, kosher food, jobs, charities, schools, events, and community posts including past Mazal Tovs.">
+<meta name="description" content="Search Houston Jewish Info — shuls, mikvahs, kosher food, jobs, charities, schools, real estate, events, and community posts including past Mazal Tovs.">
 <link rel="canonical" href="https://houstonjewishinfo.com/search/">
 <meta name="robots" content="noindex,follow">
 <link rel="icon" href="/favicon.ico">
@@ -24,11 +24,18 @@
   .s-nav a:hover{color:var(--gold);}
   .s-main{max-width:1080px;margin:0 auto;padding:26px 18px 60px;}
   .s-h1{font-family:Georgia,"Times New Roman",serif;color:var(--navy);font-size:30px;margin:0 0 14px;}
-  .s-form{display:flex;gap:0;max-width:640px;margin:0 0 20px;}
+  .s-form{position:relative;display:flex;gap:0;max-width:640px;margin:0 0 20px;}
   .s-form input{flex:1;min-width:0;padding:13px 16px;font-size:16px;border:1.5px solid var(--border);border-right:none;border-radius:6px 0 0 6px;outline:none;background:var(--white);color:var(--ink);}
   .s-form input:focus{border-color:var(--gold);}
   .s-form button{padding:13px 22px;background:var(--navy);color:var(--white);border:1.5px solid var(--navy);border-radius:0 6px 6px 0;font-size:15px;font-weight:600;cursor:pointer;}
   .s-form button:hover{background:#0f1a30;}
+  .s-ac{position:absolute;top:calc(100% + 4px);left:0;right:0;background:#fff;border:1px solid var(--border);border-radius:6px;box-shadow:0 10px 26px rgba(0,0,0,.14);z-index:50;max-height:360px;overflow:auto;display:none;}
+  .s-ac.open{display:block;}
+  .s-ac-item{display:flex;align-items:center;gap:9px;padding:10px 14px;cursor:pointer;border-bottom:1px solid #f3efe7;}
+  .s-ac-item:last-child{border-bottom:none;}
+  .s-ac-item:hover,.s-ac-item.active{background:#faf6ee;}
+  .s-ac-title{font-size:14.5px;color:var(--ink);flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .s-ac-tag{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:#fff;background:var(--navy);border-radius:10px;padding:2px 8px;white-space:nowrap;}
   .s-suggest{margin:0 0 18px;display:flex;flex-direction:column;gap:8px;}
   .s-suggest-card{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;background:#fff;border:1px solid var(--border);border-left:4px solid var(--gold);border-radius:6px;padding:12px 16px;}
   .s-suggest-card span{color:var(--muted);font-size:14px;}
@@ -43,6 +50,7 @@
   .s-tag-event{background:#2e7d52;}
   .s-tag-mazal{background:#a3375a;}
   .s-tag-passing{background:#5b5b5b;}
+  .s-tag-dir{background:var(--navy);}
   .s-badge{font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:3px 9px;border-radius:20px;background:#f3ead6;color:#8a6516;}
   .s-date{margin-left:auto;font-size:12px;color:var(--muted);letter-spacing:.03em;}
   .s-card-title{font-family:Georgia,"Times New Roman",serif;color:var(--navy);font-size:19px;margin:0 0 4px;}
@@ -80,9 +88,10 @@
 
 <main class="s-main">
   <h1 class="s-h1">Search</h1>
-  <form class="s-form" action="/search/" method="get" role="search">
-    <input id="q" type="search" name="q" placeholder="Search shuls, kosher food, jobs, a Mazal Tov name…" aria-label="Search Houston Jewish Info" autocomplete="off">
+  <form class="s-form" id="sform" role="search" autocomplete="off">
+    <input id="q" type="search" name="q" placeholder="Search shuls, kosher food, jobs, schools, a name…" aria-label="Search Houston Jewish Info" autocomplete="off">
     <button type="submit">Search</button>
+    <div class="s-ac" id="ac" role="listbox" aria-label="Suggestions"></div>
   </form>
   <div id="suggest" class="s-suggest"></div>
   <div id="status" class="s-status"></div>
@@ -99,17 +108,21 @@
   var TODAY=new Date(); TODAY.setHours(0,0,0,0);
   var MAZAL_CUTOFF=new Date(TODAY.getTime()-14*86400000);
 
+  var input=document.getElementById('q');
+  var form=document.getElementById('sform');
+  var ac=document.getElementById('ac');
+  var sug=document.getElementById('suggest');
+  var status=document.getElementById('status');
+  var results=document.getElementById('results');
   var y=document.getElementById('yr'); if(y) y.textContent=new Date().getFullYear();
 
-  function qparam(){ try{ var m=location.search.match(/[?&]q=([^&]*)/); return m?decodeURIComponent(m[1].replace(/\+/g,' ')).trim():''; }catch(e){ return ''; } }
-  var Q=qparam();
-  var input=document.getElementById('q'); if(input){ input.value=Q; if(!Q) input.focus(); }
-  if(Q) document.title='Search: '+Q+' — Houston Jewish Info';
-
+  /* ---------- helpers ---------- */
   function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
   function norm(s){ return String(s==null?'':s).toLowerCase(); }
   function trunc(s,n){ s=String(s==null?'':s).replace(/\s+/g,' ').trim(); return s.length>n? s.slice(0,n-1).trim()+'\u2026' : s; }
   function extURL(u){ u=String(u||'').trim(); if(!u) return ''; if(/^(https?:\/\/|mailto:|tel:|\/)/i.test(u)) return u; return 'https://'+u; }
+  function debounce(fn,ms){ var t; return function(){ var a=arguments,me=this; clearTimeout(t); t=setTimeout(function(){ fn.apply(me,a); },ms); }; }
+  function qparam(){ try{ var m=location.search.match(/[?&]q=([^&]*)/); return m?decodeURIComponent(m[1].replace(/\+/g,' ')).trim():''; }catch(e){ return ''; } }
 
   /* ---------- keyword router ---------- */
   var ROUTES=[
@@ -124,13 +137,13 @@
     {kw:['service','services','business','businesses','directory','plumber','electrician','attorney','lawyer','doctor','contractor','dentist'],url:'/services',label:'Community Services Directory'},
     {kw:['contact','submit','advertise','advertising','sponsor'],url:'/contact',label:'Contact / Submit'}
   ];
-  function routeMatches(){
-    if(!Q) return [];
-    var q=' '+norm(Q).replace(/[^a-z0-9 ]+/g,' ').replace(/\s+/g,' ').trim()+' ';
+  function routeMatches(q){
+    if(!q) return [];
+    var s=' '+norm(q).replace(/[^a-z0-9 ]+/g,' ').replace(/\s+/g,' ').trim()+' ';
     var seen={}, hits=[];
     ROUTES.forEach(function(r){
       for(var i=0;i<r.kw.length;i++){
-        if(q.indexOf(' '+r.kw[i]+' ')>-1){ if(!seen[r.url]){ seen[r.url]=1; hits.push(r); } break; }
+        if(s.indexOf(' '+r.kw[i]+' ')>-1){ if(!seen[r.url]){ seen[r.url]=1; hits.push(r); } break; }
       }
     });
     return hits.slice(0,2);
@@ -152,8 +165,9 @@
     CATS.forEach(function(c){ h+='<a href="'+esc(c.url)+'">'+esc(c.label)+'</a>'; });
     return h+'</div></div>';
   }
+  var SECTION_NAMES={'/services':'Services','/shuls':'Shuls','/mikvahs':'Mikvahs','/education':'Education','/jobs':'Jobs','/charities':'Charities','/real-estate':'Real Estate','/things-to-do':'Things to Do','/':'Home'};
 
-  /* ---------- google sheet content search ---------- */
+  /* ---------- gviz ---------- */
   function cellStr(c){ if(!c) return ''; return c.f!=null? String(c.f) : (c.v==null?'':String(c.v)); }
   function parseDate(c){
     if(!c) return null;
@@ -171,40 +185,71 @@
       var cols=json.table.cols.map(function(c){ return (c.label||'').toLowerCase().trim(); });
       return (json.table.rows||[]).map(function(row){
         var o={_cells:{}};
-        cols.forEach(function(col,i){ var c=row.c?row.c[i]:null; o[col]=cellStr(c); o._cells[col]=c; });
+        cols.forEach(function(col,i){ if(!col) return; var c=row.c?row.c[i]:null; o[col]=cellStr(c); o._cells[col]=c; });
         return o;
       });
     }).catch(function(){ return []; });
   }
   function active(o){ return norm(o.status).trim()==='active'; }
   function fmtDate(d){ return d? d.toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'}) : ''; }
+  function pick(o,names){ for(var i=0;i<names.length;i++){ var v=o[names[i]]; if(v!=null&&String(v).trim()!=='') return String(v).trim(); } return ''; }
+  function joinPick(o,names,max){ var out=[]; for(var i=0;i<names.length&&out.length<max;i++){ var v=o[names[i]]; if(v!=null&&String(v).trim()!=='') out.push(String(v).trim()); } return out.join(' \u00b7 '); }
+  function firstShort(o){ for(var k in o){ if(k==='_cells'||k==='status'||k==='approved')continue; var v=o[k]; if(typeof v==='string'){ v=v.trim(); if(v&&v.length<=60) return v; } } return ''; }
+  function fieldsText(o){ var s=[]; for(var k in o){ if(k==='_cells')continue; var v=o[k]; if(typeof v==='string'&&v) s.push(v); } return norm(s.join(' ')); }
 
-  var terms=norm(Q).split(/\s+/).filter(Boolean);
-  function hit(text){ text=norm(text); for(var i=0;i<terms.length;i++){ if(text.indexOf(terms[i])<0) return false; } return true; }
-
-  function build(stories,events,mazals,passings){
-    var out=[];
-    (stories||[]).forEach(function(r){ if(!active(r)||!r.headline) return;
-      if(hit([r.headline,r.label,r.byline,r.excerpt].join(' ')))
-        out.push({type:'news',label:'News',title:r.headline,date:parseDate(r._cells.date),sub:r.byline||r.label||'',body:r.excerpt||'',link:r.linkurl||'',badge:''});
-    });
-    (events||[]).forEach(function(r){ if(!active(r)||!r.title) return;
-      var d=parseDate(r._cells.date);
-      if(hit([r.title,r.category,r.presenter,r.location,r.description].join(' ')))
-        out.push({type:'event',label:'Event',title:r.title,date:d,sub:r.location||r.presenter||'',body:r.description||'',link:r.ticketurl||'',badge:(d&&d<TODAY)?'Past event':''});
-    });
-    (mazals||[]).forEach(function(r){ if(!active(r)||!r.name) return;
-      var d=parseDate(r._cells.date);
-      if(hit([r.name,r.type,r.city,r.message].join(' ')))
-        out.push({type:'mazal',label:r.type||'Mazal Tov',title:r.name,date:d,sub:r.city||'',body:r.message||'',link:'',badge:(d&&d<MAZAL_CUTOFF)?'Archived':''});
-    });
-    (passings||[]).forEach(function(r){ if(!active(r)||!r.name) return;
-      var parts=[]; if(r.levaya)parts.push('Levaya: '+r.levaya); if(r.shiva)parts.push('Shiva: '+r.shiva); if(r.message)parts.push(r.message);
-      if(hit([r.name,r.city,r.message].join(' ')))
-        out.push({type:'passing',label:'In Memoriam',title:r.name,date:parseDate(r._cells.date),sub:r.city||'',body:parts.join(' \u00b7 '),link:'',badge:''});
-    });
-    return out;
+  /* ---------- item builders ---------- */
+  function mk(type,label,title,date,sub,body,link){
+    return {type:type,label:label,title:title,date:date||null,sub:sub||'',body:body||'',link:link||'',section:'',badge:'',searchText:norm([title,sub,body,label].join(' '))};
   }
+  function feedItem(kind,row){
+    var d=parseDate(row._cells.date);
+    if(kind==='news'){ if(!active(row)||!row.headline)return null; return mk('news','News',row.headline,d,row.byline||row.label||'',row.excerpt||'',row.linkurl||''); }
+    if(kind==='event'){ if(!active(row)||!row.title)return null; var it=mk('event','Event',row.title,d,row.location||row.presenter||'',row.description||'',row.ticketurl||''); if(d&&d<TODAY) it.badge='Past event'; return it; }
+    if(kind==='mazal'){ if(!active(row)||!row.name)return null; var m=mk('mazal',row.type||'Mazal Tov',row.name,d,row.city||'',row.message||'',''); if(d&&d<MAZAL_CUTOFF) m.badge='Archived'; return m; }
+    if(kind==='passing'){ if(!active(row)||!row.name)return null; var p=[]; if(row.levaya)p.push('Levaya: '+row.levaya); if(row.shiva)p.push('Shiva: '+row.shiva); if(row.message)p.push(row.message); return mk('passing','In Memoriam',row.name,d,row.city||'',p.join(' \u00b7 '),''); }
+    return null;
+  }
+  function dirItem(cfg,row){
+    if(cfg.filter==='approved'){ if(norm(row.approved).trim()!=='yes') return null; }
+    else if('status' in row){ if(norm(row.status).trim()!=='active') return null; }
+    var title=pick(row,['name','title','business','businessname','company','organization','school','shul','headline']) || firstShort(row);
+    if(!title) return null;
+    var sub=joinPick(row,['category','city','neighborhood','area','address','location'],2);
+    var body=pick(row,['description','about','details','summary','services','message','excerpt','notes','bio']);
+    var it=mk('dir',cfg.label,title,null,sub,body,'');
+    it.section=cfg.link;
+    it.searchText=fieldsText(row);
+    return it;
+  }
+
+  /* ---------- tab config ---------- */
+  var CONFIGS=[
+    {tab:'Stories',kind:'news'},{tab:'Events',kind:'event'},{tab:'MazalTov',kind:'mazal'},{tab:'Passings',kind:'passing'},
+    {tab:'Education',kind:'dir',label:'School',link:'/education'},
+    {tab:'Shuls',kind:'dir',label:'Shul',link:'/shuls'},
+    {tab:'Mikvahs',kind:'dir',label:'Mikvah',link:'/mikvahs'},
+    {tab:'Jobs',kind:'dir',label:'Job',link:'/jobs',filter:'approved'},
+    {tab:'Services',kind:'dir',label:'Service',link:'/services'},
+    {tab:'KosherRestaurants',kind:'dir',label:'Kosher Restaurant',link:'/services'},
+    {tab:'KosherMarkets',kind:'dir',label:'Kosher Market',link:'/services'},
+    {tab:'BooksGifts',kind:'dir',label:'Books & Gifts',link:'/services'},
+    {tab:'Catering',kind:'dir',label:'Catering',link:'/services'},
+    {tab:'CommunityOrgs',kind:'dir',label:'Community Org',link:'/services'},
+    {tab:'Security',kind:'dir',label:'Security',link:'/services'},
+    {tab:'Marketing',kind:'dir',label:'Marketing',link:'/services'},
+    {tab:'Trades',kind:'dir',label:'Trades',link:'/services'},
+    {tab:'Charities',kind:'dir',label:'Charity',link:'/charities'},
+    {tab:'Gemachim',kind:'dir',label:'Gemach',link:'/charities'},
+    {tab:'RealEstate',kind:'dir',label:'Real Estate',link:'/real-estate'},
+    {tab:'Activities',kind:'dir',label:'Things to Do',link:'/things-to-do'}
+  ];
+  var FEED_KINDS={news:1,event:1,mazal:1,passing:1};
+
+  var ALL=[], LOADED=0, TOTAL=CONFIGS.length;
+
+  /* ---------- search + render ---------- */
+  function hit(terms,text){ for(var i=0;i<terms.length;i++){ if(text.indexOf(terms[i])<0) return false; } return true; }
+  function relScore(x,q){ var t=norm(x.title); if(t===q)return 4; if(t.indexOf(q)===0)return 3; if(t.indexOf(q)>-1)return 2; return 1; }
 
   function cardHTML(x){
     var top='<span class="s-tag s-tag-'+x.type+'">'+esc(x.label)+'</span>';
@@ -216,41 +261,112 @@
     if(x.body) h+='<p class="s-card-body">'+esc(trunc(x.body,220))+'</p>';
     var u=extURL(x.link);
     if(u) h+='<a class="s-card-link" href="'+esc(u)+'" target="_blank" rel="noopener">Visit \u2197</a>';
+    else if(x.section) h+='<a class="s-card-link" href="'+esc(x.section)+'">View on '+esc(SECTION_NAMES[x.section]||'page')+' \u2192</a>';
     return h+'</article>';
   }
 
-  /* ---------- run ---------- */
-  var sug=document.getElementById('suggest');
-  var status=document.getElementById('status');
-  var results=document.getElementById('results');
-
-  var routes=routeMatches();
-  if(routes.length){
-    sug.innerHTML=routes.map(function(r){
-      return '<div class="s-suggest-card"><span>Looking for '+esc(r.label)+'?</span><a href="'+esc(r.url)+'">Go to '+esc(r.label)+' \u2192</a></div>';
-    }).join('');
+  function renderRoutes(q){
+    var r=routeMatches(q);
+    sug.innerHTML = r.length ? r.map(function(x){
+      return '<div class="s-suggest-card"><span>Looking for '+esc(x.label)+'?</span><a href="'+esc(x.url)+'">Go to '+esc(x.label)+' \u2192</a></div>';
+    }).join('') : '';
   }
 
-  if(!Q){
-    status.textContent='';
-    results.innerHTML=catsHTML('Browse a section');
-    return;
-  }
-
-  status.textContent='Searching\u2026';
-  Promise.all([getTab('Stories'),getTab('Events'),getTab('MazalTov'),getTab('Passings')]).then(function(res){
-    var items=build(res[0],res[1],res[2],res[3]);
-    items.sort(function(a,b){ var at=a.date?a.date.getTime():-Infinity, bt=b.date?b.date.getTime():-Infinity; return bt-at; });
-    if(items.length){
-      status.textContent='Found '+items.length+' result'+(items.length===1?'':'s')+' for \u201c'+Q+'\u201d';
-      results.innerHTML=items.map(cardHTML).join('');
+  function runSearch(q){
+    q=String(q||'').trim();
+    try{ history.replaceState(null,'', q? ('?q='+encodeURIComponent(q)) : location.pathname); }catch(e){}
+    document.title = q? ('Search: '+q+' — Houston Jewish Info') : 'Search — Houston Jewish Info';
+    renderRoutes(q);
+    if(!q){ status.textContent=''; results.innerHTML=catsHTML('Browse a section'); return; }
+    var ql=norm(q), terms=ql.split(/\s+/).filter(Boolean);
+    var m=ALL.filter(function(x){ return hit(terms,x.searchText); });
+    m.sort(function(a,b){
+      var sa=relScore(a,ql), sb=relScore(b,ql); if(sa!==sb) return sb-sa;
+      var at=a.date?a.date.getTime():null, bt=b.date?b.date.getTime():null;
+      if(at!=null&&bt!=null) return bt-at;
+      if(at!=null) return -1; if(bt!=null) return 1;
+      return a.title.localeCompare(b.title);
+    });
+    if(m.length){
+      status.textContent='Found '+m.length+' result'+(m.length===1?'':'s')+(LOADED<TOTAL?' so far (still loading\u2026)':'')+' for \u201c'+q+'\u201d';
+      results.innerHTML=m.map(cardHTML).join('');
+    } else if(LOADED<TOTAL){
+      status.textContent='Searching\u2026'; results.innerHTML='';
     } else {
-      status.textContent='No posts matched \u201c'+Q+'\u201d.';
-      results.innerHTML=(routes.length?'':'')+catsHTML('Try a section instead');
+      status.textContent='No results for \u201c'+q+'\u201d.'; results.innerHTML=catsHTML('Try a section instead');
     }
-  }).catch(function(){
-    status.textContent='Couldn\u2019t load results just now \u2014 please try again in a moment.';
-    results.innerHTML=catsHTML('Browse a section');
+  }
+
+  /* ---------- autocomplete ---------- */
+  var acItems=[], acIdx=-1, acOpen=false;
+  function hideAC(){ ac.classList.remove('open'); acOpen=false; acIdx=-1; }
+  function buildAC(q){
+    q=norm(q).trim(); if(q.length<2) return [];
+    var terms=q.split(/\s+/).filter(Boolean);
+    var arr=ALL.filter(function(x){ return hit(terms,x.searchText); });
+    arr.sort(function(a,b){ return relScore(b,q)-relScore(a,q); });
+    var seen={}, out=[];
+    for(var i=0;i<arr.length&&out.length<8;i++){ var k=arr[i].type+'|'+norm(arr[i].title); if(seen[k])continue; seen[k]=1; out.push(arr[i]); }
+    return out;
+  }
+  function renderAC(list){
+    acItems=list; acIdx=-1;
+    if(!list.length){ hideAC(); return; }
+    ac.innerHTML=list.map(function(x,i){
+      return '<div class="s-ac-item" role="option" data-i="'+i+'"><span class="s-ac-title">'+esc(x.title)+'</span><span class="s-ac-tag">'+esc(x.label)+'</span></div>';
+    }).join('');
+    ac.classList.add('open'); acOpen=true;
+  }
+  function chooseAC(i){
+    var x=acItems[i]; if(!x) return;
+    hideAC();
+    input.value=x.title;
+    runSearch(x.title);
+  }
+  ac.addEventListener('mousedown', function(e){
+    var it=e.target.closest && e.target.closest('.s-ac-item'); if(!it) return;
+    e.preventDefault(); chooseAC(+it.getAttribute('data-i'));
+  });
+  function highlight(){
+    var nodes=ac.querySelectorAll('.s-ac-item');
+    for(var i=0;i<nodes.length;i++){ nodes[i].classList.toggle('active', i===acIdx); }
+  }
+
+  input.addEventListener('input', debounce(function(){ renderAC(buildAC(input.value)); }, 130));
+  input.addEventListener('focus', function(){ if(input.value.trim().length>=2) renderAC(buildAC(input.value)); });
+  input.addEventListener('keydown', function(e){
+    if(!acOpen) return;
+    if(e.key==='ArrowDown'){ e.preventDefault(); acIdx=Math.min(acIdx+1,acItems.length-1); highlight(); }
+    else if(e.key==='ArrowUp'){ e.preventDefault(); acIdx=Math.max(acIdx-1,0); highlight(); }
+    else if(e.key==='Enter'){ if(acIdx>=0){ e.preventDefault(); chooseAC(acIdx); } }
+    else if(e.key==='Escape'){ hideAC(); }
+  });
+  document.addEventListener('click', function(e){ if(!form.contains(e.target)) hideAC(); });
+  form.addEventListener('submit', function(e){ e.preventDefault(); hideAC(); runSearch(input.value); });
+
+  /* ---------- load data ---------- */
+  function ingest(cfg,rows){
+    (rows||[]).forEach(function(row){
+      var it = FEED_KINDS[cfg.kind] ? feedItem(cfg.kind,row) : dirItem(cfg,row);
+      if(it) ALL.push(it);
+    });
+  }
+  function onProgress(){
+    LOADED++;
+    var q=input.value.trim();
+    if(q) runSearch(q);
+    if(acOpen && q.length>=2) renderAC(buildAC(q));
+    if(LOADED>=TOTAL && !q){ /* idle */ }
+  }
+
+  /* init */
+  var Q=qparam();
+  input.value=Q;
+  if(Q){ document.title='Search: '+Q+' — Houston Jewish Info'; renderRoutes(Q); status.textContent='Searching\u2026'; }
+  else { input.focus(); results.innerHTML=catsHTML('Browse a section'); }
+
+  CONFIGS.forEach(function(cfg){
+    getTab(cfg.tab).then(function(rows){ ingest(cfg,rows); }).catch(function(){}).then(onProgress);
   });
 })();
 </script>
