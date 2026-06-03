@@ -573,6 +573,46 @@
   }
   .weather-shabbos-val { font-size: 12px; font-weight: 700; }
 
+  /* Mobile weather bar — hidden on desktop, shown via media query on mobile */
+  .mobile-weather {
+    display: none;
+    background: linear-gradient(90deg, #1f3a6b, var(--navy));
+    color: #fff;
+    cursor: pointer;
+    border-bottom: 1px solid rgba(255,255,255,.12);
+    -webkit-tap-highlight-color: transparent;
+    transition: background .4s ease;
+  }
+  .mobile-weather.is-clear { background: linear-gradient(90deg, #2f7fc4, #1f3a6b); }
+  .mobile-weather.is-cloud { background: linear-gradient(90deg, #4a5a72, var(--navy)); }
+  .mobile-weather.is-rain  { background: linear-gradient(90deg, #3a4a63, #16233f); }
+  .mobile-weather.is-storm { background: linear-gradient(90deg, #2c2f4a, #14152a); }
+  .mobile-weather.is-snow  { background: linear-gradient(90deg, #6b7d96, #3a4a63); }
+  .mw-bar {
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    padding: 8px 16px; font-family: sans-serif; font-size: 13px;
+    max-width: 1000px; margin: 0 auto; position: relative;
+  }
+  .mw-icon { font-size: 17px; line-height: 1; }
+  .mw-temp { font-weight: 700; font-size: 14px; }
+  .mw-desc { opacity: .9; }
+  .mw-feels { opacity: .65; font-size: 11px; }
+  .mw-chev { position: absolute; right: 16px; font-size: 16px; opacity: .7; transition: transform .25s ease; }
+  .mobile-weather.open .mw-chev { transform: rotate(180deg); }
+  .mw-expand {
+    max-height: 0; overflow: hidden;
+    transition: max-height .3s ease;
+    font-family: sans-serif;
+    max-width: 1000px; margin: 0 auto;
+  }
+  .mobile-weather.open .mw-expand { max-height: 120px; }
+  .mw-row {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 7px 16px; font-size: 12px;
+    border-top: 1px solid rgba(255,255,255,.12);
+  }
+  .mw-row-label { font-size: 9px; letter-spacing: .1em; text-transform: uppercase; opacity: .7; }
+
   /* -- Advertisement Slots --
      Replace the .ad-placeholder div content with:
        <img src="your-ad-banner.jpg" alt="Advertiser Name" style="width:100%;border-radius:3px;">
@@ -953,6 +993,9 @@
 
     /* Portal */
     .portal { padding: 0 12px; }
+
+    /* Mobile weather bar — visible only on mobile */
+    .mobile-weather { display: block !important; }
 
     /* Mobile ad strip */
     #mobile-ad-strip { display: block !important; }
@@ -1559,6 +1602,21 @@
     </div>
   </div>
   </div>
+  </div>
+
+  <!-- MOBILE-ONLY weather bar (collapsible). Hidden on desktop where the sidebar widget shows. -->
+  <div id="mobile-weather" class="mobile-weather" role="button" tabindex="0" aria-expanded="false" onclick="toggleMobileWeather()" onkeypress="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleMobileWeather();}">
+    <div class="mw-bar">
+      <span class="mw-icon" id="mw-icon">⛅</span>
+      <span class="mw-temp" id="mw-temp">--°</span>
+      <span class="mw-desc" id="mw-desc">Loading…</span>
+      <span class="mw-feels" id="mw-feels"></span>
+      <span class="mw-chev" id="mw-chev">⌄</span>
+    </div>
+    <div class="mw-expand" id="mw-expand">
+      <div class="mw-row"><span class="mw-row-label">Today</span><span id="mw-hilo">H --° L --°</span></div>
+      <div class="mw-row" id="mw-shabbos-row" style="display:none;"><span class="mw-row-label">Shabbos</span><span id="mw-shabbos">—</span></div>
+    </div>
   </div>
 </div>
 
@@ -2299,6 +2357,14 @@
       .catch(function(){document.getElementById('cf-list').innerHTML='<div class="cf-empty">The feed is taking a moment to load. Please refresh.</div>';if(typeof loadAds==='function')loadAds();});
   })();
 
+  /* -- Mobile weather bar expand/collapse -- */
+  function toggleMobileWeather(){
+    var mw=document.getElementById('mobile-weather');
+    if(!mw) return;
+    var open=mw.classList.toggle('open');
+    mw.setAttribute('aria-expanded', open?'true':'false');
+  }
+
   /* -- Live weather via Open-Meteo (free, no API key needed) -- */
   (function(){
     var WX = {
@@ -2336,6 +2402,17 @@
       var box=el('weather-box');
       box.className='weather-box '+info[2];
 
+      // Mobile bar (same data)
+      if(el('mw-temp')){
+        el('mw-temp').textContent=temp+'°';
+        el('mw-icon').textContent=info[1];
+        el('mw-desc').textContent=info[0];
+        el('mw-feels').textContent='Feels '+feels+'°';
+        el('mw-hilo').textContent='H '+hi+'°  L '+lo+'°';
+        var mw=el('mobile-weather');
+        if(mw) mw.className='mobile-weather '+info[2]+(mw.classList.contains('open')?' open':'');
+      }
+
       // Shabbos (upcoming Saturday) forecast from the daily arrays
       var times=daily.time || [];
       var todayIdx=0; // Open-Meteo daily[0] is today
@@ -2349,6 +2426,10 @@
           var sLo=Math.round(daily.temperature_2m_min[i]);
           el('weather-shabbos-val').textContent=sInfo[1]+'  '+sHi+'° / '+sLo+'°';
           el('weather-shabbos').style.display='flex';
+          if(el('mw-shabbos')){
+            el('mw-shabbos').textContent=sInfo[1]+'  '+sHi+'° / '+sLo+'°';
+            el('mw-shabbos-row').style.display='flex';
+          }
           break;
         }
       }
