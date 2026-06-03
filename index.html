@@ -2014,6 +2014,15 @@
 
     function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
     function attr(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/"/g,'&quot;');}
+    // Normalize an external link: if it has no protocol, assume https:// so a
+    // partial URL like "example.com/tickets" doesn't resolve as a broken
+    // relative path. Leaves mailto:, tel:, and full http(s) links untouched.
+    function extURL(v){
+      v=String(v||'').trim();
+      if(!v) return '';
+      if(/^(https?:\/\/|mailto:|tel:|\/)/i.test(v)) return v;
+      return 'https://'+v;
+    }
     function firstLine(s){return String(s||'').split('\n')[0].trim();}
     function cleanLoc(s){return String(s||'').replace(/\s*\n\s*/g,', ').replace(/,\s*$/,'').trim();}
     function imgURL(v,base){v=String(v||'').trim();if(!v)return '';return /^https?:\/\//i.test(v)?v:base+v;}
@@ -2100,12 +2109,12 @@
       var desc=x.desc?'<p class="cf-desc">'+esc(x.desc).replace(/\n/g,'<br>')+'</p><button type="button" class="read-more-btn" style="display:none;">Read more \u2193</button>':'';
       var foot='';
       if(x.type==='event'){
-        var primary=x.link?'<a href="'+attr(x.link)+'" target="_blank" rel="noopener" class="article-read-more">'+esc(x.linkText||'More Details')+'</a>':'';
+        var primary=x.link?'<a href="'+attr(extURL(x.link))+'" target="_blank" rel="noopener" class="article-read-more">'+esc(x.linkText||'More Details')+'</a>':'';
         var gc=gcal(x);
         var addcal=gc?'<button type="button" class="cf-addcal" onclick="cfAddCal(\''+encodeURIComponent(gc)+'\')">\uD83D\uDCC5 Add to calendar</button>':'';
         if(primary||addcal)foot='<div class="cf-foot">'+primary+addcal+'</div>';
       }else if(x.type==='news'&&x.link){
-        foot='<div class="cf-foot"><a href="'+attr(x.link)+'" target="_blank" rel="noopener" class="article-read-more">'+esc(x.linkText||'Read More \u2192')+'</a></div>';
+        foot='<div class="cf-foot"><a href="'+attr(extURL(x.link))+'" target="_blank" rel="noopener" class="article-read-more">'+esc(x.linkText||'Read More \u2192')+'</a></div>';
       }
       return '<article class="article-card">'+banner+'<div class="cf-body"><div class="cf-row1">'+dline+badge+'</div><div class="cf-tags">'+typeTag+catTag+'</div><h2 class="article-headline">'+esc(x.title)+'</h2>'+meta+desc+foot+'</div></article>';
     }
