@@ -36,6 +36,7 @@
   .s-ac-item:hover,.s-ac-item.active{background:#faf6ee;}
   .s-ac-title{font-size:14.5px;color:var(--ink);flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
   .s-ac-tag{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:#fff;background:var(--navy);border-radius:10px;padding:2px 8px;white-space:nowrap;}
+  .s-ac-go{color:var(--gold);font-weight:700;font-size:15px;margin-left:2px;}
   .s-suggest{margin:0 0 18px;display:flex;flex-direction:column;gap:8px;}
   .s-suggest-card{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;background:#fff;border:1px solid var(--border);border-left:4px solid var(--gold);border-radius:6px;padding:12px 16px;}
   .s-suggest-card span{color:var(--muted);font-size:14px;}
@@ -300,6 +301,13 @@
   function hit(terms,text){ for(var i=0;i<terms.length;i++){ if(!termMatch(text,terms[i])) return false; } return true; }
   function relScore(x,q){ var t=norm(x.title); if(t===q)return 4; if(t.indexOf(q)===0)return 3; if(t.indexOf(q)>-1)return 2; return 1; }
 
+  function sectionHref(x){ return (x.type==='dir') ? (x.section+'?find='+encodeURIComponent(x.title)) : x.section; }
+  function destFor(x){
+    var u=extURL(x.link);
+    if(u) return {href:u, ext:true};
+    if(x.section) return {href:sectionHref(x), ext:false};
+    return null;
+  }
   function cardHTML(x){
     var top='<span class="s-tag s-tag-'+x.type+'">'+esc(x.label)+'</span>';
     if(x.badge) top+='<span class="s-badge">'+esc(x.badge)+'</span>';
@@ -310,7 +318,7 @@
     if(x.body) h+='<p class="s-card-body">'+esc(trunc(x.body,220))+'</p>';
     var u=extURL(x.link);
     if(u) h+='<a class="s-card-link" href="'+esc(u)+'" target="_blank" rel="noopener">Visit \u2197</a>';
-    else if(x.section){ var href=(x.type==='dir')?(x.section+'?find='+encodeURIComponent(x.title)):x.section; h+='<a class="s-card-link" href="'+esc(href)+'">View on '+esc(SECTION_NAMES[x.section]||'page')+' \u2192</a>'; }
+    else if(x.section){ h+='<a class="s-card-link" href="'+esc(sectionHref(x))+'">View on '+esc(SECTION_NAMES[x.section]||'page')+' \u2192</a>'; }
     return h+'</article>';
   }
 
@@ -362,15 +370,17 @@
     acItems=list; acIdx=-1;
     if(!list.length){ hideAC(); return; }
     ac.innerHTML=list.map(function(x,i){
-      return '<div class="s-ac-item" role="option" data-i="'+i+'"><span class="s-ac-title">'+esc(x.title)+'</span><span class="s-ac-tag">'+esc(x.label)+'</span></div>';
+      var d=destFor(x); var arrow=d?(d.ext?'\u2197':'\u2192'):'';
+      return '<div class="s-ac-item" role="option" data-i="'+i+'"><span class="s-ac-title">'+esc(x.title)+'</span><span class="s-ac-tag">'+esc(x.label)+'</span>'+(arrow?'<span class="s-ac-go">'+arrow+'</span>':'')+'</div>';
     }).join('');
     ac.classList.add('open'); acOpen=true;
   }
   function chooseAC(i){
     var x=acItems[i]; if(!x) return;
     hideAC();
-    input.value=x.title;
-    runSearch(x.title);
+    var d=destFor(x);
+    if(d){ if(d.ext){ window.open(d.href,'_blank','noopener'); } else { location.href=d.href; } return; }
+    input.value=x.title; runSearch(x.title);
   }
   ac.addEventListener('mousedown', function(e){
     var it=e.target.closest && e.target.closest('.s-ac-item'); if(!it) return;
