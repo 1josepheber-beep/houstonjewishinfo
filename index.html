@@ -135,6 +135,7 @@
     color: var(--navy);
     line-height: 1;
     letter-spacing: -2px;
+    margin: 0;
   }
   .masthead-tagline {
     font-size: 13px;
@@ -1562,7 +1563,7 @@
         </div>
         <div class="masthead-logo">
           <div class="masthead-date" id="today-date"></div>
-          <div class="masthead-title">Houston Jewish Info</div>
+          <h1 class="masthead-title">Houston Jewish Info</h1>
           <div class="masthead-tagline">Your Houston Frum Community Hub</div>
         </div>
         
@@ -1820,7 +1821,7 @@
       #community-feed .cf-cal-day{margin-top:14px;}
     </style>
     <section id="community-feed">
-      <h1 class="cf-title-main">Community Feed</h1>
+      <h2 class="cf-title-main">Community Feed</h2>
       <div class="cf-rule"></div>
       <div class="cf-controls">
         <div class="cf-pills" id="cf-pills">
@@ -2256,13 +2257,15 @@
 
     function currentList(){
       var today=cfToday();
+      var mazalCutoff=new Date(today.getTime()-14*86400000); /* Mazal Tov hides 14 days after its date */
       var arr=items.filter(function(x){
         if(x.women&&!showWomen)return false;
         if(filter==='news')return x.type==='news';
-        if(filter==='mazal')return x.type==='mazal';
+        if(filter==='mazal')return x.type==='mazal'&&(!x.date||x.date>=mazalCutoff);
         if(filter==='passing')return x.type==='passing';
         if(filter==='event')return x.type==='event'&&(!x.date||x.date>=today);
         if(x.type==='event')return (!x.date||x.date>=today);
+        if(x.type==='mazal')return (!x.date||x.date>=mazalCutoff);
         return true;
       });
       arr.sort(function(a,b){
