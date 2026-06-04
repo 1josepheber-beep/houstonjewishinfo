@@ -2901,7 +2901,7 @@ window.addEventListener('resize',function(){var m=document.getElementById('hji-j
   window.hjisCloseDD=function(){ var d=document.getElementById('hjis-dd'); if(d) d.classList.remove('open'); };
   window.hjisOpenPanel=function(){ var p=document.getElementById('hjis-panel'),bd=document.getElementById('hjis-backdrop'); if(p){ p.classList.add('open'); if(bd)bd.classList.add('open'); warm(); hjisRender('hjis-m-results',''); setTimeout(function(){var i=document.getElementById('hjis-m-input');if(i)i.focus();},260); } };
   window.hjisClosePanel=function(){ var p=document.getElementById('hjis-panel'),bd=document.getElementById('hjis-backdrop'); if(p)p.classList.remove('open'); if(bd)bd.classList.remove('open'); };
-  document.addEventListener('click',function(e){ var s=document.querySelector('.hjis-desktop'); if(s&&!s.contains(e.target)) hjisCloseDD(); });
+  document.addEventListener('click',function(e){ var s=document.querySelector('.hjis-desktop'); if(!s)return; var inside=e.composedPath?e.composedPath().indexOf(s)!==-1:s.contains(e.target); if(!inside) hjisCloseDD(); });
 })();
 </script>
 <script>
