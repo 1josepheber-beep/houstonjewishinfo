@@ -1842,8 +1842,8 @@
       #community-feed .cf-body{padding:16px 18px;}
       #community-feed .cf-pass-wrap{position:relative;}
       #community-feed .cf-pass-wrap::after{content:"";display:table;clear:both;}
-      #community-feed .cf-bdhe{position:absolute;top:16px;right:18px;max-width:44%;text-align:right;font-family:'Playfair Display',serif;font-style:italic;font-weight:600;font-size:15px;line-height:1.25;color:var(--navy);pointer-events:none;}
-      @media (max-width:600px){#community-feed .cf-bdhe{position:static;max-width:none;margin:0 0 8px;font-size:13.5px;text-align:right;}}
+      #community-feed .cf-bdhe{position:absolute;top:16px;left:68%;transform:translateX(-50%);white-space:nowrap;font-family:'Playfair Display',serif;font-style:italic;font-weight:600;font-size:15px;line-height:1.25;color:var(--navy);pointer-events:none;}
+      @media (max-width:600px){#community-feed .cf-bdhe{font-size:13px;}}
       #community-feed .cf-pass-photo{float:left;width:104px;margin:2px 16px 10px 0;}
       #community-feed .cf-pass-photo img{width:104px;height:126px;object-fit:cover;object-position:center top;border-radius:8px;border:1px solid var(--border);display:block;background:#faf8f3;}
       #community-feed .cf-pass-candle{width:104px;height:126px;border-radius:8px;border:1px solid var(--border);background:#faf8f3;display:flex;align-items:center;justify-content:center;}
@@ -2282,8 +2282,8 @@
         var ploc=x.loc?'<div class="cf-pass-loc"><span>\uD83D\uDCCD '+esc(cleanLoc(x.loc))+'</span></div>':'';
         var pbody='';
         if(x.pmsg)pbody+='<p class="cf-pass-text">'+esc(x.pmsg).replace(/\n/g,'<br>')+'</p>';
-        if(x.plev)pbody+='<p class="cf-pass-text cf-pass-key">Levaya: '+esc(x.plev).replace(/\n/g,'<br>')+'</p>';
-        if(x.pshiva)pbody+='<p class="cf-pass-text cf-pass-key">Shiva: '+esc(x.pshiva).replace(/\n/g,'<br>')+'</p>';
+        if(x.plev)pbody+='<p class="cf-pass-text"><strong>Levaya:</strong> '+esc(x.plev).replace(/\n/g,'<br>')+'</p>';
+        if(x.pshiva)pbody+='<p class="cf-pass-text"><strong>Shiva:</strong> '+esc(x.pshiva).replace(/\n/g,'<br>')+'</p>';
         var toggle=pbody?'<button type="button" class="cf-pass-toggle" onclick="cfPassToggle(this)">Read more \u2193</button>':'';
         return '<article class="article-card cf-passing"><div class="cf-body cf-pass-wrap">'+
           '<div class="cf-bdhe">Baruch Dayan HaEmes</div>'+
