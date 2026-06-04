@@ -1029,6 +1029,45 @@
 .m-jewish-sub a{padding-left:38px !important;background:#faf8f3 !important;text-transform:none !important;font-weight:600 !important;}
 .m-jewish-caret{font-size:11px;color:var(--gold);}
 </style>
+
+<style id="hjis-css">
+.masthead{position:relative;}
+.hjis-desktop{position:absolute;top:50%;transform:translateY(-50%);right:0;width:212px;text-align:left;z-index:50;}
+.hjis-box{display:flex;align-items:center;gap:8px;background:#fff;border:1px solid var(--border);border-radius:6px;padding:8px 11px;cursor:text;}
+.hjis-box:focus-within{border-color:var(--gold);box-shadow:0 0 0 3px rgba(201,147,58,.18);}
+.hjis-mag{color:var(--navy);font-size:14px;line-height:1;}
+.hjis-box input{flex:1;min-width:0;border:0;outline:0;background:transparent;font-family:var(--sans,-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif);font-size:13px;color:var(--ink);}
+.hjis-box input::placeholder{color:#9a958a;}
+.hjis-dd{position:absolute;top:46px;right:0;width:300px;max-width:86vw;background:#fff;border:1px solid var(--border);border-radius:8px;box-shadow:0 14px 34px rgba(20,30,50,.22);overflow:hidden;display:none;z-index:60;}
+.hjis-dd.open{display:block;}
+.hjis-dh{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);padding:11px 14px 7px;font-family:var(--sans,sans-serif);}
+.hjis-chips{display:flex;flex-wrap:wrap;gap:7px;padding:0 12px 12px;}
+.hjis-chip{font-family:var(--sans,sans-serif);font-size:12px;color:var(--navy);background:#f4efe5;border:1px solid #e7dfce;border-radius:999px;padding:6px 12px;cursor:pointer;}
+.hjis-chip:hover{background:var(--gold);border-color:var(--gold);color:#231a09;}
+.hjis-rows{padding:4px 0 6px;}
+.hjis-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:9px 14px;cursor:pointer;text-decoration:none;}
+.hjis-row:hover{background:#faf6ec;}
+.hjis-row.hjis-active{background:#f6efdb;box-shadow:inset 3px 0 0 var(--gold);}
+.hjis-lbl{font-size:13px;color:var(--ink);}
+.hjis-sec{font-size:11px;color:var(--muted);}
+.hjis-go{color:var(--gold);font-weight:700;font-size:14px;}
+.hjis-empty{padding:14px;color:var(--muted);font-size:13px;}
+.hjis-glass{display:none;}
+.hjis-panel{display:none;}
+.hjis-backdrop{display:none;}
+.hjis-ptop{display:flex;align-items:center;gap:9px;padding:14px 12px;border-bottom:1px solid var(--border);}
+.hjis-ptop .hjis-mag{font-size:16px;}
+.hjis-ptop input{flex:1;min-width:0;border:0;outline:0;font-family:var(--sans,sans-serif);font-size:16px;color:var(--ink);background:transparent;}
+.hjis-px{border:0;background:transparent;font-size:22px;color:var(--muted);cursor:pointer;line-height:1;padding:2px 6px;}
+.hjis-pscroll{max-height:70vh;overflow:auto;}
+@media (max-width:768px){
+  .hjis-desktop{display:none;}
+  .hjis-glass{display:flex;position:absolute;top:8px;left:8px;width:36px;height:36px;border-radius:50%;background:#fff;border:1px solid var(--border);align-items:center;justify-content:center;color:var(--navy);font-size:17px;cursor:pointer;z-index:300;}
+  .hjis-panel{display:block;position:fixed;top:0;left:0;right:0;background:#fff;transform:translateY(-105%);transition:transform .26s ease;box-shadow:0 12px 28px rgba(0,0,0,.18);z-index:1000;border-bottom:2px solid var(--gold);}
+  .hjis-panel.open{transform:translateY(0);}
+  .hjis-backdrop.open{display:block;position:fixed;inset:0;background:rgba(15,20,35,.18);z-index:999;}
+}
+</style>
 </head>
 <body style="-webkit-tap-highlight-color:transparent;">
 
@@ -1036,6 +1075,26 @@
 <header>
   <div class="portal">
     <div class="masthead">
+<!-- Site search: desktop box (top-right) + mobile glass/panel -->
+      <div class="hjis-desktop">
+        <div class="hjis-box" onclick="document.getElementById('hjis-d-input').focus()">
+          <span class="hjis-mag">&#128269;</span>
+          <input id="hjis-d-input" type="text" placeholder="Search the site" autocomplete="off" aria-label="Search the site"
+                 onfocus="hjisOpenDD()" oninput="hjisRender('hjis-dd-results',this.value)" onkeydown="hjisKey(event,this)">
+        </div>
+        <div class="hjis-dd" id="hjis-dd"><div id="hjis-dd-results"></div></div>
+      </div>
+      <button type="button" class="hjis-glass" aria-label="Search the site" onclick="hjisOpenPanel()">&#128269;</button>
+      <div class="hjis-panel" id="hjis-panel">
+        <div class="hjis-ptop">
+          <span class="hjis-mag">&#128269;</span>
+          <input id="hjis-m-input" type="text" placeholder="Search the site" autocomplete="off" aria-label="Search the site"
+                 oninput="hjisRender('hjis-m-results',this.value)" onkeydown="hjisKey(event,this)">
+          <button type="button" class="hjis-px" aria-label="Close search" onclick="hjisClosePanel()">&times;</button>
+        </div>
+        <div class="hjis-pscroll" id="hjis-m-results"></div>
+      </div>
+      <div class="hjis-backdrop" id="hjis-backdrop" onclick="hjisClosePanel()"></div>
       <div class="masthead-inner">
         <div class="masthead-side" style="display:flex;flex-direction:column;align-items:flex-start;gap:6px;">
           <a href="/" title="Go to Home Page" style="display:inline-block;">
@@ -1760,6 +1819,47 @@ function hjiToggleMJewish(b){var s=b.nextElementSibling;if(!s)return;var o=s.cla
 document.addEventListener('click',function(ev){var m=document.getElementById('hji-jewish-menu');if(m&&m.classList.contains('open')&&!m.contains(ev.target)&&!(ev.target.closest&&ev.target.closest('.nav-dd-btn')))m.classList.remove('open');});
 window.addEventListener('resize',function(){var m=document.getElementById('hji-jewish-menu');if(m)m.classList.remove('open');});
 (function(){var EVMAP={'Orthodox Schools':'menu_orthodox_schools','Orthodox Shuls':'menu_orthodox_shuls','Mikvahs':'menu_mikvahs','Adult Learning':'menu_adult_learning'};document.addEventListener('click',function(ev){var a=ev.target.closest&&ev.target.closest('#hji-jewish-menu a, .m-jewish-sub a');if(!a)return;var label=(a.textContent||'').trim();var name=EVMAP[label];if(name&&typeof gtag==='function'){gtag('event',name,{menu:'Jewish',item:label});}});})();
+</script>
+<script src="/site-search.js" defer></script>
+<script id="hjis-js">
+(function(){
+  var POPULAR=['Shuls & synagogues','Kosher restaurants','Mikvahs','Jobs board','Schools & education','Charities & gemachim','Eruv map'];
+  var POPURL={'Shuls & synagogues':'/shuls','Kosher restaurants':'/services','Mikvahs':'/mikvahs','Jobs board':'/jobs','Schools & education':'/education','Charities & gemachim':'/charities','Eruv map':'/shuls'};
+  var activeIdx=-1;
+  function esc(s){return (s+'').replace(/'/g,"\\'");}
+  function escTxt(s){return (s+'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');}
+  function curVal(id){var i=document.getElementById(id==='hjis-dd-results'?'hjis-d-input':'hjis-m-input');return i?i.value:'';}
+  function popularHTML(){var h='<div class="hjis-dh">Popular searches</div><div class="hjis-chips">';POPULAR.forEach(function(l){h+='<span class="hjis-chip" onclick="hjisPick(\''+esc(l)+'\')">'+l+'</span>';});return h+'</div>';}
+  function rowsHTML(list){var h='<div class="hjis-dh">Results</div><div class="hjis-rows">';list.forEach(function(it){var sec=it.sectionName?('<div class="hjis-sec">in '+escTxt(it.sectionName)+'</div>'):'';h+='<a class="hjis-row" href="'+escTxt(it.href)+'"'+(it.ext?' target="_blank" rel="noopener"':'')+'><span class="hjis-lbl">'+escTxt(it.title)+sec+'</span><span class="hjis-go">&rarr;</span></a>';});return h+'</div>';}
+  function noMatchHTML(q){return '<div class="hjis-rows"><a class="hjis-row hjis-row-all" href="/search/?q='+encodeURIComponent(q)+'"><span class="hjis-lbl">No quick matches<div class="hjis-sec">Search the full site for \u201c'+escTxt(q)+'\u201d</div></span><span class="hjis-go">&rarr;</span></a></div>';}
+  window.hjisRender=function(id,q){
+    var box=document.getElementById(id); if(!box) return;
+    activeIdx=-1;
+    q=(q||'').trim();
+    if(!q){ box.innerHTML=popularHTML(); return; }
+    if(!window.HJISearch){ box.innerHTML='<div class="hjis-empty">Loading\u2026</div>'; return; }
+    if(!HJISearch.ready){ box.innerHTML='<div class="hjis-empty">Searching\u2026</div>'; HJISearch.load().then(function(){ if(curVal(id).trim()===q) hjisRender(id,q); }); return; }
+    var m=HJISearch.suggest(q,8);
+    box.innerHTML = m.length ? rowsHTML(m) : noMatchHTML(q);
+  };
+  window.hjisPick=function(l){ location.href=POPURL[l]||('/search/?q='+encodeURIComponent(l)); };
+  function rowsOf(cid){ var c=document.getElementById(cid); return c?c.querySelectorAll('.hjis-row'):[]; }
+  function cidFor(inputId){ return inputId==='hjis-d-input'?'hjis-dd-results':'hjis-m-results'; }
+  function highlight(cid){ var r=rowsOf(cid); for(var i=0;i<r.length;i++){ if(i===activeIdx) r[i].classList.add('hjis-active'); else r[i].classList.remove('hjis-active'); } if(activeIdx>=0&&r[activeIdx]) r[activeIdx].scrollIntoView({block:'nearest'}); }
+  window.hjisKey=function(e,inp){
+    var cid=cidFor(inp.id), r=rowsOf(cid);
+    if(e.key==='ArrowDown'){ e.preventDefault(); if(!r.length)return; activeIdx=(activeIdx+1)%r.length; highlight(cid); }
+    else if(e.key==='ArrowUp'){ e.preventDefault(); if(!r.length)return; activeIdx=(activeIdx<=0?r.length-1:activeIdx-1); highlight(cid); }
+    else if(e.key==='Enter'){ e.preventDefault(); if(activeIdx>=0&&r[activeIdx]) r[activeIdx].click(); }
+    else if(e.key==='Escape'){ if(inp.id==='hjis-d-input') hjisCloseDD(); else hjisClosePanel(); }
+  };
+  function warm(){ if(window.HJISearch&&!HJISearch.ready) HJISearch.load(); }
+  window.hjisOpenDD=function(){ var d=document.getElementById('hjis-dd'); if(d){ d.classList.add('open'); warm(); hjisRender('hjis-dd-results',document.getElementById('hjis-d-input').value); } };
+  window.hjisCloseDD=function(){ var d=document.getElementById('hjis-dd'); if(d) d.classList.remove('open'); };
+  window.hjisOpenPanel=function(){ var p=document.getElementById('hjis-panel'),bd=document.getElementById('hjis-backdrop'); if(p){ p.classList.add('open'); if(bd)bd.classList.add('open'); warm(); hjisRender('hjis-m-results',''); setTimeout(function(){var i=document.getElementById('hjis-m-input');if(i)i.focus();},260); } };
+  window.hjisClosePanel=function(){ var p=document.getElementById('hjis-panel'),bd=document.getElementById('hjis-backdrop'); if(p)p.classList.remove('open'); if(bd)bd.classList.remove('open'); };
+  document.addEventListener('click',function(e){ var s=document.querySelector('.hjis-desktop'); if(s&&!s.contains(e.target)) hjisCloseDD(); });
+})();
 </script>
 </body>
 </html>
