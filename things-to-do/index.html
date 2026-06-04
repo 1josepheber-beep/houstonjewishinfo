@@ -1156,7 +1156,7 @@
 .hjis-pscroll{max-height:70vh;overflow:auto;}
 @media (max-width:768px){
   .hjis-desktop{display:none;}
-  .hjis-glass{display:flex;position:absolute;top:8px;left:8px;width:36px;height:36px;border-radius:50%;background:#fff;border:1px solid var(--border);align-items:center;justify-content:center;color:var(--navy);font-size:17px;cursor:pointer;z-index:300;}
+  .hjis-glass{display:flex;position:absolute;top:8px;left:8px;width:36px;height:36px;border-radius:10px;background:#fff;border:1px solid var(--border);align-items:center;justify-content:center;color:var(--navy);font-size:17px;cursor:pointer;z-index:300;}
   .hjis-panel{display:block;position:fixed;top:0;left:0;right:0;background:#fff;transform:translateY(-105%);transition:transform .26s ease;box-shadow:0 12px 28px rgba(0,0,0,.18);z-index:1000;border-bottom:2px solid var(--gold);}
   .hjis-panel.open{transform:translateY(0);}
   .hjis-backdrop.open{display:block;position:fixed;inset:0;background:rgba(15,20,35,.18);z-index:999;}
@@ -1196,16 +1196,16 @@
 <!-- Site search: desktop box (top-right) + mobile glass/panel -->
       <div class="hjis-desktop">
         <div class="hjis-box" onclick="document.getElementById('hjis-d-input').focus()">
-          <span class="hjis-mag">&#128269;</span>
+          <span class="hjis-mag"><img src="/images/search.png" alt="" aria-hidden="true" style="width:1.15em;height:1.15em;object-fit:contain;vertical-align:middle;display:inline-block"></span>
           <input id="hjis-d-input" type="text" placeholder="Search the site" autocomplete="off" aria-label="Search the site"
                  onfocus="hjisOpenDD()" oninput="hjisRender('hjis-dd-results',this.value)" onkeydown="hjisKey(event,this)">
         </div>
         <div class="hjis-dd" id="hjis-dd"><div id="hjis-dd-results"></div></div>
       </div>
-      <button type="button" class="hjis-glass" aria-label="Search the site" onclick="hjisOpenPanel()">&#128269;</button>
+      <button type="button" class="hjis-glass" aria-label="Search the site" onclick="hjisOpenPanel()"><img src="/images/search.png" alt="" aria-hidden="true" style="width:1.15em;height:1.15em;object-fit:contain;vertical-align:middle;display:inline-block"></button>
       <div class="hjis-panel" id="hjis-panel">
         <div class="hjis-ptop">
-          <span class="hjis-mag">&#128269;</span>
+          <span class="hjis-mag"><img src="/images/search.png" alt="" aria-hidden="true" style="width:1.15em;height:1.15em;object-fit:contain;vertical-align:middle;display:inline-block"></span>
           <input id="hjis-m-input" type="text" placeholder="Search the site" autocomplete="off" aria-label="Search the site"
                  oninput="hjisRender('hjis-m-results',this.value)" onkeydown="hjisKey(event,this)">
           <button type="button" class="hjis-px" aria-label="Close search" onclick="hjisClosePanel()">&times;</button>
