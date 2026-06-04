@@ -127,7 +127,20 @@
     ['eruv','eiruv'],
     ['dairy','milchig','milchik','milchigs','chalavi'],
     ['meat','meaty','fleishig','fleishik','fleishigs','basari','glatt'],
-    ['pareve','parve','pareveh','parev']
+    ['pareve','parve','pareveh','parev'],
+    ['gelato','creamery','custard','sorbet','froyo','icecream'],
+    ['pizza','pizzeria','pizzas'],
+    ['sushi','sashimi'],
+    ['bagel','bagels','bagelry'],
+    ['deli','delicatessen'],
+    ['grill','grille','steakhouse','bbq','barbecue'],
+    ['camp','camps','daycamp'],
+    ['preschool','daycare','nursery','playgroup','playgroups'],
+    ['salon','barber','barbershop','haircut','hairdresser'],
+    ['coffee','cafe','espresso','coffeehouse'],
+    ['florist','flowers','flower'],
+    ['photographer','photography','photo','photos'],
+    ['tutor','tutoring','tutors']
   ];
   var SYN={}; SYN_GROUPS.forEach(function(g){ g.forEach(function(w){ SYN[w]=g; }); });
   var _re={};
@@ -139,6 +152,31 @@
     return false;
   }
   function hit(terms,text){ for(var i=0;i<terms.length;i++){ if(!termMatch(text,terms[i])) return false; } return true; }
+  var PHRASES=[
+    {p:'ice cream', w:['ice cream','icecream','gelato','creamery','custard','sorbet','froyo','frozen yogurt','parlor']},
+    {p:'frozen yogurt', w:['frozen yogurt','froyo','gelato','ice cream','icecream','creamery']},
+    {p:'dry clean', w:['dry clean','dry cleaning','dry cleaner','cleaners','laundry']},
+    {p:'coffee shop', w:['coffee','cafe','espresso','latte','coffeehouse']},
+    {p:'summer camp', w:['summer camp','day camp','camp','camps','overnight camp']},
+    {p:'day camp', w:['day camp','summer camp','camp','camps']},
+    {p:'hair salon', w:['hair salon','salon','barber','barbershop','haircut','hairdresser']},
+    {p:'real estate', w:['real estate','realtor','realty','homes','property','broker']},
+    {p:'car repair', w:['car repair','auto repair','mechanic','automotive','body shop']}
+  ];
+  function matchQuery(text, qn){
+    var work=qn, ok=true, i, p, ws, any;
+    for(p=0;p<PHRASES.length;p++){
+      if(work.indexOf(PHRASES[p].p)>-1){
+        ws=PHRASES[p].w; any=false;
+        for(i=0;i<ws.length;i++){ if(text.indexOf(ws[i])>-1){ any=true; break; } }
+        if(!any){ ok=false; break; }
+        work=work.split(PHRASES[p].p).join(' ');
+      }
+    }
+    if(!ok) return false;
+    var terms=work.split(/\s+/).filter(Boolean);
+    return hit(terms, text);
+  }
   function relScore(x,q){ var t=norm(x.title); if(t===q)return 4; if(t.indexOf(q)===0)return 3; if(t.indexOf(q)>-1)return 2; return 1; }
   function sectionHref(x){ return (x.type==='dir') ? (x.section+'?find='+encodeURIComponent(x.title)) : x.section; }
   function destFor(x){
@@ -166,8 +204,8 @@
     limit=limit||8;
     q=norm(q).replace(/\s+/g,' ').trim();
     if(!q) return [];
-    var terms=q.split(' ').filter(Boolean), out=[];
-    for(var i=0;i<ALL.length;i++){ var x=ALL[i]; if(hit(terms,x.searchText)){ var d=destFor(x); if(d) out.push({x:x,d:d}); } }
+    var out=[];
+    for(var i=0;i<ALL.length;i++){ var x=ALL[i]; if(matchQuery(x.searchText, q)){ var d=destFor(x); if(d) out.push({x:x,d:d}); } }
     out.sort(function(a,b){
       var sa=relScore(a.x,q), sb=relScore(b.x,q); if(sb!==sa) return sb-sa;
       var la=a.x.title.length, lb=b.x.title.length; if(la!==lb) return la-lb;
