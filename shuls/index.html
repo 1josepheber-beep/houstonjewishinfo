@@ -1142,19 +1142,23 @@
     </div>
     <script>
       // ── Eruv area jump buttons ──────────────────────────────────────
-      // To add/edit an area: give it a label, latitude, longitude, and zoom
-      // (13 = wider view, 15 = closer). Get lat/lng by right-clicking the spot
-      // in Google Maps and copying the numbers. "All areas" resets to full view.
+      // Areas load from the "Eruv" sheet tab (columns: area, lat, lng, zoom).
+      // If that tab has no rows, the built-in ERUV_FALLBACK list below is used.
+      // Get lat/lng by right-clicking the spot in Google Maps. "All areas" resets the view.
       var ERUV_MID = '1eCMUSdSQYatZxVpHVPvOuHz_Ru-HkPs';
-      var ERUV_AREAS = [
-        { label: 'All areas', full: true },
-        { label: 'Chabad – Young Israel – Torchwood',     lat: 29.660012473297257, lng: -95.51293073887385, zoom: 15 },
-        { label: 'Chabad of West Houston',    lat: 29.748821560376232, lng: -95.6026576208174,  zoom: 15 }
+      var ERUV_SHEET_ID = '1in7Ac7zknqyR9neWKOCAjOAG4jXCIVTJQfU6jJ72CV8';
+      var ERUV_SHEET_TAB = 'Eruv';
+      var ERUV_FALLBACK = [
+        { label: 'Chabad \u2013 Young Israel \u2013 Torchwood', lat: 29.660012473297257, lng: -95.51293073887385, zoom: 15 },
+        { label: 'Chabad of West Houston', lat: 29.748821560376232, lng: -95.6026576208174, zoom: 15 },
+        { label: 'Meyerland', lat: 29.6770053, lng: -95.4766906, zoom: 15 }
       ];
-      (function buildEruvButtons(){
+      function eruvCell(c){ if(!c) return ''; return c.f!=null?c.f:(c.v==null?'':c.v); }
+      function buildEruvButtons(areas){
         var wrap = document.getElementById('eruv-area-buttons');
         if(!wrap) return;
-        ERUV_AREAS.forEach(function(a){
+        wrap.innerHTML = '';
+        [{ label:'All areas', full:true }].concat(areas).forEach(function(a){
           var b = document.createElement('button');
           b.type = 'button';
           b.textContent = a.label;
@@ -1163,12 +1167,29 @@
             var f = document.getElementById('eruv-map-frame');
             var base = 'https://www.google.com/maps/d/embed?mid=' + ERUV_MID + '&ehbc=2E312F';
             f.src = a.full ? base : base + '&ll=' + a.lat + ',' + a.lng + '&z=' + (a.zoom || 14);
-            // highlight the active button
             wrap.querySelectorAll('button').forEach(function(x){ x.style.background='#fff'; x.style.color='var(--navy,#1f3f6e)'; });
             b.style.background = 'var(--navy,#1f3f6e)'; b.style.color = '#fff';
           };
           wrap.appendChild(b);
         });
+      }
+      buildEruvButtons(ERUV_FALLBACK);
+      (function loadEruvAreas(){
+        var url = 'https://docs.google.com/spreadsheets/d/' + ERUV_SHEET_ID + '/gviz/tq?tqx=out:json&sheet=' + encodeURIComponent(ERUV_SHEET_TAB) + '&headers=1';
+        fetch(url).then(function(r){ return r.text(); }).then(function(text){
+          var json = JSON.parse(text.substring(47, text.length - 2));
+          var cols = json.table.cols.map(function(c){ return (c.label||'').toLowerCase().trim(); });
+          var areas = [];
+          json.table.rows.forEach(function(row){
+            var o = {}; cols.forEach(function(col,i){ o[col] = eruvCell(row.c[i]); });
+            var label = String(o.area || o.name || o.label || '').trim();
+            var lat = parseFloat(o.lat || o.latitude);
+            var lng = parseFloat(o.lng || o.longitude || o.long);
+            if(!label || isNaN(lat) || isNaN(lng)) return;
+            areas.push({ label: label, lat: lat, lng: lng, zoom: parseInt(o.zoom, 10) || 15 });
+          });
+          if(areas.length) buildEruvButtons(areas);
+        }).catch(function(){});
       })();
     </script>
   </div>
