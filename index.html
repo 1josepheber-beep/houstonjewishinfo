@@ -2848,49 +2848,38 @@ document.addEventListener('click',function(ev){var m=document.getElementById('hj
 window.addEventListener('resize',function(){var m=document.getElementById('hji-jewish-menu');if(m)m.classList.remove('open');});
 (function(){var EVMAP={'Orthodox Schools':'menu_orthodox_schools','Orthodox Shuls':'menu_orthodox_shuls','Mikvahs':'menu_mikvahs','Adult Learning':'menu_adult_learning'};document.addEventListener('click',function(ev){var a=ev.target.closest&&ev.target.closest('#hji-jewish-menu a, .m-jewish-sub a');if(!a)return;var label=(a.textContent||'').trim();var name=EVMAP[label];if(name&&typeof gtag==='function'){gtag('event',name,{menu:'Jewish',item:label});}});})();
 </script>
+<script src="/site-search.js" defer></script>
 <script id="hjis-js">
 (function(){
-  var ITEMS=[
-    {label:'Shuls & synagogues',sec:'Shuls',kw:'shul synagogue minyan davening congregation',url:'/shuls'},
-    {label:'Kosher restaurants',sec:'Services',kw:'kosher restaurant food dining eat dairy meat cafe',url:'/services'},
-    {label:'Kosher markets & groceries',sec:'Services',kw:'kosher market grocery supermarket store shop food',url:'/services'},
-    {label:'Mikvahs',sec:'Mikvahs',kw:'mikvah mikveh',url:'/mikvahs'},
-    {label:'Schools & education',sec:'Education',kw:'school yeshiva education adult learning kollel',url:'/education'},
-    {label:'Jobs board',sec:'Jobs',kw:'job jobs hiring employment work career',url:'/jobs'},
-    {label:'Charities & gemachim',sec:'Charities',kw:'charity tzedakah gemach donate chesed nonprofit',url:'/charities'},
-    {label:'Eruv map',sec:'Shuls',kw:'eruv eiruv boundary',url:'/shuls'},
-    {label:'Things to do',sec:'Things to Do',kw:'things to do activities events fun family outing',url:'/things-to-do'},
-    {label:'Real estate',sec:'Real Estate',kw:'real estate apartment rent home house realtor mortgage',url:'/real-estate'},
-    {label:'Community services',sec:'Services',kw:'services business plumber electrician handyman cleaning security marketing',url:'/services'}
-  ];
   var POPULAR=['Shuls & synagogues','Kosher restaurants','Mikvahs','Jobs board','Schools & education','Charities & gemachim','Eruv map'];
-  function filter(q){q=(q||'').toLowerCase().trim();if(!q)return [];return ITEMS.filter(function(it){return it.label.toLowerCase().indexOf(q)>-1||it.kw.indexOf(q)>-1;});}
-  function byLabel(l){for(var i=0;i<ITEMS.length;i++){if(ITEMS[i].label===l)return ITEMS[i];}return null;}
+  var POPURL={'Shuls & synagogues':'/shuls','Kosher restaurants':'/services','Mikvahs':'/mikvahs','Jobs board':'/jobs','Schools & education':'/education','Charities & gemachim':'/charities','Eruv map':'/shuls'};
   function esc(s){return (s+'').replace(/'/g,"\\'");}
-  function escTxt(s){return (s+'').replace(/&/g,'&amp;').replace(/</g,'&lt;');}
+  function escTxt(s){return (s+'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');}
+  function curVal(id){var i=document.getElementById(id==='hjis-dd-results'?'hjis-d-input':'hjis-m-input');return i?i.value:'';}
+  function popularHTML(){var h='<div class="hjis-dh">Popular searches</div><div class="hjis-chips">';POPULAR.forEach(function(l){h+='<span class="hjis-chip" onclick="hjisPick(\''+esc(l)+'\')">'+l+'</span>';});return h+'</div>';}
+  function rowsHTML(list){var h='<div class="hjis-dh">Results</div><div class="hjis-rows">';list.forEach(function(it){var sec=it.sectionName?('<div class="hjis-sec">in '+escTxt(it.sectionName)+'</div>'):'';h+='<a class="hjis-row" href="'+escTxt(it.href)+'"'+(it.ext?' target="_blank" rel="noopener"':'')+'><span class="hjis-lbl">'+escTxt(it.title)+sec+'</span><span class="hjis-go">&rarr;</span></a>';});return h+'</div>';}
   window.hjisRender=function(id,q){
-    var box=document.getElementById(id);if(!box)return;
-    var m=filter(q),h='';
-    if(!q||!q.trim()){
-      h+='<div class="hjis-dh">Popular searches</div><div class="hjis-chips">';
-      POPULAR.forEach(function(l){h+='<span class="hjis-chip" onclick="hjisPick(\''+esc(l)+'\')">'+l+'</span>';});
-      h+='</div>';
-    }else if(m.length){
-      h+='<div class="hjis-dh">Results</div><div class="hjis-rows">';
-      m.forEach(function(it){h+='<a class="hjis-row" href="'+it.url+'"><span class="hjis-lbl">'+it.label+'<div class="hjis-sec">in '+it.sec+'</div></span><span class="hjis-go">&rarr;</span></a>';});
-      h+='</div>';
-    }else{
-      h+='<div class="hjis-empty">No matches \u2014 press Enter to search everything for \u201c'+escTxt(q)+'\u201d.</div>';
+    var box=document.getElementById(id); if(!box) return;
+    q=(q||'').trim();
+    if(!q){ box.innerHTML=popularHTML(); return; }
+    if(!window.HJISearch){ box.innerHTML='<div class="hjis-empty">Loading\u2026</div>'; return; }
+    if(!HJISearch.ready){
+      box.innerHTML='<div class="hjis-empty">Searching\u2026</div>';
+      HJISearch.load().then(function(){ if(curVal(id).trim()===q) hjisRender(id,q); });
+      return;
     }
-    box.innerHTML=h;
+    var m=HJISearch.suggest(q,8);
+    if(m.length){ box.innerHTML=rowsHTML(m); }
+    else{ box.innerHTML='<div class="hjis-empty">No matches \u2014 press Enter to search everything for \u201c'+escTxt(q)+'\u201d.</div>'; }
   };
-  window.hjisPick=function(l){var it=byLabel(l);if(it)location.href=it.url;};
-  window.hjisKey=function(e,inp){if(e.key==='Enter'){var q=(inp.value||'').trim();location.href='/search/?q='+encodeURIComponent(q);}};
-  window.hjisOpenDD=function(){var d=document.getElementById('hjis-dd');if(d){d.classList.add('open');hjisRender('hjis-dd-results',document.getElementById('hjis-d-input').value);}};
-  window.hjisCloseDD=function(){var d=document.getElementById('hjis-dd');if(d)d.classList.remove('open');};
-  window.hjisOpenPanel=function(){var p=document.getElementById('hjis-panel'),bd=document.getElementById('hjis-backdrop');if(p){p.classList.add('open');if(bd)bd.classList.add('open');hjisRender('hjis-m-results','');setTimeout(function(){var i=document.getElementById('hjis-m-input');if(i)i.focus();},260);}};
-  window.hjisClosePanel=function(){var p=document.getElementById('hjis-panel'),bd=document.getElementById('hjis-backdrop');if(p)p.classList.remove('open');if(bd)bd.classList.remove('open');};
-  document.addEventListener('click',function(e){var s=document.querySelector('.hjis-desktop');if(s&&!s.contains(e.target))hjisCloseDD();});
+  window.hjisPick=function(l){ location.href=POPURL[l]||('/search/?q='+encodeURIComponent(l)); };
+  window.hjisKey=function(e,inp){ if(e.key==='Enter'){ var q=(inp.value||'').trim(); location.href='/search/?q='+encodeURIComponent(q); } };
+  function warm(){ if(window.HJISearch&&!HJISearch.ready) HJISearch.load(); }
+  window.hjisOpenDD=function(){ var d=document.getElementById('hjis-dd'); if(d){ d.classList.add('open'); warm(); hjisRender('hjis-dd-results',document.getElementById('hjis-d-input').value); } };
+  window.hjisCloseDD=function(){ var d=document.getElementById('hjis-dd'); if(d) d.classList.remove('open'); };
+  window.hjisOpenPanel=function(){ var p=document.getElementById('hjis-panel'),bd=document.getElementById('hjis-backdrop'); if(p){ p.classList.add('open'); if(bd)bd.classList.add('open'); warm(); hjisRender('hjis-m-results',''); setTimeout(function(){var i=document.getElementById('hjis-m-input');if(i)i.focus();},260); } };
+  window.hjisClosePanel=function(){ var p=document.getElementById('hjis-panel'),bd=document.getElementById('hjis-backdrop'); if(p)p.classList.remove('open'); if(bd)bd.classList.remove('open'); };
+  document.addEventListener('click',function(e){ var s=document.querySelector('.hjis-desktop'); if(s&&!s.contains(e.target)) hjisCloseDD(); });
 })();
 </script>
 </body>
