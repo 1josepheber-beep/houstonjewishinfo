@@ -1026,7 +1026,7 @@
     #shabbat-strip span[style*="font-size:16px"] { font-size: 13px !important; }
     #shabbat-strip span[style*="font-size:14px"] { font-size: 13px !important; }
     #strip-candles, #strip-havdalah { font-size: 12px !important; }
-    #strip-candles-date, #strip-havdalah-date { display: none !important; }
+    #strip-candles-date, #strip-havdalah-date, #strip-candles-hdate, #strip-havdalah-hdate { display: none !important; }
     #strip-parasha { font-size: 11px !important; }
     #shabbat-strip .portal span[style*="text-transform:uppercase"] { display: none !important; }
 
@@ -1664,6 +1664,7 @@
         <span style="font-family:sans-serif;font-size:9px;letter-spacing:.1em;text-transform:uppercase;opacity:.7;">Candle Lighting &nbsp;</span>
         <span id="strip-candles" style="font-family:sans-serif;font-size:13px;font-weight:700;">–</span>
         <span id="strip-candles-date" style="font-family:sans-serif;font-size:11px;opacity:.75;margin-left:4px;"></span>
+        <span id="strip-candles-hdate" dir="rtl" style="font-family:sans-serif;font-size:11px;opacity:.7;margin-left:8px;unicode-bidi:isolate;"></span>
       </div>
     </div>
     <div style="width:1px;height:20px;background:rgba(255,255,255,.25);flex-shrink:0;"></div>
@@ -1673,6 +1674,7 @@
         <span style="font-family:sans-serif;font-size:9px;letter-spacing:.1em;text-transform:uppercase;opacity:.7;">Havdalah &nbsp;</span>
         <span id="strip-havdalah" style="font-family:sans-serif;font-size:13px;font-weight:700;">–</span>
         <span id="strip-havdalah-date" style="font-family:sans-serif;font-size:11px;opacity:.75;margin-left:4px;"></span>
+        <span id="strip-havdalah-hdate" dir="rtl" style="font-family:sans-serif;font-size:11px;opacity:.7;margin-left:8px;unicode-bidi:isolate;"></span>
       </div>
     </div>
     <div style="width:1px;height:20px;background:rgba(255,255,255,.25);flex-shrink:0;"></div>
@@ -2171,13 +2173,28 @@
         }
 
         // Populate the strip
+        function setHebrewDate(isoDate, elId) {
+          if (!isoDate) return;
+          var ymd = String(isoDate).slice(0, 10).split('-');
+          if (ymd.length !== 3) return;
+          var cu = 'https://www.hebcal.com/converter?cfg=json&gy=' + (+ymd[0]) + '&gm=' + (+ymd[1]) + '&gd=' + (+ymd[2]) + '&g2h=1';
+          fetch(cu).then(function(r){ return r.json(); }).then(function(hd){
+            if (!hd || !hd.hebrew) return;
+            var parts = hd.hebrew.replace(/[\u0591-\u05C7]/g, '').split(' ');
+            if (parts.length >= 3) parts = parts.slice(0, -1);
+            var el = document.getElementById(elId);
+            if (el) el.textContent = parts.join(' ');
+          }).catch(function(){});
+        }
         if (candles) {
           document.getElementById('strip-candles').textContent = formatTime(candles.date);
           document.getElementById('strip-candles-date').textContent = formatDate(candles.date);
+          setHebrewDate(candles.date, 'strip-candles-hdate');
         }
         if (havdalah) {
           document.getElementById('strip-havdalah').textContent = formatTime(havdalah.date);
           document.getElementById('strip-havdalah-date').textContent = formatDate(havdalah.date);
+          setHebrewDate(havdalah.date, 'strip-havdalah-hdate');
         }
         if (parasha) {
           document.getElementById('strip-parasha').textContent = parasha.title;
