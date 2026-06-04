@@ -1006,6 +1006,16 @@
   .eruv-banner-text { font-size:14px; color:var(--navy,#1f3f6e); }
   .eruv-banner-cta { font-size:12px; font-weight:700; color:#fff; background:var(--navy,#1f3f6e); padding:7px 14px; border-radius:5px; white-space:nowrap; }
   @media (max-width:600px){ .eruv-banner{ flex-direction:column; align-items:flex-start; } }
+  @media print {
+    body.eruv-printing{ overflow:visible !important; }
+    body.eruv-printing > *:not(#modal-eruv){ display:none !important; }
+    body.eruv-printing #modal-eruv{ position:static !important; display:block !important; background:#fff !important; padding:0 !important; overflow:visible !important; }
+    body.eruv-printing #modal-eruv .modal{ box-shadow:none !important; border:0 !important; max-width:100% !important; width:100% !important; max-height:none !important; height:auto !important; overflow:visible !important; margin:0 !important; padding:0 !important; }
+    body.eruv-printing #modal-eruv .modal-close,
+    body.eruv-printing #modal-eruv .modal-sub,
+    body.eruv-printing #modal-eruv #eruv-area-buttons,
+    body.eruv-printing #modal-eruv .eruv-print-row{ display:none !important; }
+  }
 
   @media (max-width: 700px) {
     .syn-grid { grid-template-columns: 1fr; }
@@ -1133,12 +1143,13 @@
     <div class="modal-title">🗺️ Houston Community Eruv</div>
     <div class="modal-sub">The map below shows the boundary of the Houston community eruv. Use the buttons to jump to an area.</div>
     <div id="eruv-area-buttons" style="display:flex;flex-wrap:wrap;gap:8px;margin:12px 0 10px;"></div>
-    <div style="border:1px solid #ddd;border-radius:8px;overflow:hidden;margin:0 0 12px;">
-      <iframe id="eruv-map-frame" src="https://www.google.com/maps/d/embed?mid=1eCMUSdSQYatZxVpHVPvOuHz_Ru-HkPs&ehbc=2E312F" style="width:100%;height:430px;border:0;display:block;" loading="lazy" title="Houston Community Eruv Map"></iframe>
+    <div style="border:1px solid #ddd;border-radius:8px;overflow:hidden;margin:0 0 12px;height:430px;">
+      <iframe id="eruv-map-frame" src="https://www.google.com/maps/d/embed?mid=1eCMUSdSQYatZxVpHVPvOuHz_Ru-HkPs&ehbc=2E312F" style="width:100%;height:494px;border:0;display:block;margin-top:-64px;" loading="lazy" title="Houston Community Eruv Map"></iframe>
     </div>
     <p style="font-family:sans-serif;font-size:12px;color:#8a6d1a;background:#fff8e6;border:1px solid #f0d98a;border-radius:6px;padding:9px 11px;line-height:1.5;margin-bottom:12px;">⚠️ An eruv's status can change week to week. Always confirm the eruv is up before relying on it for Shabbat.</p>
-    <div style="display:flex;flex-wrap:wrap;gap:16px;font-family:sans-serif;font-size:12px;font-weight:700;">
-      <a href="https://www.google.com/maps/d/viewer?mid=1eCMUSdSQYatZxVpHVPvOuHz_Ru-HkPs" target="_blank" rel="noopener" style="color:var(--navy,#1f3f6e);">Open full map in Google Maps →</a>
+    <div class="eruv-print-row" style="display:flex;flex-wrap:wrap;align-items:center;gap:10px;font-family:sans-serif;font-size:12px;">
+      <button type="button" onclick="eruvPrintMap()" style="font-weight:700;color:#fff;background:var(--navy,#1f3f6e);border:0;border-radius:5px;padding:8px 16px;cursor:pointer;">🖨️ Print this map</button>
+      <span style="color:#6b6b6b;">Tip: scroll to zoom the map to the area you want, then print.</span>
     </div>
     <script>
       // ── Eruv area jump buttons ──────────────────────────────────────
@@ -1154,6 +1165,7 @@
         { label: 'Meyerland', lat: 29.6770053, lng: -95.4766906, zoom: 15 }
       ];
       function eruvCell(c){ if(!c) return ''; return c.f!=null?c.f:(c.v==null?'':c.v); }
+      function eruvPrintMap(){ document.body.classList.add('eruv-printing'); var done=function(){ document.body.classList.remove('eruv-printing'); window.removeEventListener('afterprint',done); }; window.addEventListener('afterprint',done); setTimeout(done,3000); window.print(); }
       function buildEruvButtons(areas){
         var wrap = document.getElementById('eruv-area-buttons');
         if(!wrap) return;
