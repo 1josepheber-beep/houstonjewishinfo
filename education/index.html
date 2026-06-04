@@ -1190,6 +1190,8 @@
     if(tile) tile.classList.add('active');
     document.getElementById('edu-cat-label').textContent=EDU_LABELS[cat]||cat;
     if(window.renderEduCat) window.renderEduCat(cat);
+    var _b=document.querySelector('.results-bar')||document.getElementById('school-grid');
+    if(_b){ setTimeout(function(){ _b.scrollIntoView({behavior:'smooth', block:'start'}); }, 90); }
   }
 
   function openModal(id) { document.getElementById(id).classList.add('open'); document.body.style.overflow = 'hidden'; }
