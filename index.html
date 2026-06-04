@@ -1840,7 +1840,10 @@
       #community-feed .cf-banner{width:100%;height:180px;overflow:hidden;}
       #community-feed .cf-banner img{width:100%;height:100%;object-fit:cover;display:block;}
       #community-feed .cf-body{padding:16px 18px;}
+      #community-feed .cf-pass-wrap{position:relative;}
       #community-feed .cf-pass-wrap::after{content:"";display:table;clear:both;}
+      #community-feed .cf-bdhe{position:absolute;top:16px;right:18px;max-width:44%;text-align:right;font-family:'Playfair Display',serif;font-style:italic;font-weight:600;font-size:15px;line-height:1.25;color:var(--navy);pointer-events:none;}
+      @media (max-width:600px){#community-feed .cf-bdhe{position:static;max-width:none;margin:0 0 8px;font-size:13.5px;text-align:right;}}
       #community-feed .cf-pass-photo{float:left;width:104px;margin:2px 16px 10px 0;}
       #community-feed .cf-pass-photo img{width:104px;height:126px;object-fit:cover;object-position:center top;border-radius:8px;border:1px solid var(--border);display:block;background:#faf8f3;}
       #community-feed .cf-pass-candle{width:104px;height:126px;border-radius:8px;border:1px solid var(--border);background:#faf8f3;display:flex;align-items:center;justify-content:center;}
@@ -1864,10 +1867,13 @@
       #community-feed .desc-inline-link{color:#b8860b;font-weight:700;text-decoration:underline;text-underline-offset:2px;}
       #community-feed .desc-inline-link:hover{color:#1a2744;}
       #community-feed .cf-desc.clamped{display:-webkit-box;-webkit-line-clamp:5;-webkit-box-orient:vertical;overflow:hidden;}
+      #community-feed .cf-pass-loc{font-family:sans-serif;font-size:13px;color:var(--muted);margin:2px 0 4px;}
       #community-feed .cf-pass-extra{display:none;clear:both;}
       #community-feed .cf-pass-extra.open{display:block;}
-      #community-feed .cf-pass-text{font-family:sans-serif;color:#444;font-size:14px;line-height:1.6;margin:0;}
-      #community-feed .cf-pass-toggle{clear:both;display:inline-block;font-family:sans-serif;font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;background:none;border:none;color:var(--gold);cursor:pointer;padding:0;margin-top:12px;}
+      #community-feed .cf-pass-text{font-family:sans-serif;color:#444;font-size:14px;line-height:1.6;margin:0 0 8px;}
+      #community-feed .cf-pass-extra .cf-pass-text:last-child{margin-bottom:0;}
+      #community-feed .cf-pass-key{font-weight:700;color:var(--ink);}
+      #community-feed .cf-pass-toggle{clear:both;display:block;width:-moz-fit-content;width:fit-content;font-family:sans-serif;font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;background:none;border:none;color:var(--gold);cursor:pointer;padding:0;margin-top:12px;}
       #community-feed .cf-foot{display:flex;gap:16px;align-items:center;margin-top:12px;flex-wrap:wrap;}
       #community-feed .article-read-more{font-family:sans-serif;font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;background:var(--navy);color:#fff;padding:9px 16px;border-radius:6px;text-decoration:none;display:inline-block;}
       #community-feed .article-read-more:hover{background:var(--gold);color:#fff;}
@@ -2252,11 +2258,7 @@
       mazals.forEach(function(r){if(!active(r)||!r.name)return;
         out.push({type:'mazal',date:parseDate(r._cells.date),time:'',title:r.name,cat:r.type||'',org:'',loc:r.city||'',desc:r.message||'',img:'',link:'',linkText:'',women:false});});
       (passings||[]).forEach(function(r){if(!active(r)||!r.name)return;
-        var parts=[];
-        if(r.levaya)parts.push('Levaya: '+r.levaya);
-        if(r.shiva)parts.push('Shiva: '+r.shiva);
-        if(r.message)parts.push(r.message);
-        out.push({type:'passing',date:parseDate(r._cells.date),time:'',title:r.name,cat:'',org:'',loc:r.city||'',desc:parts.join('\n'),img:imgURL(r.image,PASSING_IMG),link:'',linkText:'',women:false});});
+        out.push({type:'passing',date:parseDate(r._cells.date),time:'',title:r.name,cat:'',org:'',loc:r.city||'',desc:'',pmsg:r.message||'',plev:r.levaya||'',pshiva:r.shiva||'',img:imgURL(r.image,PASSING_IMG),link:'',linkText:'',women:false});});
       return out;
     }
 
@@ -2277,16 +2279,20 @@
       if(x.type==='passing'){
         var photo=x.img?'<img src="'+attr(x.img)+'" alt="'+attr(x.title)+'" loading="lazy">':CANDLE_SVG;
         var pdline=x.date?'<span class="cf-dateline">'+esc(fmtDate(x.date))+'</span>':'<span class="cf-dateline"></span>';
-        var pmeta=x.loc?'<div class="cf-meta"><span>\uD83D\uDCCD '+esc(cleanLoc(x.loc))+'</span></div>':'';
-        var pbody=x.desc?'<p class="cf-pass-text">'+esc(x.desc).replace(/\n/g,'<br>')+'</p>':'';
-        var extra=pmeta+pbody;
-        var toggle=extra?'<button type="button" class="cf-pass-toggle" onclick="cfPassToggle(this)">Read more \u2193</button>':'';
+        var ploc=x.loc?'<div class="cf-pass-loc"><span>\uD83D\uDCCD '+esc(cleanLoc(x.loc))+'</span></div>':'';
+        var pbody='';
+        if(x.pmsg)pbody+='<p class="cf-pass-text">'+esc(x.pmsg).replace(/\n/g,'<br>')+'</p>';
+        if(x.plev)pbody+='<p class="cf-pass-text cf-pass-key">Levaya: '+esc(x.plev).replace(/\n/g,'<br>')+'</p>';
+        if(x.pshiva)pbody+='<p class="cf-pass-text cf-pass-key">Shiva: '+esc(x.pshiva).replace(/\n/g,'<br>')+'</p>';
+        var toggle=pbody?'<button type="button" class="cf-pass-toggle" onclick="cfPassToggle(this)">Read more \u2193</button>':'';
         return '<article class="article-card cf-passing"><div class="cf-body cf-pass-wrap">'+
+          '<div class="cf-bdhe">Baruch Dayan HaEmes</div>'+
           '<div class="cf-pass-photo">'+photo+'</div>'+
           '<div class="cf-row1">'+pdline+'</div>'+
           '<div class="cf-tags"><span class="cf-tag cf-type-passing">'+esc(TYPE.passing)+'</span></div>'+
           '<h2 class="article-headline">'+esc(x.title)+'</h2>'+
-          (extra?'<div class="cf-pass-extra">'+extra+'</div>':'')+
+          ploc+
+          (pbody?'<div class="cf-pass-extra">'+pbody+'</div>':'')+
           toggle+
           '</div></article>';
       }
