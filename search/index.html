@@ -220,30 +220,30 @@
     var body=pick(row,['description','about','details','summary','services','message','excerpt','notes','bio']);
     var it=mk('dir',cfg.label,title,null,sub,body,'');
     it.section=cfg.link;
-    it.searchText=fieldsText(row);
+    it.searchText=fieldsText(row)+(cfg.kw?(' '+cfg.kw):'');
     return it;
   }
 
   /* ---------- tab config ---------- */
   var CONFIGS=[
     {tab:'Stories',kind:'news'},{tab:'Events',kind:'event'},{tab:'MazalTov',kind:'mazal'},{tab:'Passings',kind:'passing'},
-    {tab:'Education',kind:'dir',label:'School',link:'/education'},
-    {tab:'Shuls',kind:'dir',label:'Shul',link:'/shuls'},
-    {tab:'Mikvahs',kind:'dir',label:'Mikvah',link:'/mikvahs'},
-    {tab:'Jobs',kind:'dir',label:'Job',link:'/jobs',filter:'approved'},
-    {tab:'Services',kind:'dir',label:'Service',link:'/services'},
-    {tab:'KosherRestaurants',kind:'dir',label:'Kosher Restaurant',link:'/services'},
-    {tab:'KosherMarkets',kind:'dir',label:'Kosher Market',link:'/services'},
-    {tab:'BooksGifts',kind:'dir',label:'Books & Gifts',link:'/services'},
-    {tab:'Catering',kind:'dir',label:'Catering',link:'/services'},
-    {tab:'CommunityOrgs',kind:'dir',label:'Community Org',link:'/services'},
-    {tab:'Security',kind:'dir',label:'Security',link:'/services'},
-    {tab:'Marketing',kind:'dir',label:'Marketing',link:'/services'},
-    {tab:'Trades',kind:'dir',label:'Trades',link:'/services'},
-    {tab:'Charities',kind:'dir',label:'Charity',link:'/charities'},
-    {tab:'Gemachim',kind:'dir',label:'Gemach',link:'/charities'},
-    {tab:'RealEstate',kind:'dir',label:'Real Estate',link:'/real-estate'},
-    {tab:'Activities',kind:'dir',label:'Things to Do',link:'/things-to-do'}
+    {tab:'Education',kind:'dir',label:'School',link:'/education',kw:'school schools yeshiva education adult learning kollel'},
+    {tab:'Shuls',kind:'dir',label:'Shul',link:'/shuls',kw:'shul shuls synagogue minyan davening congregation'},
+    {tab:'Mikvahs',kind:'dir',label:'Mikvah',link:'/mikvahs',kw:'mikvah mikvahs mikveh'},
+    {tab:'Jobs',kind:'dir',label:'Job',link:'/jobs',filter:'approved',kw:'job jobs hiring employment position career'},
+    {tab:'Services',kind:'dir',label:'Service',link:'/services',kw:'service services business directory'},
+    {tab:'KosherRestaurants',kind:'dir',label:'Kosher Restaurant',link:'/services',kw:'kosher restaurant restaurants dining eatery cafe food eat'},
+    {tab:'KosherMarkets',kind:'dir',label:'Kosher Market',link:'/services',kw:'kosher market markets grocery groceries supermarket store shop food'},
+    {tab:'BooksGifts',kind:'dir',label:'Books & Gifts',link:'/services',kw:'books gifts judaica seforim sefarim giftware'},
+    {tab:'Catering',kind:'dir',label:'Catering',link:'/services',kw:'catering caterer food'},
+    {tab:'CommunityOrgs',kind:'dir',label:'Community Org',link:'/services',kw:'community organization org nonprofit'},
+    {tab:'Security',kind:'dir',label:'Security',link:'/services',kw:'security alarm camera'},
+    {tab:'Marketing',kind:'dir',label:'Marketing',link:'/services',kw:'marketing advertising branding'},
+    {tab:'Trades',kind:'dir',label:'Trades',link:'/services',kw:'trades contractor handyman plumber electrician hvac'},
+    {tab:'Charities',kind:'dir',label:'Charity',link:'/charities',kw:'charity charities tzedakah donation chesed nonprofit'},
+    {tab:'Gemachim',kind:'dir',label:'Gemach',link:'/charities',kw:'gemach gemachim'},
+    {tab:'RealEstate',kind:'dir',label:'Real Estate',link:'/real-estate',kw:'real estate realtor apartment rental home house property mortgage'},
+    {tab:'Activities',kind:'dir',label:'Things to Do',link:'/things-to-do',kw:'things to do activities attraction family outing fun'}
   ];
   var FEED_KINDS={news:1,event:1,mazal:1,passing:1};
 
@@ -287,7 +287,10 @@
     ['security','alarm','camera','cameras'],
     ['marketing','advertising','branding'],
     ['judaica','seforim','sefarim','gifts','giftware'],
-    ['eruv','eiruv']
+    ['eruv','eiruv'],
+    ['dairy','milchig','milchik','milchigs','chalavi'],
+    ['meat','meaty','fleishig','fleishik','fleishigs','basari','glatt'],
+    ['pareve','parve','pareveh','parev']
   ];
   var SYN={}; SYN_GROUPS.forEach(function(g){ g.forEach(function(w){ SYN[w]=g; }); });
   var _re={};
