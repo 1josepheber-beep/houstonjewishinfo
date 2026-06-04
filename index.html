@@ -1355,6 +1355,7 @@
 .hjis-rows{padding:4px 0 6px;}
 .hjis-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:9px 14px;cursor:pointer;text-decoration:none;}
 .hjis-row:hover{background:#faf6ec;}
+.hjis-row.hjis-active{background:#f6efdb;box-shadow:inset 3px 0 0 var(--gold);}
 .hjis-lbl{font-size:13px;color:var(--ink);}
 .hjis-sec{font-size:11px;color:var(--muted);}
 .hjis-go{color:var(--gold);font-weight:700;font-size:14px;}
@@ -2853,27 +2854,34 @@ window.addEventListener('resize',function(){var m=document.getElementById('hji-j
 (function(){
   var POPULAR=['Shuls & synagogues','Kosher restaurants','Mikvahs','Jobs board','Schools & education','Charities & gemachim','Eruv map'];
   var POPURL={'Shuls & synagogues':'/shuls','Kosher restaurants':'/services','Mikvahs':'/mikvahs','Jobs board':'/jobs','Schools & education':'/education','Charities & gemachim':'/charities','Eruv map':'/shuls'};
+  var activeIdx=-1;
   function esc(s){return (s+'').replace(/'/g,"\\'");}
   function escTxt(s){return (s+'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');}
   function curVal(id){var i=document.getElementById(id==='hjis-dd-results'?'hjis-d-input':'hjis-m-input');return i?i.value:'';}
   function popularHTML(){var h='<div class="hjis-dh">Popular searches</div><div class="hjis-chips">';POPULAR.forEach(function(l){h+='<span class="hjis-chip" onclick="hjisPick(\''+esc(l)+'\')">'+l+'</span>';});return h+'</div>';}
   function rowsHTML(list){var h='<div class="hjis-dh">Results</div><div class="hjis-rows">';list.forEach(function(it){var sec=it.sectionName?('<div class="hjis-sec">in '+escTxt(it.sectionName)+'</div>'):'';h+='<a class="hjis-row" href="'+escTxt(it.href)+'"'+(it.ext?' target="_blank" rel="noopener"':'')+'><span class="hjis-lbl">'+escTxt(it.title)+sec+'</span><span class="hjis-go">&rarr;</span></a>';});return h+'</div>';}
+  function noMatchHTML(q){return '<div class="hjis-rows"><a class="hjis-row hjis-row-all" href="/search/?q='+encodeURIComponent(q)+'"><span class="hjis-lbl">No quick matches<div class="hjis-sec">Search the full site for \u201c'+escTxt(q)+'\u201d</div></span><span class="hjis-go">&rarr;</span></a></div>';}
   window.hjisRender=function(id,q){
     var box=document.getElementById(id); if(!box) return;
+    activeIdx=-1;
     q=(q||'').trim();
     if(!q){ box.innerHTML=popularHTML(); return; }
     if(!window.HJISearch){ box.innerHTML='<div class="hjis-empty">Loading\u2026</div>'; return; }
-    if(!HJISearch.ready){
-      box.innerHTML='<div class="hjis-empty">Searching\u2026</div>';
-      HJISearch.load().then(function(){ if(curVal(id).trim()===q) hjisRender(id,q); });
-      return;
-    }
+    if(!HJISearch.ready){ box.innerHTML='<div class="hjis-empty">Searching\u2026</div>'; HJISearch.load().then(function(){ if(curVal(id).trim()===q) hjisRender(id,q); }); return; }
     var m=HJISearch.suggest(q,8);
-    if(m.length){ box.innerHTML=rowsHTML(m); }
-    else{ box.innerHTML='<div class="hjis-empty">No matches \u2014 press Enter to search everything for \u201c'+escTxt(q)+'\u201d.</div>'; }
+    box.innerHTML = m.length ? rowsHTML(m) : noMatchHTML(q);
   };
   window.hjisPick=function(l){ location.href=POPURL[l]||('/search/?q='+encodeURIComponent(l)); };
-  window.hjisKey=function(e,inp){ if(e.key==='Enter'){ var q=(inp.value||'').trim(); location.href='/search/?q='+encodeURIComponent(q); } };
+  function rowsOf(cid){ var c=document.getElementById(cid); return c?c.querySelectorAll('.hjis-row'):[]; }
+  function cidFor(inputId){ return inputId==='hjis-d-input'?'hjis-dd-results':'hjis-m-results'; }
+  function highlight(cid){ var r=rowsOf(cid); for(var i=0;i<r.length;i++){ if(i===activeIdx) r[i].classList.add('hjis-active'); else r[i].classList.remove('hjis-active'); } if(activeIdx>=0&&r[activeIdx]) r[activeIdx].scrollIntoView({block:'nearest'}); }
+  window.hjisKey=function(e,inp){
+    var cid=cidFor(inp.id), r=rowsOf(cid);
+    if(e.key==='ArrowDown'){ e.preventDefault(); if(!r.length)return; activeIdx=(activeIdx+1)%r.length; highlight(cid); }
+    else if(e.key==='ArrowUp'){ e.preventDefault(); if(!r.length)return; activeIdx=(activeIdx<=0?r.length-1:activeIdx-1); highlight(cid); }
+    else if(e.key==='Enter'){ e.preventDefault(); if(activeIdx>=0&&r[activeIdx]) r[activeIdx].click(); }
+    else if(e.key==='Escape'){ if(inp.id==='hjis-d-input') hjisCloseDD(); else hjisClosePanel(); }
+  };
   function warm(){ if(window.HJISearch&&!HJISearch.ready) HJISearch.load(); }
   window.hjisOpenDD=function(){ var d=document.getElementById('hjis-dd'); if(d){ d.classList.add('open'); warm(); hjisRender('hjis-dd-results',document.getElementById('hjis-d-input').value); } };
   window.hjisCloseDD=function(){ var d=document.getElementById('hjis-dd'); if(d) d.classList.remove('open'); };
