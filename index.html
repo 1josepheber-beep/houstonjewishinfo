@@ -1836,8 +1836,15 @@
       #community-feed .cf-switch i{position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:#fff;transition:left .15s;}
       #community-feed .cf-switch.on i{left:16px;}
       #community-feed .article-card{border:1px solid var(--border);border-radius:12px;margin-bottom:14px;overflow:hidden;background:#fff;}
-      #community-feed .cf-banner{width:100%;height:180px;overflow:hidden;}
+      #community-feed .cf-banner{width:100%;height:180px;overflow:hidden;position:relative;}
       #community-feed .cf-banner img{width:100%;height:100%;object-fit:cover;display:block;}
+      #community-feed .cf-banner.is-cropped{cursor:pointer;}
+      #community-feed .cf-viewfull{position:absolute;right:8px;bottom:8px;display:none;font-family:sans-serif;font-size:11px;font-weight:700;letter-spacing:.02em;color:#fff;background:rgba(26,39,68,.82);padding:5px 11px;border-radius:20px;pointer-events:none;}
+      #community-feed .cf-banner.is-cropped .cf-viewfull{display:block;}
+      #cf-lightbox{position:fixed;top:0;left:0;right:0;bottom:0;z-index:10000;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.86);padding:18px;box-sizing:border-box;}
+      #cf-lightbox.open{display:flex;}
+      #cf-lightbox img{max-width:96vw;max-height:92vh;width:auto;height:auto;border-radius:6px;box-shadow:0 12px 44px rgba(0,0,0,.5);}
+      #cf-lightbox .cf-lb-close{position:absolute;top:12px;right:18px;font-size:38px;line-height:1;color:#fff;background:none;border:0;cursor:pointer;font-family:sans-serif;padding:0;}
       #community-feed .cf-body{padding:16px 18px;}
       #community-feed .cf-pass-wrap{position:relative;}
       #community-feed .cf-pass-wrap::after{content:"";display:table;clear:both;}
@@ -2271,6 +2278,10 @@
       return 'https://calendar.google.com/calendar/render?action=TEMPLATE&text='+encodeURIComponent(x.title)+'&dates='+s+'/'+e+'&details='+encodeURIComponent(det)+'&location='+encodeURIComponent(cleanLoc(x.loc));
     }
     window.cfAddCal=function(enc){try{window.open(decodeURIComponent(enc),'_blank');}catch(e){}};
+    window.cfOpenLightbox=function(el){ if(!el||!el.classList.contains('is-cropped'))return; var src=el.getAttribute('data-full'); if(!src)return; var lb=document.getElementById('cf-lightbox'),im=document.getElementById('cf-lightbox-img'),inner=el.querySelector('img'); if(!lb||!im)return; im.src=src; im.alt=inner?inner.alt:''; lb.classList.add('open'); document.body.style.overflow='hidden'; };
+    window.cfCloseLightbox=function(){ var lb=document.getElementById('cf-lightbox'); if(lb)lb.classList.remove('open'); var im=document.getElementById('cf-lightbox-img'); if(im)im.removeAttribute('src'); document.body.style.overflow=''; };
+    window.cfCheckCrop=function(img){ try{ var box=img.parentNode; if(!box)return; var bw=box.clientWidth,bh=box.clientHeight||180,nw=img.naturalWidth,nh=img.naturalHeight; if(!bw||!nw||!nh)return; var scale=Math.max(bw/nw,bh/nh); var vis=(bw/(nw*scale))*(bh/(nh*scale)); if(vis<0.8)box.classList.add('is-cropped'); }catch(e){} };
+    document.addEventListener('keydown',function(e){ if(e.key==='Escape'||e.key==='Esc'){ var lb=document.getElementById('cf-lightbox'); if(lb&&lb.classList.contains('open'))window.cfCloseLightbox(); } });
     window.cfPassToggle=function(btn){var wrap=btn.parentNode;var extra=wrap.querySelector('.cf-pass-extra');if(!extra)return;var open=extra.classList.toggle('open');btn.innerHTML=open?'Read less \u2191':'Read more \u2193';};
 
     function cfCard(x){
@@ -2296,7 +2307,7 @@
           '</div></article>';
       }
       var up=x.date?(x.date>=today):true;
-      var banner=x.img?'<div class="cf-banner"><img src="'+attr(x.img)+'" alt="'+attr(x.title)+'" loading="lazy"></div>':'';
+      var banner=x.img?'<div class="cf-banner" data-full="'+attr(x.img)+'" onclick="cfOpenLightbox(this)"><img src="'+attr(x.img)+'" alt="'+attr(x.title)+'" loading="lazy" onload="cfCheckCrop(this)"><span class="cf-viewfull">View full image</span></div>':'';
       var badge='';
       if(x.type==='event')badge='<span class="cf-tag '+(up?'cf-up':'cf-past')+'">'+(up?'UPCOMING':'PAST')+'</span>';
       else if(x.type==='mazal'&&x.cat)badge='<span class="cf-tag cf-tag-mz">'+esc(x.cat).toUpperCase()+'</span>';
@@ -2930,5 +2941,9 @@ window.addEventListener('resize',function(){var m=document.getElementById('hji-j
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',run); else run();
 })();
 </script>
+<div id="cf-lightbox" onclick="if(event.target===this)cfCloseLightbox()">
+  <button type="button" class="cf-lb-close" aria-label="Close full image" onclick="cfCloseLightbox()">&times;</button>
+  <img id="cf-lightbox-img" alt="">
+</div>
 </body>
 </html>
