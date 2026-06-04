@@ -1645,7 +1645,7 @@ window.addEventListener('resize',function(){var m=document.getElementById('hji-j
     var m=HJISearch.suggest(q,8);
     box.innerHTML = m.length ? rowsHTML(m) : noMatchHTML(q);
   };
-  window.hjisPick=function(l){ location.href=POPURL[l]||('/search/?q='+encodeURIComponent(l)); };
+  window.hjisPick=function(l){ var url=POPURL[l]; if(url){ location.href=url; return; } var p=document.getElementById('hjis-panel'), mob=!!(p&&p.classList.contains('open')); var inputId=mob?'hjis-m-input':'hjis-d-input', resId=mob?'hjis-m-results':'hjis-dd-results'; var inp=document.getElementById(inputId); if(inp) inp.value=l; hjisRender(resId,l); if(inp) inp.focus(); };
   function rowsOf(cid){ var c=document.getElementById(cid); return c?c.querySelectorAll('.hjis-row'):[]; }
   function cidFor(inputId){ return inputId==='hjis-d-input'?'hjis-dd-results':'hjis-m-results'; }
   function highlight(cid){ var r=rowsOf(cid); for(var i=0;i<r.length;i++){ if(i===activeIdx) r[i].classList.add('hjis-active'); else r[i].classList.remove('hjis-active'); } if(activeIdx>=0&&r[activeIdx]) r[activeIdx].scrollIntoView({block:'nearest'}); }
