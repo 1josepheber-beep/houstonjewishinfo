@@ -1404,13 +1404,12 @@ window.addEventListener('resize',function(){var m=document.getElementById('hji-j
 (function(){var EVMAP={'Orthodox Schools':'menu_orthodox_schools','Orthodox Shuls':'menu_orthodox_shuls','Mikvahs':'menu_mikvahs','Adult Learning':'menu_adult_learning'};document.addEventListener('click',function(ev){var a=ev.target.closest&&ev.target.closest('#hji-jewish-menu a, .m-jewish-sub a');if(!a)return;var label=(a.textContent||'').trim();var name=EVMAP[label];if(name&&typeof gtag==='function'){gtag('event',name,{menu:'Jewish',item:label});}});})();
 </script>
 <script>
-/* Search deep-link: open the right category (kids/adult/kollel) + scroll; also scroll on #hash */
+/* Search deep-link: open the right category + scroll to a listing (only when ?find= is present) */
 (function(){
   function norm(s){return (s||'').toLowerCase().replace(/\s+/g,' ').trim();}
   function flash(el){ el.scrollIntoView({behavior:'smooth',block:'center'}); var pb=el.style.boxShadow,pt=el.style.transition; el.style.transition='box-shadow .25s ease'; el.style.boxShadow='0 0 0 3px #c9933a, 0 6px 20px rgba(201,147,58,.45)'; setTimeout(function(){el.style.boxShadow=pb;el.style.transition=pt;},3200); }
   var FIND=norm(new URLSearchParams(location.search).get('find'));
-  var HASH=(location.hash||'').toLowerCase();
-  if(!FIND && !/adult|kollel|school/.test(HASH)) return;
+  if(!FIND) return;
   var cats=['kids','adult','kollel'];
   function findIn(cards){ var i,h; for(i=0;i<cards.length;i++){ h=cards[i].querySelector('.school-name,h1,h2,h3,h4'); if(h&&norm(h.textContent).indexOf(FIND)>-1) return cards[i]; } for(i=0;i<cards.length;i++){ if(norm(cards[i].textContent).indexOf(FIND)>-1) return cards[i]; } return null; }
   function tryCat(i){
@@ -1419,8 +1418,7 @@ window.addEventListener('resize',function(){var m=document.getElementById('hji-j
     if(typeof showEduCat==='function') showEduCat(cats[i],tile);
     setTimeout(function(){ var m=findIn(document.querySelectorAll('#school-grid .school-card')); if(m){ flash(m); } else tryCat(i+1); },240);
   }
-  function hashScroll(){ var g=document.getElementById('school-grid'); if(g) setTimeout(function(){ g.scrollIntoView({behavior:'smooth',block:'start'}); },360); }
-  function start(){ var t=0; (function w(){ if(window.EDU_BY_CAT){ if(FIND) tryCat(0); else hashScroll(); return; } if(t++<90) setTimeout(w,150); })(); }
+  function start(){ var t=0; (function w(){ if(window.EDU_BY_CAT){ tryCat(0); return; } if(t++<90) setTimeout(w,150); })(); }
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',start); else start();
 })();
 </script>
