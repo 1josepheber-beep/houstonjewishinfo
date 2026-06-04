@@ -1658,5 +1658,16 @@ window.addEventListener('resize',function(){var m=document.getElementById('hji-j
   document.addEventListener('click',function(e){ var s=document.querySelector('.hjis-desktop'); if(s&&!s.contains(e.target)) hjisCloseDD(); });
 })();
 </script>
+<script>
+/* Search deep-link: open the Eruv map modal when requested */
+(function(){
+  var p=new URLSearchParams(location.search);
+  var want=(p.get('eruv')||'')==='open' || /eruv/.test((p.get('find')||'').toLowerCase());
+  if(!want) return;
+  var t=0;
+  function open(){ if(typeof openModal==='function'){ try{ openModal('modal-eruv'); }catch(e){} } else if(t++<60){ setTimeout(open,150); } }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',function(){ setTimeout(open,150); }); else setTimeout(open,150);
+})();
+</script>
 </body>
 </html>

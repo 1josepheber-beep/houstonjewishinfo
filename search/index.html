@@ -249,7 +249,7 @@
 
   /* static pages / resources so searches like "eruv" return a real result */
   var PAGES=[
-    {t:'Houston Eruv Map',lab:'Resource',link:'/shuls',kw:'eruv eiruv eruv map boundary'},
+    {t:'Houston Eruv Map',lab:'Resource',link:'/shuls?eruv=open',kw:'eruv eiruv eruv map boundary'},
     {t:'Shuls & Synagogues',lab:'Section',link:'/shuls',kw:'shul shuls synagogue synagogues minyan minyanim minyon davening daven congregation temple orthodox'},
     {t:'Mikvahs',lab:'Section',link:'/mikvahs',kw:'mikvah mikvahs mikvaot mikveh mikva'},
     {t:'Schools & Education',lab:'Section',link:'/education',kw:'school schools education yeshiva yeshivas preschool day school orthodox'},
@@ -306,9 +306,10 @@
 
   function sectionHref(x){ return (x.type==='dir') ? (x.section+'?find='+encodeURIComponent(x.title)) : x.section; }
   function destFor(x){
-    var u=extURL(x.link);
-    if(u) return {href:u, ext:true};
-    if(x.section) return {href:sectionHref(x), ext:false};
+    if(x.type==='dir'){ return {href:x.section+'?find='+encodeURIComponent(x.title), ext:false}; }
+    if(x.type==='news'||x.type==='event'||x.type==='mazal'||x.type==='passing'){ return {href:'/?find='+encodeURIComponent(x.title), ext:false}; }
+    if(x.section){ return {href:x.section, ext:false}; }
+    var u=extURL(x.link); if(u) return {href:u, ext:true};
     return null;
   }
   function cardHTML(x){
@@ -319,9 +320,11 @@
     h+='<h3 class="s-card-title">'+esc(x.title)+'</h3>';
     if(x.sub) h+='<div class="s-card-sub">'+esc(x.sub)+'</div>';
     if(x.body) h+='<p class="s-card-body">'+esc(trunc(x.body,220))+'</p>';
-    var u=extURL(x.link);
-    if(u) h+='<a class="s-card-link" href="'+esc(u)+'" target="_blank" rel="noopener">Visit \u2197</a>';
-    else if(x.section){ h+='<a class="s-card-link" href="'+esc(sectionHref(x))+'">View on '+esc(SECTION_NAMES[x.section]||'page')+' \u2192</a>'; }
+    var d=destFor(x);
+    if(d){
+      var lbl=(x.type==='dir')?('View on '+(SECTION_NAMES[String(x.section).split('?')[0].split('#')[0]]||'page')+' →'):((x.type==='news'||x.type==='event'||x.type==='mazal'||x.type==='passing')?'View in Community Feed →':(d.ext?'Visit ↗':'View →'));
+      h+='<a class="s-card-link" href="'+esc(d.href)+'"'+(d.ext?' target="_blank" rel="noopener"':'')+'>'+lbl+'</a>';
+    }
     return h+'</article>';
   }
 

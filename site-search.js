@@ -87,7 +87,7 @@
   var FEED_KINDS={news:1,event:1,mazal:1,passing:1};
 
   var PAGES=[
-    {t:'Houston Eruv Map',lab:'Resource',link:'/shuls',kw:'eruv eiruv eruv map boundary'},
+    {t:'Houston Eruv Map',lab:'Resource',link:'/shuls?eruv=open',kw:'eruv eiruv eruv map boundary'},
     {t:'Shuls & Synagogues',lab:'Section',link:'/shuls',kw:'shul shuls synagogue synagogues minyan minyanim minyon davening daven congregation temple orthodox'},
     {t:'Mikvahs',lab:'Section',link:'/mikvahs',kw:'mikvah mikvahs mikvaot mikveh mikva'},
     {t:'Schools & Education',lab:'Section',link:'/education',kw:'school schools education yeshiva yeshivas preschool day school orthodox'},
@@ -142,9 +142,10 @@
   function relScore(x,q){ var t=norm(x.title); if(t===q)return 4; if(t.indexOf(q)===0)return 3; if(t.indexOf(q)>-1)return 2; return 1; }
   function sectionHref(x){ return (x.type==='dir') ? (x.section+'?find='+encodeURIComponent(x.title)) : x.section; }
   function destFor(x){
-    var u=extURL(x.link);
-    if(u) return {href:u, ext:true};
-    if(x.section) return {href:sectionHref(x), ext:false};
+    if(x.type==='dir'){ return {href:x.section+'?find='+encodeURIComponent(x.title), ext:false}; }
+    if(x.type==='news'||x.type==='event'||x.type==='mazal'||x.type==='passing'){ return {href:'/?find='+encodeURIComponent(x.title), ext:false}; }
+    if(x.section){ return {href:x.section, ext:false}; }
+    var u=extURL(x.link); if(u) return {href:u, ext:true};
     return null;
   }
 
