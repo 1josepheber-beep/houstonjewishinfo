@@ -1417,6 +1417,21 @@ window.addEventListener('resize',function(){var m=document.getElementById('hji-j
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',start); else start();
 })();
 </script>
+<script>
+/* Education page: JEWISH-menu category links switch the list in place — no URL hash, no reload, no jump. From other pages they navigate normally. */
+(function(){
+  function catOf(h){ h=(h||'').toLowerCase(); if(h.indexOf('adult')>-1) return 'adult'; if(h.indexOf('kollel')>-1) return 'kollel'; if(h.indexOf('school')>-1) return 'kids'; return null; }
+  document.addEventListener('click', function(e){
+    var a=e.target && e.target.closest && e.target.closest('a[href*="/education#"]');
+    if(!a || typeof showEduCat!=='function') return;
+    var cat=catOf(a.getAttribute('href')); if(!cat) return;
+    e.preventDefault();
+    showEduCat(cat, document.querySelector('.edu-tile[data-cat="'+cat+'"]'));
+    var dd=document.getElementById('hji-jewish-menu'); if(dd) dd.classList.remove('open');
+    if(typeof closeMobileMenu==='function') closeMobileMenu();
+  }, false);
+})();
+</script>
 <script src="/site-search.js" defer></script>
 <script id="hjis-js">
 (function(){
