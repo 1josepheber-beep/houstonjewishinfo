@@ -2202,7 +2202,17 @@
           setHebrewDate(havdalah.date, 'strip-havdalah-hdate');
         }
         if (parasha) {
-          document.getElementById('strip-parasha').textContent = parasha.title;
+          var pEl = document.getElementById('strip-parasha');
+          pEl.textContent = parasha.title;
+          var pHe = parasha.hebrew ? parasha.hebrew.replace(/[\u0591-\u05C7]/g, '') : '';
+          if (pHe) {
+            pEl.appendChild(document.createTextNode(' \u00b7 '));
+            var pSpan = document.createElement('span');
+            pSpan.setAttribute('dir', 'rtl');
+            pSpan.style.cssText = 'unicode-bidi:isolate;';
+            pSpan.textContent = pHe;
+            pEl.appendChild(pSpan);
+          }
         }
       })
       .catch(function() {
