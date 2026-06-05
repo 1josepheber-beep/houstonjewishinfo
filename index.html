@@ -1883,6 +1883,7 @@
       #community-feed .cf-type-mazal{background:#f6dde6;color:#a3375a;}
       #community-feed .cf-type-passing{background:#e7e9ee;color:#4b5563;}
       #community-feed .cf-cat{background:#ede9e2;color:#5f5a51;}
+      #community-feed .cf-tag-alert{background:var(--red,#b83030);color:#fff;}
       #community-feed .cf-tag-mz{background:#eee9df;color:#7a6a3f;}
       #community-feed .cf-up{background:#e3efe0;color:#3b6d11;}
       #community-feed .cf-past{background:#efece6;color:#6b6b6b;}
@@ -2357,7 +2358,8 @@
       else if(x.type==='mazal'&&x.cat)badge='<span class="cf-tag cf-tag-mz">'+esc(x.cat).toUpperCase()+'</span>';
       var dline=x.date?'<span class="cf-dateline">\uD83D\uDCC5 '+esc(fmtDate(x.date))+(firstLine(x.time)?' \u00b7 '+esc(firstLine(x.time)):'')+'</span>':'<span class="cf-dateline"></span>';
       var typeTag='<span class="cf-tag cf-type-'+x.type+'">'+esc(TYPE[x.type])+'</span>';
-      var catTag=(x.cat&&x.type!=='mazal')?'<span class="cf-tag cf-cat">'+esc(x.cat).toUpperCase()+'</span>':'';
+      var catCls=/alert/i.test(x.cat||'')?'cf-tag-alert':'cf-cat';
+      var catTag=(x.cat&&x.type!=='mazal')?'<span class="cf-tag '+catCls+'">'+esc(x.cat).toUpperCase()+'</span>':'';
       var mi=[];
       if(x.loc)mi.push('<span>\uD83D\uDCCD '+esc(cleanLoc(x.loc))+'</span>');
       if(x.org)mi.push('<span>\u270D\uFE0F '+esc(x.org)+'</span>');
@@ -2397,7 +2399,11 @@
       arr.sort(function(a,b){
         var at=a.date?a.date.getTime():null, bt=b.date?b.date.getTime():null;
         if(at==null&&bt==null)return 0; if(at==null)return 1; if(bt==null)return -1;
-        return (filter==='event')?(at-bt):(bt-at);
+        if(filter==='event')return at-bt;
+        var tomorrow=cfToday().getTime()+86400000;
+        var af=at>=tomorrow?1:0, bf=bt>=tomorrow?1:0;
+        if(af!==bf)return af-bf;
+        return af===0 ? (bt-at) : (at-bt);
       });
       return arr;
     }
