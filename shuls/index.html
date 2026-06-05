@@ -853,8 +853,8 @@
     font-family: sans-serif;
     font-size: 11px;
     font-weight: 700;
-    letter-spacing: .05em;
-    text-transform: uppercase;
+    letter-spacing: 0;
+    text-transform: capitalize;
     padding: 6px 14px;
     border-radius: 20px;
     border: 1px solid var(--border);
@@ -897,8 +897,8 @@
     font-family: sans-serif;
     font-size: 9px;
     font-weight: 700;
-    letter-spacing: .08em;
-    text-transform: uppercase;
+    letter-spacing: 0;
+    text-transform: capitalize;
     padding: 3px 9px;
     border-radius: 3px;
     margin-bottom: 8px;
@@ -913,8 +913,8 @@
     font-family: sans-serif;
     font-size: 9px;
     font-weight: 700;
-    letter-spacing: .08em;
-    text-transform: uppercase;
+    letter-spacing: 0;
+    text-transform: capitalize;
     padding: 3px 9px;
     border-radius: 3px;
     margin-bottom: 8px;
@@ -1352,6 +1352,8 @@
     function cardHTML(d){
       var key=String(d.denomination||'other').toLowerCase().trim();
       var dn=DENOM[key]||DENOM['other'];
+      var hasDenom=String(d.denomination||'').trim()!=='';
+      var denomTag=hasDenom?'<span class="syn-denom '+dn.cls+'">'+esc(dn.label)+'</span>':'';
       var img=imgURL(d.image);
       var imgBlock=img
         ? '<div class="syn-card-img" style="padding:0;overflow:hidden;"><img src="'+attr(img)+'" alt="'+attr(d.name)+'" loading="lazy" decoding="async" style="width:100%;height:100%;object-fit:cover;display:block;"></div>'
@@ -1362,11 +1364,11 @@
       var times=d.servicetimes ? '<div class="syn-service-times">'+esc(d.servicetimes)+'</div>' : '';
       var nusach=String(d.nusach||'').trim();
       var nusachList=nusach.split(/[,;/]+/).map(function(s){return s.trim();}).filter(Boolean);
-      var nusachTag=nusachList.map(function(nz){ return '<span class="syn-nusach">'+esc(nz)+'</span>'; }).join('');
+      var nusachTag=nusachList.map(function(nz,i){ var ml=(!hasDenom&&i===0)?' style="margin-left:0"':''; return '<span class="syn-nusach"'+ml+'>'+esc(nz)+'</span>'; }).join('');
       var nusachData=nusachList.map(function(nz){return nz.toLowerCase();}).join('|');
       return '<div class="syn-card" data-denom="'+attr(key)+'" data-nusach="'+attr(nusachData)+'">'+imgBlock+
         '<div class="syn-card-body">'+
-          '<span class="syn-denom '+dn.cls+'">'+esc(dn.label)+'</span>'+nusachTag+
+          denomTag+nusachTag+
           '<div class="syn-name">'+esc(d.name)+'</div>'+
           detail('\uD83D\uDCCD',d.address)+detail('\uD83D\uDCDE',d.phone)+detail('\uD83D\uDC64',d.rabbi)+webLine+
           '<hr class="syn-divider">'+
