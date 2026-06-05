@@ -1090,14 +1090,6 @@
 .hji-cx{position:absolute;transform:translateY(-50%);display:none;align-items:center;justify-content:center;width:18px;height:18px;padding:0;border:none;border-radius:50%;background:rgba(0,0,0,.12);color:#444;font-size:14px;line-height:1;cursor:pointer;z-index:6;font-family:sans-serif;}
 .hji-cx:hover{background:rgba(0,0,0,.22);color:#111;}
 </style>
-<!-- OneSignal Web Push SDK -->
-<script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
-<script>
-  window.OneSignalDeferred = window.OneSignalDeferred || [];
-  OneSignalDeferred.push(async function(OneSignal) {
-    await OneSignal.init({ appId: "19ee2457-b95b-4dec-8bd0-33ac2d95c492" });
-  });
-</script>
 </head>
 <body style="-webkit-tap-highlight-color:transparent;">
 <div class="bsd-mark" aria-hidden="true"><span>בס״ד</span></div>
@@ -1477,7 +1469,7 @@
           <span class="form-header-icon">🏠</span>
           <div>
             <div class="form-header-title">Post a Real Estate Listing</div>
-            <div class="form-header-sub">Homes for sale or rent in the Houston Jewish community — $15 listing fee</div>
+            <div class="form-header-sub">Homes for sale or rent in the Houston Jewish community — $15/month listing fee</div>
           </div>
         </div>
                 <div class="form-body" id="realestate-wrap">
@@ -1541,13 +1533,13 @@
           </div>
           <div class="form-group"><label class="form-label">Phone (optional)</label><input type="tel" name="phone" class="form-input" placeholder="(713) 000-0000"></div>
           <div class="form-group"><label class="form-label">Your Zelle Email or Phone *</label><input type="text" name="Zelle (for $15 request)" class="form-input" placeholder="Zelle email or phone to send your $15 request to"></div>
-          <p style="font-family:sans-serif;font-size:11px;color:#888;margin:-4px 0 6px;line-height:1.5;">After you submit, we'll send a $15 Zelle payment request to the email or phone above. Your listing goes live once payment is received.</p>
+          <p style="font-family:sans-serif;font-size:11px;color:#888;margin:-4px 0 6px;line-height:1.5;">After you submit, we'll send a Zelle payment request for the $15/month listing fee to the email or phone above. Your listing goes live once payment is received.</p>
           <button class="btn-primary" onclick="submitForm('realestate-wrap','realestate-ok','Real Estate Listing')">Submit Listing →</button>
         </div>
         <div class="form-success" id="realestate-ok">
           <div class="form-success-icon">✅</div>
           <div class="form-success-title">Listing submitted!</div>
-          <div class="form-success-sub">We'll be in touch about the $15 fee. Your listing goes live within 1–2 business days after payment.</div>
+          <div class="form-success-sub">We'll be in touch about the $15/month fee. Your listing goes live within 1–2 business days after payment.</div>
           <button class="form-success-back" onclick="resetForm('realestate')">← Submit another</button>
         </div>
       </div>
@@ -1615,7 +1607,6 @@
   <div class="portal">
     <div style="margin-bottom:6px">
       © 2026 Houston Jewish Info &nbsp;|&nbsp;
-      <a href="https://chat.whatsapp.com/LCrcLc76AUEKeh3OA1hu5P" target="_blank" rel="noopener" style="color:#25D366;font-weight:700;">Join our WhatsApp</a> &nbsp;|&nbsp;
       <a href="/contact">Contact Us</a>
       <a href="/privacy">Privacy Policy</a>
       <a href="/terms">Terms of Use</a>

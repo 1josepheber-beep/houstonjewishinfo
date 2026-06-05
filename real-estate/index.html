@@ -393,14 +393,6 @@
 .hji-cx{position:absolute;transform:translateY(-50%);display:none;align-items:center;justify-content:center;width:18px;height:18px;padding:0;border:none;border-radius:50%;background:rgba(0,0,0,.12);color:#444;font-size:14px;line-height:1;cursor:pointer;z-index:6;font-family:sans-serif;}
 .hji-cx:hover{background:rgba(0,0,0,.22);color:#111;}
 </style>
-<!-- OneSignal Web Push SDK -->
-<script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
-<script>
-  window.OneSignalDeferred = window.OneSignalDeferred || [];
-  OneSignalDeferred.push(async function(OneSignal) {
-    await OneSignal.init({ appId: "19ee2457-b95b-4dec-8bd0-33ac2d95c492" });
-  });
-</script>
 </head>
 <body>
 <div class="bsd-mark" aria-hidden="true"><span>בס״ד</span></div>
@@ -412,7 +404,7 @@
     <div id="listing-form-wrap">
       <div class="modal-title">List Your Property</div>
       <div class="modal-sub">Reach Houston's Jewish community — reviewed and posted within 1–2 business days.</div>
-      <div class="fee-badge">💰 $15 Listing Fee</div>
+      <div class="fee-badge">💰 $15/month Listing Fee</div>
 
       <!-- TYPE -->
       <div class="form-group">
@@ -538,12 +530,12 @@
 
       <!-- PAYMENT (Zelle) -->
       <div class="payment-section">
-        <h4>💳 $15 Listing Fee — Paid by Zelle</h4>
+        <h4>💳 $15/month Listing Fee — Paid by Zelle</h4>
         <div class="form-group">
           <label class="form-label">Your Zelle Email or Phone *</label>
           <input type="text" class="form-input" id="re-zelle" placeholder="Zelle email or phone to send your $15 request to">
         </div>
-        <p class="payment-note">After you submit, we'll send a $15 Zelle payment request to the email or phone above. Your listing is reviewed and goes live once payment is received.</p>
+        <p class="payment-note">After you submit, we'll send a Zelle payment request for the $15/month listing fee to the email or phone above. Your listing is reviewed and goes live once payment is received.</p>
       </div>
 
       <button class="btn-primary" onclick="submitListing()">Submit Listing →</button>
@@ -623,7 +615,7 @@
           <button class="re-search-btn" onclick="renderListings()">Search</button>
         </div>
       </div>
-      <button class="hero-list-btn" onclick="location.href='/contact/#realestate'">+ List a Property — $15</button>
+      <button class="hero-list-btn" onclick="location.href='/contact/#realestate'">+ List a Property — $15/month</button>
     </div>
   </div>
 </div>
@@ -679,7 +671,7 @@
           <h3>Have a property to list?</h3>
           <p>Reach Houston's Jewish community — sale or rental listings welcome.</p>
         </div>
-        <div class="list-cta-fee">$15 <small>per listing</small></div>
+        <div class="list-cta-fee">$15 <small>/month per listing</small></div>
         <button class="list-cta-btn" onclick="location.href='/contact/#realestate'">+ Post a Listing →</button>
       </div>
     </div>
@@ -692,7 +684,6 @@
   <div class="portal">
     <div style="margin-bottom:6px">
       © 2026 Houston Jewish Info &nbsp;|&nbsp;
-      <a href="https://chat.whatsapp.com/LCrcLc76AUEKeh3OA1hu5P" target="_blank" rel="noopener" style="color:#25D366;font-weight:700;">Join our WhatsApp</a> &nbsp;|&nbsp;
       <a href="/contact">Contact Us</a>
       <a href="/contact">Submit a Story</a>
       <a href="#" onclick="location.href='/contact/#advertise'; return false;">Advertise</a>
