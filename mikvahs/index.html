@@ -1125,13 +1125,13 @@
 </style>
 <style>
 /* bsd-mark */
-.bsd-mark{position:absolute;top:4px;right:10px;z-index:250;font-size:12px;line-height:1;color:#1a2744;opacity:.6;pointer-events:none;direction:rtl;}
-@media (max-width:600px){.bsd-mark{top:3px;right:9px;font-size:11px;}}
+.bsd-mark{position:absolute;top:0;left:0;right:0;margin:0 auto;max-width:1140px;z-index:250;pointer-events:none;}
+.bsd-mark>span{position:absolute;top:4px;right:16px;font-size:12px;line-height:1;color:#1a2744;opacity:.6;direction:rtl;}
+@media (max-width:600px){.bsd-mark>span{top:3px;right:12px;font-size:11px;}}
 </style>
 </head>
 <body>
-<div class="bsd-mark" aria-hidden="true">בס״ד</div>
-
+<div class="bsd-mark" aria-hidden="true"><span>בס״ד</span></div>
 
 <!-- ADVERTISE MODAL -->
 <div class="modal-overlay" id="modal-ad">
