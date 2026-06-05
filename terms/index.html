@@ -1052,6 +1052,11 @@
 .bsd-mark>span{position:absolute;top:4px;right:16px;font-size:12px;line-height:1;color:#1a2744;opacity:.6;direction:rtl;}
 @media (max-width:600px){.bsd-mark>span{top:3px;right:12px;font-size:11px;}}
 </style>
+<style>
+/* hji-clearx */
+.hji-cx{position:absolute;transform:translateY(-50%);display:none;align-items:center;justify-content:center;width:18px;height:18px;padding:0;border:none;border-radius:50%;background:rgba(0,0,0,.12);color:#444;font-size:14px;line-height:1;cursor:pointer;z-index:6;font-family:sans-serif;}
+.hji-cx:hover{background:rgba(0,0,0,.22);color:#111;}
+</style>
 </head>
 <body style="-webkit-tap-highlight-color:transparent;">
 <div class="bsd-mark" aria-hidden="true"><span>בס״ד</span></div>
@@ -1441,6 +1446,32 @@ window.addEventListener('resize',function(){var m=document.getElementById('hji-j
     }).catch(function(){});
   }
   if(document.readyState==='loading'){ document.addEventListener('DOMContentLoaded', run); } else { run(); }
+})();
+</script>
+<script>
+/* hji-clearx */
+(function(){
+  function clearable(input){
+    if(!input||input.__hjicx)return; input.__hjicx=1;
+    var par=input.parentNode; if(!par)return;
+    if(getComputedStyle(par).position==='static') par.style.position='relative';
+    var btn=document.createElement('button');
+    btn.type='button'; btn.className='hji-cx'; btn.setAttribute('aria-label','Clear search'); btn.innerHTML='&times;';
+    par.appendChild(btn);
+    var pr=parseInt(getComputedStyle(input).paddingRight)||0; if(pr<26) input.style.paddingRight='26px';
+    function place(){ var p=par.getBoundingClientRect(), i=input.getBoundingClientRect(); if(!i.width)return; btn.style.top=(i.top-p.top+i.height/2)+'px'; btn.style.left=(i.right-p.left-21)+'px'; }
+    function sync(){ var on=!!(input.value&&input.value.length); btn.style.display=on?'flex':'none'; if(on) place(); }
+    input.addEventListener('input',sync);
+    window.addEventListener('resize',sync);
+    btn.addEventListener('mousedown',function(e){e.preventDefault();});
+    btn.addEventListener('click',function(e){e.stopPropagation(); input.value=''; try{input.dispatchEvent(new Event('input',{bubbles:true}));}catch(_){ } try{input.focus();}catch(_){ } sync();});
+    sync();
+  }
+  function init(){
+    var nodes=document.querySelectorAll('#hjis-d-input,#hjis-m-input,.search-input,#eat-search,#act-search');
+    Array.prototype.forEach.call(nodes,function(n){ if(n&&n.tagName==='INPUT') clearable(n); });
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',init); else init();
 })();
 </script>
 </body>
