@@ -2400,10 +2400,13 @@
         var at=a.date?a.date.getTime():null, bt=b.date?b.date.getTime():null;
         if(at==null&&bt==null)return 0; if(at==null)return 1; if(bt==null)return -1;
         if(filter==='event')return at-bt;
-        var tomorrow=cfToday().getTime()+86400000;
-        var af=at>=tomorrow?1:0, bf=bt>=tomorrow?1:0;
-        if(af!==bf)return af-bf;
-        return af===0 ? (bt-at) : (at-bt);
+        var today=cfToday().getTime(), tomorrow=today+86400000;
+        function bk(t){return t>=tomorrow?1:(t<today?2:0);}
+        var ab=bk(at), bb=bk(bt);
+        if(ab!==bb)return ab-bb;
+        if(ab===0)return bt-at;
+        if(ab===1)return at-bt;
+        return bt-at;
       });
       return arr;
     }
