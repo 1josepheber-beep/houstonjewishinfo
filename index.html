@@ -1381,6 +1381,11 @@
 @media (max-width:768px){ .nav-bar a, .nav-dd>.nav-dd-btn{ font-size:12px !important; } .nav-dd-caret{ font-size:12px !important; } .mobile-menu-links a, .m-jewish-btn, .m-jewish-sub a{ font-size:16px !important; } }
 .m-jewish-caret{ font-size:15px !important; color:#1a2744 !important; }
 </style>
+<style>
+/* hji-masthead-hdate */
+.masthead-hdate { letter-spacing: normal; text-transform: none; unicode-bidi: isolate; }
+.masthead-sep { letter-spacing: normal; opacity: .55; }
+</style>
 </head>
 <body style="-webkit-tap-highlight-color: transparent;">
 
@@ -2962,5 +2967,24 @@ window.addEventListener('resize',function(){var m=document.getElementById('hji-j
   <button type="button" class="cf-lb-close" aria-label="Close full image" onclick="cfCloseLightbox()">&times;</button>
   <img id="cf-lightbox-img" alt="">
 </div>
+<script>
+/* HJI masthead hebrew date */
+(function(){
+  function run(){
+    var el = document.getElementById('today-date');
+    if (!el || el.querySelector('.masthead-hdate')) return;
+    var now = new Date();
+    var url = 'https://www.hebcal.com/converter?cfg=json&gy='+now.getFullYear()+'&gm='+(now.getMonth()+1)+'&gd='+now.getDate()+'&g2h=1';
+    fetch(url).then(function(r){return r.json();}).then(function(d){
+      if(!d || !d.hebrew) return;
+      var hd = d.hebrew.replace(/[\u0591-\u05C7]/g,'');
+      var sep = document.createElement('span'); sep.className='masthead-sep'; sep.textContent=' \u00b7 ';
+      var span = document.createElement('span'); span.className='masthead-hdate'; span.setAttribute('dir','rtl'); span.textContent=hd;
+      el.appendChild(sep); el.appendChild(span);
+    }).catch(function(){});
+  }
+  if(document.readyState==='loading'){ document.addEventListener('DOMContentLoaded', run); } else { run(); }
+})();
+</script>
 </body>
 </html>
