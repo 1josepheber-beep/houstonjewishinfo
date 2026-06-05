@@ -1131,7 +1131,10 @@
   .biz-category { font-family: sans-serif; font-size: 11px; color: var(--gold); font-weight: 700; text-transform: uppercase; letter-spacing: .05em; }
   .biz-detail { display: flex; gap: 6px; font-family: sans-serif; font-size: 12px; color: var(--muted); align-items: flex-start; line-height: 1.4; }
   .biz-desc { font-size: 12px; color: #555; line-height: 1.5; margin-top: 2px; }
-  .biz-card-footer { display: flex; align-items: center; justify-content: space-between; margin-top: 6px; padding-top: 10px; border-top: 1px solid var(--border); }
+  .biz-desc.clamped { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+  .biz-read-more { display: inline-block; align-self: flex-start; background: none; border: none; padding: 0; margin: 2px 0 0; font-family: sans-serif; font-size: 12px; font-weight: 700; color: var(--navy); cursor: pointer; }
+  .biz-read-more:hover { text-decoration: underline; }
+  .biz-card-footer { display: flex; align-items: center; justify-content: space-between; margin-top: auto; padding-top: 10px; border-top: 1px solid var(--border); }
   .biz-website {
     font-family: sans-serif; font-size: 10px; font-weight: 700; letter-spacing: .05em;
     text-transform: uppercase; color: var(--gold); border: 1px solid var(--gold);
@@ -2829,11 +2832,24 @@ function buildBizCard(item) {
     (item.address ? '<div class="biz-detail">📍 ' + item.address + '</div>' : '') +
     (item.phone ? '<div class="biz-detail">📞 ' + item.phone + '</div>' : '') +
     (item.email ? '<div class="biz-detail">📧 <a href="mailto:' + item.email + '" style="color:var(--gold);">' + item.email + '</a></div>' : '') +
-    (item.description ? '<div class="biz-desc">' + item.description + '</div>' : '') +
+    (item.description ? '<div class="biz-desc clamped">' + item.description + '</div><button type="button" class="biz-read-more" style="display:none;">Read more \u2193</button>' : '') +
     '<div class="biz-card-footer">' +
     '<span style="font-family:sans-serif;font-size:11px;color:var(--muted);">' + (item.hours||'') + '</span>' +
     (website ? '<a href="' + website + '" target="_blank" class="biz-website">Visit Website →</a>' : '') +
     '</div></div>';
+}
+
+function bizReadMore(scope){
+  var ps=(scope||document).querySelectorAll('.biz-desc');
+  Array.prototype.forEach.call(ps,function(p){
+    var btn=p.nextElementSibling;
+    if(!btn||!btn.classList.contains('biz-read-more'))return;
+    p.classList.add('clamped');
+    if(p.scrollHeight>p.clientHeight+2){
+      btn.style.display='inline-block'; btn.textContent='Read more \u2193';
+      btn.onclick=function(){ if(p.classList.contains('clamped')){p.classList.remove('clamped');btn.textContent='Read less \u2191';} else {p.classList.add('clamped');btn.textContent='Read more \u2193';} };
+    } else { p.classList.remove('clamped'); btn.style.display='none'; }
+  });
 }
 
 var BIZ_PER_PAGE = 24;
@@ -2885,6 +2901,7 @@ function renderBizPage() {
   var start = (bizPageNum - 1) * BIZ_PER_PAGE;
   var pageItems = bizPageList.slice(start, start + BIZ_PER_PAGE);
   grid.innerHTML = pageItems.map(buildBizCard).join('');
+  bizReadMore(grid);
 
   // Pager controls: only show if more than one page
   var pager = document.getElementById('biz-pager');
