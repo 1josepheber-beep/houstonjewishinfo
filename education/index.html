@@ -962,8 +962,15 @@
 .masthead-hdate { letter-spacing: normal; text-transform: none; unicode-bidi: isolate; }
 .masthead-sep { letter-spacing: normal; opacity: .55; }
 </style>
+<style>
+/* bsd-mark */
+.bsd-mark{position:absolute;top:4px;right:10px;z-index:250;font-size:12px;line-height:1;color:#1a2744;opacity:.6;pointer-events:none;direction:rtl;}
+@media (max-width:600px){.bsd-mark{top:3px;right:9px;font-size:11px;}}
+</style>
 </head>
 <body>
+<div class="bsd-mark" aria-hidden="true">בס״ד</div>
+
 
 <!-- ADVERTISE MODAL -->
 <div class="modal-overlay" id="modal-ad">
