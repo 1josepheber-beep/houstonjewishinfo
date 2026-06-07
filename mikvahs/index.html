@@ -1635,5 +1635,31 @@ window.addEventListener('resize',function(){var m=document.getElementById('hji-j
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',init); else init();
 })();
 </script>
+<!-- GA4 search-term tracking -->
+<script>
+(function(){
+  function send(term){
+    term=(term||'').replace(/\s+/g,' ').trim();
+    if(term.length<2) return;
+    if(send._last===term.toLowerCase()) return;
+    send._last=term.toLowerCase();
+    try{ if(typeof gtag==='function'){ gtag('event','search',{search_term:term}); } }catch(e){}
+  }
+  function attach(el){
+    if(!el||el._hjisST) return; el._hjisST=1;
+    var t;
+    el.addEventListener('input',function(){ clearTimeout(t); var v=el.value; t=setTimeout(function(){ send(v); },1400); });
+    el.addEventListener('keydown',function(e){ if((e.key||'')==='Enter'){ clearTimeout(t); send(el.value); } });
+  }
+  function init(){
+    attach(document.getElementById('hjis-d-input'));
+    attach(document.getElementById('hjis-m-input'));
+    attach(document.getElementById('q'));
+    try{ var m=location.search.match(/[?&]q=([^&]*)/); if(m){ send(decodeURIComponent(m[1].replace(/\+/g,' '))); } }catch(e){}
+  }
+  if(document.readyState==='loading'){ document.addEventListener('DOMContentLoaded',init); } else { init(); }
+})();
+</script>
+
 </body>
 </html>
