@@ -2149,7 +2149,7 @@
       if (value === '') return;
       fields.push({ label: label, value: value });
     });
-    var payload = { form_id: formId, fields: fields, page: location.href, submitted_at: new Date().toString() };
+    var payload = { form_id: formId, fields: fields, page: location.href, submitted_at: new Date().toString(), hp: (window.hjiHP?window.hjiHP(formId):''), elapsed: (window.hjiElapsed?window.hjiElapsed():0) };
 
     // Loading state on the submit button while the send is in flight (~2s),
     // so the user sees progress and can't double-submit.
@@ -3113,6 +3113,29 @@ window.addEventListener('resize',function(){var m=document.getElementById('hji-j
     Array.prototype.forEach.call(nodes,function(n){ if(n&&n.tagName==='INPUT') clearable(n); });
   }
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',init); else init();
+})();
+</script>
+<script>
+/* HJI spam guard — pairs with the intake script. Adds an invisible honeypot
+   field to every form and times how long the form was open. Real visitors
+   never fill the honeypot and take a few seconds; bots do the opposite. */
+(function(){
+  if(!window.__hjiT0){window.__hjiT0=Date.now();}
+  window.hjiElapsed=function(){return Date.now()-(window.__hjiT0||Date.now());};
+  window.hjiHP=function(id){var w=id&&document.getElementById(id);var h=w&&w.querySelector('.hji-hp');return h?(h.value||''):'';};
+  function addHP(w){
+    if(!w||w.querySelector('.hji-hp'))return;
+    var hp=document.createElement('input');
+    hp.type='text';hp.className='hji-hp';hp.name='hp_url';hp.value='';
+    hp.tabIndex=-1;hp.setAttribute('autocomplete','off');hp.setAttribute('aria-hidden','true');
+    hp.style.cssText='position:absolute;left:-9999px;top:-9999px;width:1px;height:1px;opacity:0;pointer-events:none;';
+    w.appendChild(hp);
+  }
+  function init(){
+    var wraps=document.querySelectorAll('[id$="-wrap"]'),i;
+    for(i=0;i<wraps.length;i++){if(wraps[i].querySelector('input, select, textarea'))addHP(wraps[i]);}
+  }
+  if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',init);}else{init();}
 })();
 </script>
 </body>
