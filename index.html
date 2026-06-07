@@ -2449,16 +2449,20 @@
     function currentList(){
       var today=cfToday();
       var mazalCutoff=new Date(today.getTime()-14*86400000); /* Mazal Tov hides 14 days after its date */
+      var newsCutoff=new Date(today.getTime()-30*86400000); /* Stories hide 30 days after their date */
+      var passingCutoff=new Date(today.getTime()-14*86400000); /* Passings hide 14 days after their date */
       var rev=(window.__cfReveal||'');
       function rv(x){ return !!rev && String(x.title||'').toLowerCase().indexOf(rev)>-1; }
       var arr=items.filter(function(x){
         if(x.women&&!showWomen)return false;
-        if(filter==='news')return x.type==='news';
+        if(filter==='news')return x.type==='news'&&(!x.date||x.date>=newsCutoff||rv(x));
         if(filter==='mazal')return x.type==='mazal'&&(!x.date||x.date>=mazalCutoff||rv(x));
-        if(filter==='passing')return x.type==='passing';
+        if(filter==='passing')return x.type==='passing'&&(!x.date||x.date>=passingCutoff||rv(x));
         if(filter==='event')return x.type==='event'&&(!x.date||x.date>=today||rv(x));
         if(x.type==='event')return (!x.date||x.date>=today||rv(x));
         if(x.type==='mazal')return (!x.date||x.date>=mazalCutoff||rv(x));
+        if(x.type==='news')return (!x.date||x.date>=newsCutoff||rv(x));
+        if(x.type==='passing')return (!x.date||x.date>=passingCutoff||rv(x));
         return true;
       });
       arr.sort(function(a,b){
