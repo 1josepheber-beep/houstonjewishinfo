@@ -132,24 +132,26 @@
 <div class="login-wrap" id="loginScreen">
   <div class="login">
     <div class="brand"><div class="mark">H<b>J</b></div><div><h1>HJI Admin</h1></div></div>
-    <p class="sub">Manage your directory. Start in <b>view-only</b> to look around safely — nothing can change until you connect the editing backend.</p>
+    <p class="sub">Enter your password to manage the directory.</p>
 
+    <div id="advSheet">
     <label>Google Sheet ID</label>
     <input class="field" id="inSheet" placeholder="paste Sheet ID">
     <div class="hint">Pre-filled with your live directory. For testing, paste your TEST COPY's ID instead.</div>
+    </div>
 
+    <div id="advScript">
     <label>Editing backend URL <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--muted)">(optional)</span></label>
     <input class="field" id="inScript" placeholder="leave blank for view-only preview">
     <div class="hint">Paste your Apps Script <code>/exec</code> URL to turn on Add / Edit / Delete.</div>
+    </div>
 
     <label>Password</label>
-    <input class="field" id="inToken" type="password" placeholder="only needed for editing">
-    <div class="hint">Must match the password set in your Code.gs backend.</div>
+    <input class="field" id="inToken" type="password" placeholder="enter password">
 
     <div class="err" id="loginErr"></div>
     <div class="login-actions">
-      <button class="btn" id="btnConnect">Connect for editing →</button>
-      <button class="btn ghost" id="btnView">Just view my data (safe preview)</button>
+      <button class="btn" id="btnConnect">Log in →</button>
     </div>
   </div>
 </div>
@@ -191,6 +193,7 @@
 <script>
 /* ====================== CONFIG ====================== */
 var LIVE_SHEET_ID = '1in7Ac7zknqyR9neWKOCAjOAG4jXCIVTJQfU6jJ72CV8';
+var BAKED_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx1yJzRglJ8SQ-bNbUjx-gIA2EDyfsdJZFaA6zSQmvqMeHT9T7JjVlcKdcQAuqHmxM/exec';
 
 var COLLECTIONS = [
   ['Stories','📰 Stories'], ['Events','📅 Events'], ['Passings','🕯️ Passings'],
@@ -236,20 +239,32 @@ function gvizRead(tab){
 
 /* ====================== LOGIN ====================== */
 function showErr(m){var e=$('loginErr');e.textContent=m;e.style.display='block';}
-(function(){var s=recall();$('inSheet').value=s.sheetId||LIVE_SHEET_ID;$('inScript').value=s.scriptUrl||'';})();
+(function(){
+  var s=recall();
+  $('inSheet').value=LIVE_SHEET_ID;
+  if(BAKED_SCRIPT_URL){
+    $('inScript').value=BAKED_SCRIPT_URL;
+    $('advSheet').style.display='none';
+    $('advScript').style.display='none';
+    $('inToken').focus();
+  } else {
+    $('inSheet').value=s.sheetId||LIVE_SHEET_ID;
+    $('inScript').value=s.scriptUrl||'';
+  }
+})();
+$('inToken').addEventListener('keydown',function(e){if(e.key==='Enter')$('btnConnect').click();});
 
-$('btnView').onclick=function(){S.sheetId=$('inSheet').value.trim()||LIVE_SHEET_ID;S.scriptUrl='';S.token='';S.mode='view';remember();enterApp();};
 $('btnConnect').onclick=function(){
   S.sheetId=$('inSheet').value.trim();S.scriptUrl=$('inScript').value.trim();S.token=$('inToken').value;
   if(!S.scriptUrl){showErr('Paste your Apps Script /exec URL, or use "Just view my data".');return;}
   if(!S.token){showErr('Enter your password to connect for editing.');return;}
   $('btnConnect').disabled=true;$('btnConnect').textContent='Connecting…';
   api('ping').then(function(res){
-    $('btnConnect').disabled=false;$('btnConnect').textContent='Connect for editing →';
+    $('btnConnect').disabled=false;$('btnConnect').textContent='Log in →';
     if(!res||!res.ok){showErr((res&&res.error)||'Could not connect. Check the password.');return;}
     S.sheetId=res.sheetId||S.sheetId;S.mode='full';remember();enterApp();
   }).catch(function(){
-    $('btnConnect').disabled=false;$('btnConnect').textContent='Connect for editing →';
+    $('btnConnect').disabled=false;$('btnConnect').textContent='Log in →';
     showErr('Could not reach the backend. Check the URL, and that deployment access is "Anyone".');
   });
 };
