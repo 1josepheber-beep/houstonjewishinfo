@@ -2647,14 +2647,10 @@ function mapServiceCat(v){
 }
 
 var bizTabMap = {
+  // Merged: Security, Marketing, Trades, Catering, BooksGifts,
+  // KosherMarkets and CommunityOrgs now live inside the Services tab,
+  // identified by their Category value. Kosher Restaurants stays separate.
   'kosher-restaurant': 'KosherRestaurants',
-  'kosher-market':     'KosherMarkets',
-  'books-gifts':       'BooksGifts',
-  'catering':          'Catering',
-  'community-org':     'CommunityOrgs',
-  'security':          'Security',
-  'marketing':         'Marketing',
-  'trades':            'Trades',
   'services':          'Services'
 };
 var bizTabKeys = Object.keys(bizTabMap);
