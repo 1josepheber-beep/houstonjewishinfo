@@ -218,6 +218,36 @@ var COLLECTIONS = [
 var LONG_FIELDS = ['Description','Message','Notes','Excerpt','Program','ServiceTimes','Amenities','Hours'];
 var STATUSY = ['Status','Approved','Free','Women'];
 
+// Official option lists per "Sheet.Column". multi:true = pick several (joined with ", ").
+// Each option is either a string (value=label) or [value,label].
+// An "Other (type my own)" choice is added automatically to every one of these.
+var FIELD_OPTIONS = {
+  'Services.Category': { multi:true, options:[
+    ['24hour','24 Hour Services'], ['legal','Attorney / Legal'],
+    ['beauty','Beauty, Sheitels & Alterations'], ['books-gifts','Books & Gifts'],
+    ['catering','Catering & Events'], ['coaching','Coaching'],
+    ['community-org','Community Organizations'], ['construction','Construction'],
+    ['doors','Doors & Hardware'], ['electric','Electrician'],
+    ['financial','Financial / Accounting'], ['funeral','Funeral Home'],
+    ['hvac','HVAC'], ['insurance','Insurance'], ['jewelry','Jewelry'],
+    ['jfs','Jewish Family Service'], ['kosher-market','Kosher Market'],
+    ['marketing','Marketing & Digital'], ['medical','Medical / Healthcare'],
+    ['mortgage','Mortgage Broker'], ['photography','Photography'],
+    ['plumbing','Plumbing'], ['realestate','Real Estate'],
+    ['recruiting','Recruiting & Staffing'], ['security','Security'],
+    ['shipping','Shipping & Courier'], ['therapy','Therapy & Counseling'],
+    ['trades','Trades'], ['travel','Travel Agency'], ['tutoring','Tutoring']
+  ]},
+  'MazalTov.Type': { options:['Birth / New Baby','Bris / Brit Milah','Bar Mitzvah','Bat Mitzvah','Upsherin','Engagement','Wedding','Anniversary','Graduation','New Home'] },
+  'Jobs.Type':   { options:['Full-Time','Part-Time','Contract','Temporary','Internship','Seasonal','Volunteer','Remote'] },
+  'Jobs.Status': { options:[['hiring','Hiring'],['seeking','Seeking work']] },
+  'RealEstate.Type': { options:['For Sale','For Rent'] },
+  'Activities.IndoorOutdoor': { options:['Indoor','Outdoor','Both'] },
+  'Activities.Free': { options:['Yes','No'] }
+};
+var OTHER = '__other__';
+function normOpts(arr){ return arr.map(function(o){ return (typeof o==='string')?[o,o]:o; }); }
+
 /* ====================== STATE ====================== */
 var S = { sheetId:'', scriptUrl:'', token:'', mode:'view', current:null, headers:[], rows:[], pending:null };
 var lastPendingTotal = null;
@@ -434,6 +464,53 @@ function deletePending(it){
 var editing=null;
 function distinctValues(col){var seen={};S.rows.forEach(function(r){var v=(r[col]||'').trim();if(v)seen[v]=1;});return Object.keys(seen);}
 function uniq(a){var s={},o=[];a.forEach(function(v){if(!(v in s)){s[v]=1;o.push(v);}});return o;}
+function buildOptionField(h,opts,multi,val){
+  var wrap=el('div');wrap.id='fw-'+h;
+  if(multi){
+    var sel=val?val.split(/\s*,\s*/).filter(Boolean):[];
+    var box=el('div');box.style.cssText='border:1px solid var(--line);border-radius:10px;padding:8px 10px;max-height:170px;overflow:auto;background:#fbfcfe';
+    var known={};
+    opts.forEach(function(o){
+      known[o[0]]=1;
+      var lab=el('label');lab.style.cssText='display:flex;align-items:center;gap:8px;padding:3px 0;font-size:14px;text-transform:none;letter-spacing:0;color:var(--ink);font-weight:400;margin:0';
+      var cb=el('input');cb.type='checkbox';cb.className='f-cb';cb.value=o[0];cb.style.width='auto';
+      if(sel.indexOf(o[0])>=0)cb.checked=true;
+      lab.appendChild(cb);lab.appendChild(document.createTextNode(o[1]));
+      box.appendChild(lab);
+    });
+    wrap.appendChild(box);
+    var leftover=sel.filter(function(v){return !known[v];}).join(', ');
+    var oth=el('input','field');oth.id='f-'+h+'-other';oth.placeholder='Other (type your own, comma-separated)…';oth.value=leftover;oth.style.marginTop='6px';
+    wrap.appendChild(oth);
+  } else {
+    var s=el('select','field');s.id='f-'+h;
+    var blank=el('option',null,'');blank.value='';s.appendChild(blank);
+    var matched=(val==='');
+    opts.forEach(function(o){var op=el('option',null,o[1]);op.value=o[0];if(o[0]===val){op.selected=true;matched=true;}s.appendChild(op);});
+    var oo=el('option',null,'Other (type my own)…');oo.value=OTHER;s.appendChild(oo);
+    var oth=el('input','field');oth.id='f-'+h+'-other';oth.placeholder='Type your own…';oth.style.cssText='margin-top:6px;display:none';
+    if(!matched&&val){oo.selected=true;oth.value=val;oth.style.display='block';}
+    s.addEventListener('change',function(){oth.style.display=(s.value===OTHER)?'block':'none';});
+    wrap.appendChild(s);wrap.appendChild(oth);
+  }
+  return wrap;
+}
+function readField(h){
+  var fo=FIELD_OPTIONS[S.current+'.'+h];
+  if(fo){
+    if(fo.multi){
+      var vals=[],wrap=$('fw-'+h);
+      if(wrap)wrap.querySelectorAll('.f-cb').forEach(function(cb){if(cb.checked)vals.push(cb.value);});
+      var oth=$('f-'+h+'-other');
+      if(oth&&oth.value.trim())oth.value.split(/\s*,\s*/).forEach(function(v){if(v&&vals.indexOf(v)<0)vals.push(v);});
+      return vals.join(', ');
+    }
+    var s=$('f-'+h);if(!s)return '';
+    if(s.value===OTHER){var o=$('f-'+h+'-other');return o?o.value.trim():'';}
+    return s.value;
+  }
+  var f=$('f-'+h);return f?f.value:'';
+}
 function openForm(row){
   if(S.mode!=='full')return;
   editing=row||null;
@@ -442,6 +519,8 @@ function openForm(row){
   S.headers.forEach(function(h){
     body.appendChild(el('label',null,h));
     var val=row?(row[h]||''):'';var input;
+    var fo=FIELD_OPTIONS[S.current+'.'+h];
+    if(fo){ body.appendChild(buildOptionField(h,normOpts(fo.options),!!fo.multi,val)); return; }
     if(STATUSY.indexOf(h)>=0){
       input=el('select','field');input.id='f-'+h;
       var opts;
@@ -464,7 +543,7 @@ $('btnAdd').onclick=function(){openForm(null);};
 $('btnCancel').onclick=function(){$('overlay').style.display='none';};
 $('overlay').onclick=function(e){if(e.target===$('overlay'))$('overlay').style.display='none';};
 $('btnSave').onclick=function(){
-  var data={};S.headers.forEach(function(h){var f=$('f-'+h);data[h]=f?f.value:'';});
+  var data={};S.headers.forEach(function(h){data[h]=readField(h);});
   $('btnSave').disabled=true;$('btnSave').textContent='Saving…';
   var call=editing?api('update',{sheet:S.current,row:editing._row,data:data}):api('create',{sheet:S.current,data:data});
   call.then(function(res){
