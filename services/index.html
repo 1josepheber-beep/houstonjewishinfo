@@ -2196,7 +2196,7 @@ function renderGemS(){
       var cols=json.table.cols.map(function(c){return (c.label||'').toLowerCase().trim();});
       var rows=json.table.rows.map(function(row){ var o={}; cols.forEach(function(col,i){ o[col]=gemsVal(row.c?row.c[i]:null); }); return o; })
         .filter(function(o){ if(!o.name) return false; var s=(o.status||'').toLowerCase().trim(); return !s||s==='active'; });
-      rows.sort(function(a,b){ return String(a.name||'').localeCompare(String(b.name||''), undefined, {sensitivity:'base'}); });
+      rows.sort(function(a,b){ var pa=(a.cardimage&&String(a.cardimage).trim())?0:1, pb=(b.cardimage&&String(b.cardimage).trim())?0:1; if(pa!==pb) return pa-pb; return String(a.name||'').localeCompare(String(b.name||''), undefined, {sensitivity:'base'}); });
       GEMS_ALL=rows; renderGemS();
     }).catch(function(){
       var grid=document.getElementById('gemS-grid');
@@ -2279,7 +2279,7 @@ function renderCharS(){
       var cols=json.table.cols.map(function(c){return (c.label||'').toLowerCase().trim();});
       var rows=json.table.rows.map(function(row){ var o={}; cols.forEach(function(col,i){ o[col]=charVal(row.c?row.c[i]:null); }); return o; })
         .filter(function(o){ if(!o.name) return false; var s=(o.status||'').toLowerCase().trim(); return !s||s==='active'; });
-      rows.sort(function(a,b){ return String(a.name||'').localeCompare(String(b.name||''), undefined, {sensitivity:'base'}); });
+      rows.sort(function(a,b){ var pa=(a.cardimage&&String(a.cardimage).trim())?0:1, pb=(b.cardimage&&String(b.cardimage).trim())?0:1; if(pa!==pb) return pa-pb; return String(a.name||'').localeCompare(String(b.name||''), undefined, {sensitivity:'base'}); });
       CHAR_ALL=rows; renderCharS();
     }).catch(function(){
       var grid=document.getElementById('charS-grid');
@@ -2516,7 +2516,7 @@ function renderBizGrid(cat) {
     : allBizListings.filter(function(i) {
         return (i._cats && i._cats.indexOf(cat) > -1) || i._cat === cat;
       });
-  filtered = filtered.slice().sort(function(a,b){ return String(a.name||a.businessname||'').localeCompare(String(b.name||b.businessname||''), undefined, {sensitivity:'base'}); });
+  filtered = filtered.slice().sort(function(a,b){ var pa=(a.cardimage&&String(a.cardimage).trim())?0:1, pb=(b.cardimage&&String(b.cardimage).trim())?0:1; if(pa!==pb) return pa-pb; return String(a.name||a.businessname||'').localeCompare(String(b.name||b.businessname||''), undefined, {sensitivity:'base'}); });
   document.getElementById('biz-count').textContent = filtered.length;
 
   if(filtered.length === 0) {
@@ -2714,7 +2714,7 @@ function filterBiz() {
     var pagerE = document.getElementById('biz-pager'); if(pagerE) pagerE.style.display = 'none';
     document.getElementById('biz-grid').innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:40px;font-family:sans-serif;color:var(--muted);">No results found for \"' + raw + '\". Try a different word, or browse the <strong>Find a Service</strong> tab.</div>';
   } else {
-    filtered = filtered.slice().sort(function(a,b){ return String(a.name||a.businessname||'').localeCompare(String(b.name||b.businessname||''), undefined, {sensitivity:'base'}); });
+    filtered = filtered.slice().sort(function(a,b){ var pa=(a.cardimage&&String(a.cardimage).trim())?0:1, pb=(b.cardimage&&String(b.cardimage).trim())?0:1; if(pa!==pb) return pa-pb; return String(a.name||a.businessname||'').localeCompare(String(b.name||b.businessname||''), undefined, {sensitivity:'base'}); });
     bizPageList = filtered;
     bizPageNum = 1;
     renderBizPage();
