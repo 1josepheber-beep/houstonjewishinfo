@@ -810,14 +810,14 @@
   .results-bar strong { color: var(--navy); }
 
   /* School grid */
-  .edu-tiles { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin-bottom: 24px; }
-  .edu-tile { background: var(--white); border: 1px solid var(--border); border-radius: 8px; padding: 22px 16px; text-align: center; cursor: pointer; transition: all .18s; }
+  .edu-tiles { display: flex; gap: 14px; margin-bottom: 24px; }
+  .edu-tile { flex: 1 1 0; min-width: 0; background: var(--white); border: 1px solid var(--border); border-radius: 8px; padding: 22px 16px; text-align: center; cursor: pointer; transition: all .18s; }
   .edu-tile:hover { box-shadow: 0 4px 14px rgba(0,0,0,.10); transform: translateY(-2px); border-color: var(--navy); }
   .edu-tile.active { border-color: var(--navy); border-width: 2px; box-shadow: 0 4px 14px rgba(0,0,0,.08); }
   .edu-tile-icon { font-size: 34px; margin-bottom: 8px; }
   .edu-tile-name { font-family: 'Playfair Display', serif; font-size: 17px; font-weight: 700; color: var(--navy); margin-bottom: 3px; }
   .edu-tile-count { font-family: sans-serif; font-size: 11px; color: var(--muted); }
-  @media (max-width: 600px){ .edu-tiles { grid-template-columns: 1fr; gap: 10px; } .edu-tile { padding: 16px; } }
+  @media (max-width: 600px){ .edu-tiles { flex-direction: column; gap: 10px; } .edu-tile { padding: 16px; } }
   .school-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; margin-bottom: 40px; }
 
   .school-card { background: var(--white); border: 1px solid var(--border); border-radius: 6px; overflow: hidden; transition: box-shadow .2s; }
@@ -1104,6 +1104,11 @@
       <div class="edu-tile-name">Adult Learning</div>
       <div class="edu-tile-count" id="count-adult">—</div>
     </div>
+    <div class="edu-tile" data-cat="camps" onclick="showEduCat('camps', this)">
+      <div class="edu-tile-icon">🏕️</div>
+      <div class="edu-tile-name">Jewish Camps</div>
+      <div class="edu-tile-count" id="count-camps">—</div>
+    </div>
   </div>
 
   <div class="results-bar"><strong id="edu-cat-label">Orthodox Schools</strong> — showing <strong id="school-count">0</strong></div>
@@ -1214,7 +1219,7 @@
     fetch(url).then(function(r){return r.text();}).then(function(text){
       var json=JSON.parse(text.substring(47,text.length-2));
       var cols=json.table.cols.map(function(c){return (c.label||'').toLowerCase().trim();});
-      window.EDU_BY_CAT={ kids:[], adult:[] };
+      window.EDU_BY_CAT={ kids:[], adult:[], camps:[] };
       json.table.rows.forEach(function(row){
         var d={};
         cols.forEach(function(col,i){ var cell=row.c[i]; d[col]=cell?(cell.f!=null?cell.f:(cell.v==null?'':cell.v)):''; });
@@ -1222,16 +1227,19 @@
         if(!d.name) return;
         var cat=String(d.category||'').toLowerCase().trim();
         // map common variations to the three buckets; default to kids
-        if(cat.indexOf('adult')>=0 || cat.indexOf('kollel')>=0) cat='adult';
+        if(cat.indexOf('camp')>=0) cat='camps';
+        else if(cat.indexOf('adult')>=0 || cat.indexOf('kollel')>=0) cat='adult';
         else cat='kids';
         window.EDU_BY_CAT[cat].push(d);
       });
       document.getElementById('count-kids').textContent  = window.EDU_BY_CAT.kids.length + ' listed';
       document.getElementById('count-adult').textContent = window.EDU_BY_CAT.adult.length + ' listed';
-      ['kids','adult'].forEach(function(k){ window.EDU_BY_CAT[k].sort(function(a,b){ return String(a.name||'').localeCompare(String(b.name||''), undefined, {sensitivity:'base'}); }); });
+      document.getElementById('count-camps').textContent = window.EDU_BY_CAT.camps.length + ' listed';
+      ['kids','adult','camps'].forEach(function(k){ window.EDU_BY_CAT[k].sort(function(a,b){ return String(a.name||'').localeCompare(String(b.name||''), undefined, {sensitivity:'base'}); }); });
       // deep-link: open the right category from the URL hash (#schools, #adult-learning)
       var h=(location.hash||'').toLowerCase();
-      if(h.indexOf('adult')>=0 || h.indexOf('kollel')>=0){ showEduCat('adult', document.querySelector('.edu-tile[data-cat="adult"]')); }
+      if(h.indexOf('camp')>=0){ showEduCat('camps', document.querySelector('.edu-tile[data-cat="camps"]')); }
+      else if(h.indexOf('adult')>=0 || h.indexOf('kollel')>=0){ showEduCat('adult', document.querySelector('.edu-tile[data-cat="adult"]')); }
       else { renderEduCat('kids'); }
     }).catch(function(){
       var grid=document.getElementById('school-grid');
@@ -1247,7 +1255,7 @@
     };
   })();
 
-  var EDU_LABELS={ kids:"Orthodox Schools", adult:"Adult Learning" };
+  var EDU_LABELS={ kids:"Orthodox Schools", adult:"Adult Learning", camps:"Jewish Camps" };
   function showEduCat(cat, tile){
     document.querySelectorAll('.edu-tile').forEach(function(t){ t.classList.remove('active'); });
     if(tile) tile.classList.add('active');
@@ -1335,6 +1343,7 @@
 <a href="/shuls">Orthodox Shuls</a>
 <a href="/mikvahs">Mikvahs</a>
 <a href="/education#adult-learning">Adult Learning</a>
+<a href="/education#camps">Jewish Camps</a>
 </div>
     <a href="/services">🛠️ Services</a>
     <a href="/jobs">💼 Jobs</a>
@@ -1455,13 +1464,14 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape')closeMobileM
 <a href="/shuls" role="menuitem">Orthodox Shuls</a>
 <a href="/mikvahs" role="menuitem">Mikvahs</a>
 <a href="/education#adult-learning" role="menuitem">Adult Learning</a>
+<a href="/education#camps" role="menuitem">Jewish Camps</a>
 </div>
 <script>
 function hjiToggleJewish(e){e.stopPropagation();var m=document.getElementById('hji-jewish-menu');var b=e.currentTarget;if(!m)return;if(m.classList.contains('open')){m.classList.remove('open');b.setAttribute('aria-expanded','false');return;}var r=b.getBoundingClientRect();m.style.left=Math.round(r.left)+'px';m.style.top=Math.round(r.bottom)+'px';m.classList.add('open');b.setAttribute('aria-expanded','true');}
 function hjiToggleMJewish(b){var s=b.nextElementSibling;if(!s)return;var o=s.classList.toggle('open');var c=b.querySelector('.m-jewish-caret');if(c)c.textContent=o?'\u25b4':'\u25be';}
 document.addEventListener('click',function(ev){var m=document.getElementById('hji-jewish-menu');if(m&&m.classList.contains('open')&&!m.contains(ev.target)&&!(ev.target.closest&&ev.target.closest('.nav-dd-btn')))m.classList.remove('open');});
 window.addEventListener('resize',function(){var m=document.getElementById('hji-jewish-menu');if(m)m.classList.remove('open');});
-(function(){var EVMAP={'Orthodox Schools':'menu_orthodox_schools','Orthodox Shuls':'menu_orthodox_shuls','Mikvahs':'menu_mikvahs','Adult Learning':'menu_adult_learning'};document.addEventListener('click',function(ev){var a=ev.target.closest&&ev.target.closest('#hji-jewish-menu a, .m-jewish-sub a');if(!a)return;var label=(a.textContent||'').trim();var name=EVMAP[label];if(name&&typeof gtag==='function'){gtag('event',name,{menu:'Jewish',item:label});}});})();
+(function(){var EVMAP={'Orthodox Schools':'menu_orthodox_schools','Orthodox Shuls':'menu_orthodox_shuls','Mikvahs':'menu_mikvahs','Adult Learning':'menu_adult_learning','Jewish Camps':'menu_jewish_camps'};document.addEventListener('click',function(ev){var a=ev.target.closest&&ev.target.closest('#hji-jewish-menu a, .m-jewish-sub a');if(!a)return;var label=(a.textContent||'').trim();var name=EVMAP[label];if(name&&typeof gtag==='function'){gtag('event',name,{menu:'Jewish',item:label});}});})();
 </script>
 <script>
 /* Search deep-link: open the right category + scroll to a listing (only when ?find= is present) */
@@ -1470,7 +1480,7 @@ window.addEventListener('resize',function(){var m=document.getElementById('hji-j
   function flash(el){ el.scrollIntoView({behavior:'smooth',block:'center'}); var pb=el.style.boxShadow,pt=el.style.transition; el.style.transition='box-shadow .25s ease'; el.style.boxShadow='0 0 0 3px #c9933a, 0 6px 20px rgba(201,147,58,.45)'; setTimeout(function(){el.style.boxShadow=pb;el.style.transition=pt;},3200); }
   var FIND=norm(new URLSearchParams(location.search).get('find'));
   if(!FIND) return;
-  var cats=['kids','adult'];
+  var cats=['kids','adult','camps'];
   function findIn(cards){ var i,h; for(i=0;i<cards.length;i++){ h=cards[i].querySelector('.school-name,h1,h2,h3,h4'); if(h&&norm(h.textContent).indexOf(FIND)>-1) return cards[i]; } for(i=0;i<cards.length;i++){ if(norm(cards[i].textContent).indexOf(FIND)>-1) return cards[i]; } return null; }
   function tryCat(i){
     if(i>=cats.length){ var k=document.querySelector('.edu-tile[data-cat="kids"]'); if(typeof showEduCat==='function') showEduCat('kids',k); return; }
@@ -1485,7 +1495,7 @@ window.addEventListener('resize',function(){var m=document.getElementById('hji-j
 <script>
 /* Education page: JEWISH-menu category links switch the list in place — no URL hash, no reload, no jump. From other pages they navigate normally. */
 (function(){
-  function catOf(h){ h=(h||'').toLowerCase(); if(h.indexOf('adult')>-1||h.indexOf('kollel')>-1) return 'adult'; if(h.indexOf('school')>-1) return 'kids'; return null; }
+  function catOf(h){ h=(h||'').toLowerCase(); if(h.indexOf('camp')>-1) return 'camps'; if(h.indexOf('adult')>-1||h.indexOf('kollel')>-1) return 'adult'; if(h.indexOf('school')>-1) return 'kids'; return null; }
   document.addEventListener('click', function(e){
     var a=e.target && e.target.closest && e.target.closest('a[href*="/education#"]');
     if(!a || typeof showEduCat!=='function') return;

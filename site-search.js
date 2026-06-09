@@ -86,6 +86,7 @@
     {t:'Mikvahs',lab:'Section',link:'/mikvahs',kw:'mikvah mikvahs mikvaot mikveh mikva'},
     {t:'Schools & Education',lab:'Section',link:'/education',kw:'school schools education yeshiva yeshivas preschool day school orthodox'},
     {t:'Adult Learning',lab:'Section',link:'/education#adult-learning',kw:'adult learning kollel shiur shiurim classes torah learning'},
+    {t:'Jewish Camps',lab:'Section',link:'/education#camps',kw:'jewish camp camps summer camp overnight camp day camp sleepaway'},
     {t:'Jobs Board',lab:'Section',link:'/jobs',kw:'job jobs hiring employment work position positions career careers'},
     {t:'Charities & Gemachim',lab:'Section',link:'/charities',kw:'charity charities gemach gemachim tzedakah donate donation chesed nonprofit'},
     {t:'Kosher Food & Restaurants',lab:'Section',link:'/services',kw:'kosher restaurant restaurants food dining eat eatery cafe takeout catering bakery'},

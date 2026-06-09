@@ -1597,6 +1597,7 @@ loadJobs();
 <a href="/shuls">Orthodox Shuls</a>
 <a href="/mikvahs">Mikvahs</a>
 <a href="/education#adult-learning">Adult Learning</a>
+<a href="/education#camps">Jewish Camps</a>
 </div>
     <a href="/services">🛠️ Services</a>
     <a href="/jobs" class="active">💼 Jobs</a>
@@ -1717,13 +1718,14 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape')closeMobileM
 <a href="/shuls" role="menuitem">Orthodox Shuls</a>
 <a href="/mikvahs" role="menuitem">Mikvahs</a>
 <a href="/education#adult-learning" role="menuitem">Adult Learning</a>
+<a href="/education#camps" role="menuitem">Jewish Camps</a>
 </div>
 <script>
 function hjiToggleJewish(e){e.stopPropagation();var m=document.getElementById('hji-jewish-menu');var b=e.currentTarget;if(!m)return;if(m.classList.contains('open')){m.classList.remove('open');b.setAttribute('aria-expanded','false');return;}var r=b.getBoundingClientRect();m.style.left=Math.round(r.left)+'px';m.style.top=Math.round(r.bottom)+'px';m.classList.add('open');b.setAttribute('aria-expanded','true');}
 function hjiToggleMJewish(b){var s=b.nextElementSibling;if(!s)return;var o=s.classList.toggle('open');var c=b.querySelector('.m-jewish-caret');if(c)c.textContent=o?'\u25b4':'\u25be';}
 document.addEventListener('click',function(ev){var m=document.getElementById('hji-jewish-menu');if(m&&m.classList.contains('open')&&!m.contains(ev.target)&&!(ev.target.closest&&ev.target.closest('.nav-dd-btn')))m.classList.remove('open');});
 window.addEventListener('resize',function(){var m=document.getElementById('hji-jewish-menu');if(m)m.classList.remove('open');});
-(function(){var EVMAP={'Orthodox Schools':'menu_orthodox_schools','Orthodox Shuls':'menu_orthodox_shuls','Mikvahs':'menu_mikvahs','Adult Learning':'menu_adult_learning'};document.addEventListener('click',function(ev){var a=ev.target.closest&&ev.target.closest('#hji-jewish-menu a, .m-jewish-sub a');if(!a)return;var label=(a.textContent||'').trim();var name=EVMAP[label];if(name&&typeof gtag==='function'){gtag('event',name,{menu:'Jewish',item:label});}});})();
+(function(){var EVMAP={'Orthodox Schools':'menu_orthodox_schools','Orthodox Shuls':'menu_orthodox_shuls','Mikvahs':'menu_mikvahs','Adult Learning':'menu_adult_learning','Jewish Camps':'menu_jewish_camps'};document.addEventListener('click',function(ev){var a=ev.target.closest&&ev.target.closest('#hji-jewish-menu a, .m-jewish-sub a');if(!a)return;var label=(a.textContent||'').trim();var name=EVMAP[label];if(name&&typeof gtag==='function'){gtag('event',name,{menu:'Jewish',item:label});}});})();
 </script>
 <script>
 /* Search deep-link: scroll to + highlight the matching card (runs only when ?find= is present) */
