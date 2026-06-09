@@ -245,7 +245,8 @@ var FIELD_OPTIONS = {
   'RealEstate.Type': { options:['For Sale','For Rent'] },
   'Activities.IndoorOutdoor': { options:['Indoor','Outdoor','Both'] },
   'Activities.Free': { options:['Yes','No'] },
-  'SelfHelp.Category': { options:[['emergencies','🚨 Emergencies'],['cold','❄️ Cold Weather'],['home','🏠 Home & DIY'],['taxes','💰 Taxes & Finance'],['budget','📊 Budgeting'],['jewish','✡️ Jewish Life']] }
+  'SelfHelp.Category': { options:[['emergencies','🚨 Emergencies'],['cold','❄️ Cold Weather'],['home','🏠 Home & DIY'],['taxes','💰 Taxes & Finance'],['budget','📊 Budgeting'],['jewish','✡️ Jewish Life']] },
+  'Education.Type': { options:['Boys Only','Girls Only','Co-ed','Day School','Middle School','High School','Early Childhood','Hebrew School','Adult Education','Day Camp','Overnight / Sleepaway'] }
 };
 var OTHER = '__other__';
 function normOpts(arr){ return arr.map(function(o){ return (typeof o==='string')?[o,o]:o; }); }
@@ -536,6 +537,16 @@ function openForm(row){
       input=el('textarea','field');input.id='f-'+h;input.value=val;
     } else {
       input=el('input','field');input.id='f-'+h;input.value=val;
+      var sug=distinctValues(h);
+      if(sug.length){
+        var listId='dl-'+h;
+        input.setAttribute('list',listId);
+        input.setAttribute('autocomplete','off');
+        var dl=el('datalist');dl.id=listId;
+        sug.forEach(function(o){var op=el('option');op.value=o;dl.appendChild(op);});
+        body.appendChild(input);body.appendChild(dl);
+        return;
+      }
     }
     body.appendChild(input);
   });

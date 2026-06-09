@@ -1200,6 +1200,8 @@
       }
       var web=String(d.website||'').trim();
       var webLine=web ? '<div class="school-detail"><span class="school-detail-icon">\uD83C\uDF10</span> <a href="'+attr(web)+'" target="_blank">'+esc(webDisplay(web))+'</a></div>' : '';
+      var em=String(d.email||'').trim();
+      var emailLine=em ? '<div class="school-detail"><span class="school-detail-icon">\u2709\uFE0F</span> <a href="mailto:'+attr(em)+'">'+esc(em)+'</a></div>' : '';
       var btn=web ? '<a href="'+attr(web)+'" target="_blank" class="school-website-btn">Visit Website \u2192</a>' : '';
       var tuition = d.tuition
         ? '<div class="school-tuition"><div class="school-tuition-label">Tuition</div><div class="school-tuition-val">'+esc(d.tuition)+'</div></div>'
@@ -1209,7 +1211,7 @@
           '<span class="school-type-badge '+cls+'"'+badgeStyle+'>'+esc(label)+'</span>'+
           '<div class="school-name">'+esc(d.name)+'</div>'+
           detail('\uD83D\uDCCD',d.address)+detail('\uD83D\uDCDE',d.phone)+detail('\uD83D\uDC64',d.head)+
-          detail('\uD83D\uDCDA',d.program)+webLine+
+          detail('\uD83D\uDCDA',d.program)+webLine+emailLine+
           '<hr class="school-divider">'+
           '<div class="school-bottom">'+tuition+btn+'</div>'+
         '</div></div>';
