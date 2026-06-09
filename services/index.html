@@ -1234,6 +1234,13 @@
   .shg-safety{background:#fdeceb;color:#b42318;font-family:sans-serif;font-size:12.5px;padding:8px 11px;border-radius:8px;margin:0 0 12px}
   .shg-card details>summary{cursor:pointer;color:#c45f10;font-family:sans-serif;font-size:13px;font-weight:700;margin-bottom:8px;list-style:none}
   .shg-card details>summary::-webkit-details-marker{display:none}
+  .sh-search-wrap{position:relative}
+  .sh-suggest{position:absolute;left:0;right:0;top:calc(100% + 4px);background:#fff;border:1px solid #e3e7ee;border-radius:10px;box-shadow:0 8px 24px rgba(19,41,75,.12);z-index:300;max-height:280px;overflow-y:auto;font-family:sans-serif}
+  .sh-suggest-item{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 14px;cursor:pointer;border-bottom:1px solid #f0f3f8}
+  .sh-suggest-item:last-child{border-bottom:none}
+  .sh-suggest-item:hover,.sh-suggest-item.active{background:#f4f6fa}
+  .sh-sg-t{font-size:14px;color:#13294b;font-weight:600}
+  .sh-sg-c{font-size:11px;color:#8a97a8;white-space:nowrap}
 
   .sh-content { display:flex; flex-direction:column; gap:16px; }
 
@@ -1966,8 +1973,9 @@
       Step-by-step guides and videos to help you handle everyday tasks yourself — from home repairs and emergencies to saving money.
     </p>
 
-    <div style="margin-bottom:16px;">
-      <input type="text" id="sh-search" class="search-input" placeholder="🔍  Search guides… (e.g. water, gas, freeze, taxes)" oninput="shRender()" style="width:100%;max-width:100%;">
+    <div style="margin-bottom:16px;position:relative;" class="sh-search-wrap">
+      <input type="text" id="sh-search" class="search-input" autocomplete="off" placeholder="🔍  Search guides… (e.g. water, gas, freeze, taxes)" oninput="shRender()" style="width:100%;max-width:100%;">
+      <div id="sh-suggest" class="sh-suggest" style="display:none"></div>
     </div>
 
     <div class="sh-layout">
@@ -3111,7 +3119,7 @@ window.addEventListener('resize',function(){var m=document.getElementById('hji-j
   var ALIAS={'emergencies':'emergencies','emergency':'emergencies','cold':'cold','cold weather':'cold','freeze':'cold','home':'home','home & diy':'home','home and diy':'home','diy':'home','taxes':'taxes','taxes & finance':'taxes','tax':'taxes','finance':'taxes','budget':'budget','budgeting':'budget','jewish':'jewish','jewish life':'jewish'};
   var LABEL={emergencies:'🚨 Emergencies',cold:'❄️ Cold Weather',home:'🏠 Home & DIY',taxes:'💰 Taxes & Finance',budget:'📊 Budgeting',jewish:'✡️ Jewish Life',other:'🛠️ More'};
   var BADGE={emergencies:'shg-emerg',cold:'shg-cold',home:'shg-home',taxes:'shg-tax',budget:'shg-budget',jewish:'shg-jewish',other:'shg-other'};
-  var rows=[],curCat='all';
+  var rows=[],curCat='all',sugIdx=-1;
   function key(c){var n=String(c||'').toLowerCase().trim();return ALIAS[n]||(n?n.replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,''):'other');}
   function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
   function imgU(v){v=String(v||'').trim();if(!v)return '';return /^https?:\/\//i.test(v)?v:SH_IMG+v;}
@@ -3150,6 +3158,33 @@ window.addEventListener('resize',function(){var m=document.getElementById('hji-j
     });
     grid.innerHTML=n?out:'<div style="padding:24px;color:var(--muted);font-family:sans-serif;grid-column:1/-1">No guides found yet. Check back soon.</div>';
   };
+  function shSuggest(){
+    var qi=document.getElementById('sh-search'),box=document.getElementById('sh-suggest');if(!qi||!box)return;
+    var q=(qi.value||'').toLowerCase().trim();sugIdx=-1;
+    if(!q){box.style.display='none';box.innerHTML='';return;}
+    var m=[];rows.forEach(function(r){var hay=(String(r.title||'')+' '+(r.summary||'')).toLowerCase();if(hay.indexOf(q)>-1)m.push(r);});
+    if(!m.length){box.style.display='none';box.innerHTML='';return;}
+    box.innerHTML=m.slice(0,7).map(function(r){var lbl=(LABEL[key(r.category)]||'').replace(/^\S+\s/,'');var ttl=esc(String(r.title||'')).replace(/"/g,'&quot;');return '<div class="sh-suggest-item" data-title="'+ttl+'" onmousedown="shPick(event)"><span class="sh-sg-t">'+esc(r.title)+'</span><span class="sh-sg-c">'+esc(lbl)+'</span></div>';}).join('');
+    box.style.display='block';
+  }
+  function hlSug(items){items.forEach(function(n,i){n.classList.toggle('active',i===sugIdx);if(i===sugIdx&&n.scrollIntoView)n.scrollIntoView({block:'nearest'});});}
+  function pickTitle(t){curCat='all';var qi=document.getElementById('sh-search');if(qi)qi.value=t||'';var box=document.getElementById('sh-suggest');if(box){box.style.display='none';box.innerHTML='';}buildSide();shRender();}
+  window.shPick=function(e){e.preventDefault();pickTitle(e.currentTarget.getAttribute('data-title'));};
+  function initSuggest(){
+    var qi=document.getElementById('sh-search');if(!qi||qi.__shsug)return;qi.__shsug=1;qi.setAttribute('autocomplete','off');
+    qi.addEventListener('input',shSuggest);
+    qi.addEventListener('focus',function(){if((qi.value||'').trim())shSuggest();});
+    qi.addEventListener('blur',function(){setTimeout(function(){var b=document.getElementById('sh-suggest');if(b)b.style.display='none';},150);});
+    qi.addEventListener('keydown',function(e){
+      var box=document.getElementById('sh-suggest');if(!box)return;var items=box.querySelectorAll('.sh-suggest-item');
+      if(box.style.display==='none'||!items.length)return;
+      if(e.key==='ArrowDown'){e.preventDefault();sugIdx=Math.min(sugIdx+1,items.length-1);hlSug(items);}
+      else if(e.key==='ArrowUp'){e.preventDefault();sugIdx=Math.max(sugIdx-1,0);hlSug(items);}
+      else if(e.key==='Enter'){if(sugIdx>=0&&items[sugIdx]){e.preventDefault();pickTitle(items[sugIdx].getAttribute('data-title'));}}
+      else if(e.key==='Escape'){box.style.display='none';}
+    });
+  }
+  document.addEventListener('mousedown',function(e){var box=document.getElementById('sh-suggest');if(!box)return;var wrap=document.querySelector('.sh-search-wrap');if(wrap&&!wrap.contains(e.target))box.style.display='none';});
   function fetchSH(){
     var url='https://docs.google.com/spreadsheets/d/'+SH_ID+'/gviz/tq?tqx=out:json&headers=1&sheet='+encodeURIComponent(SH_TAB);
     fetch(url).then(function(r){return r.text();}).then(function(t){
@@ -3168,7 +3203,8 @@ window.addEventListener('resize',function(){var m=document.getElementById('hji-j
       } else { shRender(); }
     }).catch(function(){var c=document.getElementById('sh-content');if(c)c.innerHTML='<div style="padding:24px;color:var(--muted);font-family:sans-serif;">Guides are being set up. Check back soon.</div>';});
   }
-  if(document.readyState!=='loading')fetchSH();else document.addEventListener('DOMContentLoaded',fetchSH);
+  initSuggest();
+  if(document.readyState!=='loading')fetchSH();else document.addEventListener('DOMContentLoaded',function(){fetchSH();initSuggest();});
 })();
 </script>
 </body>
