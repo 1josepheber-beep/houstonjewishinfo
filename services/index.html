@@ -1397,8 +1397,15 @@
 @media (max-width:768px){ .nav-bar a, .nav-dd>.nav-dd-btn{ font-size:12px !important; } .nav-dd-caret{ font-size:12px !important; } .mobile-menu-links a, .m-jewish-btn, .m-jewish-sub a{ font-size:16px !important; } }
 .m-jewish-caret{ font-size:15px !important; color:#1a2744 !important; }
 </style>
+<style>
+/* bsd-mark */
+.bsd-mark{position:absolute;top:0;left:0;right:0;margin:0 auto;max-width:1140px;z-index:250;pointer-events:none;}
+.bsd-mark>span{position:absolute;top:4px;right:16px;font-size:12px;line-height:1;color:#1a2744;opacity:.6;direction:rtl;}
+@media (max-width:600px){.bsd-mark>span{top:3px;right:12px;font-size:11px;}}
+</style>
 </head>
 <body>
+<div class="bsd-mark" aria-hidden="true"><span>בס״ד</span></div>
 
 <!-- SUBMIT BUSINESS MODAL -->
 <div class="modal-overlay" id="modal-submit-biz">
@@ -1995,6 +2002,24 @@
   var months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
   var el = document.getElementById('today-date');
   if(el) el.textContent = days[d.getDay()] + ', ' + months[d.getMonth()] + ' ' + d.getDate() + ', ' + d.getFullYear();
+})();
+
+/* HJI masthead hebrew date */
+(function(){
+  function run(){
+    var el = document.getElementById('today-date');
+    if (!el || el.querySelector('.masthead-hdate')) return;
+    var now = new Date();
+    var url = 'https://www.hebcal.com/converter?cfg=json&gy='+now.getFullYear()+'&gm='+(now.getMonth()+1)+'&gd='+now.getDate()+'&g2h=1';
+    fetch(url).then(function(r){return r.json();}).then(function(d){
+      if(!d || !d.hebrew) return;
+      var hd = d.hebrew.replace(/[\u0591-\u05C7]/g,'');
+      var sep = document.createElement('span'); sep.className='masthead-sep'; sep.textContent=' \u00b7 ';
+      var span = document.createElement('span'); span.className='masthead-hdate'; span.setAttribute('dir','rtl'); span.textContent=hd;
+      el.appendChild(sep); el.appendChild(span);
+    }).catch(function(){});
+  }
+  if(document.readyState==='loading'){ document.addEventListener('DOMContentLoaded', run); } else { run(); }
 })();
 
 // ── TABS ──
