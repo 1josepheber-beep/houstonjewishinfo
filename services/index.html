@@ -1568,7 +1568,7 @@
       <button class="main-tab" onclick="switchTab('services', this)">🔧 Find a Service</button>
       <button class="main-tab" onclick="switchTab('gemachim', this)">🤝 Gemachim</button>
       <button class="main-tab" onclick="switchTab('charities', this)">❤️ Charities</button>
-      <button class="main-tab" onclick="switchTab('selfhelp', this)">📚 Self Help &amp; How-To</button>
+      <button class="main-tab" onclick="showSelfHelpSoon()">📚 Self Help &amp; How-To</button>
     </div>
   </div>
 </div>
@@ -3390,6 +3390,26 @@ window.addEventListener('resize',function(){var m=document.getElementById('hji-j
   window.hjisClosePanel=function(){ var p=document.getElementById('hjis-panel'),bd=document.getElementById('hjis-backdrop'); if(p)p.classList.remove('open'); if(bd)bd.classList.remove('open'); };
   document.addEventListener('click',function(e){ var s=document.querySelector('.hjis-desktop'); if(!s)return; var inside=e.composedPath?e.composedPath().indexOf(s)!==-1:s.contains(e.target); if(!inside) hjisCloseDD(); });
 })();
+</script>
+
+  <!-- Self Help: coming-soon notice (self-contained styles) -->
+  <div id="selfhelp-soon-modal" style="display:none;position:fixed;inset:0;z-index:10000;background:rgba(15,23,42,.6);align-items:center;justify-content:center;padding:20px;font-family:system-ui,-apple-system,'Segoe UI',sans-serif;">
+    <div style="background:#ffffff;color:#16202e;max-width:420px;width:100%;border-radius:16px;box-shadow:0 20px 60px rgba(0,0,0,.35);padding:30px 26px;text-align:center;position:relative;">
+      <button aria-label="Close" onclick="closeSelfHelpSoon()" style="position:absolute;top:12px;right:14px;background:none;border:none;font-size:26px;line-height:1;color:#94a3b8;cursor:pointer;">&times;</button>
+      <div style="font-size:46px;line-height:1;margin:4px 0 12px;">🛠️</div>
+      <h3 style="margin:0 0 10px;font-size:22px;font-weight:700;color:#13294b;">Coming soon</h3>
+      <p style="font-size:15px;line-height:1.55;color:#475569;margin:0 0 22px;">
+        We're still building out the Self Help &amp; How-To section. Check back soon — step-by-step guides and videos are on the way.
+      </p>
+      <button onclick="closeSelfHelpSoon()" style="background:#e87722;color:#fff;border:none;font-size:15px;font-weight:600;padding:12px 26px;border-radius:10px;cursor:pointer;min-width:130px;">Got it</button>
+    </div>
+  </div>
+
+<script>
+function showSelfHelpSoon(){ var m=document.getElementById('selfhelp-soon-modal'); m.style.display='flex'; document.body.style.overflow='hidden'; }
+function closeSelfHelpSoon(){ var m=document.getElementById('selfhelp-soon-modal'); m.style.display='none'; document.body.style.overflow=''; }
+document.getElementById('selfhelp-soon-modal').addEventListener('click',function(e){ if(e.target===this) closeSelfHelpSoon(); });
+document.addEventListener('keydown',function(e){ if(e.key==='Escape') closeSelfHelpSoon(); });
 </script>
 </body>
 </html>
