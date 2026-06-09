@@ -1218,6 +1218,22 @@
   .sh-sidebar-item:hover { background:var(--light-blue, #eef3fb); }
   .sh-sidebar-item.active { background:var(--navy); color:#fff; }
   .sh-sidebar-icon { font-size:16px; }
+  .shg-media{height:150px;background:#dfe5ee;display:flex;align-items:center;justify-content:center;font-size:42px;border-radius:6px 6px 0 0;overflow:hidden;margin:-18px -18px 14px;position:relative}
+  .shg-media img{width:100%;height:100%;object-fit:cover;display:block}
+  .shg-play{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;cursor:pointer;background:rgba(19,41,75,.32)}
+  .shg-play span{width:54px;height:54px;border-radius:50%;background:rgba(255,255,255,.92);color:#13294b;display:flex;align-items:center;justify-content:center;font-size:22px;padding-left:4px}
+  .shg-play:hover span{background:#fff}
+  .shg-badge{display:inline-block;font-family:sans-serif;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;padding:3px 9px;border-radius:20px;margin-bottom:8px}
+  .shg-emerg{background:#fdeceb;color:#b42318} .shg-cold{background:#e6f1fb;color:#1c5a93}
+  .shg-home{background:#eaf4ea;color:#1f7a3d} .shg-tax{background:#fdf1e3;color:#9a5a12}
+  .shg-budget{background:#efeafb;color:#5a3a9a} .shg-jewish{background:#f3e9f7;color:#7a2a8b} .shg-other{background:#eef1f6;color:#475569}
+  .shg-title{font-family:'Playfair Display',serif;font-size:17px;font-weight:700;color:#13294b;line-height:1.25;margin-bottom:6px}
+  .shg-summary{font-family:sans-serif;font-size:13.5px;color:#5d6b7e;margin:0 0 12px}
+  .shg-steps{font-family:sans-serif;font-size:13.5px;color:#16202e;margin:0 0 12px;padding-left:18px}
+  .shg-steps li{margin-bottom:5px}
+  .shg-safety{background:#fdeceb;color:#b42318;font-family:sans-serif;font-size:12.5px;padding:8px 11px;border-radius:8px;margin:0 0 12px}
+  .shg-card details>summary{cursor:pointer;color:#c45f10;font-family:sans-serif;font-size:13px;font-weight:700;margin-bottom:8px;list-style:none}
+  .shg-card details>summary::-webkit-details-marker{display:none}
 
   .sh-content { display:flex; flex-direction:column; gap:16px; }
 
@@ -1568,7 +1584,7 @@
       <button class="main-tab" onclick="switchTab('services', this)">🔧 Find a Service</button>
       <button class="main-tab" onclick="switchTab('gemachim', this)">🤝 Gemachim</button>
       <button class="main-tab" onclick="switchTab('charities', this)">❤️ Charities</button>
-      <button class="main-tab" onclick="showSelfHelpSoon()">📚 Self Help &amp; How-To</button>
+      <button class="main-tab" onclick="switchTab('selfhelp', this)">📚 Self Help &amp; How-To</button>
     </div>
   </div>
 </div>
@@ -1939,348 +1955,17 @@
   ══════════════════════════════════════ -->
   <div class="tab-panel" id="tab-selfhelp">
 
-    <p style="font-family:sans-serif;font-size:13px;color:var(--muted);margin-bottom:20px;">
-      Step-by-step guides and videos to help you handle everyday tasks yourself — from home repairs to tax tips to Jewish life resources.
+    <p style="font-family:sans-serif;font-size:13px;color:var(--muted);margin-bottom:18px;">
+      Step-by-step guides and videos to help you handle everyday tasks yourself — from home repairs and emergencies to saving money.
     </p>
 
     <div style="margin-bottom:16px;">
-      <input name="🔍__search_guides..._(e.g._wate" type="text" id="sh-search" class="search-input" placeholder="🔍  Search guides... (e.g. water heater, property tax, challah)" oninput="searchSH()" style="width:100%;max-width:100%;">
-      <div id="sh-no-results" style="display:none;font-family:sans-serif;font-size:13px;color:var(--muted);padding:12px 0;">No guides found for that search. Try a different keyword.</div>
+      <input type="text" id="sh-search" class="search-input" placeholder="🔍  Search guides… (e.g. water, gas, freeze, taxes)" oninput="shRender()" style="width:100%;max-width:100%;">
     </div>
 
     <div class="sh-layout">
-
-      <!-- SIDEBAR -->
-      <div class="sh-sidebar">
-        <div class="sh-sidebar-item active" onclick="showSHCat('all',this)">
-          <span class="sh-sidebar-icon">📋</span> All Guides
-        </div>
-        <div class="sh-sidebar-item" onclick="showSHCat('home',this)">
-          <span class="sh-sidebar-icon">🏠</span> Home &amp; DIY
-        </div>
-        <div class="sh-sidebar-item" onclick="showSHCat('taxes',this)">
-          <span class="sh-sidebar-icon">💰</span> Taxes &amp; Finance
-        </div>
-        <div class="sh-sidebar-item" onclick="showSHCat('jewish',this)">
-          <span class="sh-sidebar-icon">✡️</span> Jewish Life
-        </div>
-      </div>
-
-      <!-- GUIDE CARDS -->
-      <div class="sh-content" id="sh-content">
-
-        <!-- ── HOME & DIY ── -->
-        <div class="sh-cat-head" data-shcat="home">🏠 Home &amp; DIY</div>
-
-        <!-- Card: Water heater — both -->
-        <div class="sh-guide-card" data-shcat="home">
-          <div class="sh-guide-header">
-            <div>
-              <div class="sh-guide-badges">
-                <span class="sh-badge sh-badge-video">▶ Video</span>
-                <span class="sh-badge sh-badge-guide">📄 Guide</span>
-              </div>
-              <div class="sh-guide-title">How to Relight Your Water Heater Pilot Light</div>
-              <div class="sh-guide-desc">Gas water heater won't ignite? Here's how to safely relight the pilot.</div>
-            </div>
-          </div>
-          <div class="sh-toggle-bar">
-            <button class="sh-toggle active" onclick="showContent(this,'watch','read','wh')">▶ Watch</button>
-            <button class="sh-toggle" onclick="showContent(this,'read','watch','wh')">📄 Read</button>
-          </div>
-          <div id="wh-watch" class="sh-content-block">
-            <div class="sh-video-wrap">
-              <iframe src="https://www.youtube.com/embed/RUfaAR5Bz1s" title="How to Relight a Water Heater" allowfullscreen loading="lazy"></iframe>
-            </div>
-          </div>
-          <div id="wh-read" class="sh-content-block" style="display:none;">
-            <ol class="sh-steps">
-              <li class="sh-step"><span class="sh-step-num">1</span><span>Turn the thermostat to the lowest setting and set the gas valve to <strong>Pilot</strong>.</span></li>
-              <li class="sh-step"><span class="sh-step-num">2</span><span>Press and hold the pilot button down while pressing the igniter repeatedly until you see a flame.</span></li>
-              <li class="sh-step"><span class="sh-step-num">3</span><span>Keep holding the pilot button for 30–60 seconds after the flame appears to let the thermocouple heat up.</span></li>
-              <li class="sh-step"><span class="sh-step-num">4</span><span>Release the button slowly. If the flame stays, turn the gas valve back to <strong>On</strong> and set your desired temperature.</span></li>
-              <li class="sh-step"><span class="sh-step-num">5</span><span>If the pilot won't stay lit after a few tries, the thermocouple may need replacing — call a plumber.</span></li>
-            </ol>
-          </div>
-        </div>
-
-        <!-- Card: Circuit breaker — guide only -->
-        <div class="sh-guide-card" data-shcat="home">
-          <div class="sh-guide-header">
-            <div>
-              <div class="sh-guide-badges">
-                <span class="sh-badge sh-badge-guide">📄 Guide</span>
-              </div>
-              <div class="sh-guide-title">How to Reset a Tripped Circuit Breaker</div>
-              <div class="sh-guide-desc">Power out in one room? A tripped breaker is usually the fix.</div>
-            </div>
-          </div>
-          <ol class="sh-steps">
-            <li class="sh-step"><span class="sh-step-num">1</span><span>Find your electrical panel — usually in a utility room, garage, or hallway closet.</span></li>
-            <li class="sh-step"><span class="sh-step-num">2</span><span>Look for a breaker that's in the middle position (neither fully ON nor OFF) — that's the tripped one.</span></li>
-            <li class="sh-step"><span class="sh-step-num">3</span><span>Flip it fully to <strong>OFF</strong> first, then firmly flip it back to <strong>ON</strong>.</span></li>
-            <li class="sh-step"><span class="sh-step-num">4</span><span>If it trips again immediately, don't keep resetting it — call a licensed electrician.</span></li>
-          </ol>
-        </div>
-
-        <!-- Card: Unclog drain — both -->
-        <div class="sh-guide-card" data-shcat="home">
-          <div class="sh-guide-header">
-            <div>
-              <div class="sh-guide-badges">
-                <span class="sh-badge sh-badge-video">▶ Video</span>
-                <span class="sh-badge sh-badge-guide">📄 Guide</span>
-              </div>
-              <div class="sh-guide-title">How to Unclog a Slow or Blocked Drain</div>
-              <div class="sh-guide-desc">Natural and tool-based methods — no plumber needed.</div>
-            </div>
-          </div>
-          <div class="sh-toggle-bar">
-            <button class="sh-toggle active" onclick="showContent(this,'drain-watch','drain-read','drain')">▶ Watch</button>
-            <button class="sh-toggle" onclick="showContent(this,'drain-read','drain-watch','drain')">📄 Read</button>
-          </div>
-          <div id="drain-watch" class="sh-content-block">
-            <div class="sh-video-wrap">
-              <iframe src="https://www.youtube.com/embed/pzMBHdCFx5c" title="How to Unclog a Drain" allowfullscreen loading="lazy"></iframe>
-            </div>
-          </div>
-          <div id="drain-read" class="sh-content-block" style="display:none;">
-            <ol class="sh-steps">
-              <li class="sh-step"><span class="sh-step-num">1</span><span>Pour boiling water slowly down the drain — this dissolves soap and grease buildup.</span></li>
-              <li class="sh-step"><span class="sh-step-num">2</span><span>Mix 1/2 cup baking soda + 1/2 cup white vinegar, pour in, cover with a rag for 5 minutes, then flush with hot water.</span></li>
-              <li class="sh-step"><span class="sh-step-num">3</span><span>Use a drain snake or hair catcher tool to physically pull out any clogs.</span></li>
-              <li class="sh-step"><span class="sh-step-num">4</span><span>For stubborn clogs, use a plunger with petroleum jelly on the rim to create a tighter seal.</span></li>
-            </ol>
-          </div>
-        </div>
-
-        <!-- Card: Shut off water — guide only -->
-        <div class="sh-guide-card" data-shcat="home">
-          <div class="sh-guide-header">
-            <div>
-              <div class="sh-guide-badges">
-                <span class="sh-badge sh-badge-guide">📄 Guide</span>
-              </div>
-              <div class="sh-guide-title">How to Shut Off Your Home's Water in an Emergency</div>
-              <div class="sh-guide-desc">Know where your shutoff valve is before you need it.</div>
-            </div>
-          </div>
-          <ol class="sh-steps">
-            <li class="sh-step"><span class="sh-step-num">1</span><span>Find your main shutoff valve — usually near the water meter, in the garage, or outside near the foundation.</span></li>
-            <li class="sh-step"><span class="sh-step-num">2</span><span>Turn the valve clockwise (righty-tighty) until it stops. This cuts water to the whole house.</span></li>
-            <li class="sh-step"><span class="sh-step-num">3</span><span>Open a faucet to release any remaining water pressure in the lines.</span></li>
-            <li class="sh-step"><span class="sh-step-num">4</span><span>Call a plumber and document any damage for your insurance claim.</span></li>
-          </ol>
-        </div>
-
-        <!-- ── TAXES & FINANCE ── -->
-        <div class="sh-cat-head" data-shcat="taxes">💰 Taxes &amp; Finance</div>
-
-        <!-- Card: Property tax protest — guide only -->
-        <div class="sh-guide-card" data-shcat="taxes">
-          <div class="sh-guide-header">
-            <div>
-              <div class="sh-guide-badges">
-                <span class="sh-badge sh-badge-guide">📄 Guide</span>
-              </div>
-              <div class="sh-guide-title">How to Fight Your Property Tax Appraisal in Texas</div>
-              <div class="sh-guide-desc">Harris County homeowners can protest every year — here's how.</div>
-            </div>
-          </div>
-          <ol class="sh-steps">
-            <li class="sh-step"><span class="sh-step-num">1</span><span>Check your appraisal notice — you have until <strong>May 15</strong> (or 30 days from notice) to file a protest.</span></li>
-            <li class="sh-step"><span class="sh-step-num">2</span><span>Go to <strong>hcad.org</strong> and file your protest online under "iFile" — it's free.</span></li>
-            <li class="sh-step"><span class="sh-step-num">3</span><span>Gather evidence: recent sales of similar nearby homes, photos of damage, or a recent private appraisal.</span></li>
-            <li class="sh-step"><span class="sh-step-num">4</span><span>You'll get an informal hearing first — many cases settle there without going to the ARB.</span></li>
-            <li class="sh-step"><span class="sh-step-num">5</span><span>If unsatisfied, request a formal ARB hearing. Bring your comparables and be specific.</span></li>
-          </ol>
-        </div>
-
-        <!-- Card: Homestead exemption — guide only -->
-        <div class="sh-guide-card" data-shcat="taxes">
-          <div class="sh-guide-header">
-            <div>
-              <div class="sh-guide-badges">
-                <span class="sh-badge sh-badge-guide">📄 Guide</span>
-              </div>
-              <div class="sh-guide-title">How to File for a Texas Homestead Exemption</div>
-              <div class="sh-guide-desc">Save hundreds per year if your home is your primary residence.</div>
-            </div>
-          </div>
-          <ol class="sh-steps">
-            <li class="sh-step"><span class="sh-step-num">1</span><span>You must own and live in the home as your primary residence as of January 1 of the tax year.</span></li>
-            <li class="sh-step"><span class="sh-step-num">2</span><span>Download the Homestead Exemption application at <strong>hcad.org</strong> or your county appraisal district's website.</span></li>
-            <li class="sh-step"><span class="sh-step-num">3</span><span>Attach a copy of your Texas driver's license or ID showing your home address.</span></li>
-            <li class="sh-step"><span class="sh-step-num">4</span><span>Submit by mail or online. No hard deadline — but file early to apply for the current year.</span></li>
-            <li class="sh-step"><span class="sh-step-num">5</span><span>You only need to apply once — it renews automatically unless your status changes.</span></li>
-          </ol>
-        </div>
-
-        <!-- Card: Read tax bill — both -->
-        <div class="sh-guide-card" data-shcat="taxes">
-          <div class="sh-guide-header">
-            <div>
-              <div class="sh-guide-badges">
-                <span class="sh-badge sh-badge-video">▶ Video</span>
-                <span class="sh-badge sh-badge-guide">📄 Guide</span>
-              </div>
-              <div class="sh-guide-title">How to Read and Understand Your Property Tax Bill</div>
-              <div class="sh-guide-desc">A plain-English breakdown of every line on your Texas tax bill.</div>
-            </div>
-          </div>
-          <div class="sh-toggle-bar">
-            <button class="sh-toggle active" onclick="showContent(this,'tax-watch','tax-read','tax')">▶ Watch</button>
-            <button class="sh-toggle" onclick="showContent(this,'tax-read','tax-watch','tax')">📄 Read</button>
-          </div>
-          <div id="tax-watch" class="sh-content-block">
-            <div class="sh-video-wrap">
-              <iframe src="https://www.youtube.com/embed/VjdPMRnF8NU" title="How to Read Your Property Tax Bill" allowfullscreen loading="lazy"></iframe>
-            </div>
-          </div>
-          <div id="tax-read" class="sh-content-block" style="display:none;">
-            <ol class="sh-steps">
-              <li class="sh-step"><span class="sh-step-num">1</span><span><strong>Appraised Value</strong> — what the county says your property is worth. This is what you protest.</span></li>
-              <li class="sh-step"><span class="sh-step-num">2</span><span><strong>Assessed Value</strong> — appraised value minus any exemptions (homestead, over-65, disability, etc.).</span></li>
-              <li class="sh-step"><span class="sh-step-num">3</span><span><strong>Tax Rate</strong> — set by each taxing unit (city, school district, county). Multiply by assessed value for your bill.</span></li>
-              <li class="sh-step"><span class="sh-step-num">4</span><span><strong>Total Tax Due</strong> — sum of all taxing units. Pay by January 31 to avoid penalties.</span></li>
-            </ol>
-          </div>
-        </div>
-
-        <!-- Card: Organize finances — guide only -->
-        <div class="sh-guide-card" data-shcat="taxes">
-          <div class="sh-guide-header">
-            <div>
-              <div class="sh-guide-badges">
-                <span class="sh-badge sh-badge-guide">📄 Guide</span>
-              </div>
-              <div class="sh-guide-title">How to Get Your Finances Organized in a Weekend</div>
-              <div class="sh-guide-desc">A simple system to track income, expenses, and savings.</div>
-            </div>
-          </div>
-          <ol class="sh-steps">
-            <li class="sh-step"><span class="sh-step-num">1</span><span>List every monthly expense — fixed (rent, car) and variable (groceries). Use your last 3 bank statements.</span></li>
-            <li class="sh-step"><span class="sh-step-num">2</span><span>Set up a free budgeting tool like <strong>Mint</strong>, <strong>YNAB</strong>, or a Google Sheets template.</span></li>
-            <li class="sh-step"><span class="sh-step-num">3</span><span>Automate savings — set up an automatic transfer on payday, even if it's just $25.</span></li>
-            <li class="sh-step"><span class="sh-step-num">4</span><span>Review subscriptions and cancel anything unused — most people save $50–$150/month doing this.</span></li>
-            <li class="sh-step"><span class="sh-step-num">5</span><span>Check your credit report free at <strong>annualcreditreport.com</strong> and dispute any errors.</span></li>
-          </ol>
-        </div>
-
-        <!-- ── JEWISH LIFE ── -->
-        <div class="sh-cat-head" data-shcat="jewish">✡️ Jewish Life</div>
-
-        <!-- Card: Kosher symbols — guide only -->
-        <div class="sh-guide-card" data-shcat="jewish">
-          <div class="sh-guide-header">
-            <div>
-              <div class="sh-guide-badges">
-                <span class="sh-badge sh-badge-guide">📄 Guide</span>
-              </div>
-              <div class="sh-guide-title">How to Read a Kosher Symbol on a Food Product</div>
-              <div class="sh-guide-desc">Not all kosher symbols are the same — here's what to look for.</div>
-            </div>
-          </div>
-          <ol class="sh-steps">
-            <li class="sh-step"><span class="sh-step-num">1</span><span>Look for a hechsher on the packaging — common ones include OU, OK, Star-K, Kof-K, and HKA (Houston).</span></li>
-            <li class="sh-step"><span class="sh-step-num">2</span><span><strong>Meat:</strong> no extra letter. <strong>Dairy:</strong> look for a "D." <strong>Pareve:</strong> neither meat nor dairy, often marked "P" or "Pareve."</span></li>
-            <li class="sh-step"><span class="sh-step-num">3</span><span>A standalone "P" on some symbols means <strong>Passover</strong> approved — not pareve. Context matters.</span></li>
-            <li class="sh-step"><span class="sh-step-num">4</span><span>When in doubt, check <strong>kosherquest.org</strong> or the certifying agency's website for a full product list.</span></li>
-          </ol>
-        </div>
-
-        <!-- Card: Light Shabbat candles — both -->
-        <div class="sh-guide-card" data-shcat="jewish">
-          <div class="sh-guide-header">
-            <div>
-              <div class="sh-guide-badges">
-                <span class="sh-badge sh-badge-video">▶ Video</span>
-                <span class="sh-badge sh-badge-guide">📄 Guide</span>
-              </div>
-              <div class="sh-guide-title">How to Light Shabbat Candles</div>
-              <div class="sh-guide-desc">A warm, beginner-friendly guide to Friday night candle lighting — blessings included.</div>
-            </div>
-          </div>
-          <div class="sh-toggle-bar">
-            <button class="sh-toggle active" onclick="showContent(this,'shab-watch','shab-read','shab')">▶ Watch</button>
-            <button class="sh-toggle" onclick="showContent(this,'shab-read','shab-watch','shab')">📄 Read</button>
-          </div>
-          <div id="shab-watch" class="sh-content-block">
-            <div class="sh-video-wrap">
-              <iframe src="https://www.youtube.com/embed/J3fRLTDQMzE" title="How to Light Shabbat Candles" allowfullscreen loading="lazy"></iframe>
-            </div>
-          </div>
-          <div id="shab-read" class="sh-content-block" style="display:none;">
-            <ol class="sh-steps">
-              <li class="sh-step"><span class="sh-step-num">1</span><span>Place two candles in candlesticks 18 minutes before sunset on Friday.</span></li>
-              <li class="sh-step"><span class="sh-step-num">2</span><span>Light the candles, then use your hands to draw the flame toward you three times.</span></li>
-              <li class="sh-step"><span class="sh-step-num">3</span><span>Cover your eyes and recite: <em>Baruch Atah Adonai, Eloheinu Melech haolam, asher kid'shanu b'mitzvotav v'tzivanu l'hadlik ner shel Shabbat.</em></span></li>
-              <li class="sh-step"><span class="sh-step-num">4</span><span>Uncover your eyes, take in the light, and say <em>Shabbat Shalom</em> to those around you.</span></li>
-            </ol>
-          </div>
-        </div>
-
-        <!-- Card: Bar/Bat Mitzvah on a budget — guide only -->
-        <div class="sh-guide-card" data-shcat="jewish">
-          <div class="sh-guide-header">
-            <div>
-              <div class="sh-guide-badges">
-                <span class="sh-badge sh-badge-guide">📄 Guide</span>
-              </div>
-              <div class="sh-guide-title">How to Plan a Bar/Bat Mitzvah on a Budget</div>
-              <div class="sh-guide-desc">A meaningful celebration doesn't have to break the bank.</div>
-            </div>
-          </div>
-          <ol class="sh-steps">
-            <li class="sh-step"><span class="sh-step-num">1</span><span>Set your total budget first — then work backwards. The ceremony is free; it's the party that costs.</span></li>
-            <li class="sh-step"><span class="sh-step-num">2</span><span>Consider Friday night or Sunday morning — venues cost significantly less than Saturday afternoon.</span></li>
-            <li class="sh-step"><span class="sh-step-num">3</span><span>Use the JCC or your synagogue's social hall — often much cheaper than a hotel ballroom.</span></li>
-            <li class="sh-step"><span class="sh-step-num">4</span><span>Limit the guest list. Smaller, more intimate gatherings save on catering, invitations, and favors.</span></li>
-            <li class="sh-step"><span class="sh-step-num">5</span><span>Focus spending on what matters most — great food, a meaningful speech, a live musician — and simplify the rest.</span></li>
-          </ol>
-        </div>
-
-        <!-- Card: Bake challah — both -->
-        <div class="sh-guide-card" data-shcat="jewish">
-          <div class="sh-guide-header">
-            <div>
-              <div class="sh-guide-badges">
-                <span class="sh-badge sh-badge-video">▶ Video</span>
-                <span class="sh-badge sh-badge-guide">📄 Guide</span>
-              </div>
-              <div class="sh-guide-title">How to Bake Challah From Scratch</div>
-              <div class="sh-guide-desc">Beautiful braided challah for Shabbat and holidays — beginner friendly.</div>
-            </div>
-          </div>
-          <div class="sh-toggle-bar">
-            <button class="sh-toggle active" onclick="showContent(this,'challah-watch','challah-read','challah')">▶ Watch</button>
-            <button class="sh-toggle" onclick="showContent(this,'challah-read','challah-watch','challah')">📄 Read</button>
-          </div>
-          <div id="challah-watch" class="sh-content-block">
-            <div class="sh-video-wrap">
-              <iframe src="https://www.youtube.com/embed/1KG0UpWr0m8" title="How to Make Challah Bread" allowfullscreen loading="lazy"></iframe>
-            </div>
-          </div>
-          <div id="challah-read" class="sh-content-block" style="display:none;">
-            <ol class="sh-steps">
-              <li class="sh-step"><span class="sh-step-num">1</span><span>Mix 2 tsp yeast + 1 tsp sugar in 1 cup warm water. Let sit 5–10 minutes until foamy.</span></li>
-              <li class="sh-step"><span class="sh-step-num">2</span><span>In a large bowl combine 4 cups flour, 1/3 cup sugar, 1 tsp salt. Add yeast mix, 2 eggs, and 1/3 cup oil. Knead 8–10 minutes.</span></li>
-              <li class="sh-step"><span class="sh-step-num">3</span><span>Cover and let rise 1.5 hours until doubled. Punch down, divide into 3 strands, and braid.</span></li>
-              <li class="sh-step"><span class="sh-step-num">4</span><span>Place on a parchment-lined pan, brush with egg wash, let rise 30 more minutes.</span></li>
-              <li class="sh-step"><span class="sh-step-num">5</span><span>Bake at 375°F for 30–35 minutes until deep golden brown. Cool before slicing.</span></li>
-            </ol>
-          </div>
-        </div>
-
-      </div><!-- end sh-content -->
-    </div><!-- end sh-layout -->
-
-    <div class="sh-add-banner">
-      <div>
-        <div class="sh-add-banner-title">Have a guide to suggest?</div>
-        <div class="sh-add-banner-sub">We're always adding new how-to guides and videos. Send us your suggestions!</div>
-      </div>
-      <a href="/contact" style="background:var(--gold);color:#fff;font-family:sans-serif;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:11px 22px;border-radius:4px;white-space:nowrap;text-decoration:none;">Suggest a Guide →</a>
+      <div class="sh-sidebar" id="sh-side"></div>
+      <div class="sh-content" id="sh-content"><div style="padding:30px;color:var(--muted);font-family:sans-serif;">Loading guides…</div></div>
     </div>
 
   </div><!-- end tab-selfhelp -->
@@ -3392,24 +3077,66 @@ window.addEventListener('resize',function(){var m=document.getElementById('hji-j
 })();
 </script>
 
-  <!-- Self Help: coming-soon notice (self-contained styles) -->
-  <div id="selfhelp-soon-modal" style="display:none;position:fixed;inset:0;z-index:10000;background:rgba(15,23,42,.6);align-items:center;justify-content:center;padding:20px;font-family:system-ui,-apple-system,'Segoe UI',sans-serif;">
-    <div style="background:#ffffff;color:#16202e;max-width:420px;width:100%;border-radius:16px;box-shadow:0 20px 60px rgba(0,0,0,.35);padding:30px 26px;text-align:center;position:relative;">
-      <button aria-label="Close" onclick="closeSelfHelpSoon()" style="position:absolute;top:12px;right:14px;background:none;border:none;font-size:26px;line-height:1;color:#94a3b8;cursor:pointer;">&times;</button>
-      <div style="font-size:46px;line-height:1;margin:4px 0 12px;">🛠️</div>
-      <h3 style="margin:0 0 10px;font-size:22px;font-weight:700;color:#13294b;">Coming soon</h3>
-      <p style="font-size:15px;line-height:1.55;color:#475569;margin:0 0 22px;">
-        We're still building out the Self Help &amp; How-To section. Check back soon — step-by-step guides and videos are on the way.
-      </p>
-      <button onclick="closeSelfHelpSoon()" style="background:#e87722;color:#fff;border:none;font-size:15px;font-weight:600;padding:12px 26px;border-radius:10px;cursor:pointer;min-width:130px;">Got it</button>
-    </div>
-  </div>
 
 <script>
-function showSelfHelpSoon(){ var m=document.getElementById('selfhelp-soon-modal'); m.style.display='flex'; document.body.style.overflow='hidden'; }
-function closeSelfHelpSoon(){ var m=document.getElementById('selfhelp-soon-modal'); m.style.display='none'; document.body.style.overflow=''; }
-document.getElementById('selfhelp-soon-modal').addEventListener('click',function(e){ if(e.target===this) closeSelfHelpSoon(); });
-document.addEventListener('keydown',function(e){ if(e.key==='Escape') closeSelfHelpSoon(); });
+(function(){
+  var SH_ID='1in7Ac7zknqyR9neWKOCAjOAG4jXCIVTJQfU6jJ72CV8';
+  var SH_TAB='SelfHelp';
+  var SH_IMG='https://houstonjewishinfo.com/images/selfhelp/';
+  var ALIAS={'emergencies':'emergencies','emergency':'emergencies','cold':'cold','cold weather':'cold','freeze':'cold','home':'home','home & diy':'home','home and diy':'home','diy':'home','taxes':'taxes','taxes & finance':'taxes','tax':'taxes','finance':'taxes','budget':'budget','budgeting':'budget','jewish':'jewish','jewish life':'jewish'};
+  var LABEL={emergencies:'🚨 Emergencies',cold:'❄️ Cold Weather',home:'🏠 Home & DIY',taxes:'💰 Taxes & Finance',budget:'📊 Budgeting',jewish:'✡️ Jewish Life',other:'🛠️ More'};
+  var BADGE={emergencies:'shg-emerg',cold:'shg-cold',home:'shg-home',taxes:'shg-tax',budget:'shg-budget',jewish:'shg-jewish',other:'shg-other'};
+  var rows=[],curCat='all';
+  function key(c){var n=String(c||'').toLowerCase().trim();return ALIAS[n]||(n?n.replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,''):'other');}
+  function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+  function imgU(v){v=String(v||'').trim();if(!v)return '';return /^https?:\/\//i.test(v)?v:SH_IMG+v;}
+  function imgs(v){return String(v||'').split(',').map(imgU).filter(Boolean);}
+  function buildSide(){
+    var side=document.getElementById('sh-side');if(!side)return;
+    var present={};rows.forEach(function(r){present[key(r.category)]=1;});
+    var order=['emergencies','cold','home','taxes','budget','jewish'];
+    var keys=order.filter(function(k){return present[k];}).concat(Object.keys(present).filter(function(k){return order.indexOf(k)<0;}));
+    var html='<div class="sh-sidebar-item'+(curCat==='all'?' active':'')+'" onclick="shSetCat(\'all\',this)"><span class="sh-sidebar-icon">📋</span> All Guides</div>';
+    keys.forEach(function(k){var lbl=LABEL[k]||('🛠️ '+k);var parts=lbl.split(' ');var icon=parts.shift();html+='<div class="sh-sidebar-item'+(curCat===k?' active':'')+'" onclick="shSetCat(\''+k+'\',this)"><span class="sh-sidebar-icon">'+icon+'</span> '+esc(parts.join(' '))+'</div>';});
+    side.innerHTML=html;
+  }
+  window.shSetCat=function(k,el){curCat=k;var s=document.getElementById('sh-side');if(s)s.querySelectorAll('.sh-sidebar-item').forEach(function(n){n.classList.remove('active');});if(el)el.classList.add('active');shRender();};
+  window.shPlay=function(el,id){el.outerHTML='<iframe width="100%" height="150" style="border:0;display:block;border-radius:6px" src="https://www.youtube.com/embed/'+id+'?autoplay=1" allow="autoplay" allowfullscreen></iframe>';};
+  window.shRender=function(){
+    var grid=document.getElementById('sh-content');if(!grid)return;
+    var qi=document.getElementById('sh-search');var q=(qi&&qi.value||'').toLowerCase().trim();
+    grid.style.display='grid';grid.style.gridTemplateColumns='repeat(auto-fill,minmax(250px,1fr))';grid.style.gap='16px';
+    var out='',n=0;
+    rows.forEach(function(r){
+      var k=key(r.category);
+      if(curCat!=='all'&&k!==curCat)return;
+      var hay=(r.title+' '+(r.summary||'')+' '+(r.steps||'')).toLowerCase();
+      if(q&&hay.indexOf(q)<0)return;
+      n++;
+      var badge=BADGE[k]||'shg-other';var blabel=(LABEL[k]||'More').replace(/^\S+\s/,'');
+      var media='';var im=imgs(r.image);
+      if(String(r.videoid||'').trim())media='<div class="shg-media"><div class="shg-play" onclick="shPlay(this,\''+esc(String(r.videoid).trim())+'\')"><span>▶</span></div></div>';
+      else if(im.length)media='<div class="shg-media"><img src="'+esc(im[0])+'" alt="'+esc(r.title)+'"></div>';
+      var stepsArr=String(r.steps||'').split(/\n|\s*\|\s*/).map(function(x){return x.trim();}).filter(Boolean);
+      var steps=stepsArr.length?'<details><summary>▸ Show steps</summary><ol class="shg-steps">'+stepsArr.map(function(x){return '<li>'+esc(x)+'</li>';}).join('')+'</ol></details>':'';
+      var safety=String(r.safety||'').trim()?'<div class="shg-safety">⚠️ '+esc(r.safety)+'</div>':'';
+      var btn=String(r.linkurl||'').trim()?'<a class="btn-primary" style="margin-top:auto;align-self:flex-start;text-decoration:none;display:inline-block" href="'+esc(String(r.linkurl).trim())+'" target="_blank" rel="noopener">'+esc(r.linktext||'Learn more →')+'</a>':'';
+      out+='<div class="sh-guide-card shg-card" style="display:flex;flex-direction:column">'+media+'<span class="shg-badge '+badge+'">'+esc(blabel)+'</span><div class="shg-title">'+esc(r.title)+'</div>'+(r.summary?'<p class="shg-summary">'+esc(r.summary)+'</p>':'')+safety+steps+btn+'</div>';
+    });
+    grid.innerHTML=n?out:'<div style="padding:24px;color:var(--muted);font-family:sans-serif;grid-column:1/-1">No guides found yet. Check back soon.</div>';
+  };
+  function fetchSH(){
+    var url='https://docs.google.com/spreadsheets/d/'+SH_ID+'/gviz/tq?tqx=out:json&headers=1&sheet='+encodeURIComponent(SH_TAB);
+    fetch(url).then(function(r){return r.text();}).then(function(t){
+      var j=JSON.parse(t.substring(t.indexOf('{'),t.lastIndexOf('}')+1));
+      var cols=(j.table.cols||[]).map(function(c){return (c.label||'').toLowerCase().trim();});
+      rows=(j.table.rows||[]).map(function(rr){var o={};cols.forEach(function(c,i){var cell=rr.c[i];o[c]=cell?(cell.f!=null?String(cell.f):(cell.v==null?'':String(cell.v))):'';});return o;})
+        .filter(function(o){var st=String(o.status||'').toLowerCase().trim();return st!=='pending'&&st!=='hide'&&st!=='inactive'&&Object.keys(o).some(function(kk){return o[kk]!=='';});});
+      buildSide();shRender();
+    }).catch(function(){var c=document.getElementById('sh-content');if(c)c.innerHTML='<div style="padding:24px;color:var(--muted);font-family:sans-serif;">Guides are being set up. Check back soon.</div>';});
+  }
+  if(document.readyState!=='loading')fetchSH();else document.addEventListener('DOMContentLoaded',fetchSH);
+})();
 </script>
 </body>
 </html>

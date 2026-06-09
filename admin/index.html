@@ -213,9 +213,10 @@ var COLLECTIONS = [
   ['Ads','📣 Ads'], ['shuls','🕍 Shuls'], ['mikvahs','💧 Mikvahs'],
   ['Education','🎓 Education'], ['Charities','💛 Charities'], ['Gemachim','🤝 Gemachim'],
   ['Services','🛠️ Services'], ['KosherRestaurants','🍽️ Kosher Restaurants'],
+  ['SelfHelp','📚 Self Help'],
   ['Activities','🎡 Activities'], ['Eruv','🗺️ Eruv']
 ];
-var LONG_FIELDS = ['Description','Message','Notes','Excerpt','Program','ServiceTimes','Amenities','Hours'];
+var LONG_FIELDS = ['Description','Message','Notes','Excerpt','Program','ServiceTimes','Amenities','Hours','Summary','Steps'];
 var STATUSY = ['Status','Approved','Free','Women'];
 
 // Official option lists per "Sheet.Column". multi:true = pick several (joined with ", ").
@@ -243,7 +244,8 @@ var FIELD_OPTIONS = {
   'Jobs.Status': { options:[['hiring','Hiring'],['seeking','Seeking work']] },
   'RealEstate.Type': { options:['For Sale','For Rent'] },
   'Activities.IndoorOutdoor': { options:['Indoor','Outdoor','Both'] },
-  'Activities.Free': { options:['Yes','No'] }
+  'Activities.Free': { options:['Yes','No'] },
+  'SelfHelp.Category': { options:[['emergencies','🚨 Emergencies'],['cold','❄️ Cold Weather'],['home','🏠 Home & DIY'],['taxes','💰 Taxes & Finance'],['budget','📊 Budgeting'],['jewish','✡️ Jewish Life']] }
 };
 var OTHER = '__other__';
 function normOpts(arr){ return arr.map(function(o){ return (typeof o==='string')?[o,o]:o; }); }
