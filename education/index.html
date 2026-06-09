@@ -867,6 +867,10 @@
   .school-detail a:hover { color: var(--navy); }
 
   .school-divider { border: none; border-top: 1px solid var(--border); margin: 12px 0; }
+  .school-desc { font-family: sans-serif; font-size: 13.5px; color: #555; line-height: 1.7; margin: 0 0 10px; }
+  .school-desc.clamped { display: -webkit-box; -webkit-line-clamp: 5; -webkit-box-orient: vertical; overflow: hidden; }
+  .school-read-more { display: inline-block; background: none; border: none; padding: 0; margin: -4px 0 12px; font-family: sans-serif; font-size: 13px; font-weight: 700; color: var(--navy, #1f3f6e); cursor: pointer; }
+  .school-read-more:hover { text-decoration: underline; }
 
   .school-bottom { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
   .school-tuition { font-family: sans-serif; font-size: 11px; }
@@ -1234,6 +1238,8 @@
       var em=String(d.email||'').trim();
       var emailLine=em ? '<div class="school-detail"><span class="school-detail-icon">\u2709\uFE0F</span> <a href="mailto:'+attr(em)+'">'+esc(em)+'</a></div>' : '';
       var btn=web ? '<a href="'+attr(web)+'" target="_blank" class="school-website-btn">Visit Website \u2192</a>' : '';
+      var dsc=String(d.description||d.about||d.summary||'').trim();
+      var descBlock=dsc?'<p class="school-desc">'+esc(dsc)+'</p><button type="button" class="school-read-more" style="display:none;">Read more \u2193</button>':'';
       var tuition = d.tuition
         ? '<div class="school-tuition"><div class="school-tuition-label">Tuition</div><div class="school-tuition-val">'+esc(d.tuition)+'</div></div>'
         : '<div class="school-tuition"></div>';
@@ -1242,7 +1248,7 @@
           badges+
           '<div class="school-name">'+esc(d.name)+'</div>'+
           detail('\uD83D\uDCCD',d.address)+detail('\uD83D\uDCDE',d.phone)+detail('\uD83D\uDC64',d.head)+
-          detail('\uD83D\uDCDA',d.program)+webLine+emailLine+
+          detail('\uD83D\uDCDA',d.program)+webLine+emailLine+descBlock+
           '<hr class="school-divider">'+
           '<div class="school-bottom">'+tuition+btn+'</div>'+
         '</div></div>';
@@ -1279,12 +1285,26 @@
       grid.innerHTML='<div style="grid-column:1/-1;font-family:sans-serif;font-size:14px;color:var(--muted);text-align:center;padding:40px 0;">Listings are taking a moment to load. Please refresh.</div>';
     });
 
+    function applySchoolClamp(){
+      var grid=document.getElementById('school-grid'); if(!grid) return;
+      grid.querySelectorAll('.school-desc').forEach(function(p){
+        if(p.__clampDone) return; p.__clampDone=1;
+        var btn=p.nextElementSibling;
+        if(!btn||!btn.classList.contains('school-read-more')) return;
+        var lh=parseFloat(getComputedStyle(p).lineHeight)||20;
+        if(p.scrollHeight>lh*5+2){
+          p.classList.add('clamped'); btn.style.display='inline-block';
+          btn.onclick=function(){ if(p.classList.contains('clamped')){p.classList.remove('clamped');btn.textContent='Read less \u2191';} else {p.classList.add('clamped');btn.textContent='Read more \u2193';} };
+        }
+      });
+    }
     window.renderEduCat=function(cat){
       var data=(window.EDU_BY_CAT&&window.EDU_BY_CAT[cat])||[];
       var grid=document.getElementById('school-grid');
       grid.innerHTML = data.length ? data.map(cardHTML).join('')
         : '<div style="grid-column:1/-1;font-family:sans-serif;font-size:14px;color:var(--muted);text-align:center;padding:40px 0;">Nothing listed in this category yet.</div>';
       document.getElementById('school-count').textContent=data.length;
+      applySchoolClamp();
     };
   })();
 
@@ -1296,6 +1316,7 @@
     if(window.renderEduCat) window.renderEduCat(cat);
     var _b=document.querySelector('.results-bar')||document.getElementById('school-grid');
     if(_b){ setTimeout(function(){ _b.scrollIntoView({behavior:'smooth', block:'start'}); }, 90); }
+    if(typeof gtag==='function'){try{gtag('event','education_section',{section:(EDU_LABELS[cat]||cat)});}catch(e){}}
   }
 
   function openModal(id) { document.getElementById(id).classList.add('open'); document.body.style.overflow = 'hidden'; }
