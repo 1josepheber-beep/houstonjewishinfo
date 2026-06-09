@@ -1241,6 +1241,8 @@
   .sh-suggest-item:hover,.sh-suggest-item.active{background:#f4f6fa}
   .sh-sg-t{font-size:14px;color:#13294b;font-weight:600}
   .sh-sg-c{font-size:11px;color:#8a97a8;white-space:nowrap}
+  .sch-clear{position:absolute;top:50%;right:12px;transform:translateY(-50%);display:none;align-items:center;justify-content:center;width:18px;height:18px;border:none;border-radius:50%;background:rgba(0,0,0,.14);color:#444;font-size:14px;line-height:1;cursor:pointer;z-index:6;font-family:sans-serif;padding:0;}
+  .sch-clear:hover{background:rgba(0,0,0,.24)}
 
   .sh-content { display:flex; flex-direction:column; gap:16px; }
 
@@ -1612,7 +1614,10 @@
   <div class="tab-panel active" id="tab-browse">
 
     <div class="search-filter-bar">
-      <input name="🔍__search_businesses..." type="text" class="search-input" id="biz-search" placeholder="🔍  Search businesses..." oninput="filterBiz()">
+      <div class="biz-search-wrap" style="position:relative;flex:1;min-width:200px;">
+      <input name="🔍__search_businesses..." type="text" class="search-input" id="biz-search" autocomplete="off" placeholder="🔍  Search businesses..." oninput="filterBiz()" style="width:100%;box-sizing:border-box;">
+      <div id="biz-suggest" class="sh-suggest" style="display:none"></div>
+      </div>
       <select class="search-select" id="biz-cat-select" onchange="filterBiz()">
         <option value="all">All Categories</option>
         <option value="24hour">24 Hour Services</option>
@@ -2693,6 +2698,56 @@ var SEARCH_SYNONYMS = {
   digital:'marketing', advertising:'marketing', ads:'marketing'
 };
 
+var bizSugIdx=-1;
+function bizEsc(x){return String(x==null?'':x).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function bizSuggest(){
+  var qi=document.getElementById('biz-search'),box=document.getElementById('biz-suggest');if(!qi||!box)return;
+  var q=(qi.value||'').toLowerCase().trim();bizSugIdx=-1;
+  if(!q){box.style.display='none';box.innerHTML='';return;}
+  var seen={},m=[];
+  for(var i=0;i<allBizListings.length;i++){var it=allBizListings[i];var nm=String(it.name||it.businessname||'');if(!nm)continue;
+    var hay=(nm+' '+(it.description||'')+' '+(it.category||'')).toLowerCase();
+    if(hay.indexOf(q)<0)continue;var kn=nm.toLowerCase();if(seen[kn])continue;seen[kn]=1;m.push(it);if(m.length>=8)break;}
+  if(!m.length){box.style.display='none';box.innerHTML='';return;}
+  box.innerHTML=m.map(function(it){var nm=String(it.name||it.businessname||'');var ttl=bizEsc(nm).replace(/"/g,'&quot;');var cat=bizEsc(String(it.category||'').split(',')[0].trim());return '<div class="sh-suggest-item" data-title="'+ttl+'" onmousedown="bizPick(event)"><span class="sh-sg-t">'+bizEsc(nm)+'</span><span class="sh-sg-c">'+cat+'</span></div>';}).join('');
+  box.style.display='block';
+}
+function bizHlSug(items){items.forEach(function(n,i){n.classList.toggle('active',i===bizSugIdx);if(i===bizSugIdx&&n.scrollIntoView)n.scrollIntoView({block:'nearest'});});}
+function bizPickTitle(t){var sel=document.getElementById('biz-cat-select');if(sel)sel.value='all';var qi=document.getElementById('biz-search');if(qi)qi.value=t||'';var box=document.getElementById('biz-suggest');if(box){box.style.display='none';box.innerHTML='';}filterBiz();}
+window.bizPick=function(e){e.preventDefault();bizPickTitle(e.currentTarget.getAttribute('data-title'));};
+function bizInitSuggest(){
+  var qi=document.getElementById('biz-search');if(!qi||qi.__bizsug)return;qi.__bizsug=1;qi.setAttribute('autocomplete','off');
+  qi.addEventListener('input',bizSuggest);
+  qi.addEventListener('focus',function(){if((qi.value||'').trim())bizSuggest();});
+  qi.addEventListener('blur',function(){setTimeout(function(){var b=document.getElementById('biz-suggest');if(b)b.style.display='none';},150);});
+  qi.addEventListener('keydown',function(e){
+    var box=document.getElementById('biz-suggest');if(!box)return;var items=box.querySelectorAll('.sh-suggest-item');
+    if(box.style.display==='none'||!items.length)return;
+    if(e.key==='ArrowDown'){e.preventDefault();bizSugIdx=Math.min(bizSugIdx+1,items.length-1);bizHlSug(items);}
+    else if(e.key==='ArrowUp'){e.preventDefault();bizSugIdx=Math.max(bizSugIdx-1,0);bizHlSug(items);}
+    else if(e.key==='Enter'){if(bizSugIdx>=0&&items[bizSugIdx]){e.preventDefault();bizPickTitle(items[bizSugIdx].getAttribute('data-title'));}}
+    else if(e.key==='Escape'){box.style.display='none';}
+  });
+}
+document.addEventListener('mousedown',function(e){var box=document.getElementById('biz-suggest');if(!box)return;var wrap=document.querySelector('.biz-search-wrap');if(wrap&&!wrap.contains(e.target))box.style.display='none';});
+if(document.readyState!=='loading')bizInitSuggest();else document.addEventListener('DOMContentLoaded',bizInitSuggest);
+function schClearBiz(){var b=document.getElementById('biz-suggest');if(b){b.style.display='none';b.innerHTML='';}if(typeof filterBiz==='function')filterBiz();}
+function schClearSH(){var b=document.getElementById('sh-suggest');if(b){b.style.display='none';b.innerHTML='';}if(window.shRender)window.shRender();}
+function wireClearX(inputId,wrapSel,clearFn){
+  var input=document.getElementById(inputId);if(!input||input.__schx)return;input.__schx=1;
+  var wrap=(input.closest?input.closest(wrapSel):null)||input.parentNode;if(!wrap)return;
+  if(getComputedStyle(wrap).position==='static')wrap.style.position='relative';
+  var pr=parseInt(getComputedStyle(input).paddingRight)||0;if(pr<30)input.style.paddingRight='30px';
+  var btn=document.createElement('button');btn.type='button';btn.className='sch-clear';btn.setAttribute('aria-label','Clear search');btn.innerHTML='&times;';
+  wrap.appendChild(btn);
+  function sync(){btn.style.display=(input.value&&input.value.length)?'flex':'none';}
+  input.addEventListener('input',sync);input.addEventListener('focus',sync);
+  btn.addEventListener('mousedown',function(e){e.preventDefault();});
+  btn.addEventListener('click',function(e){e.preventDefault();input.value='';if(clearFn)clearFn();sync();input.focus();});
+  sync();
+}
+function schInit(){wireClearX('biz-search','.biz-search-wrap',schClearBiz);wireClearX('sh-search','.sh-search-wrap',schClearSH);}
+if(document.readyState!=='loading')schInit();else document.addEventListener('DOMContentLoaded',schInit);
 function filterBiz() {
   var raw = (document.getElementById('biz-search').value||'').toLowerCase().trim();
   var cat = document.getElementById('biz-cat-select').value;
