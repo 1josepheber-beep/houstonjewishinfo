@@ -868,7 +868,7 @@
 
   .school-divider { border: none; border-top: 1px solid var(--border); margin: 12px 0; }
   .school-desc { font-family: sans-serif; font-size: 13.5px; color: #555; line-height: 1.7; margin: 0 0 10px; }
-  .school-desc.clamped { display: -webkit-box; -webkit-line-clamp: 5; -webkit-box-orient: vertical; overflow: hidden; }
+  .school-desc.clamped { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
   .school-read-more { display: inline-block; background: none; border: none; padding: 0; margin: -4px 0 12px; font-family: sans-serif; font-size: 13px; font-weight: 700; color: var(--navy, #1f3f6e); cursor: pointer; }
   .school-read-more:hover { text-decoration: underline; }
 
@@ -1292,7 +1292,7 @@
         var btn=p.nextElementSibling;
         if(!btn||!btn.classList.contains('school-read-more')) return;
         var lh=parseFloat(getComputedStyle(p).lineHeight)||20;
-        if(p.scrollHeight>lh*5+2){
+        if(p.scrollHeight>lh*3+2){
           p.classList.add('clamped'); btn.style.display='inline-block';
           btn.onclick=function(){ if(p.classList.contains('clamped')){p.classList.remove('clamped');btn.textContent='Read less \u2191';} else {p.classList.add('clamped');btn.textContent='Read more \u2193';} };
         }
