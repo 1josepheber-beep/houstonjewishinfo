@@ -824,6 +824,15 @@
   .school-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,.10); }
 
   .school-card-img { width: 100%; height: 140px; display: flex; align-items: center; justify-content: center; font-size: 48px; overflow: hidden; }
+  .sch-gallery{position:relative;width:100%;height:140px;overflow:hidden}
+  .sch-gtrack{display:flex;height:100%;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;-ms-overflow-style:none}
+  .sch-gtrack::-webkit-scrollbar{display:none}
+  .sch-gslide{flex:0 0 100%;height:100%;scroll-snap-align:start}
+  .sch-gslide img{width:100%;height:100%;object-fit:cover;display:block}
+  .sch-garrow{position:absolute;top:50%;transform:translateY(-50%);width:30px;height:30px;border:none;border-radius:50%;background:rgba(0,0,0,.45);color:#fff;font-size:18px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:2}
+  .sch-garrow.prev{left:6px} .sch-garrow.next{right:6px}
+  .sch-garrow:hover{background:rgba(0,0,0,.7)}
+  .sch-gcount{position:absolute;bottom:6px;right:8px;background:rgba(0,0,0,.55);color:#fff;font-size:11px;font-family:sans-serif;padding:1px 7px;border-radius:10px;z-index:2}
 
   .school-card-body { padding: 16px; }
 
@@ -1144,6 +1153,9 @@
     function esc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
     function attr(s){ return esc(s).replace(/"/g,'&quot;'); }
     function imgURL(v){ v=String(v||'').trim(); if(!v) return ''; return /^https?:\/\//i.test(v)?v:SCH_IMG_BASE+v; }
+    function imgList(v){ return String(v||'').split(',').map(function(x){return imgURL(x);}).filter(Boolean); }
+    window.schGSlide=function(btn,dir){var g=btn.closest('.sch-gallery');if(!g)return;var tr=g.querySelector('.sch-gtrack');if(!tr)return;var w=tr.clientWidth||1;var n=tr.children.length;var idx=Math.round(tr.scrollLeft/w)+dir;idx=Math.max(0,Math.min(n-1,idx));tr.scrollTo({left:idx*w,behavior:'smooth'});var c=g.querySelector('.sch-gidx');if(c)c.textContent=(idx+1);};
+    window.schGScroll=function(tr){var g=tr.closest&&tr.closest('.sch-gallery');if(!g)return;var w=tr.clientWidth||1;var idx=Math.round(tr.scrollLeft/w);var c=g.querySelector('.sch-gidx');if(c)c.textContent=(idx+1);};
     function webDisplay(u){ return String(u||'').replace(/^https?:\/\//i,'').replace(/^www\./i,'').replace(/\/+$/,''); }
     function detail(icon,val){ return val ? '<div class="school-detail"><span class="school-detail-icon">'+icon+'</span> '+esc(val)+'</div>' : ''; }
 
@@ -1153,10 +1165,19 @@
       if (t){ key=t.key; cls=t.cls; label=t.label; grad=t.grad; }
       else { key=String(d.type||'other').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')||'other';
              cls=''; label=d.type||'Other'; grad='#eceae4,#bdbcb4'; badgeStyle=' style="background:#f0f0f0;color:#555;"'; }
-      var img=imgURL(d.image);
-      var imgBlock=img
-        ? '<div class="school-card-img" style="padding:0;overflow:hidden;"><img src="'+attr(img)+'" alt="'+attr(d.name)+'" loading="lazy" decoding="async" style="width:100%;height:100%;object-fit:cover;display:block;"></div>'
-        : '<div class="school-card-img" style="background:linear-gradient(135deg,'+grad+');">\uD83C\uDF93</div>';
+      var imgs=imgList(d.image);
+      var imgBlock;
+      if(imgs.length>1){
+        var gs=imgs.map(function(u){return '<div class="sch-gslide"><img src="'+attr(u)+'" alt="'+attr(d.name)+'" loading="lazy" decoding="async"></div>';}).join('');
+        imgBlock='<div class="school-card-img" style="padding:0;overflow:hidden;"><div class="sch-gallery"><div class="sch-gtrack" onscroll="schGScroll(this)">'+gs+'</div>'+
+          '<button type="button" class="sch-garrow prev" aria-label="Previous image" onclick="schGSlide(this,-1)">\u2039</button>'+
+          '<button type="button" class="sch-garrow next" aria-label="Next image" onclick="schGSlide(this,1)">\u203a</button>'+
+          '<div class="sch-gcount"><span class="sch-gidx">1</span> / '+imgs.length+'</div></div></div>';
+      } else if(imgs.length===1){
+        imgBlock='<div class="school-card-img" style="padding:0;overflow:hidden;"><img src="'+attr(imgs[0])+'" alt="'+attr(d.name)+'" loading="lazy" decoding="async" style="width:100%;height:100%;object-fit:cover;display:block;"></div>';
+      } else {
+        imgBlock='<div class="school-card-img" style="background:linear-gradient(135deg,'+grad+');">\uD83C\uDF93</div>';
+      }
       var web=String(d.website||'').trim();
       var webLine=web ? '<div class="school-detail"><span class="school-detail-icon">\uD83C\uDF10</span> <a href="'+attr(web)+'" target="_blank">'+esc(webDisplay(web))+'</a></div>' : '';
       var btn=web ? '<a href="'+attr(web)+'" target="_blank" class="school-website-btn">Visit Website \u2192</a>' : '';
