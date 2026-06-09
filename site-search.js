@@ -75,7 +75,8 @@
     {tab:'Charities',kind:'dir',label:'Charity',link:'/charities',kw:'charity charities tzedakah donation chesed nonprofit'},
     {tab:'Gemachim',kind:'dir',label:'Gemach',link:'/charities',kw:'gemach gemachim'},
     {tab:'RealEstate',kind:'dir',label:'Real Estate',link:'/real-estate',kw:'real estate realtor apartment rental home house property mortgage',strict:true},
-    {tab:'Activities',kind:'dir',label:'Things to Do',link:'/things-to-do',kw:'things to do activities attraction family outing fun'}
+    {tab:'Activities',kind:'dir',label:'Things to Do',link:'/things-to-do',kw:'things to do activities attraction family outing fun'},
+    {tab:'SelfHelp',kind:'dir',label:'Self Help',link:'/services',kw:'self help how to guide guides diy repair fix emergency water heater gas shut off freeze pipes taxes budget budgeting'}
   ];
   var FEED_KINDS={news:1,event:1,mazal:1,passing:1};
 
@@ -171,9 +172,9 @@
     return hit(terms, text);
   }
   function relScore(x,q){ var t=norm(x.title); if(t===q)return 4; if(t.indexOf(q)===0)return 3; if(t.indexOf(q)>-1)return 2; return 1; }
-  function sectionHref(x){ return (x.type==='dir') ? (x.section+'?find='+encodeURIComponent(x.title)) : x.section; }
+  function sectionHref(x){ return (x.type==='dir') ? (x.label==='Self Help' ? ('/services?sh='+encodeURIComponent(x.title)) : (x.section+'?find='+encodeURIComponent(x.title))) : x.section; }
   function destFor(x){
-    if(x.type==='dir'){ return {href:x.section+'?find='+encodeURIComponent(x.title), ext:false}; }
+    if(x.type==='dir'){ if(x.label==='Self Help') return {href:'/services?sh='+encodeURIComponent(x.title), ext:false}; return {href:x.section+'?find='+encodeURIComponent(x.title), ext:false}; }
     if(x.type==='news'||x.type==='event'||x.type==='mazal'||x.type==='passing'){ return {href:'/?find='+encodeURIComponent(x.title), ext:false}; }
     if(x.section){ return {href:x.section, ext:false}; }
     var u=extURL(x.link); if(u) return {href:u, ext:true};
@@ -209,7 +210,7 @@
       var xx=out[j].x, dd=out[j].d, key=(dd.href+'|'+xx.title).toLowerCase();
       if(seen[key]) continue; seen[key]=1;
       var base=String(xx.section||'').split('#')[0].split('?')[0];
-      res.push({title:xx.title, label:xx.label, sectionName:SECTION_NAMES[base]||'', href:dd.href, ext:!!dd.ext});
+      res.push({title:xx.title, label:xx.label, sectionName:(xx.label==='Self Help'?'Self Help':(SECTION_NAMES[base]||'')), href:dd.href, ext:!!dd.ext});
     }
     return res;
   }
