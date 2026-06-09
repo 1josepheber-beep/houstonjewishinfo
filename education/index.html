@@ -850,6 +850,8 @@
     letter-spacing: .08em; text-transform: uppercase; padding: 3px 9px;
     border-radius: 3px; margin-bottom: 8px;
   }
+  .school-type-badges { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; }
+  .school-type-badges .school-type-badge { margin-bottom: 0; }
   .type-dayschool  { background: #e8f0fb; color: #1a3a7a; }
   .type-middle     { background: #ede8fb; color: #4a2a8b; }
   .type-high       { background: #e0f3f4; color: #0a5a66; }
@@ -1179,12 +1181,39 @@
     function webDisplay(u){ return String(u||'').replace(/^https?:\/\//i,'').replace(/^www\./i,'').replace(/\/+$/,''); }
     function detail(icon,val){ return val ? '<div class="school-detail"><span class="school-detail-icon">'+icon+'</span> '+esc(val)+'</div>' : ''; }
 
-    function cardHTML(d){
-      var t = TYPES[String(d.type||'').toLowerCase().trim()];
-      var key, cls, label, grad, badgeStyle='';
-      if (t){ key=t.key; cls=t.cls; label=t.label; grad=t.grad; }
-      else { key=String(d.type||'other').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')||'other';
-             cls=''; label=d.type||'Other'; grad='#eceae4,#bdbcb4'; badgeStyle=' style="background:#f0f0f0;color:#555;"'; }
+    function typeMeta(raw){
+        var k=String(raw||'').toLowerCase().trim();
+        var M={
+          'boys only':{label:'Boys Only',bg:'#e8f0fb',fg:'#2c5aa0',grad:'#e8f0fb,#7a99cc'},
+          'girls only':{label:'Girls Only',bg:'#fbe8f1',fg:'#a52c6b',grad:'#fbe8f1,#d07aa6'},
+          'co-ed':{label:'Co-ed',bg:'#e8f4ee',fg:'#2c8a5e',grad:'#e8f4ee,#6abf95'},
+          'coed':{label:'Co-ed',bg:'#e8f4ee',fg:'#2c8a5e',grad:'#e8f4ee,#6abf95'},
+          'day school':{label:'Day School',bg:'#e8f0fb',fg:'#3a5f99',grad:'#e8f0fb,#7a99cc'},
+          'dayschool':{label:'Day School',bg:'#e8f0fb',fg:'#3a5f99',grad:'#e8f0fb,#7a99cc'},
+          'middle school':{label:'Middle School',bg:'#ede8fb',fg:'#6a3aa0',grad:'#ede8fb,#9a7ad0'},
+          'middle':{label:'Middle School',bg:'#ede8fb',fg:'#6a3aa0',grad:'#ede8fb,#9a7ad0'},
+          'high school':{label:'High School',bg:'#e0f3f4',fg:'#2c7a82',grad:'#e0f3f4,#5aa8b0'},
+          'high':{label:'High School',bg:'#e0f3f4',fg:'#2c7a82',grad:'#e0f3f4,#5aa8b0'},
+          'early childhood':{label:'Early Childhood',bg:'#fdf3e0',fg:'#a5701f',grad:'#fdf3e0,#d4a060'},
+          'early':{label:'Early Childhood',bg:'#fdf3e0',fg:'#a5701f',grad:'#fdf3e0,#d4a060'},
+          'hebrew school':{label:'Hebrew School',bg:'#edf7ed',fg:'#2c7a3d',grad:'#edf7ed,#5aa85a'},
+          'hebrew':{label:'Hebrew School',bg:'#edf7ed',fg:'#2c7a3d',grad:'#edf7ed,#5aa85a'},
+          'adult education':{label:'Adult Education',bg:'#fce8e8',fg:'#a83a3a',grad:'#fce8e8,#d05a5a'},
+          'adult':{label:'Adult Education',bg:'#fce8e8',fg:'#a83a3a',grad:'#fce8e8,#d05a5a'},
+          'day camp':{label:'Day Camp',bg:'#fdf6db',fg:'#8a6d10',grad:'#fdf6db,#d8b84a'},
+          'overnight / sleepaway':{label:'Overnight / Sleepaway',bg:'#e6efe0',fg:'#46692a',grad:'#e6efe0,#8aaf6a'},
+          'overnight':{label:'Overnight / Sleepaway',bg:'#e6efe0',fg:'#46692a',grad:'#e6efe0,#8aaf6a'},
+          'sleepaway':{label:'Overnight / Sleepaway',bg:'#e6efe0',fg:'#46692a',grad:'#e6efe0,#8aaf6a'}
+        };
+        return M[k] || {label:(raw||'Other'),bg:'#f0f0f0',fg:'#555',grad:'#eceae4,#bdbcb4'};
+      }
+      function cardHTML(d){
+      var rawTypes=String(d.type||'').split(',').map(function(x){return x.trim();}).filter(Boolean);
+      if(!rawTypes.length) rawTypes=['Other'];
+      var metas=rawTypes.map(typeMeta);
+      var grad=metas[0].grad;
+      var key=rawTypes.map(function(x){return String(x).toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');}).join(' ')||'other';
+      var badges='<div class="school-type-badges">'+metas.map(function(m){return '<span class="school-type-badge" style="background:'+m.bg+';color:'+m.fg+';">'+esc(m.label)+'</span>';}).join('')+'</div>';
       var imgs=imgList(d.image);
       var imgBlock;
       if(imgs.length>1){
@@ -1208,7 +1237,7 @@
         : '<div class="school-tuition"></div>';
       return '<div class="school-card" data-type="'+attr(key)+'">'+imgBlock+
         '<div class="school-card-body">'+
-          '<span class="school-type-badge '+cls+'"'+badgeStyle+'>'+esc(label)+'</span>'+
+          badges+
           '<div class="school-name">'+esc(d.name)+'</div>'+
           detail('\uD83D\uDCCD',d.address)+detail('\uD83D\uDCDE',d.phone)+detail('\uD83D\uDC64',d.head)+
           detail('\uD83D\uDCDA',d.program)+webLine+emailLine+
