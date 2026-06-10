@@ -2733,8 +2733,8 @@
         };
         hiringCards = buildCards(hiringList);
         seekingCards = buildCards(seekingList);
-        if(hiringList.length>3) hiringCards+='<a href="/jobs" style="display:block;text-align:center;padding:12px;font-family:sans-serif;font-size:13px;font-weight:700;color:var(--navy);text-decoration:none;border-top:1px solid var(--border);margin-top:8px;cursor:pointer;">View old jobs →</a>';
-        if(seekingList.length>3) seekingCards+='<a href="/jobs" style="display:block;text-align:center;padding:12px;font-family:sans-serif;font-size:13px;font-weight:700;color:var(--navy);text-decoration:none;border-top:1px solid var(--border);margin-top:8px;cursor:pointer;">View old jobs →</a>';
+        if(hiringList.length>3) hiringCards+='<a href="/jobs" style="display:block;text-align:center;padding:12px;font-family:sans-serif;font-size:13px;font-weight:700;color:var(--navy);text-decoration:none;border-top:1px solid var(--border);margin-top:8px;cursor:pointer;">View all jobs →</a>';
+        if(seekingList.length>3) seekingCards+='<a href="/jobs" style="display:block;text-align:center;padding:12px;font-family:sans-serif;font-size:13px;font-weight:700;color:var(--navy);text-decoration:none;border-top:1px solid var(--border);margin-top:8px;cursor:pointer;">View all jobs →</a>';
 
         document.getElementById('hiring-cards').innerHTML = hiringCards ||
           '<div style="font-family:sans-serif;font-size:12px;color:var(--muted);text-align:center;padding:12px;">No listings yet.</div>';
