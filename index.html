@@ -2697,39 +2697,44 @@
         var hiringCards = '';
         var seekingCards = '';
 
+        var hiringList = [], seekingList = [];
         rows.forEach(function(row) {
           var data = {};
           cols.forEach(function(col, i) {
             data[col] = row.c[i] ? (row.c[i].v || '') : '';
           });
-
-          // Skip empty rows
           if (!data.title) return;
-
-          // Pick tag color based on category
-          var tagClass = 'job-card-tag';
-          var cat = (data.category || '').toLowerCase();
-          if (cat === 'nonprofit' || cat === 'office') tagClass += ' orange';
-          else if (cat === 'food service' || cat === 'trades') tagClass += ' green';
-
-          var contact = '';
-          if (data.phone) contact += '<a href="tel:' + data.phone + '" style="display:block;font-family:sans-serif;font-size:11px;color:var(--navy);margin-top:4px;">📞 ' + data.phone + '</a>';
-          if (data.email) contact += '<a href="mailto:' + data.email + '" style="display:block;font-family:sans-serif;font-size:11px;color:var(--gold);margin-top:2px;">✉️ ' + data.email + '</a>';
-
-          var card = '<div class="job-card">' +
-            '<div class="job-card-title">' + data.title + '</div>' +
-            '<div class="job-card-meta">' + (data.organization || '') +
-            (data.type ? ' &nbsp;·&nbsp; ' + data.type : '') + '</div>' +
-            '<span class="' + tagClass + '">' + (data.category || '') + '</span>' +
-            (data.pay ? '<div style="font-family:sans-serif;font-size:11px;font-weight:700;color:var(--navy);margin-top:4px;">💰 ' + data.pay + '</div>' : '') +
-            contact +
-            '<a href="/jobs" style="display:inline-block;margin-top:8px;font-family:sans-serif;font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--gold);text-decoration:none;">See Full Listing →</a>' +
-            '</div>';
-
           var status = (data.status || '').toLowerCase().trim();
-          if (status === 'hiring') hiringCards += card;
-          else if (status === 'seeking') seekingCards += card;
+          if (status === 'hiring') hiringList.push(data);
+          else if (status === 'seeking') seekingList.push(data);
         });
+        
+        var buildCards = function(list){
+          var cards='';
+          list.slice(0, 3).forEach(function(data){
+            var tagClass = 'job-card-tag';
+            var cat = (data.category || '').toLowerCase();
+            if (cat === 'nonprofit' || cat === 'office') tagClass += ' orange';
+            else if (cat === 'food service' || cat === 'trades') tagClass += ' green';
+            var contact = '';
+            if (data.phone) contact += '<a href="tel:' + data.phone + '" style="display:block;font-family:sans-serif;font-size:11px;color:var(--navy);margin-top:4px;">📞 ' + data.phone + '</a>';
+            if (data.email) contact += '<a href="mailto:' + data.email + '" style="display:block;font-family:sans-serif;font-size:11px;color:var(--gold);margin-top:2px;">✉️ ' + data.email + '</a>';
+            cards += '<div class="job-card">' +
+              '<div class="job-card-title">' + data.title + '</div>' +
+              '<div class="job-card-meta">' + (data.organization || '') +
+              (data.type ? ' &nbsp;·&nbsp; ' + data.type : '') + '</div>' +
+              '<span class="' + tagClass + '">' + (data.category || '') + '</span>' +
+              (data.pay ? '<div style="font-family:sans-serif;font-size:11px;font-weight:700;color:var(--navy);margin-top:4px;">💰 ' + data.pay + '</div>' : '') +
+              contact +
+              '<a href="/jobs" style="display:inline-block;margin-top:8px;font-family:sans-serif;font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--gold);text-decoration:none;">See Full Listing →</a>' +
+              '</div>';
+          });
+          return cards;
+        };
+        hiringCards = buildCards(hiringList);
+        seekingCards = buildCards(seekingList);
+        if(hiringList.length>3) hiringCards+='<a href="/jobs" style="display:block;text-align:center;padding:12px;font-family:sans-serif;font-size:13px;font-weight:700;color:var(--navy);text-decoration:none;border-top:1px solid var(--border);margin-top:8px;cursor:pointer;">View old jobs →</a>';
+        if(seekingList.length>3) seekingCards+='<a href="/jobs" style="display:block;text-align:center;padding:12px;font-family:sans-serif;font-size:13px;font-weight:700;color:var(--navy);text-decoration:none;border-top:1px solid var(--border);margin-top:8px;cursor:pointer;">View old jobs →</a>';
 
         document.getElementById('hiring-cards').innerHTML = hiringCards ||
           '<div style="font-family:sans-serif;font-size:12px;color:var(--muted);text-align:center;padding:12px;">No listings yet.</div>';
@@ -2842,7 +2847,6 @@
 <a href="/shuls">Orthodox Shuls</a>
 <a href="/mikvahs">Mikvahs</a>
 <a href="/education#adult-learning">Adult Learning</a>
-<a href="/education#camps">Jewish Camps</a>
 </div>
     <a href="/services">🛠️ Services</a>
     <a href="/jobs">💼 Jobs</a>
@@ -2868,7 +2872,6 @@
 <a href="/shuls">Orthodox Shuls</a>
 <a href="/mikvahs">Mikvahs</a>
 <a href="/education#adult-learning">Adult Learning</a>
-<a href="/education#camps">Jewish Camps</a>
 </div>
     <a href="/services">🛠️ Services</a>
     <a href="/jobs">💼 Jobs</a>
@@ -2989,14 +2992,13 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape')closeMobileM
 <a href="/shuls" role="menuitem">Orthodox Shuls</a>
 <a href="/mikvahs" role="menuitem">Mikvahs</a>
 <a href="/education#adult-learning" role="menuitem">Adult Learning</a>
-<a href="/education#camps" role="menuitem">Jewish Camps</a>
 </div>
 <script>
 function hjiToggleJewish(e){e.stopPropagation();var m=document.getElementById('hji-jewish-menu');var b=e.currentTarget;if(!m)return;if(m.classList.contains('open')){m.classList.remove('open');b.setAttribute('aria-expanded','false');return;}var r=b.getBoundingClientRect();m.style.left=Math.round(r.left)+'px';m.style.top=Math.round(r.bottom)+'px';m.classList.add('open');b.setAttribute('aria-expanded','true');}
 function hjiToggleMJewish(b){var s=b.nextElementSibling;if(!s)return;var o=s.classList.toggle('open');var c=b.querySelector('.m-jewish-caret');if(c)c.textContent=o?'\u25b4':'\u25be';}
 document.addEventListener('click',function(ev){var m=document.getElementById('hji-jewish-menu');if(m&&m.classList.contains('open')&&!m.contains(ev.target)&&!(ev.target.closest&&ev.target.closest('.nav-dd-btn')))m.classList.remove('open');});
 window.addEventListener('resize',function(){var m=document.getElementById('hji-jewish-menu');if(m)m.classList.remove('open');});
-(function(){var EVMAP={'Orthodox Schools':'menu_orthodox_schools','Orthodox Shuls':'menu_orthodox_shuls','Mikvahs':'menu_mikvahs','Adult Learning':'menu_adult_learning','Jewish Camps':'menu_jewish_camps'};document.addEventListener('click',function(ev){var a=ev.target.closest&&ev.target.closest('#hji-jewish-menu a, .m-jewish-sub a');if(!a)return;var label=(a.textContent||'').trim();var name=EVMAP[label];if(name&&typeof gtag==='function'){gtag('event',name,{menu:'Jewish',item:label});}});})();
+(function(){var EVMAP={'Orthodox Schools':'menu_orthodox_schools','Orthodox Shuls':'menu_orthodox_shuls','Mikvahs':'menu_mikvahs','Adult Learning':'menu_adult_learning'};document.addEventListener('click',function(ev){var a=ev.target.closest&&ev.target.closest('#hji-jewish-menu a, .m-jewish-sub a');if(!a)return;var label=(a.textContent||'').trim();var name=EVMAP[label];if(name&&typeof gtag==='function'){gtag('event',name,{menu:'Jewish',item:label});}});})();
 </script>
 <script src="/site-search.js" defer></script>
 <script id="hjis-js">
