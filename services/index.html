@@ -1130,6 +1130,10 @@
   .biz-name { font-family: 'Playfair Display', serif; font-size: 16px; font-weight: 700; color: var(--navy); line-height: 1.2; }
   .biz-category { font-family: sans-serif; font-size: 11px; color: var(--gold); font-weight: 700; text-transform: uppercase; letter-spacing: .05em; }
   .biz-detail { display: flex; gap: 6px; font-family: sans-serif; font-size: 12px; color: var(--muted); align-items: flex-start; line-height: 1.4; }
+  .biz-desc { font-family: sans-serif; font-size: 13px; color: #555; line-height: 1.6; margin: 8px 0; }
+  .biz-desc.clamped { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+  .biz-read-more { display: inline-block; background: none; border: none; padding: 0; margin: 0 0 8px; font-family: sans-serif; font-size: 12px; font-weight: 700; color: var(--navy, #1f3f6e); cursor: pointer; }
+  .biz-read-more:hover { text-decoration: underline; }
   .biz-desc { font-size: 12px; color: #555; line-height: 1.5; margin-top: 2px; }
   .biz-card-footer { display: flex; align-items: center; justify-content: space-between; margin-top: 6px; padding-top: 10px; border-top: 1px solid var(--border); }
   .biz-website {
@@ -1561,7 +1565,7 @@
         <div class="masthead-side" style="display:flex;flex-direction:column;align-items:flex-start;gap:6px;">
           <a href="/" title="Go to Home Page" style="display:inline-block;">
             <img src="/images/logo.svg" alt="HJI" style="height:64px;width:auto;" onerror="this.onerror=null;this.src='/images/logo.png';">
-          </a>          
+          </a>            
         </div>
         <div class="masthead-logo">
           <div class="masthead-date" id="today-date"></div>
@@ -2538,7 +2542,7 @@ function buildBizCard(item) {
     (item.address ? '<div class="biz-detail">📍 ' + item.address + '</div>' : '') +
     (item.phone ? '<div class="biz-detail">📞 ' + item.phone + '</div>' : '') +
     (item.email ? '<div class="biz-detail">📧 <a href="mailto:' + item.email + '" style="color:var(--gold);">' + item.email + '</a></div>' : '') +
-    (item.description ? '<div class="biz-desc">' + item.description + '</div>' : '') +
+    (item.description ? '<div class="biz-desc">' + item.description + '</div><button type="button" class="biz-read-more" style="display:none;">Read more ↓</button>' : '') +
     '<div class="biz-card-footer">' +
     '<span style="font-family:sans-serif;font-size:11px;color:var(--muted);">' + (item.hours||'') + '</span>' +
     (website ? '<a href="' + website + '" target="_blank" class="biz-website">Visit Website →</a>' : '') +
@@ -2548,6 +2552,20 @@ function buildBizCard(item) {
 var BIZ_PER_PAGE = 24;
 var bizPageList = [];   // current filtered+sorted list
 var bizPageNum = 1;     // current page (1-based)
+
+function applyBizClamp(){
+  var grid=document.getElementById('biz-grid'); if(!grid) return;
+  grid.querySelectorAll('.biz-desc').forEach(function(p){
+    if(p.__clampDone) return; p.__clampDone=1;
+    var btn=p.nextElementSibling;
+    if(!btn||!btn.classList.contains('biz-read-more')) return;
+    var lh=parseFloat(getComputedStyle(p).lineHeight)||20;
+    if(p.scrollHeight>lh*3+2){
+      p.classList.add('clamped'); btn.style.display='inline-block';
+      btn.onclick=function(){ if(p.classList.contains('clamped')){p.classList.remove('clamped');btn.textContent='Read less ↑';} else {p.classList.add('clamped');btn.textContent='Read more ↓';} };
+    }
+  });
+}
 
 function renderBizGrid(cat) {
   var grid = document.getElementById('biz-grid');
@@ -2594,6 +2612,7 @@ function renderBizPage() {
   var start = (bizPageNum - 1) * BIZ_PER_PAGE;
   var pageItems = bizPageList.slice(start, start + BIZ_PER_PAGE);
   grid.innerHTML = pageItems.map(buildBizCard).join('');
+  setTimeout(applyBizClamp, 50);
 
   // Pager controls: only show if more than one page
   var pager = document.getElementById('biz-pager');
