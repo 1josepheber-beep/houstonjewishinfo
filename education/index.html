@@ -1108,7 +1108,7 @@
   <div class="edu-tiles" id="edu-tiles">
     <div class="edu-tile active" data-cat="kids" onclick="showEduCat('kids', this)">
       <div class="edu-tile-icon">🏫</div>
-      <div class="edu-tile-name">Orthodox Schools</div>
+      <div class="edu-tile-name">Schools</div>
       <div class="edu-tile-count" id="count-kids">—</div>
     </div>
     <div class="edu-tile" data-cat="adult" onclick="showEduCat('adult', this)">
@@ -1118,12 +1118,12 @@
     </div>
     <div class="edu-tile" data-cat="camps" onclick="showEduCat('camps', this)">
       <div class="edu-tile-icon">🏕️</div>
-      <div class="edu-tile-name">Jewish Camps</div>
+      <div class="edu-tile-name">Camps</div>
       <div class="edu-tile-count" id="count-camps">—</div>
     </div>
   </div>
 
-  <div class="results-bar"><strong id="edu-cat-label">Orthodox Schools</strong> — showing <strong id="school-count">0</strong></div>
+  <div class="results-bar"><strong id="edu-cat-label">Schools</strong> — showing <strong id="school-count">0</strong></div>
 
   <div class="school-grid" id="school-grid">
     <!-- Cards loaded dynamically from the Education sheet tab -->
@@ -1314,7 +1314,7 @@
     };
   })();
 
-  var EDU_LABELS={ kids:"Orthodox Schools", adult:"Adult Learning", camps:"Jewish Camps" };
+  var EDU_LABELS={ kids:"Schools", adult:"Adult Learning", camps:"Camps" };
   function showEduCat(cat, tile){
     document.querySelectorAll('.edu-tile').forEach(function(t){ t.classList.remove('active'); });
     if(tile) tile.classList.add('active');
@@ -1403,7 +1403,7 @@
 <a href="/shuls">Shuls</a>
 <a href="/mikvahs">Mikvahs</a>
 <a href="/education#adult-learning">Adult Learning</a>
-<a href="/education#camps">Jewish Camps</a>
+<a href="/education#camps">Camps</a>
 </div>
     <a href="/services">🛠️ Services</a>
     <a href="/jobs">💼 Jobs</a>
@@ -1524,14 +1524,14 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape')closeMobileM
 <a href="/shuls" role="menuitem">Shuls</a>
 <a href="/mikvahs" role="menuitem">Mikvahs</a>
 <a href="/education#adult-learning" role="menuitem">Adult Learning</a>
-<a href="/education#camps" role="menuitem">Jewish Camps</a>
+<a href="/education#camps" role="menuitem">Camps</a>
 </div>
 <script>
 function hjiToggleJewish(e){e.stopPropagation();var m=document.getElementById('hji-jewish-menu');var b=e.currentTarget;if(!m)return;if(m.classList.contains('open')){m.classList.remove('open');b.setAttribute('aria-expanded','false');return;}var r=b.getBoundingClientRect();m.style.left=Math.round(r.left)+'px';m.style.top=Math.round(r.bottom)+'px';m.classList.add('open');b.setAttribute('aria-expanded','true');}
 function hjiToggleMJewish(b){var s=b.nextElementSibling;if(!s)return;var o=s.classList.toggle('open');var c=b.querySelector('.m-jewish-caret');if(c)c.textContent=o?'\u25b4':'\u25be';}
 document.addEventListener('click',function(ev){var m=document.getElementById('hji-jewish-menu');if(m&&m.classList.contains('open')&&!m.contains(ev.target)&&!(ev.target.closest&&ev.target.closest('.nav-dd-btn')))m.classList.remove('open');});
 window.addEventListener('resize',function(){var m=document.getElementById('hji-jewish-menu');if(m)m.classList.remove('open');});
-(function(){var EVMAP={'Schools':'menu_orthodox_schools','Shuls':'menu_orthodox_shuls','Mikvahs':'menu_mikvahs','Adult Learning':'menu_adult_learning','Jewish Camps':'menu_jewish_camps'};document.addEventListener('click',function(ev){var a=ev.target.closest&&ev.target.closest('#hji-jewish-menu a, .m-jewish-sub a');if(!a)return;var label=(a.textContent||'').trim();var name=EVMAP[label];if(name&&typeof gtag==='function'){gtag('event',name,{menu:'Jewish',item:label});}});})();
+(function(){var EVMAP={'Schools':'menu_orthodox_schools','Shuls':'menu_orthodox_shuls','Mikvahs':'menu_mikvahs','Adult Learning':'menu_adult_learning','Camps':'menu_jewish_camps'};document.addEventListener('click',function(ev){var a=ev.target.closest&&ev.target.closest('#hji-jewish-menu a, .m-jewish-sub a');if(!a)return;var label=(a.textContent||'').trim();var name=EVMAP[label];if(name&&typeof gtag==='function'){gtag('event',name,{menu:'Jewish',item:label});}});})();
 </script>
 <script>
 /* Search deep-link: open the right category + scroll to a listing (only when ?find= is present) */
