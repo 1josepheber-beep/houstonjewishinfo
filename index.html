@@ -331,12 +331,13 @@
     padding: 9px 8px;
     border-bottom: 1px solid var(--border);
     cursor: pointer;
-    transition: background .1s;
+    transition: background .12s, box-shadow .12s;
     border-radius: 3px;
     justify-content: flex-start;
     text-decoration: none;
   }
   .resource-item:last-of-type { border-bottom: none; }
+  .resource-item:hover { background: var(--white); box-shadow: 0 1px 6px rgba(26,39,68,.10); }
   .resource-item:hover .resource-label { color: var(--gold); }
   .resource-icon {
     width: 32px; height: 32px;
