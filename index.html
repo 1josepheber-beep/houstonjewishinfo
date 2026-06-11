@@ -1424,145 +1424,6 @@
   nav.nav-bar { display: none !important; }
 }
 </style>
-<style id="hji-modern">
-:root{
-  --hji-orange:#c0531f; --hji-orange-d:#a8461a;
-  --hji-page:#f4f2ed; --hji-line:#e7e3d9; --hji-navy:#1a2744;
-  --hji-sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
-}
-body{background:var(--hji-page)!important;}
-.bsd-mark{display:none!important;}
-.portal{max-width:1180px;margin:0 auto;padding:0 20px;}
-
-/* TOP UTILITY BAR */
-.hji-topbar{background:var(--hji-navy);color:#fff;font-family:var(--hji-sans);font-size:12.5px;}
-.hji-topbar-inner{max-width:1180px;margin:0 auto;padding:7px 20px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;}
-.tb-left{display:flex;align-items:center;gap:18px;flex-wrap:wrap;}
-.tb-shab{display:inline-flex;align-items:center;gap:6px;white-space:nowrap;}
-.tb-ico{font-size:14px;line-height:1;}
-.tb-k{opacity:.72;}
-.tb-v{font-weight:700;}
-.tb-d{opacity:.7;font-size:11px;}
-.tb-parasha{display:inline-flex;align-items:center;padding:3px 12px;border:1px solid rgba(201,147,58,.55);border-radius:999px;color:#e9cf9b;font-size:11.5px;font-weight:600;white-space:nowrap;}
-.tb-parasha:empty{display:none;}
-.tb-right{display:flex;align-items:center;gap:18px;flex-wrap:wrap;}
-.tb-right a,.tb-bsd{color:#fff;text-decoration:none;opacity:.82;white-space:nowrap;}
-.tb-right a:hover{opacity:1;}
-.tb-wa{color:#48d16f!important;font-weight:600;opacity:1!important;}
-.tb-bsd{opacity:.6;direction:rtl;}
-
-/* HEADER */
-header{background:#fff;border-bottom:1px solid var(--hji-line);position:relative;}
-.hji-header{max-width:1180px;margin:0 auto;padding:14px 20px;display:flex;align-items:center;gap:12px;}
-.hji-brand{display:flex;align-items:center;gap:11px;text-decoration:none;flex-shrink:0;}
-.hji-brand-mark{height:44px;width:44px;border-radius:12px;object-fit:contain;background:var(--hji-navy);padding:6px;}
-.hji-brand-text{display:flex;flex-direction:column;line-height:1.05;}
-.hji-brand-name{font-family:'Playfair Display',serif;font-weight:700;font-size:21px;color:var(--hji-navy);}
-.hji-brand-tag{font-family:var(--hji-sans);font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:#9a8f7d;margin-top:2px;}
-.hji-search{flex:0 1 220px;min-width:140px;display:flex;justify-content:flex-start;}
-.hji-search .hjis-desktop{position:relative!important;top:auto!important;right:auto!important;left:auto!important;transform:none!important;width:100%!important;max-width:240px;display:block;text-align:left;}
-.hji-search .hjis-box{display:flex!important;width:100%;box-sizing:border-box;align-items:center;gap:8px;background:#f0eee8!important;border:1px solid var(--hji-line)!important;border-radius:999px!important;padding:9px 16px!important;cursor:text;box-shadow:none!important;transition:border-color .15s,background .15s;}
-.hji-search .hjis-box:focus-within{background:#fff!important;border-color:#cdbfa6!important;box-shadow:none!important;}
-.hji-search .hjis-mag{display:flex;opacity:.5;flex-shrink:0;}
-.hji-search .hjis-box input{flex:1;border:none!important;background:transparent;outline:none;width:100%;min-width:0;font-family:var(--hji-sans);font-size:13.5px;color:var(--ink);}
-.hji-search .hjis-dd{position:absolute;top:calc(100% + 8px);left:0;right:0;z-index:200;}
-
-header .nav-bar{display:flex!important;align-items:center;gap:3px;border:none!important;border-top:none!important;background:none!important;padding:0!important;margin:0!important;overflow:visible!important;flex-wrap:nowrap!important;flex-shrink:0;}
-header .nav-bar a,header .nav-bar .nav-dd-btn{font-family:var(--hji-sans);font-size:13px!important;font-weight:600;color:#3a4254;text-decoration:none;padding:7px 9px!important;border-radius:8px;background:none;border:none;cursor:pointer;white-space:nowrap;line-height:1;transition:background .15s,color .15s;}
-header .nav-bar a:hover,header .nav-bar .nav-dd-btn:hover{background:#f0eee8;color:var(--hji-navy);}
-header .nav-bar a.active{background:var(--hji-navy);color:#fff;}
-header .nav-bar a.active:hover{background:var(--hji-navy);color:#fff;}
-header .nav-dd{position:relative;display:inline-flex;}
-header .nav-dd-caret{font-size:11px!important;opacity:.8;}
-header .nav-bar a.nav-submit{background:var(--hji-orange);color:#fff;margin-left:6px;padding:7px 13px!important;box-shadow:0 1px 2px rgba(0,0,0,.12);}
-header .nav-bar a.nav-submit:hover{background:var(--hji-orange-d);color:#fff;}
-
-header .hamburger{display:none!important;}
-header .hjis-glass{display:none!important;}
-.masthead-date{display:none!important;}
-
-/* LEFT SIDEBAR */
-.sidebar-left .section-head,.sidebar-right .section-head{font-family:var(--hji-sans);font-size:11px;font-weight:700;letter-spacing:.13em;text-transform:uppercase;color:var(--gold);text-align:center;padding-bottom:8px;border-bottom:1px solid var(--hji-line);margin:0 0 14px;background:none;}
-.job-tabs{display:flex;gap:8px;margin-bottom:12px;}
-.job-tabs .job-tab{flex:1;font-family:var(--hji-sans);font-size:13px;font-weight:600;padding:9px 0;border-radius:9px;border:1px solid var(--hji-line);background:#fff;color:#3a4254;cursor:pointer;transition:all .15s;}
-.job-tabs .job-tab.active{background:var(--hji-navy);color:#fff;border-color:var(--hji-navy);}
-.sidebar-left .sidebar-btn{display:block;width:100%;font-family:var(--hji-sans);font-size:12px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;text-align:center;padding:11px 0;border-radius:10px;background:var(--hji-navy);color:#fff;border:none;cursor:pointer;margin-top:8px;transition:background .15s;}
-.sidebar-left .sidebar-btn:hover{background:#243763;}
-.sidebar-left .resource-item{display:flex;align-items:center;gap:11px;padding:9px 10px;border-radius:11px;text-decoration:none;border:none;transition:background .15s;}
-.sidebar-left .resource-item:hover{background:#fff;}
-.sidebar-left .resource-icon{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
-.sidebar-left .resource-label{font-family:var(--hji-sans);font-size:14px;font-weight:700;color:var(--hji-navy);line-height:1.15;}
-.sidebar-left .resource-sub{font-family:var(--hji-sans);font-size:11.5px;color:var(--muted);line-height:1.2;margin-top:1px;}
-
-/* MAIN GRID */
-.main-grid{display:grid;grid-template-columns:266px 1fr 244px;gap:28px;align-items:start;padding:28px 0 40px;}
-.news-center{min-width:0;}
-
-/* FEED (scoped to beat in-page #community-feed styles) */
-#community-feed .cf-title-main{font-family:'Playfair Display',serif;font-size:30px;color:var(--hji-navy);text-align:center;margin:0;}
-#community-feed .cf-rule{display:none!important;}
-#community-feed .cf-controls{display:flex;justify-content:center;margin:16px 0 4px;border:none;}
-#community-feed .cf-pills{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;}
-#community-feed .cf-pill{font-family:var(--hji-sans);font-size:13px;font-weight:600;padding:7px 15px;border-radius:999px;border:1px solid var(--hji-line);background:#fff;color:#3a4254;cursor:pointer;display:inline-flex;align-items:center;gap:7px;transition:all .15s;}
-#community-feed .cf-pill:hover{border-color:#cdbfa6;}
-#community-feed .cf-pill.on{background:var(--hji-navy);color:#fff;border-color:var(--hji-navy);}
-#community-feed .cf-dot{width:7px;height:7px;border-radius:50%;display:inline-block;}
-#community-feed .cf-women{display:flex;align-items:center;justify-content:center;gap:9px;margin:14px 0 20px;font-family:var(--hji-sans);font-size:13px;color:#3a4254;}
-#community-feed .cf-switch{width:38px;height:22px;border-radius:999px;background:#d6d0c4;border:none;position:relative;cursor:pointer;padding:0;transition:background .18s;flex-shrink:0;}
-#community-feed .cf-switch i{position:absolute;top:2px;left:2px;width:18px;height:18px;border-radius:50%;background:#fff;transition:left .18s;box-shadow:0 1px 2px rgba(0,0,0,.2);}
-#community-feed .cf-switch[aria-pressed="true"]{background:var(--hji-orange);}
-#community-feed .cf-switch[aria-pressed="true"] i{left:18px;}
-#community-feed .cf-muted{color:var(--muted);}
-
-/* WEATHER CARD */
-.sidebar-right .weather-box{background:linear-gradient(160deg,#22325a,#16223f);color:#fff;border:none;border-radius:16px;padding:18px 20px;box-shadow:0 8px 24px rgba(26,39,68,.18);position:relative;overflow:hidden;}
-.sidebar-right .weather-box::after{content:"";position:absolute;top:-40px;right:-30px;width:120px;height:120px;border-radius:50%;background:rgba(255,255,255,.06);}
-.sidebar-right .weather-city{font-family:var(--hji-sans);font-size:11px;font-weight:700;letter-spacing:.13em;text-transform:uppercase;opacity:.75;text-align:right;color:#fff;}
-.sidebar-right .weather-main{display:flex;align-items:center;gap:10px;margin-top:6px;}
-.sidebar-right .weather-icon{font-size:40px;line-height:1;}
-.sidebar-right .weather-temp{font-family:'Playfair Display',serif;font-size:46px;font-weight:700;line-height:1;color:#fff;}
-.sidebar-right .weather-desc{font-family:var(--hji-sans);font-size:15px;font-weight:600;margin-top:2px;color:#fff;}
-.sidebar-right .weather-meta{font-family:var(--hji-sans);font-size:12px;opacity:.78;margin-top:6px;color:#fff;}
-.sidebar-right .weather-shabbos{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:14px;padding-top:12px;border-top:1px solid rgba(255,255,255,.16);font-family:var(--hji-sans);font-size:12px;color:#fff;}
-.sidebar-right .weather-shabbos-label{letter-spacing:.1em;text-transform:uppercase;opacity:.75;font-weight:700;font-size:11px;}
-.sidebar-right .ad-managed{margin-bottom:12px;}
-
-/* FOOTER */
-footer{background:var(--hji-navy);color:#fff;margin-top:10px;}
-.hji-footer{max-width:1180px;margin:0 auto;padding:30px 20px;display:flex;align-items:flex-start;justify-content:space-between;gap:24px;flex-wrap:wrap;}
-.foot-name{font-family:'Playfair Display',serif;font-size:24px;font-weight:700;color:#fff;}
-.foot-tag{font-family:var(--hji-sans);font-size:12px;opacity:.62;margin-top:6px;}
-.foot-copy{font-family:var(--hji-sans);font-size:11px;opacity:.4;margin-top:8px;}
-.foot-links{display:flex;gap:20px;flex-wrap:wrap;align-items:center;}
-.foot-links a{font-family:var(--hji-sans);font-size:13px;color:#fff;opacity:.8;text-decoration:none;}
-.foot-links a:hover{opacity:1;}
-.foot-links a.foot-wa{color:#48d16f;font-weight:600;opacity:1;}
-
-/* RESPONSIVE */
-@media (max-width:1180px){
-  header .nav-bar{display:none!important;}
-  .hji-search{display:none!important;}
-  header .hjis-glass{display:inline-flex!important;position:static!important;align-items:center;justify-content:center;width:40px;height:40px;border-radius:10px;border:1px solid var(--hji-line)!important;background:#fff!important;margin-left:auto;cursor:pointer;padding:0;top:auto!important;right:auto!important;}
-  header .hamburger{display:flex!important;position:static!important;flex-direction:column;justify-content:center;gap:5px;width:40px;height:40px;border:1px solid var(--hji-line)!important;border-radius:10px;background:#fff!important;cursor:pointer;padding:0 9px;margin:0;top:auto!important;right:auto!important;}
-  header .hamburger span{display:block;width:100%;height:2px;background:var(--hji-navy);border-radius:2px;position:static;margin:0;transform:none;}
-}
-@media (max-width:960px){
-  .main-grid{grid-template-columns:1fr;gap:0;padding:18px 0 30px;}
-  .sidebar-left,.sidebar-right{display:none!important;}
-}
-@media (max-width:768px){
-  .hji-header{gap:10px;}
-  .hji-brand-name{font-size:19px;}
-  .hji-brand-mark{height:40px;width:40px;}
-  .hji-topbar{font-size:11.5px;}
-}
-@media (max-width:560px){
-  .tb-right a:not(.tb-wa){display:none;}
-  .tb-left{gap:12px;font-size:11px;}
-  .tb-d{display:none;}
-  .tb-parasha{display:none;}
-}
-</style>
 </head>
 <body style="-webkit-tap-highlight-color: transparent;">
 <div class="bsd-mark" aria-hidden="true"><span>בס״ד</span></div>
@@ -1779,93 +1640,113 @@ footer{background:var(--hji-navy);color:#fff;margin-top:10px;}
 <!-- ============================================================
      PAGE HEADER
      ============================================================ -->
-<!-- ===== TOP UTILITY BAR ===== -->
-<div class="hji-topbar">
-  <div class="hji-topbar-inner">
-    <div class="tb-left">
-      <span class="tb-shab"><span class="tb-ico">&#128367;&#65039;</span><span class="tb-k">Candles</span><span class="tb-v" id="strip-candles">&#8211;</span><span class="tb-d" id="strip-candles-date"></span></span>
-      <span class="tb-shab"><span class="tb-ico">&#10024;</span><span class="tb-k">Havdalah</span><span class="tb-v" id="strip-havdalah">&#8211;</span><span class="tb-d" id="strip-havdalah-date"></span></span>
-      <span class="tb-parasha" id="strip-parasha"></span>
-      <span id="shabbat-loading" style="display:none"></span>
-      <span id="strip-candles-hdate" dir="rtl" style="display:none"></span>
-      <span id="strip-havdalah-hdate" dir="rtl" style="display:none"></span>
-    </div>
-    <div class="tb-right">
-      <a href="/contact">Submit a Story</a>
-      <a href="#" onclick="location.href='/contact/#advertise';return false;">Advertise</a>
-      <a href="https://chat.whatsapp.com/LCrcLc76AUEKeh3OA1hu5P" target="_blank" rel="noopener" class="tb-wa">WhatsApp</a>
-      <span class="tb-bsd" dir="rtl">&#1489;&#1505;&#1524;&#1491;</span>
-    </div>
-  </div>
-</div>
-
-<!-- ===== HEADER ===== -->
 <header>
-  <div class="hji-header">
-    <a href="/" class="hji-brand" title="Go to Home Page">
-      <img src="/images/logo.svg" alt="HJI" class="hji-brand-mark" onerror="this.onerror=null;this.src='/images/logo.png';">
-      <span class="hji-brand-text">
-        <span class="hji-brand-name">Houston Jewish Info</span>
-        <span class="hji-brand-tag">Your Frum Community Hub</span>
-      </span>
-    </a>
-
-    <div class="hji-search">
+  <div class="portal">
+    <div class="masthead">
+      <!-- Site search: desktop box (top-right) + mobile glass/panel -->
       <div class="hjis-desktop">
         <div class="hjis-box" onclick="document.getElementById('hjis-d-input').focus()">
-          <span class="hjis-mag"><img src="/images/search.png" alt="" aria-hidden="true" style="width:1.05em;height:1.05em;object-fit:contain;vertical-align:middle;display:inline-block"></span>
-          <input id="hjis-d-input" type="text" placeholder="Search shuls, kosher, jobs&#8230;" autocomplete="off" aria-label="Search the site"
+          <span class="hjis-mag"><img src="/images/search.png" alt="" aria-hidden="true" style="width:1.15em;height:1.15em;object-fit:contain;vertical-align:middle;display:inline-block"></span>
+          <input id="hjis-d-input" type="text" placeholder="Search the site" autocomplete="off" aria-label="Search the site"
                  onfocus="hjisOpenDD()" oninput="hjisRender('hjis-dd-results',this.value)" onkeydown="hjisKey(event,this)">
         </div>
         <div class="hjis-dd" id="hjis-dd"><div id="hjis-dd-results"></div></div>
       </div>
+      <button type="button" class="hjis-glass" aria-label="Search the site" onclick="hjisOpenPanel()"><img src="/images/search.png" alt="" aria-hidden="true" style="width:1.15em;height:1.15em;object-fit:contain;vertical-align:middle;display:inline-block"></button>
+      <div class="hjis-panel" id="hjis-panel">
+        <div class="hjis-ptop">
+          <span class="hjis-mag"><img src="/images/search.png" alt="" aria-hidden="true" style="width:1.15em;height:1.15em;object-fit:contain;vertical-align:middle;display:inline-block"></span>
+          <input id="hjis-m-input" type="text" placeholder="Search the site" autocomplete="off" aria-label="Search the site"
+                 oninput="hjisRender('hjis-m-results',this.value)" onkeydown="hjisKey(event,this)">
+          <button type="button" class="hjis-px" aria-label="Close search" onclick="hjisClosePanel()">&times;</button>
+        </div>
+        <div class="hjis-pscroll" id="hjis-m-results"></div>
+      </div>
+      <div class="hjis-backdrop" id="hjis-backdrop" onclick="hjisClosePanel()"></div>
+            <div class="masthead-inner">
+        <div class="masthead-side" style="display:flex;flex-direction:column;align-items:flex-start;gap:6px;">
+          <a href="/" title="Go to Home Page" style="display:inline-block;"><img src="/images/logo.svg" alt="HJI" style="height:64px;width:auto;" onerror="this.onerror=null;this.src='/images/logo.png';"></a>
+          
+        </div>
+        <div class="masthead-logo">
+          <div class="masthead-date" id="today-date"></div>
+          <h1 class="masthead-title">Houston Jewish Info</h1>
+          <div class="masthead-tagline">Your Houston Frum Community Hub</div>
+        </div>
+        
+      </div>
+
+      <!-- NAVIGATION — edit links here -->
+      <button class="hamburger" id="hamburger-btn" aria-label="Toggle navigation" onclick="openMobileMenu()">
+        <span></span><span></span><span></span>
+      </button>
+      <div class="nav-wrapper">
+        <button class="nav-arrow left" aria-label="Scroll nav left">&#8249;</button>
+        <nav class="nav-bar" id="main-nav" aria-label="Main navigation">
+        <a href="/" class="active">Home</a><div class="nav-dd" id="nav-jewish"><button type="button" class="nav-dd-btn" aria-haspopup="true" aria-expanded="false" onclick="hjiToggleJewish(event)">Jewish <span class="nav-dd-caret">▾</span></button></div>
+        <a href="/services">Services</a>
+        <a href="/jobs">Jobs</a>
+        <a href="/real-estate">Real Estate</a>
+        <a href="/things-to-do">Things to Do</a>
+        <a href="/charities">Charities</a>
+        <a href="/contact">Contact / Submit</a>
+      </nav>
+        <button class="nav-arrow right" aria-label="Scroll nav right">&#8250;</button>
+      </div>
     </div>
-
-    <nav class="nav-bar" id="main-nav" aria-label="Main navigation">
-      <a href="/" class="active">Home</a><div class="nav-dd" id="nav-jewish"><button type="button" class="nav-dd-btn" aria-haspopup="true" aria-expanded="false" onclick="hjiToggleJewish(event)">Jewish <span class="nav-dd-caret">&#9662;</span></button></div>
-      <a href="/services">Services</a>
-      <a href="/jobs">Jobs</a>
-      <a href="/real-estate">Real Estate</a>
-      <a href="/things-to-do">Things to Do</a>
-      <a href="/charities">Charities</a>
-      <a href="/contact" class="nav-submit">+ Submit</a>
-    </nav>
-
-    <button type="button" class="hjis-glass" aria-label="Search the site" onclick="hjisOpenPanel()"><img src="/images/search.png" alt="" aria-hidden="true" style="width:1.15em;height:1.15em;object-fit:contain;vertical-align:middle;display:inline-block"></button>
-    <button class="hamburger" id="hamburger-btn" aria-label="Toggle navigation" onclick="openMobileMenu()"><span></span><span></span><span></span></button>
   </div>
-
-  <!-- Mobile search panel (hooks unchanged) -->
-  <div class="hjis-panel" id="hjis-panel">
-    <div class="hjis-ptop">
-      <span class="hjis-mag"><img src="/images/search.png" alt="" aria-hidden="true" style="width:1.15em;height:1.15em;object-fit:contain;vertical-align:middle;display:inline-block"></span>
-      <input id="hjis-m-input" type="text" placeholder="Search the site" autocomplete="off" aria-label="Search the site"
-             oninput="hjisRender('hjis-m-results',this.value)" onkeydown="hjisKey(event,this)">
-      <button type="button" class="hjis-px" aria-label="Close search" onclick="hjisClosePanel()">&times;</button>
-    </div>
-    <div class="hjis-pscroll" id="hjis-m-results"></div>
-  </div>
-  <div class="hjis-backdrop" id="hjis-backdrop" onclick="hjisClosePanel()"></div>
-
-  <div class="masthead-date" id="today-date" style="display:none"></div>
 </header>
 
-<!-- Mobile-only weather bar (times now live in the top utility bar) -->
-<div id="shabbat-strip">
+<!-- SHABBAT TIMES STRIP — visible on all screen sizes -->
+<div id="shabbat-strip" style="background:var(--navy);color:#fff;padding:0;margin-top:0;">
+  <div class="portal" style="padding:0;">
+  <div style="background:var(--navy);border-bottom:2px solid var(--gold);">
+  <div style="padding:8px 16px;display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:wrap;max-width:1000px;margin:0 auto;">
+    <div style="display:flex;align-items:center;gap:8px;">
+      <span style="font-size:16px;">🕯️</span>
+      <div>
+        <span style="font-family:sans-serif;font-size:9px;letter-spacing:.1em;text-transform:uppercase;opacity:.7;">Candle Lighting &nbsp;</span>
+        <span id="strip-candles" style="font-family:sans-serif;font-size:13px;font-weight:700;">–</span>
+        <span id="strip-candles-date" style="font-family:sans-serif;font-size:11px;opacity:.75;margin-left:4px;"></span>
+        <span id="strip-candles-hdate" dir="rtl" style="font-family:sans-serif;font-size:11px;opacity:.7;margin-left:8px;unicode-bidi:isolate;"></span>
+      </div>
+    </div>
+    <div style="width:1px;height:20px;background:rgba(255,255,255,.25);flex-shrink:0;"></div>
+    <div style="display:flex;align-items:center;gap:8px;">
+      <span style="font-size:16px;">✨</span>
+      <div>
+        <span style="font-family:sans-serif;font-size:9px;letter-spacing:.1em;text-transform:uppercase;opacity:.7;">Havdalah &nbsp;</span>
+        <span id="strip-havdalah" style="font-family:sans-serif;font-size:13px;font-weight:700;">–</span>
+        <span id="strip-havdalah-date" style="font-family:sans-serif;font-size:11px;opacity:.75;margin-left:4px;"></span>
+        <span id="strip-havdalah-hdate" dir="rtl" style="font-family:sans-serif;font-size:11px;opacity:.7;margin-left:8px;unicode-bidi:isolate;"></span>
+      </div>
+    </div>
+    <div style="width:1px;height:20px;background:rgba(255,255,255,.25);flex-shrink:0;"></div>
+    <div style="display:flex;align-items:center;gap:6px;">
+      <span style="font-size:14px;">📖</span>
+      <span id="strip-parasha" style="font-family:sans-serif;font-size:11px;opacity:.85;"></span>
+    </div>
+  </div>
+  </div>
+  </div>
+
+  <!-- MOBILE-ONLY weather bar (collapsible). Hidden on desktop where the sidebar widget shows. -->
   <div id="mobile-weather" class="mobile-weather" role="button" tabindex="0" aria-expanded="false" onclick="toggleMobileWeather()" onkeypress="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleMobileWeather();}">
     <div class="mw-bar">
-      <span class="mw-icon" id="mw-icon">&#9925;</span>
-      <span class="mw-temp" id="mw-temp">--&#176;</span>
-      <span class="mw-desc" id="mw-desc">Loading&#8230;</span>
+      <span class="mw-icon" id="mw-icon">⛅</span>
+      <span class="mw-temp" id="mw-temp">--°</span>
+      <span class="mw-desc" id="mw-desc">Loading…</span>
       <span class="mw-feels" id="mw-feels"></span>
       <span class="mw-chev" id="mw-chev" aria-hidden="true"><svg viewBox="0 0 16 16" width="14" height="14"><path d="M4 6l4 4 4-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
     </div>
     <div class="mw-expand" id="mw-expand">
-      <div class="mw-row"><span class="mw-row-label">Today</span><span id="mw-hilo">H --&#176; L --&#176;</span></div>
-      <div class="mw-row" id="mw-shabbos-row" style="display:none;"><span class="mw-row-label">Shabbos</span><span id="mw-shabbos">&#8212;</span></div>
+      <div class="mw-row"><span class="mw-row-label">Today</span><span id="mw-hilo">H --° L --°</span></div>
+      <div class="mw-row" id="mw-shabbos-row" style="display:none;"><span class="mw-row-label">Shabbos</span><span id="mw-shabbos">—</span></div>
     </div>
   </div>
 </div>
+
+
 
 <!-- ============================================================
      MAIN CONTENT
@@ -1881,8 +1762,8 @@ footer{background:var(--hji-navy);color:#fff;margin-top:10px;}
       <!-- JOB BOARD -->
       <div class="section-head">Jobs Board</div>
       <div class="job-tabs">
-        <button class="job-tab active" onclick="showJobs('hire', this)">Hiring</button>
-        <button class="job-tab" onclick="showJobs('seek', this)">Seekers</button>
+        <button class="job-tab active" onclick="showJobs('hire', this)">Now Hiring</button>
+        <button class="job-tab" onclick="showJobs('seek', this)">Job Seekers</button>
       </div>
 
       <!-- HIRING listings — edit or add .job-card items here -->
@@ -1902,7 +1783,7 @@ footer{background:var(--hji-navy);color:#fff;margin-top:10px;}
       <button class="sidebar-btn" onclick="location.href='/contact/#job'">+ Post a Listing</button>
 
       <!-- COMMUNITY RESOURCES — edit .resource-item entries here -->
-      <div class="section-head" style="margin-top:22px">Community</div>
+      <div class="section-head" style="margin-top:22px">Community Resources</div>
 
       <a class="resource-item" href="/shuls">
         <div class="resource-icon" style="background:#e8f0fb">✡️</div>
@@ -2150,19 +2031,30 @@ footer{background:var(--hji-navy);color:#fff;margin-top:10px;}
      FOOTER — edit links and copyright text
      ============================================================ -->
 <footer>
-  <div class="hji-footer">
-    <div class="foot-brand">
-      <div class="foot-name">Houston Jewish Info</div>
-      <div class="foot-tag">Serving the Houston Jewish community with pride &#127775;</div>
-      <div class="foot-copy">&copy; 2026 Houston Jewish Info</div>
-    </div>
-    <div class="foot-links">
+  <div class="portal">
+    <a href="/" aria-label="Houston Jewish Info home" class="foot-mark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="57.81 43.19 906.67 212.62" role="img" aria-label="Houston Jewish Info">
+<g transform="translate(52.118,-15.185) scale(0.41482)">
+ <defs><clipPath id="jc"><path d="M 547.5,160 Q 547.5,160 547.5,160 L 639.5,160 Q 639.5,160 639.5,160 L 639.5,496.0 A 138.0,138.0 0 0 1 363.5,496.0 L 363.5,447 Q 363.5,447 363.5,447 L 455.5,447 Q 455.5,447 455.5,447 L 455.5,496.0 A 46.0,46.0 0 0 0 547.5,496.0 Z"/></clipPath></defs>
+ <g fill="#143D75"><rect x="33.0" y="160" width="92" height="474" rx="0"/><rect x="221.0" y="160" width="92" height="474" rx="0"/><rect x="33.0" y="329.0" width="280.0" height="131.11396867937202"/></g>
+ <path d="M 173.00,343.00 L 186.40,381.55 L 227.21,382.39 L 194.68,407.05 L 206.50,446.11 L 173.00,422.80 L 139.50,446.11 L 151.32,407.05 L 118.79,382.39 L 159.60,381.55 Z" fill="#FFFFFF"/>
+ <path d="M 547.5,160 Q 547.5,160 547.5,160 L 639.5,160 Q 639.5,160 639.5,160 L 639.5,496.0 A 138.0,138.0 0 0 1 363.5,496.0 L 363.5,447 Q 363.5,447 363.5,447 L 455.5,447 Q 455.5,447 455.5,447 L 455.5,496.0 A 46.0,46.0 0 0 0 547.5,496.0 Z" fill="#B94218"/>
+ <g clip-path="url(#jc)"><polygon points="547.5,160 639.5,160 639.5,256.15 547.5,314.35" fill="#143D75"/><polygon points="547.5,314.35 639.5,256.15 639.5,384.85 547.5,443.48" fill="#FFFFFF"/></g>
+ <g fill="#B94218"><rect x="689.0" y="160" width="92" height="474" rx="0"/></g>
+</g>
+<g transform="translate(430,156) scale(0.04755,-0.04755)" fill="#143D75"><g transform="translate(0,0)"><path d="M1046 0V604H432V0H137V1409H432V848H1046V1409H1341V0Z"/></g><g transform="translate(1479,0)"><path d="M1171 542Q1171 279 1025.0 129.5Q879 -20 621 -20Q368 -20 224.0 130.0Q80 280 80 542Q80 803 224.0 952.5Q368 1102 627 1102Q892 1102 1031.5 957.5Q1171 813 1171 542ZM877 542Q877 735 814.0 822.0Q751 909 631 909Q375 909 375 542Q375 361 437.5 266.5Q500 172 618 172Q877 172 877 542Z"/></g><g transform="translate(2730,0)"><path d="M408 1082V475Q408 190 600 190Q702 190 764.5 277.5Q827 365 827 502V1082H1108V242Q1108 104 1116 0H848Q836 144 836 215H831Q775 92 688.5 36.0Q602 -20 483 -20Q311 -20 219.0 85.5Q127 191 127 395V1082Z"/></g><g transform="translate(3981,0)"><path d="M1055 316Q1055 159 926.5 69.5Q798 -20 571 -20Q348 -20 229.5 50.5Q111 121 72 270L319 307Q340 230 391.5 198.0Q443 166 571 166Q689 166 743.0 196.0Q797 226 797 290Q797 342 753.5 372.5Q710 403 606 424Q368 471 285.0 511.5Q202 552 158.5 616.5Q115 681 115 775Q115 930 234.5 1016.5Q354 1103 573 1103Q766 1103 883.5 1028.0Q1001 953 1030 811L781 785Q769 851 722.0 883.5Q675 916 573 916Q473 916 423.0 890.5Q373 865 373 805Q373 758 411.5 730.5Q450 703 541 685Q668 659 766.5 631.5Q865 604 924.5 566.0Q984 528 1019.5 468.5Q1055 409 1055 316Z"/></g><g transform="translate(5120,0)"><path d="M420 -18Q296 -18 229.0 49.5Q162 117 162 254V892H25V1082H176L264 1336H440V1082H645V892H440V330Q440 251 470.0 213.5Q500 176 563 176Q596 176 657 190V16Q553 -18 420 -18Z"/></g><g transform="translate(5802,0)"><path d="M1171 542Q1171 279 1025.0 129.5Q879 -20 621 -20Q368 -20 224.0 130.0Q80 280 80 542Q80 803 224.0 952.5Q368 1102 627 1102Q892 1102 1031.5 957.5Q1171 813 1171 542ZM877 542Q877 735 814.0 822.0Q751 909 631 909Q375 909 375 542Q375 361 437.5 266.5Q500 172 618 172Q877 172 877 542Z"/></g><g transform="translate(7053,0)"><path d="M844 0V607Q844 892 651 892Q549 892 486.5 804.5Q424 717 424 580V0H143V840Q143 927 140.5 982.5Q138 1038 135 1082H403Q406 1063 411.0 980.5Q416 898 416 867H420Q477 991 563.0 1047.0Q649 1103 768 1103Q940 1103 1032.0 997.0Q1124 891 1124 687V0Z"/></g></g>
+<g transform="translate(430,245) scale(0.04755,-0.04755)" fill="#143D75"><g transform="translate(0,0)"><path d="M524 -20Q305 -20 187.5 75.0Q70 170 31 382L324 425Q342 316 391.0 263.5Q440 211 526 211Q614 211 659.5 270.0Q705 329 705 439V1178H424V1409H999V446Q999 226 874.0 103.0Q749 -20 524 -20Z"/></g><g transform="translate(1139,0)"><path d="M586 -20Q342 -20 211.0 124.5Q80 269 80 546Q80 814 213.0 958.0Q346 1102 590 1102Q823 1102 946.0 947.5Q1069 793 1069 495V487H375Q375 329 433.5 248.5Q492 168 600 168Q749 168 788 297L1053 274Q938 -20 586 -20ZM586 925Q487 925 433.5 856.0Q380 787 377 663H797Q789 794 734.0 859.5Q679 925 586 925Z"/></g><g transform="translate(2278,0)"><path d="M1313 0H1016L844 660Q832 705 797 882L745 658L571 0H274L-6 1082H258L436 255L450 329L475 446L645 1082H946L1112 446Q1126 394 1153 255L1181 387L1337 1082H1597Z"/></g><g transform="translate(3871,0)"><path d="M143 1277V1484H424V1277ZM143 0V1082H424V0Z"/></g><g transform="translate(4440,0)"><path d="M1055 316Q1055 159 926.5 69.5Q798 -20 571 -20Q348 -20 229.5 50.5Q111 121 72 270L319 307Q340 230 391.5 198.0Q443 166 571 166Q689 166 743.0 196.0Q797 226 797 290Q797 342 753.5 372.5Q710 403 606 424Q368 471 285.0 511.5Q202 552 158.5 616.5Q115 681 115 775Q115 930 234.5 1016.5Q354 1103 573 1103Q766 1103 883.5 1028.0Q1001 953 1030 811L781 785Q769 851 722.0 883.5Q675 916 573 916Q473 916 423.0 890.5Q373 865 373 805Q373 758 411.5 730.5Q450 703 541 685Q668 659 766.5 631.5Q865 604 924.5 566.0Q984 528 1019.5 468.5Q1055 409 1055 316Z"/></g><g transform="translate(5579,0)"><path d="M420 866Q477 990 563.0 1046.0Q649 1102 768 1102Q940 1102 1032.0 996.0Q1124 890 1124 686V0H844V606Q844 891 651 891Q549 891 486.5 803.5Q424 716 424 579V0H143V1484H424V1079Q424 970 416 866Z"/></g><g transform="translate(7399,0)"><path d="M137 0V1409H432V0Z"/></g><g transform="translate(7968,0)"><path d="M844 0V607Q844 892 651 892Q549 892 486.5 804.5Q424 717 424 580V0H143V840Q143 927 140.5 982.5Q138 1038 135 1082H403Q406 1063 411.0 980.5Q416 898 416 867H420Q477 991 563.0 1047.0Q649 1103 768 1103Q940 1103 1032.0 997.0Q1124 891 1124 687V0Z"/></g><g transform="translate(9219,0)"><path d="M473 892V0H193V892H35V1082H193V1195Q193 1342 271.0 1413.0Q349 1484 508 1484Q587 1484 686 1468V1287Q645 1296 604 1296Q532 1296 502.5 1267.5Q473 1239 473 1167V1082H686V892Z"/></g><g transform="translate(9901,0)"><path d="M1171 542Q1171 279 1025.0 129.5Q879 -20 621 -20Q368 -20 224.0 130.0Q80 280 80 542Q80 803 224.0 952.5Q368 1102 627 1102Q892 1102 1031.5 957.5Q1171 813 1171 542ZM877 542Q877 735 814.0 822.0Q751 909 631 909Q375 909 375 542Q375 361 437.5 266.5Q500 172 618 172Q877 172 877 542Z"/></g></g>
+</svg></a>
+    <div class="foot-center">
+    <div style="margin-bottom:6px">
+      © 2026 Houston Jewish Info &nbsp;|&nbsp;
+      <a href="https://chat.whatsapp.com/LCrcLc76AUEKeh3OA1hu5P" target="_blank" rel="noopener" style="color:#25D366;font-weight:700;">Join our WhatsApp</a> &nbsp;|&nbsp;
       <a href="/contact">Contact Us</a>
       <a href="/contact">Submit a Story</a>
-      <a href="#" onclick="location.href='/contact/#advertise';return false;">Advertise</a>
-      <a href="https://chat.whatsapp.com/LCrcLc76AUEKeh3OA1hu5P" target="_blank" rel="noopener" class="foot-wa">WhatsApp</a>
-      <a href="/privacy">Privacy</a>
-      <a href="/terms">Terms</a>
+      <a href="#" onclick="location.href='/contact/#advertise'; return false;">Advertise</a>
+      <a href="/privacy">Privacy Policy</a>
+      <a href="/terms">Terms of Use</a>
+    </div>
+    <div style="font-size:10px">Serving the Houston Jewish community with pride 🌟</div>
     </div>
   </div>
 </footer>
