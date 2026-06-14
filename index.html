@@ -2473,6 +2473,7 @@
         return true;
       });
       arr.sort(function(a,b){
+        if(showWomen&&filter==='all'&&a.women!==b.women)return a.women?-1:1; /* women's events to top when toggle on (All view) */
         var at=a.date?a.date.getTime():null, bt=b.date?b.date.getTime():null;
         if(at==null&&bt==null)return 0; if(at==null)return 1; if(bt==null)return -1;
         if(filter==='event')return at-bt;
