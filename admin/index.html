@@ -177,6 +177,12 @@
   .setnote{background:#fff;border:1px solid var(--line);border-left:3px solid var(--orange);border-radius:9px;padding:12px 14px;color:var(--muted);font-size:13px;line-height:1.5;margin-bottom:16px}
   .setnote b{color:var(--navy)}
   .setbar{margin-top:24px}
+  .imgfield{display:block}
+  .imgprev{display:none;max-width:150px;max-height:110px;border-radius:8px;border:1px solid var(--line);margin:8px 0;object-fit:cover;background:#f4f6fa}
+  .imgup{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-bottom:4px}
+  .imgfile{font-size:12.5px;max-width:210px}
+  .imgname{flex:1;min-width:160px}
+  .imgstatus{font-size:12px;color:var(--muted)}
 </style>
 </head>
 <body>
@@ -797,6 +803,52 @@ function readField(h){
   }
   var f=$('f-'+h);return f?f.value:'';
 }
+function sectionImg(){
+  var m={Stories:'images/stories',Events:'images/events',Passings:'images/passings',Ads:'images/ads',Education:'images/education'};
+  var folder=m[S.current]||('images/'+String(S.current||'misc').toLowerCase());
+  return {folder:folder, base:'https://houstonjewishinfo.com/'+folder+'/'};
+}
+function resolveImg(v){v=(v||'').trim();if(!v)return '';if(/^https?:\/\//i.test(v))return v;if(/^\//.test(v))return 'https://houstonjewishinfo.com'+v;return sectionImg().base+v;}
+function imgFieldKeys(h){return /image|img|photo|flyer|logo/i.test(h);}
+function cleanName(s){var x=String(s||'').trim().toLowerCase().replace(/[^a-z0-9._-]+/g,'-').replace(/-+/g,'-').replace(/^[-.]+|[-.]+$/g,'');return x||'image';}
+function buildImageField(h,val){
+  var wrap=el('div','imgfield');
+  var inp=el('input','field');inp.id='f-'+h;inp.value=val;inp.placeholder='filename or full URL';
+  var prev=el('img','imgprev');prev.alt='';
+  function setPrev(v){var u=resolveImg(v);if(u){prev.src=u;prev.style.display='';}else{prev.style.display='none';}}
+  setPrev(val);
+  inp.addEventListener('input',function(){setPrev(inp.value);});
+  var up=el('div','imgup');
+  var file=el('input');file.type='file';file.accept='image/*';file.className='imgfile';
+  var nm=el('input','field imgname');nm.placeholder='name to save, e.g. my-photo.jpg';
+  var btn=el('button','btn ghost sm','Upload');btn.type='button';btn.disabled=true;
+  var st=el('span','imgstatus');
+  file.addEventListener('change',function(){
+    var f=file.files&&file.files[0];if(!f){btn.disabled=true;return;}
+    var ext=((f.name.split('.').pop())||'jpg').toLowerCase();
+    var bn=(editing&&S.headers[0]&&editing[S.headers[0]])?editing[S.headers[0]]:f.name.replace(/\.[^.]+$/,'');
+    nm.value=cleanName(bn)+'.'+ext;btn.disabled=false;st.textContent='';
+  });
+  btn.onclick=function(){
+    var f=file.files&&file.files[0];if(!f){toast('Pick an image first.',true);return;}
+    var name=cleanName(nm.value||f.name);
+    if(!/\.[a-z0-9]+$/i.test(name))name+='.'+(((f.name.split('.').pop())||'jpg').toLowerCase());
+    btn.disabled=true;st.textContent='Uploading\u2026';
+    var rd=new FileReader();
+    rd.onload=function(){
+      var b64=String(rd.result).split(',')[1]||'';
+      api('uploadImage',{folder:sectionImg().folder,name:name,content:b64}).then(function(res){
+        btn.disabled=false;
+        if(!res||!res.ok){st.textContent='';toast((res&&res.error)||'Upload failed.',true);return;}
+        inp.value=res.url;setPrev(res.url);st.textContent='Uploaded \u2713';toast('Image uploaded \u2713');
+      }).catch(function(){btn.disabled=false;st.textContent='';toast('Could not reach the backend.',true);});
+    };
+    rd.readAsDataURL(f);
+  };
+  up.appendChild(file);up.appendChild(nm);up.appendChild(btn);up.appendChild(st);
+  wrap.appendChild(inp);wrap.appendChild(prev);wrap.appendChild(up);
+  return wrap;
+}
 function openForm(row){
   if(S.mode!=='full')return;
   editing=row||null;
@@ -805,6 +857,7 @@ function openForm(row){
   S.headers.forEach(function(h){
     body.appendChild(el('label',null,h));
     var val=row?(row[h]||''):'';var input;
+    if(imgFieldKeys(h)){body.appendChild(buildImageField(h,val));return;}
     var fo=FIELD_OPTIONS[S.current+'.'+h];
     if(fo){ body.appendChild(buildOptionField(h,normOpts(fo.options),!!fo.multi,val)); return; }
     if(STATUSY.indexOf(h)>=0){
