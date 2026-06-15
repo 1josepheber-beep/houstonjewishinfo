@@ -2293,6 +2293,59 @@
   (function(){
     var SHEET_ID='1in7Ac7zknqyR9neWKOCAjOAG4jXCIVTJQfU6jJ72CV8';
 
+    /* ===== Admin-driven settings (feed hide-windows + homepage popup) =====
+       Defaults are baked in so the page NEVER waits on the Settings tab.
+       A Settings tab (columns: Key | Value) simply overrides them. */
+    var HJI_SETTINGS={storyDays:30,mazalDays:14,passingDays:14,popup:null};
+    function applySettings(rows){
+      var map={};
+      (rows||[]).forEach(function(r){var k=((r.key||'')+'').trim().toLowerCase();if(k)map[k]=(r.value!=null?(''+r.value):'');});
+      function num(k,def){var v=parseInt(map[k],10);return (!isNaN(v)&&v>0)?v:def;}
+      HJI_SETTINGS.storyDays=num('story_days',30);
+      HJI_SETTINGS.mazalDays=num('mazal_days',14);
+      HJI_SETTINGS.passingDays=num('passing_days',14);
+      var on=(map['popup_on']||'').trim().toLowerCase();
+      HJI_SETTINGS.popup={on:(on==='yes'||on==='on'||on==='true'||on==='1'),
+        title:map['popup_title']||'',message:map['popup_message']||'',
+        btnText:map['popup_button_text']||'',btnLink:map['popup_button_link']||'',image:map['popup_image']||''};
+    }
+    var POPUP_CSS=".hjipop-backdrop{position:fixed;inset:0;background:rgba(26,39,68,.55);display:flex;align-items:center;justify-content:center;padding:20px;z-index:99999;opacity:0;transition:opacity .25s ease}"
+      +".hjipop-backdrop.show{opacity:1}"
+      +".hjipop-card{background:#fff;max-width:440px;width:100%;border-radius:14px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.32);transform:translateY(14px) scale(.98);transition:transform .25s ease;position:relative;font-family:'Source Serif 4',Georgia,serif}"
+      +".hjipop-backdrop.show .hjipop-card{transform:none}"
+      +".hjipop-x{position:absolute;top:10px;right:12px;width:30px;height:30px;border:none;background:rgba(0,0,0,.06);border-radius:50%;font-size:18px;line-height:1;color:#333;cursor:pointer;z-index:2}"
+      +".hjipop-x:hover{background:rgba(0,0,0,.12)}"
+      +".hjipop-img{width:100%;max-height:210px;object-fit:cover;display:block}"
+      +".hjipop-body{padding:26px 24px 24px}"
+      +".hjipop-title{font-size:23px;color:#1a2744;font-weight:700;margin:0 0 10px;line-height:1.25}"
+      +".hjipop-msg{font-size:15.5px;color:#1c1c1c;line-height:1.55;white-space:pre-wrap}"
+      +".hjipop-btn{display:inline-block;margin-top:18px;background:#1a2744;color:#fff;text-decoration:none;font-weight:600;padding:11px 22px;border-radius:8px;font-size:15px}"
+      +".hjipop-btn:hover{background:#10192e}";
+    function popHash(s){var h=0,i;for(i=0;i<s.length;i++){h=(h*31+s.charCodeAt(i))|0;}return (h>>>0).toString(36);}
+    function maybeShowPopup(){
+      var p=HJI_SETTINGS.popup; if(!p||!p.on)return;
+      if(!p.title&&!p.message&&!p.image)return;
+      var sig='hjipop_'+popHash([p.title,p.message,p.btnText,p.btnLink,p.image].join('|'));
+      try{ if(localStorage.getItem(sig))return; }catch(e){}
+      if(!document.getElementById('hjipop-css')){var st=document.createElement('style');st.id='hjipop-css';st.textContent=POPUP_CSS;document.head.appendChild(st);}
+      var bd=document.createElement('div'); bd.className='hjipop-backdrop';
+      var h='<button class="hjipop-x" aria-label="Close">×</button>';
+      if(p.image)h+='<img class="hjipop-img" src="'+attr(p.image)+'" alt="">';
+      h+='<div class="hjipop-body">';
+      if(p.title)h+='<div class="hjipop-title">'+esc(p.title)+'</div>';
+      if(p.message)h+='<div class="hjipop-msg">'+esc(p.message)+'</div>';
+      if(p.btnText&&p.btnLink)h+='<a class="hjipop-btn" href="'+attr(p.btnLink)+'" target="_blank" rel="noopener">'+esc(p.btnText)+'</a>';
+      h+='</div>';
+      var card=document.createElement('div'); card.className='hjipop-card'; card.innerHTML=h;
+      bd.appendChild(card); document.body.appendChild(bd);
+      requestAnimationFrame(function(){bd.classList.add('show');});
+      function close(){try{localStorage.setItem(sig,'1');}catch(e){}bd.classList.remove('show');setTimeout(function(){if(bd.parentNode)bd.parentNode.removeChild(bd);},250);document.removeEventListener('keydown',onKey);}
+      card.querySelector('.hjipop-x').onclick=close;
+      bd.addEventListener('click',function(e){if(e.target===bd)close();});
+      function onKey(e){if(e.key==='Escape')close();}
+      document.addEventListener('keydown',onKey);
+    }
+
 
     var STORY_IMG='https://houstonjewishinfo.com/images/stories/';
     var EVENT_IMG='https://houstonjewishinfo.com/images/events/';
@@ -2455,9 +2508,9 @@
 
     function currentList(){
       var today=cfToday();
-      var mazalCutoff=new Date(today.getTime()-14*86400000); /* Mazal Tov hides 14 days after its date */
-      var newsCutoff=new Date(today.getTime()-30*86400000); /* Stories hide 30 days after their date */
-      var passingCutoff=new Date(today.getTime()-14*86400000); /* Passings hide 14 days after their date */
+      var mazalCutoff=new Date(today.getTime()-HJI_SETTINGS.mazalDays*86400000); /* Mazal Tov hide window (admin Settings, default 14) */
+      var newsCutoff=new Date(today.getTime()-HJI_SETTINGS.storyDays*86400000); /* Stories hide window (admin Settings, default 30) */
+      var passingCutoff=new Date(today.getTime()-HJI_SETTINGS.passingDays*86400000); /* Passings hide window (admin Settings, default 14) */
       var rev=(window.__cfReveal||'');
       function rv(x){ return !!rev && String(x.title||'').toLowerCase().indexOf(rev)>-1; }
       var arr=items.filter(function(x){
@@ -2583,8 +2636,8 @@
 
     document.getElementById('cf-list').innerHTML='<div class="cf-empty">Loading the community feed\u2026</div>';
     wireUp();
-    Promise.all([getTab('Stories'),getTab('Events'),getTab('MazalTov'),getTab('Passings').catch(function(){return [];})])
-      .then(function(res){items=buildItems(res[0],res[1],res[2],res[3]);renderList();})
+    Promise.all([getTab('Stories'),getTab('Events'),getTab('MazalTov'),getTab('Passings').catch(function(){return [];}),getTab('Settings').catch(function(){return [];})])
+      .then(function(res){applySettings(res[4]);items=buildItems(res[0],res[1],res[2],res[3]);renderList();maybeShowPopup();})
       .catch(function(){document.getElementById('cf-list').innerHTML='<div class="cf-empty">The feed is taking a moment to load. Please refresh.</div>';if(typeof loadAds==='function')loadAds();});
   })();
 

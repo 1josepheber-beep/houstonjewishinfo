@@ -172,6 +172,11 @@
   .navhidden{font-size:10px;font-weight:700;color:#3a2a08;background:#f0b86a;padding:1px 7px;border-radius:20px;white-space:nowrap}
   .feednote{display:flex;align-items:center;gap:7px;font-size:12.5px;color:var(--muted);background:#fff;border:1px solid var(--line);border-left:3px solid var(--orange);border-radius:9px;padding:9px 13px;margin-bottom:14px}
   .feednote b{color:var(--navy);font-weight:600}
+  .setwrap{max-width:560px}
+  .setsec{font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--orange-dk);font-weight:700;margin:22px 0 8px;padding-top:14px;border-top:1px solid var(--line)}
+  .setnote{background:#fff;border:1px solid var(--line);border-left:3px solid var(--orange);border-radius:9px;padding:12px 14px;color:var(--muted);font-size:13px;line-height:1.5;margin-bottom:16px}
+  .setnote b{color:var(--navy)}
+  .setbar{margin-top:24px}
 </style>
 </head>
 <body>
@@ -400,6 +405,89 @@ function buildNav(){
     b.onclick=function(){selectCollection(c[0],c[1]);toggleDrawer(false);};
     nav.appendChild(b);
   });
+  nav.appendChild(el('div','seclabel','Site'));
+  var sb=el('button','navitem');sb.dataset.key='__settings__';
+  sb.appendChild(el('span',null,'⚙️ Settings'));
+  sb.onclick=function(){openSettings();toggleDrawer(false);};
+  nav.appendChild(sb);
+}
+
+/* ====================== SITE SETTINGS (feed days + homepage popup) ====================== */
+var SETTINGS_TAB='Settings';
+var SETTINGS_FIELDS=[
+  {sec:'Feed hide-windows'},
+  {key:'story_days',label:'Stories — hide from the feed after (days)',type:'number',def:'30'},
+  {key:'mazal_days',label:'Mazal Tov — hide after (days)',type:'number',def:'14'},
+  {key:'passing_days',label:'Passings — hide after (days)',type:'number',def:'14'},
+  {sec:'Homepage popup'},
+  {key:'popup_on',label:'Show the popup on the homepage?',type:'select',options:['no','yes'],def:'no'},
+  {key:'popup_title',label:'Title',type:'text',def:''},
+  {key:'popup_message',label:'Message',type:'textarea',def:''},
+  {key:'popup_button_text',label:'Button text (optional)',type:'text',def:''},
+  {key:'popup_button_link',label:'Button link / URL (optional)',type:'text',def:''},
+  {key:'popup_image',label:'Image URL (optional)',type:'text',def:''}
+];
+function openSettings(){
+  S.current='__settings__';
+  $('colTitle').textContent='Settings';
+  $('btnAdd').style.display='none';
+  document.querySelectorAll('.navitem').forEach(function(n){n.classList.toggle('active',n.dataset.key==='__settings__');});
+  $('content').innerHTML='<div class="loading">Loading settings…</div>';
+  var reader=(S.mode==='full')?api('list',{sheet:SETTINGS_TAB}):gvizRead(SETTINGS_TAB);
+  reader.then(function(res){
+    if(!res||(S.mode==='full'&&!res.ok))throw (res&&res.error)||'error';
+    var map={};
+    (res.rows||[]).forEach(function(r){var k=((r.Key!=null?r.Key:(r.key!=null?r.key:''))+'').trim().toLowerCase();if(k)map[k]={value:((r.Value!=null?r.Value:(r.value!=null?r.value:''))+''),_row:r._row};});
+    renderSettings(map);
+  }).catch(function(){
+    var c=$('content');c.innerHTML='';
+    var w=el('div','setwrap');var n=el('div','setnote');
+    n.innerHTML='No <b>Settings</b> tab found in your sheet yet. Add a tab named <b>Settings</b> with two columns titled <b>Key</b> and <b>Value</b>, paste the starter rows you were given, then reload this page.';
+    w.appendChild(n);c.appendChild(w);
+  });
+}
+function renderSettings(map){
+  S.settingsMap=map;
+  var c=$('content');c.innerHTML='';
+  var w=el('div','setwrap');
+  var intro=el('div','setnote');
+  intro.innerHTML='These control your live homepage. <b>Hide-windows</b> set how many days Stories, Mazal Tovs and Passings stay in the feed before they hide (Events always hide once their date passes). The <b>popup</b> shows on the homepage when On — it appears once per visitor, and again whenever you change the title or message.';
+  w.appendChild(intro);
+  if(S.mode!=='full'){var ro=el('div','setnote');ro.textContent='View-only mode — log in with your password to make changes.';w.appendChild(ro);}
+  SETTINGS_FIELDS.forEach(function(f){
+    if(f.sec){w.appendChild(el('div','setsec',f.sec));return;}
+    var lb=el('label',null,f.label);lb.setAttribute('for','set-'+f.key);w.appendChild(lb);
+    var cur=(map[f.key]&&map[f.key].value!=null)?map[f.key].value:(f.def||'');
+    var inp;
+    if(f.type==='textarea'){inp=el('textarea','field');inp.value=cur;inp.rows=4;}
+    else if(f.type==='select'){inp=el('select','field');(f.options||[]).forEach(function(o){var op=el('option',null,o);op.value=o;if(String(o).toLowerCase()===String(cur).toLowerCase())op.selected=true;inp.appendChild(op);});}
+    else{inp=el('input','field');inp.type=(f.type==='number')?'number':'text';inp.value=cur;}
+    inp.id='set-'+f.key;w.appendChild(inp);
+  });
+  if(S.mode==='full'){
+    var bar=el('div','setbar');
+    var save=el('button','btn','Save settings');save.id='setSave';save.onclick=saveSettings;
+    bar.appendChild(save);w.appendChild(bar);
+  }
+  c.appendChild(w);
+}
+function saveSettings(){
+  var btn=$('setSave');if(btn){btn.disabled=true;btn.textContent='Saving…';}
+  var map=S.settingsMap||{};var calls=[];
+  SETTINGS_FIELDS.forEach(function(f){
+    if(f.sec)return;
+    var inp=$('set-'+f.key);if(!inp)return;
+    var val=(inp.value!=null?(''+inp.value):'').trim();
+    var ex=map[f.key];
+    if(ex&&ex._row)calls.push(api('update',{sheet:SETTINGS_TAB,row:ex._row,data:{Value:val}}));
+    else calls.push(api('create',{sheet:SETTINGS_TAB,data:{Key:f.key,Value:val}}));
+  });
+  Promise.all(calls).then(function(ress){
+    if(btn){btn.disabled=false;btn.textContent='Save settings';}
+    var bad=ress.find(function(r){return !r||!r.ok;});
+    if(bad){toast((bad&&bad.error)||'Some settings did not save.',true);return;}
+    toast('Settings saved ✓');openSettings();
+  }).catch(function(){if(btn){btn.disabled=false;btn.textContent='Save settings';}toast('Could not reach the backend.',true);});
 }
 
 /* ====================== GLOBAL SEARCH ====================== */
