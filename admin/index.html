@@ -170,6 +170,8 @@
   .feedchip.off{background:#dcdce1;color:#5d6470}
   .navright{display:flex;align-items:center;gap:6px;flex-shrink:0}
   .navhidden{font-size:10px;font-weight:700;color:#3a2a08;background:#f0b86a;padding:1px 7px;border-radius:20px;white-space:nowrap}
+  .feednote{display:flex;align-items:center;gap:7px;font-size:12.5px;color:var(--muted);background:#fff;border:1px solid var(--line);border-left:3px solid var(--orange);border-radius:9px;padding:9px 13px;margin-bottom:14px}
+  .feednote b{color:var(--navy);font-weight:600}
 </style>
 </head>
 <body>
@@ -572,8 +574,14 @@ function feedRowState(row,key){
   return (now<agedOut)?{state:'active',days:0}
     :{state:'hidden',days:Math.floor((now-agedOut)/DAY)};
 }
+function feedNote(key){
+  var w=FEED_WINDOWS[key]; if(w===undefined)return '';
+  var txt=(w==='event')?'Hides from the feed <b>once the date passes</b> — then stays searchable.'
+    :'Hides from the feed <b>'+w+' days</b> after the date — then stays searchable.';
+  return '<div class="feednote">⏳ '+txt+'</div>';
+}
 function renderTable(){
-  if(!S.rows.length){$('content').innerHTML='<div class="empty">No entries yet in <b>'+S.current+'</b>.'+(S.mode==='full'?'<br>Use “+ Add new” to create the first one.':'')+'</div>';return;}
+  if(!S.rows.length){$('content').innerHTML=feedNote(S.current)+'<div class="empty">No entries yet in <b>'+S.current+'</b>.'+(S.mode==='full'?'<br>Use “+ Add new” to create the first one.':'')+'</div>';return;}
   var statusCol=S.headers.find(function(h){return STATUSY.indexOf(h)>=0;});
   var showCols=S.headers.filter(function(h){return h!==statusCol;}).slice(0,4);
   var t=el('table'),thead=el('thead'),trh=el('tr');
@@ -606,7 +614,7 @@ function renderTable(){
     }
     tb.appendChild(tr);
   });
-  t.appendChild(tb);$('content').innerHTML='';$('content').appendChild(t);
+  t.appendChild(tb);$('content').innerHTML=feedNote(S.current);$('content').appendChild(t);
   highlightPending();
 }
 
