@@ -804,7 +804,7 @@ function readField(h){
   var f=$('f-'+h);return f?f.value:'';
 }
 function sectionImg(){
-  var m={Stories:'images/stories',Events:'images/events',Passings:'images/passings',Ads:'images/ads',Education:'images/education'};
+  var m={Stories:'images/stories',Events:'images/events',Passings:'images/passings',Ads:'images/ads',Education:'images/education',Services:'images/cards',shuls:'images/synagogues',Charities:'images/charities',SelfHelp:'images/selfhelp',RealEstate:'images/realestate'};
   var folder=m[S.current]||('images/'+String(S.current||'misc').toLowerCase());
   return {folder:folder, base:'https://houstonjewishinfo.com/'+folder+'/'};
 }
