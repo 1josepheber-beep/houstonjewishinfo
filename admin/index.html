@@ -451,7 +451,7 @@ function renderSettings(map){
   var c=$('content');c.innerHTML='';
   var w=el('div','setwrap');
   var intro=el('div','setnote');
-  intro.innerHTML='These control your live homepage. <b>Hide-windows</b> set how many days Stories, Mazal Tovs and Passings stay in the feed before they hide (Events always hide once their date passes). The <b>popup</b> shows on the homepage when On — it appears once per visitor, and again whenever you change the title or message.';
+  intro.innerHTML='These control your live homepage. <b>Hide-windows</b> set how many days Stories, Mazal Tovs and Passings stay in the feed before they hide (Events always hide once their date passes). The <b>popup</b> shows on the homepage when On — it appears once per visit (it won\u2019t repeat as they move around the site, and shows again when they return or when you change the title or message).';
   w.appendChild(intro);
   if(S.mode!=='full'){var ro=el('div','setnote');ro.textContent='View-only mode — log in with your password to make changes.';w.appendChild(ro);}
   SETTINGS_FIELDS.forEach(function(f){

@@ -2326,7 +2326,7 @@
       var p=HJI_SETTINGS.popup; if(!p||!p.on)return;
       if(!p.title&&!p.message&&!p.image)return;
       var sig='hjipop_'+popHash([p.title,p.message,p.btnText,p.btnLink,p.image].join('|'));
-      try{ if(localStorage.getItem(sig))return; }catch(e){}
+      try{ if(sessionStorage.getItem(sig))return; sessionStorage.setItem(sig,'1'); }catch(e){}
       if(!document.getElementById('hjipop-css')){var st=document.createElement('style');st.id='hjipop-css';st.textContent=POPUP_CSS;document.head.appendChild(st);}
       var bd=document.createElement('div'); bd.className='hjipop-backdrop';
       var h='<button class="hjipop-x" aria-label="Close">×</button>';
@@ -2339,7 +2339,7 @@
       var card=document.createElement('div'); card.className='hjipop-card'; card.innerHTML=h;
       bd.appendChild(card); document.body.appendChild(bd);
       requestAnimationFrame(function(){bd.classList.add('show');});
-      function close(){try{localStorage.setItem(sig,'1');}catch(e){}bd.classList.remove('show');setTimeout(function(){if(bd.parentNode)bd.parentNode.removeChild(bd);},250);document.removeEventListener('keydown',onKey);}
+      function close(){bd.classList.remove('show');setTimeout(function(){if(bd.parentNode)bd.parentNode.removeChild(bd);},250);document.removeEventListener('keydown',onKey);}
       card.querySelector('.hjipop-x').onclick=close;
       bd.addEventListener('click',function(e){if(e.target===bd)close();});
       function onKey(e){if(e.key==='Escape')close();}
