@@ -188,6 +188,12 @@
   tr.catgroup td{font-weight:700;color:var(--navy);padding:11px 14px;border-top:1px solid var(--line)}
   tr.catgroup .chev{display:inline-block;width:13px;color:var(--orange-dk)}
   tr.catgroup .catcount{font-weight:600;color:var(--muted);font-size:12.5px;margin-left:8px}
+  .navgroup{display:flex;align-items:center;gap:8px;width:100%;text-align:left;background:transparent;color:#cdd6e4;padding:8px 10px;border-radius:9px;font-size:13.5px;font-weight:600;cursor:pointer}
+  .navgroup:hover{background:var(--navy-2);color:#fff}
+  .navgroup .gchev{display:inline-block;width:12px;color:#7d8aa3}
+  .navgroup .gdot{width:8px;height:8px;border-radius:50%;background:var(--orange);display:inline-block;margin-left:auto}
+  .navsub{margin:1px 0 6px 12px;padding-left:8px;border-left:1px solid rgba(255,255,255,.08)}
+  .navsub .navitem{font-size:13px}
 </style>
 </head>
 <body>
@@ -404,23 +410,56 @@ function enterApp(){
   }
 }
 
+var NAV_GROUPS=[
+  {label:'Home', keys:['Stories','Events','MazalTov','Passings']},
+  {label:'Jewish', keys:['shuls','Education','mikvahs','Eruv']},
+  {label:'Services', keys:['Services','Charities','Gemachim','KosherRestaurants','SelfHelp']}
+];
+var NAV_STANDALONE=['Jobs','RealEstate','Ads','Activities'];
+function collLabel(key){var c=COLLECTIONS.find(function(x){return x[0]===key;});return c?c[1]:key;}
+function groupOf(key){for(var i=0;i<NAV_GROUPS.length;i++){if(NAV_GROUPS[i].keys.indexOf(key)>=0)return NAV_GROUPS[i].label;}return null;}
+function navItemEl(key){
+  var label=collLabel(key);
+  var b=el('button','navitem');b.dataset.key=key;
+  b.appendChild(el('span',null,label));
+  var right=el('span','navright');
+  var cnt=el('span','count','');cnt.id='cnt-'+key;right.appendChild(cnt);
+  if(FEED_WINDOWS[key]!==undefined){var hb=el('span','navhidden');hb.id='hid-'+key;hb.style.display='none';right.appendChild(hb);}
+  b.appendChild(right);
+  b.onclick=function(){selectCollection(key,label);toggleDrawer(false);};
+  return b;
+}
+function applyNavGroup(label){
+  var open=!!(S.openNav&&S.openNav[label]);
+  document.querySelectorAll('.navgroup').forEach(function(g){if(g.getAttribute('data-group')===label){var ch=g.querySelector('.gchev');if(ch)ch.textContent=open?'▾':'▸';}});
+  document.querySelectorAll('.navsub').forEach(function(s){if(s.getAttribute('data-group')===label)s.style.display=open?'':'none';});
+}
+function toggleNavGroup(label){if(!S.openNav)S.openNav={};S.openNav[label]=!S.openNav[label];applyNavGroup(label);}
+function openNavGroupFor(key){var g=groupOf(key);if(g){if(!S.openNav)S.openNav={};S.openNav[g]=true;applyNavGroup(g);}}
 function buildNav(){
   var nav=$('nav');nav.innerHTML='';nav.appendChild(el('div','seclabel','Collections'));
-  COLLECTIONS.forEach(function(c){
-    var b=el('button','navitem');b.dataset.key=c[0];
-    b.appendChild(el('span',null,c[1]));
-    var right=el('span','navright');
-    var cnt=el('span','count','');cnt.id='cnt-'+c[0];right.appendChild(cnt);
-    if(FEED_WINDOWS[c[0]]!==undefined){var hb=el('span','navhidden');hb.id='hid-'+c[0];hb.style.display='none';right.appendChild(hb);}
-    b.appendChild(right);
-    b.onclick=function(){selectCollection(c[0],c[1]);toggleDrawer(false);};
-    nav.appendChild(b);
+  if(!S.openNav)S.openNav={};
+  var placed={};
+  NAV_GROUPS.forEach(function(g){
+    var hdr=el('button','navgroup');hdr.setAttribute('data-group',g.label);
+    hdr.appendChild(el('span','gchev','▸'));
+    hdr.appendChild(el('span',null,g.label));
+    hdr.onclick=function(){toggleNavGroup(g.label);};
+    nav.appendChild(hdr);
+    var sub=el('div','navsub');sub.setAttribute('data-group',g.label);
+    g.keys.forEach(function(key){ if(!COLLECTIONS.find(function(x){return x[0]===key;}))return; placed[key]=1; sub.appendChild(navItemEl(key)); });
+    nav.appendChild(sub);
   });
+  var extras=NAV_STANDALONE.filter(function(k){return COLLECTIONS.find(function(x){return x[0]===k;});});
+  COLLECTIONS.forEach(function(c){ if(!placed[c[0]]&&extras.indexOf(c[0])<0)extras.push(c[0]); });
+  extras.forEach(function(key){placed[key]=1;nav.appendChild(navItemEl(key));});
   nav.appendChild(el('div','seclabel','Site'));
   var sb=el('button','navitem');sb.dataset.key='__settings__';
   sb.appendChild(el('span',null,'⚙️ Settings'));
   sb.onclick=function(){openSettings();toggleDrawer(false);};
   nav.appendChild(sb);
+  NAV_GROUPS.forEach(function(g){applyNavGroup(g.label);});
+  if(S.current)openNavGroupFor(S.current);
 }
 
 /* ====================== SITE SETTINGS (feed days + homepage popup) ====================== */
@@ -615,6 +654,12 @@ function updatePendingUI(){
     if(byTab[key]){if(!dot){lbl.appendChild(el('span','dot'));}}
     else if(dot){dot.remove();}
   });
+  (typeof NAV_GROUPS!=='undefined'?NAV_GROUPS:[]).forEach(function(g){
+    var has=g.keys.some(function(k){return byTab[k];});
+    var hdr=document.querySelector('.navgroup[data-group="'+g.label+'"]');
+    if(!hdr)return; var gd=hdr.querySelector('.gdot');
+    if(has){if(!gd)hdr.appendChild(el('span','gdot'));}else if(gd)gd.remove();
+  });
 }
 
 function selectCollection(key,label){
@@ -622,6 +667,7 @@ function selectCollection(key,label){
   $('colTitle').textContent=label.replace(/^\S+\s/,'');
   $('btnAdd').style.display=(S.mode==='full')?'':'none';
   document.querySelectorAll('.navitem').forEach(function(n){n.classList.toggle('active',n.dataset.key===key);});
+  if(typeof openNavGroupFor==='function')openNavGroupFor(key);
   $('content').innerHTML='<div class="loading">Loading '+key+'…</div>';
   var reader=(S.mode==='full')?api('list',{sheet:key}):gvizRead(key);
   reader.then(function(res){
