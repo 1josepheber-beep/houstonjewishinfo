@@ -1140,7 +1140,7 @@
   .biz-website {
     font-family: sans-serif; font-size: 10px; font-weight: 700; letter-spacing: .05em;
     text-transform: uppercase; color: var(--gold); border: 1px solid var(--gold);
-    padding: 4px 10px; border-radius: 3px; transition: all .15s;
+    padding: 4px 10px; border-radius: 3px; transition: all .15s; white-space: nowrap;
   }
   .biz-website:hover { background: var(--gold); color: #fff; }
 
@@ -1183,11 +1183,13 @@
   }
   .service-listing-item {
     background: var(--white); border: 1px solid var(--border); border-top: none;
-    padding: 14px 18px; display: flex; align-items: center; justify-content: space-between; gap: 16px;
+    padding: 14px 18px; display: flex; align-items: flex-start; justify-content: space-between; gap: 16px;
     transition: background .15s;
   }
   .service-listing-item:hover { background: #f5f3ee; }
   .service-listing-item:last-child { border-radius: 0 0 6px 6px; }
+  .service-listing-item > div:first-child { flex: 1 1 auto; min-width: 0; }
+  .service-listing-item > div:last-child { flex: 0 0 auto; }
   .sli-name { font-family: sans-serif; font-size: 13px; font-weight: 700; color: var(--navy); margin-bottom: 2px; }
   .sli-meta { font-family: sans-serif; font-size: 11px; color: var(--muted); }
   .sli-phone { font-family: sans-serif; font-size: 12px; color: var(--navy); font-weight: 600; white-space: nowrap; }
@@ -2500,6 +2502,27 @@ function dedupeBizListings(list) {
   return Object.keys(groups).map(function(k){ return groups[k]; });
 }
 
+// Collapse same-name duplicates within each service tile (mirrors the
+// directory's dedupe): a premium (CardImage) row wins, otherwise the most complete one.
+function dedupeServiceCache(){
+  if(!serviceCache) return;
+  function nn(n){ return String(n||'').toLowerCase().replace(/[^a-z0-9]/g,''); }
+  function comp(o){ var c=0; ['description','address','phone','email','website','hours','badge','cardimage'].forEach(function(k){ if(o[k]&&String(o[k]).trim()) c++; }); return c; }
+  Object.keys(serviceCache).forEach(function(key){
+    var seen={}, out=[];
+    serviceCache[key].forEach(function(o){
+      var k=nn(o.name);
+      if(!k){ out.push(o); return; }
+      if(seen[k]===undefined){ seen[k]=out.length; out.push(o); return; }
+      var cur=out[seen[k]];
+      var curPrem=!!(cur.cardimage&&String(cur.cardimage).trim());
+      var oPrem=!!(o.cardimage&&String(o.cardimage).trim());
+      if((oPrem&&!curPrem)||(oPrem===curPrem&&comp(o)>comp(cur))) out[seen[k]]=o;
+    });
+    serviceCache[key]=out;
+  });
+}
+
 function getBadgeClass(badge) {
   var b = (badge||'').toLowerCase();
   if(b.indexOf('kosher') > -1) return 'badge-kosher';
@@ -2687,6 +2710,7 @@ function preloadServiceCounts() {
           if(serviceCache[cat].indexOf(obj) === -1) serviceCache[cat].push(obj);
         });
       });
+      dedupeServiceCache();
       // Update all tile counts
       document.querySelectorAll('.service-card').forEach(function(card){
         var onclick = card.getAttribute('onclick')||'';
@@ -2926,6 +2950,7 @@ function openService(type) {
           if(serviceCache['financial'].indexOf(b) === -1) serviceCache['financial'].push(b);
         });
       }
+      dedupeServiceCache();
       // Update tile counts dynamically
       document.querySelectorAll('.service-card').forEach(function(card) {
         var onclick = card.getAttribute('onclick') || '';
