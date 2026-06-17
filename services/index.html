@@ -2345,7 +2345,8 @@ var tabsLoaded = 0;
  * Tolerant of variants: "electric", "Electrician", "Electrical" all -> electric.
  * Returns '' if unknown (row still loads, just under generic 'services'). */
 function mapServiceCat(v){
-  var k = String(v||'').toLowerCase().replace(/&/g,' and ').replace(/[^a-z0-9]/g,'');
+  var raw = String(v||'').toLowerCase();
+  var k = raw.replace(/&/g,' and ').replace(/[^a-z0-9]/g,'');
   var M = {
     electric:'electric', electrician:'electric', electrical:'electric',
     plumbing:'plumbing', plumber:'plumbing', plumbers:'plumbing',
@@ -2380,7 +2381,15 @@ function mapServiceCat(v){
     recruiting:'recruiting', recruitingandstaffing:'recruiting', recruiter:'recruiting', staffing:'recruiting',
     coaching:'coaching', coach:'coaching'
   };
-  return M[k] || '';
+  if (M[k]) return M[k];
+  // Fallback: resolve compound labels like "Medical / Healthcare" or
+  // "Therapy & Counseling" by their first recognizable word.
+  var parts = raw.split(/[\/,;&]+|\band\b/);
+  for (var pi = 0; pi < parts.length; pi++) {
+    var pk = parts[pi].replace(/[^a-z0-9]/g, '');
+    if (pk && M[pk]) return M[pk];
+  }
+  return '';
 }
 
 var bizTabMap = {
@@ -2667,10 +2676,15 @@ function preloadServiceCounts() {
         var obj = {};
         cols.forEach(function(col,i){obj[col]=safeVal(row.c?row.c[i]:null);});
         if(!obj.name||obj.status.toLowerCase().trim()!=='active') return;
-        var cats = (obj.category||'').split(',').map(function(c){return c.trim().toLowerCase();});
-        cats.forEach(function(cat){
+        var keys = [];
+        (obj.category||'').split(/[,;/]+/).forEach(function(part){
+          var mapped = mapServiceCat(part);
+          if(mapped && keys.indexOf(mapped) === -1) keys.push(mapped);
+        });
+        if(!keys.length) keys.push('services');
+        keys.forEach(function(cat){
           if(!serviceCache[cat]) serviceCache[cat] = [];
-          serviceCache[cat].push(obj);
+          if(serviceCache[cat].indexOf(obj) === -1) serviceCache[cat].push(obj);
         });
       });
       // Update all tile counts
@@ -2893,10 +2907,15 @@ function openService(type) {
         var obj = {};
         cols.forEach(function(col, i) { obj[col] = safeVal(row.c ? row.c[i] : null); });
         if(!obj.name || obj.status.toLowerCase().trim() !== 'active') return;
-        var cats = (obj.category||'').split(',').map(function(c){return c.trim().toLowerCase();});
-        cats.forEach(function(cat){
+        var keys = [];
+        (obj.category||'').split(/[,;/]+/).forEach(function(part){
+          var mapped = mapServiceCat(part);
+          if(mapped && keys.indexOf(mapped) === -1) keys.push(mapped);
+        });
+        if(!keys.length) keys.push('services');
+        keys.forEach(function(cat){
           if(!serviceCache[cat]) serviceCache[cat] = [];
-          serviceCache[cat].push(obj);
+          if(serviceCache[cat].indexOf(obj) === -1) serviceCache[cat].push(obj);
         });
       });
       // Financial tile also surfaces mortgage brokers automatically, so a
