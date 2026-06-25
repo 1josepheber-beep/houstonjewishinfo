@@ -1846,5 +1846,49 @@ window.addEventListener('resize',function(){var m=document.getElementById('hji-j
   update();
 })();
 </script>
+<script>
+/* HJI live settings — reads the Settings tab (Key/Value) and applies site-wide options */
+(function(){
+  var SHEET='1in7Ac7zknqyR9neWKOCAjOAG4jXCIVTJQfU6jJ72CV8';
+  function on(v){v=(''+(v||'')).trim().toLowerCase();return v==='yes'||v==='true'||v==='1'||v==='on';}
+  function g(S,k){return (S[k]!=null?(''+S[k]):'').trim();}
+  function apply(S){
+    var rs=document.documentElement.style;
+    if(g(S,'color_primary'))rs.setProperty('--navy',g(S,'color_primary'));
+    if(g(S,'color_highlight'))rs.setProperty('--gold',g(S,'color_highlight'));
+    if(g(S,'color_background'))rs.setProperty('--cream',g(S,'color_background'));
+    var logo=g(S,'logo_url');
+    if(logo){document.querySelectorAll('header img[src*="logo"], .sn-logo img').forEach(function(im){im.removeAttribute('onerror');im.src=logo;});}
+    var flogo=g(S,'footer_logo');
+    if(flogo){var fm=document.querySelector('.foot-mark');if(fm){fm.innerHTML='';var im=document.createElement('img');im.src=flogo;im.alt='Houston Jewish Info';im.style.cssText='height:48px;width:auto';fm.appendChild(im);}}
+    if(on(S.announce_on)&&g(S,'announce_text')&&!document.getElementById('hji-announce')){
+      var COL={navy:'#1a2744',rust:'#B94218',gold:'#c9933a',green:'#1f7a3d',red:'#b83030'};
+      var bg=COL[(g(S,'announce_color')||'navy').toLowerCase()]||COL.navy;
+      var bar=document.createElement('div');bar.id='hji-announce';
+      bar.style.cssText='background:'+bg+';color:#fff;font-family:sans-serif;font-size:14px;font-weight:600;text-align:center;padding:9px 38px 9px 16px;position:relative;z-index:950;line-height:1.4';
+      var link=g(S,'announce_link');
+      if(link){var a=document.createElement('a');a.href=link;a.textContent=g(S,'announce_text');a.style.cssText='color:#fff;text-decoration:underline';bar.appendChild(a);}
+      else bar.appendChild(document.createTextNode(g(S,'announce_text')));
+      var x=document.createElement('button');x.type='button';x.setAttribute('aria-label','Dismiss');x.innerHTML='&times;';
+      x.style.cssText='position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;color:#fff;font-size:20px;line-height:1;cursor:pointer;opacity:.85';
+      x.onclick=function(){if(bar.parentNode)bar.parentNode.removeChild(bar);};
+      bar.appendChild(x);document.body.insertBefore(bar,document.body.firstChild);
+    }
+    if(on(S.donate_on)&&g(S,'donate_link')&&!document.getElementById('hji-donate')){
+      var label=g(S,'donate_label')||'Donate',pos=(g(S,'donate_position')||'floating').toLowerCase();
+      var d=document.createElement('a');d.id='hji-donate';d.href=g(S,'donate_link');d.target='_blank';d.rel='noopener';d.textContent=label;
+      if(pos.indexOf('header')>=0){d.style.cssText='display:inline-block;background:#B94218;color:#fff;font-family:sans-serif;font-weight:700;font-size:13px;padding:7px 14px;border-radius:8px;text-decoration:none;margin:6px';(document.querySelector('.nav-bar')||document.querySelector('header')||document.body).appendChild(d);}
+      else if(pos.indexOf('footer')>=0){d.style.cssText='display:inline-block;background:#B94218;color:#fff;font-family:sans-serif;font-weight:700;font-size:14px;padding:9px 18px;border-radius:8px;text-decoration:none';var f=document.querySelector('footer .portal')||document.querySelector('footer');if(f){var w=document.createElement('div');w.style.cssText='text-align:center;padding:8px 0';w.appendChild(d);f.insertBefore(w,f.firstChild);}else document.body.appendChild(d);}
+      else {d.style.cssText='position:fixed;right:16px;bottom:16px;z-index:940;background:#B94218;color:#fff;font-family:sans-serif;font-weight:700;font-size:15px;padding:12px 20px;border-radius:30px;text-decoration:none;box-shadow:0 4px 14px rgba(0,0,0,.25)';document.body.appendChild(d);}
+    }
+  }
+  try{
+    fetch('https://docs.google.com/spreadsheets/d/'+SHEET+'/gviz/tq?tqx=out:json&sheet=Settings&cb='+Date.now())
+      .then(function(r){return r.text();})
+      .then(function(t){var s=t.indexOf('{'),e=t.lastIndexOf('}');if(s<0||e<0)return;var j=JSON.parse(t.substring(s,e+1));var rows=(j.table&&j.table.rows)||[],S={};rows.forEach(function(row){var c=row.c||[];var k=(c[0]&&c[0].v!=null?(''+c[0].v):'').trim().toLowerCase();var v=(c[1]&&c[1].v!=null?(''+c[1].v):'');if(k)S[k]=v;});apply(S);})
+      .catch(function(){});
+  }catch(e){}
+})();
+</script>
 </body>
 </html>
