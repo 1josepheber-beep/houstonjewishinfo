@@ -2010,7 +2010,7 @@
          ======================================================== -->
     <aside class="sidebar-right" aria-label="Ads and extras">
 
-      <!-- WEATHER — live via Open-Meteo -->
+      <!-- WEATHER — live via the National Weather Service (weather.gov) -->
       <div class="weather-box" id="weather-box">
         <div class="weather-city">Houston, TX</div>
         <div class="weather-main">
@@ -2026,7 +2026,7 @@
       </div>
 
       <!-- AD SLOT 1 — managed via Ads sheet | placement="right-sidebar-1" | default below = Brian Gavin Diamonds -->
-      <div class="section-head">Advertise</div>
+      <div class="section-head">Advertisement</div>
       <div class="ad-managed" data-ad-slot="right-sidebar-1"></div>
 
       <!-- AD SLOT 2 — managed via Ads sheet | placement="right-sidebar-2" | default below = Z Biltong -->
@@ -2665,94 +2665,90 @@
     mw.setAttribute('aria-expanded', open?'true':'false');
   }
 
-  /* -- Live weather via Open-Meteo (free, no API key needed) -- */
+  /* -- Live weather via the National Weather Service (weather.gov) — free, no key -- */
   (function(){
-    var WX = {
-      0:['Clear sky','☀️','is-clear'], 1:['Mainly clear','🌤️','is-clear'],
-      2:['Partly cloudy','⛅','is-cloud'], 3:['Overcast','☁️','is-cloud'],
-      45:['Foggy','🌫️','is-cloud'], 48:['Icy fog','🌫️','is-cloud'],
-      51:['Light drizzle','🌦️','is-rain'], 53:['Drizzle','🌦️','is-rain'], 55:['Drizzle','🌧️','is-rain'],
-      61:['Light rain','🌦️','is-rain'], 63:['Rain','🌧️','is-rain'], 65:['Heavy rain','🌧️','is-rain'],
-      66:['Freezing rain','🌧️','is-rain'], 67:['Freezing rain','🌧️','is-rain'],
-      71:['Light snow','🌨️','is-snow'], 73:['Snow','❄️','is-snow'], 75:['Heavy snow','❄️','is-snow'], 77:['Snow grains','🌨️','is-snow'],
-      80:['Rain showers','🌦️','is-rain'], 81:['Showers','🌧️','is-rain'], 82:['Heavy showers','🌧️','is-rain'],
-      85:['Snow showers','🌨️','is-snow'], 86:['Snow showers','❄️','is-snow'],
-      95:['Thunderstorm','⛈️','is-storm'], 96:['Thunderstorm','⛈️','is-storm'], 99:['Thunderstorm','⛈️','is-storm']
-    };
-    function look(code){ return WX[code] || ['See forecast','🌡️','is-cloud']; }
+    var LAT=29.7604, LON=-95.3698;
     function el(id){ return document.getElementById(id); }
+    function cToF(c){ return (c==null) ? null : (c*9/5+32); }
+    // Map NWS free-text conditions to an icon + the existing weather-box class
+    function look(txt){
+      var t=(''+(txt||'')).toLowerCase();
+      if(/thunder|tstorm|squall/.test(t))                         return ['\u26c8\ufe0f','is-storm'];
+      if(/snow|sleet|flurr|ice|icy|wintry|blizzard/.test(t))      return ['\u2744\ufe0f','is-snow'];
+      if(/rain|shower|drizzle|sprinkle/.test(t))                  return ['\ud83c\udf27\ufe0f','is-rain'];
+      if(/fog|haze|mist|smoke/.test(t))                           return ['\ud83c\udf2b\ufe0f','is-cloud'];
+      if(/partly sunny|mostly sunny|partly cloudy|few clouds|scattered clouds/.test(t)) return ['\u26c5','is-cloud'];
+      if(/overcast|mostly cloudy|cloudy/.test(t))                 return ['\u2601\ufe0f','is-cloud'];
+      if(/clear|sunny|fair/.test(t))                              return ['\u2600\ufe0f','is-clear'];
+      return ['\ud83c\udf21\ufe0f','is-cloud'];
+    }
+    // Plain header-less fetch keeps this a "simple" CORS request (weather.gov rejects custom headers)
+    function getJSON(u){ return fetch(u).then(function(r){ if(!r.ok) throw 0; return r.json(); }); }
 
-    var url='https://api.open-meteo.com/v1/forecast?latitude=29.7604&longitude=-95.3698'
-      +'&current=temperature_2m,apparent_temperature,weather_code'
-      +'&daily=weather_code,temperature_2m_max,temperature_2m_min'
-      +'&temperature_unit=fahrenheit&timezone=America%2FChicago&forecast_days=7';
-
-    function renderWeather(data){
-      var cur=data.current, daily=data.daily;
-      var temp=Math.round(cur.temperature_2m);
-      var feels=Math.round(cur.apparent_temperature);
-      var info=look(cur.weather_code!=null?cur.weather_code:cur.weathercode);
-      var hi=Math.round(daily.temperature_2m_max[0]);
-      var lo=Math.round(daily.temperature_2m_min[0]);
-
-      el('weather-temp').innerHTML=temp+'<span class="deg">°</span>';
-      el('weather-icon').textContent=info[1];
-      el('weather-desc').textContent=info[0];
-      el('weather-meta').textContent='Feels '+feels+'°  ·  H '+hi+'°  L '+lo+'°';
-      var box=el('weather-box');
-      box.className='weather-box '+info[2];
-
-      // Mobile bar (same data)
+    function paint(temp, feels, desc, info, hi, lo){
+      var t = (temp!=null) ? Math.round(temp) : null;
+      if(el('weather-temp')) el('weather-temp').innerHTML = (t!=null?t:'--')+'<span class="deg">\u00b0</span>';
+      if(el('weather-icon')) el('weather-icon').textContent = info[0];
+      if(el('weather-desc')) el('weather-desc').textContent = desc||'';
+      var meta='';
+      if(feels!=null) meta='Feels '+Math.round(feels)+'\u00b0';
+      if(hi!=null)    meta+=(meta?'  \u00b7  ':'')+'H '+Math.round(hi)+'\u00b0';
+      if(lo!=null)    meta+='  L '+Math.round(lo)+'\u00b0';
+      if(el('weather-meta')) el('weather-meta').textContent = meta;
+      if(el('weather-box'))  el('weather-box').className = 'weather-box '+info[1];
       if(el('mw-temp')){
-        el('mw-temp').textContent=temp+'°';
-        el('mw-icon').textContent=info[1];
-        el('mw-desc').textContent=info[0];
-        el('mw-feels').textContent='Feels '+feels+'°';
-        el('mw-hilo').textContent='H '+hi+'°  L '+lo+'°';
-        var mw=el('mobile-weather');
-        if(mw) mw.className='mobile-weather '+info[2]+(mw.classList.contains('open')?' open':'');
+        el('mw-temp').textContent = (t!=null?t:'--')+'\u00b0';
+        el('mw-icon').textContent = info[0];
+        el('mw-desc').textContent = desc||'';
+        el('mw-feels').textContent = (feels!=null)?('Feels '+Math.round(feels)+'\u00b0'):'';
+        el('mw-hilo').textContent = (hi!=null?'H '+Math.round(hi)+'\u00b0':'')+(lo!=null?'  L '+Math.round(lo)+'\u00b0':'');
+        var mw=el('mobile-weather'); if(mw) mw.className='mobile-weather '+info[1]+(mw.classList.contains('open')?' open':'');
       }
+    }
+    function fail(){ var t=el('weather-temp'); if(t) t.textContent='--\u00b0'; var d=el('weather-desc'); if(d) d.textContent='Unavailable'; }
 
-      // Shabbos (upcoming Saturday) forecast from the daily arrays
-      var times=daily.time || [];
-      for(var i=0;i<times.length;i++){
-        var d=new Date(times[i]+'T12:00:00');
-        if(d.getDay()===6){ // Saturday
-          var sInfo=look((daily.weather_code||daily.weathercode||[])[i]);
-          var sHi=Math.round(daily.temperature_2m_max[i]);
-          var sLo=Math.round(daily.temperature_2m_min[i]);
-          el('weather-shabbos-val').textContent=sInfo[1]+'  '+sHi+'° / '+sLo+'°';
-          el('weather-shabbos').style.display='flex';
-          if(el('mw-shabbos')){
-            el('mw-shabbos').textContent=sInfo[1]+'  '+sHi+'° / '+sLo+'°';
-            el('mw-shabbos-row').style.display='flex';
-          }
-          break;
+    function shabbos(periods){
+      for(var j=0;j<periods.length;j++){
+        if(periods[j].isDaytime && /saturday/i.test(periods[j].name||'')){
+          var sInfo=look(periods[j].shortForecast);
+          var sHi=periods[j].temperature, sLo=null;
+          for(var k=j;k<periods.length;k++){ if(!periods[k].isDaytime && /saturday/i.test(periods[k].name||'')){ sLo=periods[k].temperature; break; } }
+          var val=sInfo[0]+'  '+sHi+'\u00b0'+(sLo!=null?(' / '+sLo+'\u00b0'):'');
+          if(el('weather-shabbos-val')){ el('weather-shabbos-val').textContent=val; el('weather-shabbos').style.display='flex'; }
+          if(el('mw-shabbos')){ el('mw-shabbos').textContent=val; if(el('mw-shabbos-row')) el('mw-shabbos-row').style.display='flex'; }
+          return;
         }
       }
     }
 
-    function fetchWeather(timeoutMs){
-      // AbortController cancels the request if it takes too long, so the
-      // widget never hangs waiting behind other page traffic.
-      var ctrl = (typeof AbortController!=='undefined') ? new AbortController() : null;
-      var timer = ctrl ? setTimeout(function(){ ctrl.abort(); }, timeoutMs) : null;
-      var opts = ctrl ? {signal:ctrl.signal} : {};
-      return fetch(url, opts).then(function(r){ if(timer) clearTimeout(timer); return r.json(); });
-    }
-
     function loadWeather(){
-      fetchWeather(7000)
-        .then(renderWeather)
-        .catch(function(){
-          // First attempt timed out or failed — try once more with a longer window.
-          fetchWeather(12000)
-            .then(renderWeather)
-            .catch(function(){
-              var t=el('weather-temp'); if(t) t.textContent='--°';
-              var d=el('weather-desc'); if(d) d.textContent='Unavailable';
-            });
+      getJSON('https://api.weather.gov/points/'+LAT+','+LON).then(function(pts){
+        var p=(pts&&pts.properties)||{};
+        var fcP  = p.forecast ? getJSON(p.forecast).then(function(f){ return (f.properties&&f.properties.periods)||[]; }).catch(function(){ return []; }) : Promise.resolve([]);
+        var obsP = p.observationStations ? getJSON(p.observationStations).then(function(s){
+                     var st=(s.features&&s.features[0]&&s.features[0].id)||(s.observationStations&&s.observationStations[0]);
+                     if(!st) throw 0; return getJSON(st+'/observations/latest');
+                   }).then(function(o){ return o.properties; }).catch(function(){ return null; }) : Promise.resolve(null);
+        return Promise.all([obsP, fcP]).then(function(r){
+          var obs=r[0], periods=r[1]||[];
+          var dayP=null, nightP=null;
+          for(var i=0;i<periods.length;i++){ if(periods[i].isDaytime && !dayP) dayP=periods[i]; if(!periods[i].isDaytime && !nightP) nightP=periods[i]; if(dayP&&nightP) break; }
+          var hi=dayP?dayP.temperature:null, lo=nightP?nightP.temperature:null;
+          var temp=null, feels=null, desc='';
+          if(obs){
+            temp = cToF(obs.temperature && obs.temperature.value);
+            var fl=(obs.heatIndex&&obs.heatIndex.value!=null)?obs.heatIndex.value:((obs.windChill&&obs.windChill.value!=null)?obs.windChill.value:null);
+            feels = cToF(fl);
+            desc = obs.textDescription||'';
+          }
+          var condText = desc || (dayP&&dayP.shortForecast) || (periods[0]&&periods[0].shortForecast) || '';
+          if(!desc) desc=condText;
+          if(temp==null && periods[0]) temp=periods[0].temperature;   /* forecast fallback (already F) */
+          if(feels==null) feels=temp;
+          paint(temp, feels, desc, look(condText), hi, lo);
+          shabbos(periods);
         });
+      }).catch(fail);
     }
     loadWeather();
   })();
