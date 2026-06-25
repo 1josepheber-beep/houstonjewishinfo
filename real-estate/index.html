@@ -679,10 +679,8 @@
     <!-- Agent ad slots — managed via the Ads sheet (placements real-estate-1..4). Hidden until at least one is active. -->
     <div id="re-ad-block" class="re-ads" style="display:none;">
       <div class="re-ads-head">Real Estate Agents</div>
-      <div class="ad-managed" data-ad-slot="real-estate-1"></div>
-      <div class="ad-managed" data-ad-slot="real-estate-2"></div>
-      <div class="ad-managed" data-ad-slot="real-estate-3"></div>
-      <div class="ad-managed" data-ad-slot="real-estate-4"></div>
+      <!-- Real estate ads — UNLIMITED. In the Ads sheet use placement real-estate-1, real-estate-2, real-estate-3 … (add as many as you like). They render here in number order. -->
+      <div class="ad-managed" data-ad-area="real-estate"></div>
     </div>
     </div>
 
@@ -1078,30 +1076,39 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape')closeMobileM
     fetch(url).then(function(r){return r.text();}).then(function(text){
       var json = JSON.parse(text.substring(47, text.length - 2));
       var cols = json.table.cols.map(function(c){ return (c.label||'').toLowerCase().trim(); });
-      var slots = {};
+      function adBox(d, placementName){
+        var alt = String(d.advertiser||'Advertisement').replace(/"/g,'&quot;');
+        var trackName = String(d.advertiser||'Advertisement').replace(/'/g,"\\'");
+        var onclk = "try{if(typeof gtag==='function'){gtag('event','ad_click',{ad_name:'"+trackName+"',ad_placement:'"+placementName+"'});}}catch(e){}";
+        return '<a href="'+(d.linkurl||'#')+'" target="_blank" rel="noopener" aria-label="'+alt+'" data-ad-box="'+placementName+'" data-ad-name="'+alt+'" onclick="'+onclk+'" style="display:block;margin:0 0 16px;border:1px solid #c8a882;border-radius:6px;overflow:hidden;text-decoration:none;"><img src="'+adImg(d.imageurl)+'" alt="'+alt+'" style="width:100%;height:auto;display:block;"></a>';
+      }
+      var byPlacement={}, byArea={};
       json.table.rows.forEach(function(row){
         var d = {}; cols.forEach(function(col,i){ d[col] = row.c[i] ? (row.c[i].v||'') : ''; });
-        var slot = (d.placement||'').toLowerCase().trim();
-        if(!slot) return;
-        if(!slots[slot]) slots[slot] = { active:null };
+        var placement = (d.placement||'').toLowerCase().trim(); if(!placement) return;
         var isActive = (d.status||'').toLowerCase().trim() === 'active';
-        if(isActive && d.imageurl && !slots[slot].active) slots[slot].active = d;
+        if(!isActive || !d.imageurl) return;
+        if(!byPlacement[placement]) byPlacement[placement]=d;
+        var m = placement.match(/^(.*?)-(\d+)$/);
+        var area = m?m[1]:placement; var order = m?parseInt(m[2],10):1e9;
+        (byArea[area]=byArea[area]||[]).push({d:d,order:order,placement:placement});
+      });
+      Object.keys(byArea).forEach(function(a){ byArea[a].sort(function(x,y){return x.order-y.order;}); });
+      document.querySelectorAll('[data-ad-area]').forEach(function(cont){
+        var area = cont.getAttribute('data-ad-area').toLowerCase().trim();
+        var list = byArea[area]||[];
+        cont.innerHTML = list.map(function(it){ return adBox(it.d, it.placement); }).join('');
       });
       document.querySelectorAll('[data-ad-slot]').forEach(function(el){
-        var info = slots[el.getAttribute('data-ad-slot').toLowerCase().trim()];
-        if(info && info.active){
-          var d = info.active;
-          var alt = String(d.advertiser||'Advertisement').replace(/"/g,'&quot;');
-          var reTrack = String(d.advertiser||'Advertisement').replace(/'/g,"\\'");
-          var reSlot = el.getAttribute('data-ad-slot');
-          var reOnclk = "try{if(typeof gtag==='function'){gtag('event','ad_click',{ad_name:'"+reTrack+"',ad_placement:'"+reSlot+"'});}}catch(e){}";
-          el.innerHTML = '<a href="'+(d.linkurl||'#')+'" target="_blank" rel="noopener" aria-label="'+alt+'" onclick="'+reOnclk+'" style="display:block;margin:0 0 16px;border:1px solid #c8a882;border-radius:6px;overflow:hidden;text-decoration:none;"><img src="'+adImg(d.imageurl)+'" alt="'+alt+'" style="width:100%;height:auto;display:block;"></a>';
-          trackAdView(el, String(d.advertiser||'Advertisement'), reSlot);
-        } else { el.innerHTML=''; }
+        var d = byPlacement[el.getAttribute('data-ad-slot').toLowerCase().trim()];
+        el.innerHTML = d ? adBox(d, el.getAttribute('data-ad-slot')) : '';
       });
-      // show the agent block only if at least one of its slots has an active ad
+      document.querySelectorAll('[data-ad-box]').forEach(function(b){
+        trackAdView(b, b.getAttribute('data-ad-name'), b.getAttribute('data-ad-box'));
+      });
+      // show the agent block only if at least one ad rendered inside it
       var block = document.getElementById('re-ad-block');
-      if(block){ block.style.display = block.querySelector('[data-ad-slot] a') ? '' : 'none'; }
+      if(block){ block.style.display = block.querySelector('a[data-ad-box]') ? '' : 'none'; }
     }).catch(function(){});
 
     function trackAdView(el, adName, slotName){

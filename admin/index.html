@@ -218,6 +218,11 @@
   .switch input:checked + .track{background:var(--orange,#e87722)}
   .switch input:checked + .track::after{transform:translateX(20px)}
   .switch .switch-lbl{font-size:13.5px;color:var(--ink)}
+  .ad-card{border:1px solid var(--border,#dfe3ea);border-radius:10px;padding:14px 14px 4px;margin:0 0 14px;background:#fcfdff}
+  .ad-card-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+  .ad-card-title{font-family:sans-serif;font-weight:700;font-size:13px;color:var(--navy,#13294b);letter-spacing:.02em}
+  .ad-list{margin-top:6px}
+  .ad-add{margin-top:4px}
 </style>
 </head>
 <body>
@@ -442,6 +447,7 @@ function refreshCurrent(){
   if(typeof buildSearchIndex==='function')buildSearchIndex();
   if(S.current==='__review__'){openReview();}
   else if(S.current==='__settings__'){openSettings();}
+  else if(S.current==='__ads__'){openAds();}
   else if(S.current){selectCollection(S.current,collLabel(S.current));}
   else {selectInitialCollection();}
 }
@@ -471,7 +477,7 @@ var NAV_GROUPS=[
   {label:'Jewish', keys:['shuls','Education','mikvahs','Eruv']},
   {label:'Services', keys:['Services','Charities','Gemachim','KosherRestaurants','SelfHelp']}
 ];
-var NAV_STANDALONE=['Jobs','RealEstate','Ads','Activities'];
+var NAV_STANDALONE=['Jobs','RealEstate','Activities'];
 function collLabel(key){var c=COLLECTIONS.find(function(x){return x[0]===key;});return c?c[1]:key;}
 function groupOf(key){for(var i=0;i<NAV_GROUPS.length;i++){if(NAV_GROUPS[i].keys.indexOf(key)>=0)return NAV_GROUPS[i].label;}return null;}
 function navItemEl(key){
@@ -496,6 +502,7 @@ function buildNav(){
   var nav=$('nav');nav.innerHTML='';nav.appendChild(el('div','seclabel','Collections'));
   if(!S.openNav)S.openNav={};
   var placed={};
+  placed['Ads']=1; // Ads has its own dedicated screen in the Site section
   NAV_GROUPS.forEach(function(g){
     var hdr=el('button','navgroup');hdr.setAttribute('data-group',g.label);
     hdr.appendChild(el('span','gchev','▸'));
@@ -510,6 +517,10 @@ function buildNav(){
   COLLECTIONS.forEach(function(c){ if(!placed[c[0]]&&extras.indexOf(c[0])<0)extras.push(c[0]); });
   extras.forEach(function(key){placed[key]=1;nav.appendChild(navItemEl(key));});
   nav.appendChild(el('div','seclabel','Site'));
+  var ab=el('button','navitem');ab.dataset.key='__ads__';
+  ab.appendChild(el('span',null,'📣 Ads'));
+  ab.onclick=function(){openAds();toggleDrawer(false);};
+  nav.appendChild(ab);
   var sb=el('button','navitem');sb.dataset.key='__settings__';
   sb.appendChild(el('span',null,'⚙️ Settings'));
   sb.onclick=function(){openSettings();toggleDrawer(false);};
@@ -693,6 +704,188 @@ function saveSettings(){
     if(bad){toast((bad&&bad.error)||'Some settings did not save.',true);return;}
     toast('Settings saved ✓'); openSettings();
   }).catch(function(){ if(btn){btn.disabled=false;btn.textContent='Save settings';} toast('Could not reach the backend.',true); });
+}
+
+/* ====================== ADS (area-based, unlimited) ====================== */
+var AD_TAB='Ads';
+var AD_AREAS=[
+  {id:'right-sidebar', label:'Homepage \u2014 Sidebar',     hint:'Shows in the right-hand column on the homepage (desktop).'},
+  {id:'mobile',        label:'Homepage \u2014 Mobile feed', hint:'Shows woven between the stories on phones.'},
+  {id:'mazaltov',      label:'Homepage \u2014 Mazal Tov',   hint:'Shows inside the Mazal Tov section.'},
+  {id:'real-estate',   label:'Real Estate page',            hint:'Shows on the Real Estate page (desktop and mobile).'}
+];
+function adColName(headers,want){
+  var h=(headers||[]).find(function(x){return String(x).toLowerCase().replace(/[^a-z]/g,'')===want;});
+  return h||null;
+}
+function adImgResolve(v){v=String(v||'').trim();if(!v)return '';if(/^https?:\/\//i.test(v))return v;if(/^\//.test(v))return 'https://houstonjewishinfo.com'+v;return 'https://houstonjewishinfo.com/images/ads/'+v;}
+function openAds(){
+  S.current='__ads__';
+  $('colTitle').textContent='Ads';
+  $('btnAdd').style.display='none';
+  document.querySelectorAll('.navitem').forEach(function(n){n.classList.toggle('active',n.dataset.key==='__ads__');});
+  $('content').innerHTML='<div class="loading">Loading ads\u2026</div>';
+  var reader=(S.mode==='full')?api('list',{sheet:AD_TAB}):gvizRead(AD_TAB);
+  reader.then(function(res){
+    if(!res||(S.mode==='full'&&!res.ok))throw (res&&res.error)||'error';
+    var headers=res.headers||[];
+    var cols={
+      placement: adColName(headers,'placement')||'placement',
+      status:    adColName(headers,'status')||'status',
+      image:     adColName(headers,'imageurl')||adColName(headers,'image')||'imageurl',
+      link:      adColName(headers,'linkurl')||adColName(headers,'link')||'linkurl',
+      adv:       adColName(headers,'advertiser')||'advertiser'
+    };
+    S.adCols=cols;
+    var byArea={};
+    (res.rows||[]).forEach(function(r){
+      var placement=String(r[cols.placement]||'').toLowerCase().trim(); if(!placement)return;
+      var m=placement.match(/^(.*?)-(\d+)$/);
+      var area=m?m[1]:placement, num=m?parseInt(m[2],10):0;
+      (byArea[area]=byArea[area]||[]).push({
+        _row:r._row||null, num:num,
+        image:String(r[cols.image]||''), link:String(r[cols.link]||''),
+        adv:String(r[cols.adv]||''), active:String(r[cols.status]||'').toLowerCase().trim()==='active'
+      });
+    });
+    Object.keys(byArea).forEach(function(a){byArea[a].sort(function(x,y){return x.num-y.num;});});
+    renderAds(byArea);
+  }).catch(function(){
+    $('content').innerHTML='<div class="empty">Could not load <b>Ads</b>. Your sheet needs a tab named <b>Ads</b> with columns: placement, status, imageurl, linkurl, advertiser.</div>';
+  });
+}
+function setAdsTab(id){
+  document.querySelectorAll('#content .set-tab').forEach(function(t){t.classList.toggle('active',t.getAttribute('data-cat')===id);});
+  document.querySelectorAll('#content .set-group').forEach(function(g){g.classList.toggle('active',g.getAttribute('data-cat')===id);});
+}
+function uploadAdImage(cid,fileInput){
+  var f=fileInput.files&&fileInput.files[0]; if(!f)return;
+  if(f.size>10*1024*1024){toast('Image is larger than 10MB.',true);return;}
+  var name=cleanName(f.name)||('ad-'+Date.now());
+  if(!/\.[a-z0-9]+$/i.test(name))name+='.jpg';
+  var rd=new FileReader();
+  rd.onload=function(){
+    var b64=String(rd.result).split(',')[1]||'';
+    toast('Uploading\u2026');
+    api('uploadImage',{folder:'images/ads',name:name,content:b64}).then(function(res){
+      if(res&&res.ok&&res.url){ var u=$('adimg-'+cid); if(u)u.value=res.url; var pv=$('adprev-'+cid); if(pv){pv.src=res.url;pv.style.display='block';} toast('Uploaded \u2713'); }
+      else toast((res&&res.error)||'Upload failed.',true);
+    }).catch(function(){toast('Could not reach the backend.',true);});
+  };
+  rd.readAsDataURL(f);
+}
+function adCardEl(area,card,pos){
+  var cid=String(++S.adSeq);
+  S.adCards[cid]={area:area,_row:card?card._row:null};
+  var box=el('div','ad-card'); box.id='adcard-'+cid; box.setAttribute('data-area',area);
+  var head=el('div','ad-card-head'); head.appendChild(el('span','ad-card-title','Ad '+pos));
+  if(S.mode==='full'){ var rm=el('button','btn danger sm','Remove'); rm.type='button'; rm.onclick=function(){removeAdCard(cid);}; head.appendChild(rm); }
+  box.appendChild(head);
+  var iv=card?card.image:'';
+  var imf=el('div','setfield'); imf.appendChild(el('label',null,'Ad image'));
+  var ir=el('div','set-img-row');
+  var prev=el('img','set-img-preview'); prev.id='adprev-'+cid; prev.alt=''; if(iv){prev.src=adImgResolve(iv);prev.style.display='block';}else prev.style.display='none';
+  var turl=el('input','field'); turl.type='text'; turl.id='adimg-'+cid; turl.value=iv; turl.placeholder='Paste an image URL, or upload \u2192';
+  turl.oninput=function(){ if(turl.value){prev.src=adImgResolve(turl.value);prev.style.display='block';}else prev.style.display='none'; };
+  var actions=el('div','set-img-actions');
+  if(S.mode==='full'){
+    var file=el('input'); file.type='file'; file.accept='image/*'; file.style.display='none'; file.id='adfile-'+cid;
+    var up=el('button','btn ghost sm','Upload'); up.type='button'; up.onclick=function(){file.click();};
+    file.onchange=function(){ uploadAdImage(cid,file); };
+    actions.appendChild(up); actions.appendChild(file);
+  }
+  ir.appendChild(prev); ir.appendChild(turl); ir.appendChild(actions); imf.appendChild(ir); box.appendChild(imf);
+  var lf=el('div','setfield'); lf.appendChild(el('label',null,'Link (where it goes when clicked)'));
+  var li=el('input','field'); li.type='text'; li.id='adlink-'+cid; li.value=card?card.link:''; li.placeholder='https://\u2026'; lf.appendChild(li); box.appendChild(lf);
+  var af=el('div','setfield'); af.appendChild(el('label',null,'Advertiser name'));
+  var ai=el('input','field'); ai.type='text'; ai.id='adadv-'+cid; ai.value=card?card.adv:''; af.appendChild(ai); box.appendChild(af);
+  var tf=el('div','setfield'); tf.appendChild(el('label',null,'Show this ad?'));
+  var sw=el('label','switch'); var cb=el('input'); cb.type='checkbox'; cb.id='adactive-'+cid; if(!card||card.active)cb.checked=true;
+  sw.appendChild(cb); sw.appendChild(el('span','track')); sw.appendChild(el('span','switch-lbl','On / Off')); tf.appendChild(sw); box.appendChild(tf);
+  return box;
+}
+function renumberAdLabels(area){
+  var list=$('adlist-'+area); if(!list)return;
+  Array.prototype.forEach.call(list.querySelectorAll('.ad-card .ad-card-title'),function(t,i){t.textContent='Ad '+(i+1);});
+}
+function addAdCard(area){
+  var list=$('adlist-'+area); if(!list)return;
+  var pos=list.querySelectorAll('.ad-card').length+1;
+  list.appendChild(adCardEl(area,null,pos));
+}
+function removeAdCard(cid){
+  var rec=S.adCards[cid]; if(!rec)return;
+  var box=$('adcard-'+cid);
+  if(rec._row){
+    if(!confirm('Remove this ad? It will be deleted from your Ads sheet.'))return;
+    api('delete',{sheet:AD_TAB,row:rec._row}).then(function(res){
+      if(!res||!res.ok){toast((res&&res.error)||'Delete failed',true);return;}
+      toast('Ad removed.'); openAds();
+    }).catch(function(){toast('Could not reach the backend.',true);});
+  } else {
+    if(box&&box.parentNode)box.parentNode.removeChild(box);
+    delete S.adCards[cid];
+    renumberAdLabels(rec.area);
+  }
+}
+function renderAds(byArea){
+  S.adByArea=byArea; S.adCards={}; S.adSeq=0;
+  var c=$('content'); c.innerHTML='';
+  var w=el('div','setwrap');
+  var intro=el('div','setnote');
+  intro.innerHTML='Pick an area, then add or edit its ads. Each area holds as many ads as you like \u2014 they show in order. One <b>Save</b> stores everything.';
+  w.appendChild(intro);
+  if(S.mode!=='full'){ var ro=el('div','setnote'); ro.textContent='View-only mode \u2014 log in with your password to make changes.'; w.appendChild(ro); }
+  var tabs=el('div','set-tabs'); var groups=el('div','set-groups');
+  AD_AREAS.forEach(function(area,ai){
+    var tab=el('button','set-tab'+(ai===0?' active':''),area.label); tab.setAttribute('data-cat',area.id);
+    tab.onclick=(function(id){return function(){setAdsTab(id);};})(area.id);
+    tabs.appendChild(tab);
+    var grp=el('div','set-group'+(ai===0?' active':'')); grp.setAttribute('data-cat',area.id);
+    if(area.hint){var hn=el('div','setnote');hn.innerHTML=area.hint;grp.appendChild(hn);}
+    var list=el('div','ad-list'); list.id='adlist-'+area.id;
+    (byArea[area.id]||[]).forEach(function(card,idx){ list.appendChild(adCardEl(area.id,card,idx+1)); });
+    grp.appendChild(list);
+    if(S.mode==='full'){
+      var add=el('button','btn ghost ad-add','+ Add ad'); add.type='button';
+      add.onclick=(function(aid){return function(){addAdCard(aid);};})(area.id);
+      grp.appendChild(add);
+    }
+    groups.appendChild(grp);
+  });
+  w.appendChild(tabs); w.appendChild(groups);
+  if(S.mode==='full'){
+    var bar=el('div','setbar'); var save=el('button','btn','Save ads'); save.id='adSave'; save.onclick=saveAds; bar.appendChild(save); w.appendChild(bar);
+  }
+  c.appendChild(w);
+}
+function saveAds(){
+  var btn=$('adSave'); if(btn){btn.disabled=true;btn.textContent='Saving\u2026';}
+  var cols=S.adCols||{placement:'placement',status:'status',image:'imageurl',link:'linkurl',adv:'advertiser'};
+  var calls=[];
+  AD_AREAS.forEach(function(area){
+    var list=$('adlist-'+area.id); if(!list)return;
+    var cards=list.querySelectorAll('.ad-card');
+    Array.prototype.forEach.call(cards,function(box,idx){
+      var cid=box.id.replace('adcard-','');
+      var rec=S.adCards[cid]; if(!rec)return;
+      var data={};
+      data[cols.placement]=area.id+'-'+(idx+1);
+      data[cols.status]=(($('adactive-'+cid)||{}).checked)?'active':'paused';
+      data[cols.image]=String((($('adimg-'+cid)||{}).value)||'').trim();
+      data[cols.link]=String((($('adlink-'+cid)||{}).value)||'').trim();
+      data[cols.adv]=String((($('adadv-'+cid)||{}).value)||'').trim();
+      if(rec._row)calls.push(api('update',{sheet:AD_TAB,row:rec._row,data:data}));
+      else calls.push(api('create',{sheet:AD_TAB,data:data}));
+    });
+  });
+  if(!calls.length){ if(btn){btn.disabled=false;btn.textContent='Save ads';} toast('Nothing to save yet.'); return; }
+  Promise.all(calls).then(function(ress){
+    if(btn){btn.disabled=false;btn.textContent='Save ads';}
+    var bad=ress.find(function(r){return !r||!r.ok;});
+    if(bad){toast((bad&&bad.error)||'Some ads did not save.',true);return;}
+    toast('Ads saved \u2713'); openAds();
+  }).catch(function(){ if(btn){btn.disabled=false;btn.textContent='Save ads';} toast('Could not reach the backend.',true); });
 }
 
 /* ====================== GLOBAL SEARCH ====================== */
