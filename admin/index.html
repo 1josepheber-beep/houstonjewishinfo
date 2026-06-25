@@ -199,6 +199,25 @@
   .iconbtn:hover{background:#fff4ea;border-color:var(--orange)}
   .iconbtn.spin svg{animation:hjispin .7s linear}
   @keyframes hjispin{to{transform:rotate(360deg)}}
+  .set-tabs{display:flex;gap:6px;overflow-x:auto;-webkit-overflow-scrolling:touch;border-bottom:1px solid var(--line);margin:6px 0 16px;padding-bottom:2px}
+  .set-tab{flex:0 0 auto;background:transparent;border:none;border-bottom:2px solid transparent;color:var(--muted);font-weight:600;font-size:13.5px;padding:8px 12px;cursor:pointer;white-space:nowrap;border-radius:8px 8px 0 0}
+  .set-tab:hover{color:var(--navy);background:#f3f5fa}
+  .set-tab.active{color:var(--orange-dk,#b94218);border-bottom-color:var(--orange,#e87722)}
+  .set-group{display:none}
+  .set-group.active{display:block}
+  .setfield{margin:0 0 14px}
+  .set-color-row{display:flex;align-items:center;gap:10px}
+  .set-color-row input[type=color]{width:44px;height:38px;border:1px solid var(--line);border-radius:8px;padding:2px;background:#fff;cursor:pointer;flex:none}
+  .set-img-row{display:flex;flex-direction:column;gap:8px;align-items:flex-start}
+  .set-img-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+  .set-img-preview{max-height:60px;max-width:170px;border:1px solid var(--line);border-radius:8px;display:none}
+  .switch{position:relative;display:inline-flex;align-items:center;gap:11px;cursor:pointer;user-select:none}
+  .switch input{position:absolute;opacity:0;width:0;height:0}
+  .switch .track{width:46px;height:26px;background:#cdd6e4;border-radius:20px;transition:background .15s;flex:none;position:relative;display:inline-block}
+  .switch .track::after{content:"";position:absolute;top:3px;left:3px;width:20px;height:20px;background:#fff;border-radius:50%;transition:transform .15s;box-shadow:0 1px 3px rgba(0,0,0,.25)}
+  .switch input:checked + .track{background:var(--orange,#e87722)}
+  .switch input:checked + .track::after{transform:translateX(20px)}
+  .switch .switch-lbl{font-size:13.5px;color:var(--ink)}
 </style>
 </head>
 <body>
@@ -501,18 +520,48 @@ function buildNav(){
 
 /* ====================== SITE SETTINGS (feed days + homepage popup) ====================== */
 var SETTINGS_TAB='Settings';
-var SETTINGS_FIELDS=[
-  {sec:'Feed hide-windows'},
-  {key:'story_days',label:'Stories — hide from the feed after (days)',type:'number',def:'30'},
-  {key:'mazal_days',label:'Mazal Tov — hide after (days)',type:'number',def:'14'},
-  {key:'passing_days',label:'Passings — hide after (days)',type:'number',def:'14'},
-  {sec:'Homepage popup'},
-  {key:'popup_on',label:'Show the popup on the homepage?',type:'select',options:['no','yes'],def:'no'},
-  {key:'popup_title',label:'Title',type:'text',def:''},
-  {key:'popup_message',label:'Message',type:'textarea',def:''},
-  {key:'popup_button_text',label:'Button text (optional)',type:'text',def:''},
-  {key:'popup_button_link',label:'Button link / URL (optional)',type:'text',def:''},
-  {key:'popup_image',label:'Image URL (optional)',type:'text',def:''}
+var SETTINGS_CATS=[
+  {id:'feed',label:'Feed',fields:[
+    {key:'story_days',label:'Stories — hide from feed after (days)',type:'number',def:'30'},
+    {key:'mazal_days',label:'Mazal Tov — hide after (days)',type:'number',def:'14'},
+    {key:'passing_days',label:'Passings — hide after (days)',type:'number',def:'14'}
+  ]},
+  {id:'popup',label:'Popup',fields:[
+    {key:'popup_on',label:'Show popup on the homepage?',type:'toggle',def:'no'},
+    {key:'popup_title',label:'Title',type:'text',def:''},
+    {key:'popup_message',label:'Message',type:'textarea',def:''},
+    {key:'popup_button_text',label:'Button text (optional)',type:'text',def:''},
+    {key:'popup_button_link',label:'Button link / URL (optional)',type:'text',def:''},
+    {key:'popup_image',label:'Image (optional)',type:'image',def:''},
+    {key:'popup_start',label:'Auto-show starting on (optional)',type:'date',def:''},
+    {key:'popup_end',label:'Auto-hide after (optional)',type:'date',def:''}
+  ]},
+  {id:'announce',label:'Announcement',fields:[
+    {key:'announce_on',label:'Show announcement bar?',type:'toggle',def:'no'},
+    {key:'announce_text',label:'Banner text',type:'text',def:''},
+    {key:'announce_link',label:'Link / URL (optional)',type:'text',def:''},
+    {key:'announce_color',label:'Bar color',type:'select',options:['navy','rust','gold','green','red'],def:'navy'}
+  ]},
+  {id:'look',label:'Look & Feel',fields:[
+    {key:'color_primary',label:'Primary color (navy)',type:'color',def:'#143D75'},
+    {key:'color_accent',label:'Accent color (rust)',type:'color',def:'#B94218'},
+    {key:'color_highlight',label:'Highlight color',type:'color',def:'#C9933A'},
+    {key:'logo_url',label:'Header logo',type:'image',def:''},
+    {key:'site_font',label:'Body font',type:'select',options:['Default','Inter','Source Serif 4','Georgia','System sans-serif'],def:'Default'},
+    {key:'corner_style',label:'Corners',type:'select',options:['rounded','square'],def:'rounded'}
+  ]},
+  {id:'links',label:'Links',fields:[
+    {key:'whatsapp_link',label:'WhatsApp invite link',type:'text',def:''},
+    {key:'donate_on',label:'Show donate button?',type:'toggle',def:'no'},
+    {key:'donate_label',label:'Donate button label',type:'text',def:'Donate'},
+    {key:'donate_link',label:'Donate link / URL',type:'text',def:''},
+    {key:'facebook_url',label:'Facebook URL',type:'text',def:''},
+    {key:'instagram_url',label:'Instagram URL',type:'text',def:''}
+  ]},
+  {id:'general',label:'General',fields:[
+    {key:'submissions_paused',label:'Pause new submissions?',type:'toggle',def:'no'},
+    {key:'submissions_message',label:'Message shown when paused',type:'text',def:''}
+  ]}
 ];
 function openSettings(){
   S.current='__settings__';
@@ -533,38 +582,104 @@ function openSettings(){
     w.appendChild(n);c.appendChild(w);
   });
 }
+function flattenSettings(){var out=[];SETTINGS_CATS.forEach(function(cat){cat.fields.forEach(function(f){out.push(f);});});return out;}
+function setSettingsTab(id){
+  document.querySelectorAll('#content .set-tab').forEach(function(t){t.classList.toggle('active',t.getAttribute('data-cat')===id);});
+  document.querySelectorAll('#content .set-group').forEach(function(g){g.classList.toggle('active',g.getAttribute('data-cat')===id);});
+}
+function uploadSettingImage(key,file){
+  var f=file.files&&file.files[0]; if(!f)return;
+  if(f.size>10*1024*1024){toast('Image is larger than 10MB.',true);return;}
+  var url=$('set-'+key), prev=$('setimg-'+key);
+  var name=(cleanName(f.name)||('img-'+Date.now()))+'';
+  var rd=new FileReader();
+  rd.onload=function(){
+    var b64=((''+rd.result).split(',')[1])||'';
+    toast('Uploading…');
+    api('uploadImage',{folder:'images/site',name:name,content:b64}).then(function(res){
+      if(res&&res.ok&&res.url){ if(url)url.value=res.url; if(prev){prev.src=res.url;prev.style.display='block';} toast('Uploaded ✓'); }
+      else toast((res&&res.error)||'Upload failed.',true);
+    }).catch(function(){ toast('Could not reach the backend.',true); });
+  };
+  rd.readAsDataURL(f);
+}
+function buildSettingField(f,cur){
+  var box=el('div','setfield');
+  var lb=el('label',null,f.label); lb.setAttribute('for','set-'+f.key); box.appendChild(lb);
+  if(f.type==='textarea'){
+    var ta=el('textarea','field'); ta.value=cur; ta.rows=4; ta.id='set-'+f.key; box.appendChild(ta);
+  } else if(f.type==='select'){
+    var sel=el('select','field'); (f.options||[]).forEach(function(o){var op=el('option',null,o);op.value=o;if(String(o).toLowerCase()===String(cur).toLowerCase())op.selected=true;sel.appendChild(op);}); sel.id='set-'+f.key; box.appendChild(sel);
+  } else if(f.type==='toggle'){
+    var sw=el('label','switch');
+    var cb=el('input'); cb.type='checkbox'; cb.id='set-'+f.key;
+    var lc=String(cur).toLowerCase(); if(lc==='yes'||lc==='true'||lc==='1')cb.checked=true;
+    var track=el('span','track');
+    var sl=el('span','switch-lbl','On / Off');
+    sw.appendChild(cb); sw.appendChild(track); sw.appendChild(sl); box.appendChild(sw);
+  } else if(f.type==='color'){
+    var row=el('div','set-color-row');
+    var pick=el('input'); pick.type='color';
+    var hex=el('input','field'); hex.type='text'; hex.value=cur; hex.placeholder=f.def||'#000000'; hex.id='set-'+f.key;
+    try{ var hv=(cur||f.def||'').trim(); if(/^#?[0-9a-fA-F]{6}$/.test(hv.replace('#','')))pick.value=(hv.charAt(0)==='#'?hv:'#'+hv); }catch(e){}
+    pick.oninput=function(){ hex.value=pick.value; };
+    hex.oninput=function(){ if(/^#[0-9a-fA-F]{6}$/.test(hex.value))pick.value=hex.value; };
+    row.appendChild(pick); row.appendChild(hex); box.appendChild(row);
+  } else if(f.type==='image'){
+    var ir=el('div','set-img-row');
+    var prev=el('img','set-img-preview'); prev.id='setimg-'+f.key; prev.alt=''; if(cur){prev.src=cur;prev.style.display='block';}
+    var turl=el('input','field'); turl.type='text'; turl.value=cur; turl.placeholder='Paste an image URL, or upload →'; turl.id='set-'+f.key;
+    turl.oninput=function(){ if(turl.value){prev.src=turl.value;prev.style.display='block';}else prev.style.display='none'; };
+    var actions=el('div','set-img-actions');
+    if(S.mode==='full'){
+      var file=el('input'); file.type='file'; file.accept='image/*'; file.style.display='none'; file.id='setfile-'+f.key;
+      var up=el('button','btn ghost sm','Upload'); up.type='button'; up.onclick=function(){file.click();};
+      file.onchange=function(){ uploadSettingImage(f.key,file); };
+      actions.appendChild(up); actions.appendChild(file);
+    }
+    ir.appendChild(prev); ir.appendChild(turl); ir.appendChild(actions); box.appendChild(ir);
+  } else {
+    var inp=el('input','field'); inp.type=(f.type==='number')?'number':(f.type==='date'?'date':'text'); inp.value=cur; inp.id='set-'+f.key; box.appendChild(inp);
+  }
+  return box;
+}
 function renderSettings(map){
   S.settingsMap=map;
-  var c=$('content');c.innerHTML='';
+  var c=$('content'); c.innerHTML='';
   var w=el('div','setwrap');
   var intro=el('div','setnote');
-  intro.innerHTML='These control your live homepage. <b>Hide-windows</b> set how many days Stories, Mazal Tovs and Passings stay in the feed before they hide (Events always hide once their date passes). The <b>popup</b> shows on the homepage when On — it appears once per visit (it won\u2019t repeat as they move around the site, and shows again when they return or when you change the title or message).';
+  intro.innerHTML='Pick a category, then edit its settings. One <b>Save</b> stores everything. <b>Feed</b> windows and the <b>Popup</b> are live on your homepage now; the other sections become active once your public pages are wired to read them.';
   w.appendChild(intro);
-  if(S.mode!=='full'){var ro=el('div','setnote');ro.textContent='View-only mode — log in with your password to make changes.';w.appendChild(ro);}
-  SETTINGS_FIELDS.forEach(function(f){
-    if(f.sec){w.appendChild(el('div','setsec',f.sec));return;}
-    var lb=el('label',null,f.label);lb.setAttribute('for','set-'+f.key);w.appendChild(lb);
-    var cur=(map[f.key]&&map[f.key].value!=null)?map[f.key].value:(f.def||'');
-    var inp;
-    if(f.type==='textarea'){inp=el('textarea','field');inp.value=cur;inp.rows=4;}
-    else if(f.type==='select'){inp=el('select','field');(f.options||[]).forEach(function(o){var op=el('option',null,o);op.value=o;if(String(o).toLowerCase()===String(cur).toLowerCase())op.selected=true;inp.appendChild(op);});}
-    else{inp=el('input','field');inp.type=(f.type==='number')?'number':'text';inp.value=cur;}
-    inp.id='set-'+f.key;w.appendChild(inp);
+  if(S.mode!=='full'){ var ro=el('div','setnote'); ro.textContent='View-only mode — log in with your password to make changes.'; w.appendChild(ro); }
+  var tabs=el('div','set-tabs');
+  var groups=el('div','set-groups');
+  SETTINGS_CATS.forEach(function(cat,ci){
+    var tab=el('button','set-tab'+(ci===0?' active':''),cat.label); tab.setAttribute('data-cat',cat.id);
+    tab.onclick=(function(id){return function(){setSettingsTab(id);};})(cat.id);
+    tabs.appendChild(tab);
+    var grp=el('div','set-group'+(ci===0?' active':'')); grp.setAttribute('data-cat',cat.id);
+    cat.fields.forEach(function(f){
+      var cur=(map[f.key]&&map[f.key].value!=null)?map[f.key].value:(f.def||'');
+      grp.appendChild(buildSettingField(f,cur));
+    });
+    groups.appendChild(grp);
   });
+  w.appendChild(tabs); w.appendChild(groups);
   if(S.mode==='full'){
     var bar=el('div','setbar');
-    var save=el('button','btn','Save settings');save.id='setSave';save.onclick=saveSettings;
-    bar.appendChild(save);w.appendChild(bar);
+    var save=el('button','btn','Save settings'); save.id='setSave'; save.onclick=saveSettings;
+    bar.appendChild(save); w.appendChild(bar);
   }
   c.appendChild(w);
 }
 function saveSettings(){
-  var btn=$('setSave');if(btn){btn.disabled=true;btn.textContent='Saving…';}
-  var map=S.settingsMap||{};var calls=[];
-  SETTINGS_FIELDS.forEach(function(f){
-    if(f.sec)return;
-    var inp=$('set-'+f.key);if(!inp)return;
-    var val=(inp.value!=null?(''+inp.value):'').trim();
+  var btn=$('setSave'); if(btn){btn.disabled=true;btn.textContent='Saving…';}
+  var map=S.settingsMap||{}; var calls=[];
+  flattenSettings().forEach(function(f){
+    var inp=$('set-'+f.key); if(!inp)return;
+    var val;
+    if(f.type==='toggle')val=inp.checked?'yes':'no';
+    else val=(inp.value!=null?(''+inp.value):'').trim();
     var ex=map[f.key];
     if(ex&&ex._row)calls.push(api('update',{sheet:SETTINGS_TAB,row:ex._row,data:{Value:val}}));
     else calls.push(api('create',{sheet:SETTINGS_TAB,data:{Key:f.key,Value:val}}));
@@ -573,8 +688,8 @@ function saveSettings(){
     if(btn){btn.disabled=false;btn.textContent='Save settings';}
     var bad=ress.find(function(r){return !r||!r.ok;});
     if(bad){toast((bad&&bad.error)||'Some settings did not save.',true);return;}
-    toast('Settings saved ✓');openSettings();
-  }).catch(function(){if(btn){btn.disabled=false;btn.textContent='Save settings';}toast('Could not reach the backend.',true);});
+    toast('Settings saved ✓'); openSettings();
+  }).catch(function(){ if(btn){btn.disabled=false;btn.textContent='Save settings';} toast('Could not reach the backend.',true); });
 }
 
 /* ====================== GLOBAL SEARCH ====================== */
