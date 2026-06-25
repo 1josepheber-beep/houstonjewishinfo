@@ -1048,6 +1048,17 @@
   nav.nav-bar { display: none !important; }
 }
 </style>
+<style id="sticky-nav-css">
+/* Slim sticky nav — shows on mobile once the masthead scrolls off, tucks away at the top */
+.sticky-nav{position:fixed;top:0;left:0;right:0;z-index:900;display:none;align-items:center;justify-content:space-between;gap:12px;padding:8px 14px;background:#fff;border-bottom:2px solid var(--gold);box-shadow:0 3px 12px rgba(0,0,0,.12);transform:translateY(-115%);transition:transform .26s ease}
+.sticky-nav.show{transform:translateY(0)}
+.sticky-nav .sn-logo{display:flex;align-items:center;gap:9px;text-decoration:none;min-width:0}
+.sticky-nav .sn-logo img{height:34px;width:auto;flex:none}
+.sticky-nav .sn-logo span{font-family:'Playfair Display',Georgia,serif;font-weight:700;color:var(--navy);font-size:16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sticky-nav .sn-burger{display:flex;flex-direction:column;gap:5px;background:none;border:none;cursor:pointer;padding:8px;flex:none}
+.sticky-nav .sn-burger span{display:block;width:26px;height:3px;background:var(--navy);border-radius:2px}
+@media (max-width:768px){.sticky-nav{display:flex}}
+</style>
 </head>
 <body style="-webkit-tap-highlight-color:transparent;">
 <div class="bsd-mark" aria-hidden="true"><span>בס״ד</span></div>
@@ -1107,6 +1118,11 @@
     </div>
   </div>
 </header>
+<!-- Slim sticky nav (mobile) -->
+<div id="stickyNav" class="sticky-nav" aria-hidden="true">
+  <a href="/" class="sn-logo" title="Home"><img src="/images/logo.svg" alt="" onerror="this.onerror=null;this.src='/images/logo.png';"><span>Houston Jewish Info</span></a>
+  <button type="button" class="sn-burger" aria-label="Open menu" onclick="openMobileMenu()"><span></span><span></span><span></span></button>
+</div>
 
 <!-- PAGE HERO -->
 <div class="page-hero">
@@ -1624,6 +1640,22 @@ window.addEventListener('resize',function(){var m=document.getElementById('hji-j
     Array.prototype.forEach.call(nodes,function(n){ if(n&&n.tagName==='INPUT') clearable(n); });
   }
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',init); else init();
+})();
+</script>
+<script>
+/* Slim sticky nav: reveal once the full header scrolls out of view */
+(function(){
+  var sn=document.getElementById('stickyNav'), hdr=document.querySelector('header');
+  if(!sn||!hdr)return;
+  var ticking=false;
+  function update(){ ticking=false;
+    var gone = hdr.getBoundingClientRect().bottom < 6;
+    sn.classList.toggle('show', gone);
+    sn.setAttribute('aria-hidden', gone ? 'false' : 'true');
+  }
+  window.addEventListener('scroll', function(){ if(!ticking){ ticking=true; requestAnimationFrame(update); } }, {passive:true});
+  window.addEventListener('resize', update, {passive:true});
+  update();
 })();
 </script>
 </body>
