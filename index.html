@@ -2025,18 +2025,8 @@
         </div>
       </div>
 
-      <!-- AD SLOT 1 — managed via Ads sheet | placement="right-sidebar-1" | default below = Brian Gavin Diamonds -->
-      <div class="section-head">Advertisement</div>
-      <div class="ad-managed" data-ad-slot="right-sidebar-1"></div>
-
-      <!-- AD SLOT 2 — managed via Ads sheet | placement="right-sidebar-2" | default below = Z Biltong -->
-      <div class="ad-managed" data-ad-slot="right-sidebar-2"></div>
-
-      <!-- AD SLOT 3 -->
-      <div class="ad-managed" data-ad-slot="right-sidebar-3"></div>
-
-      <!-- AD SLOT 4 -->
-      <div class="ad-managed" data-ad-slot="right-sidebar-4"></div>
+      <!-- Sidebar ads — UNLIMITED. In the Ads sheet set placement to right-sidebar-1, right-sidebar-2, right-sidebar-3 … (add as many as you like). They render here in number order; empty/inactive ones simply don't appear. -->
+      <div class="ad-managed" data-ad-area="right-sidebar"></div>
 
     </aside>
 
@@ -2578,14 +2568,13 @@
       var html='';
       if(!slice.length){html='<div class="cf-empty">Nothing here right now \u2014 check back soon.</div>';}
       else if(page===1){
-        html+=adSlot(MOBILE_AD_SLOTS[0]);
-        var mob=1, mz=1;
+        html+=adSlot('mobile-1');
+        var mob=2, mz=2;
         slice.forEach(function(x){
           html+=cfCard(x);
-          if(filter==='mazal'&&mz<MAZAL_AD_SLOTS.length){html+=mazalSlot(MAZAL_AD_SLOTS[mz]);mz++;}
-          if(mob<MOBILE_AD_SLOTS.length){html+=adSlot(MOBILE_AD_SLOTS[mob]);mob++;}
+          if(filter==='mazal'){html+=mazalSlot('mazaltov-'+mz);mz++;}
+          html+=adSlot('mobile-'+mob);mob++;
         });
-        while(mob<MOBILE_AD_SLOTS.length){html+=adSlot(MOBILE_AD_SLOTS[mob]);mob++;}
       }else{slice.forEach(function(x){html+=cfCard(x);});}
       document.getElementById('cf-list').innerHTML=html;
       var pg=document.getElementById('cf-pager');
@@ -2852,32 +2841,47 @@
       .then(function(text) {
         var json = JSON.parse(text.substring(47, text.length - 2));
         var cols = json.table.cols.map(function(c) { return (c.label || '').toLowerCase().trim(); });
-        var slots = {}; // placement -> { active: rowData | null }
+        // One reusable ad box (image + link + click tracking)
+        function adBox(d, placementName){
+          var alt = String(d.advertiser || 'Advertisement').replace(/"/g, '&quot;');
+          var trackName = String(d.advertiser || 'Advertisement').replace(/'/g, "\\'");
+          var onclk = "try{if(typeof gtag==='function'){gtag('event','ad_click',{ad_name:'" + trackName + "',ad_placement:'" + placementName + "'});}}catch(e){}";
+          return '<a href="' + (d.linkurl || '#') + '" target="_blank" rel="noopener" aria-label="' + alt + '" ' +
+                 'data-ad-box="' + placementName + '" data-ad-name="' + alt + '" onclick="' + onclk + '" ' +
+                 'style="display:block;margin:0 0 16px;border:1px solid #c8a882;border-radius:6px;overflow:hidden;text-decoration:none;">' +
+                 '<img src="' + adImg(d.imageurl) + '" alt="' + alt + '" style="width:100%;height:auto;display:block;"></a>';
+        }
+        // Group active ads two ways: by exact placement (for fixed/interleaved slots),
+        // and by "area" = the placement with a trailing -number removed (for unlimited area containers).
+        var byPlacement = {}, byArea = {};
         json.table.rows.forEach(function(row) {
           var d = {};
           cols.forEach(function(col, i) { d[col] = row.c[i] ? (row.c[i].v || '') : ''; });
-          var slot = (d.placement || '').toLowerCase().trim();
-          if (!slot) return;
-          if (!slots[slot]) slots[slot] = { active: null };
+          var placement = (d.placement || '').toLowerCase().trim();
+          if (!placement) return;
           var isActive = (d.status || '').toLowerCase().trim() === 'active';
-          if (isActive && d.imageurl && !slots[slot].active) slots[slot].active = d;
+          if (!isActive || !d.imageurl) return;
+          if (!byPlacement[placement]) byPlacement[placement] = d;
+          var m = placement.match(/^(.*?)-(\d+)$/);
+          var area = m ? m[1] : placement;
+          var order = m ? parseInt(m[2], 10) : 1e9;
+          (byArea[area] = byArea[area] || []).push({ d: d, order: order, placement: placement });
         });
-                document.querySelectorAll('[data-ad-slot]').forEach(function(el) {
-          var info = slots[el.getAttribute('data-ad-slot').toLowerCase().trim()];
-          if (info && info.active) {   // active row -> show the ad (border + spacing injected here)
-            var d = info.active;
-            var alt = String(d.advertiser || 'Advertisement').replace(/"/g, '&quot;');
-            var slotName = el.getAttribute('data-ad-slot');
-            var trackName = String(d.advertiser || 'Advertisement').replace(/'/g, "\\'");
-            var onclk = "try{if(typeof gtag==='function'){gtag('event','ad_click',{ad_name:'" + trackName + "',ad_placement:'" + slotName + "'});}}catch(e){}";
-            el.innerHTML = '<a href="' + (d.linkurl || '#') + '" target="_blank" rel="noopener" aria-label="' + alt + '" ' +
-                           'onclick="' + onclk + '" ' +
-                           'style="display:block;margin:0 0 16px;border:1px solid #c8a882;border-radius:6px;overflow:hidden;text-decoration:none;">' +
-                           '<img src="' + adImg(d.imageurl) + '" alt="' + alt + '" style="width:100%;height:auto;display:block;"></a>';
-            trackAdView(el, String(d.advertiser || 'Advertisement'), slotName);
-          } else {                     // no active ad for this placement -> stays empty (collapses)
-            el.innerHTML = '';
-          }
+        Object.keys(byArea).forEach(function(a){ byArea[a].sort(function(x,y){ return x.order - y.order; }); });
+        // AREA CONTAINERS — render EVERY ad assigned to the area, in number order (unlimited)
+        document.querySelectorAll('[data-ad-area]').forEach(function(cont) {
+          var area = cont.getAttribute('data-ad-area').toLowerCase().trim();
+          var list = byArea[area] || [];
+          cont.innerHTML = list.map(function(it){ return adBox(it.d, it.placement); }).join('');
+        });
+        // FIXED / INTERLEAVED SLOTS — one ad per exact placement (collapses if none)
+        document.querySelectorAll('[data-ad-slot]').forEach(function(el) {
+          var d = byPlacement[el.getAttribute('data-ad-slot').toLowerCase().trim()];
+          el.innerHTML = d ? adBox(d, el.getAttribute('data-ad-slot')) : '';
+        });
+        // ad_view tracking for every rendered ad box
+        document.querySelectorAll('[data-ad-box]').forEach(function(b){
+          trackAdView(b, b.getAttribute('data-ad-name'), b.getAttribute('data-ad-box'));
         });
       })
       .catch(function() { /* on any error, keep the built-in default ads */ });

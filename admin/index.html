@@ -651,7 +651,7 @@ function renderSettings(map){
   var c=$('content'); c.innerHTML='';
   var w=el('div','setwrap');
   var intro=el('div','setnote');
-  intro.innerHTML='Pick a category, then edit its settings. One <b>Save</b> stores everything. <b>Feed</b> windows and the <b>Popup</b> are live on your homepage now; the other sections become active once your public pages are wired to read them.';
+  intro.innerHTML='Pick a category and edit its settings. One <b>Save</b> stores everything.';
   w.appendChild(intro);
   if(S.mode!=='full'){ var ro=el('div','setnote'); ro.textContent='View-only mode — log in with your password to make changes.'; w.appendChild(ro); }
   var tabs=el('div','set-tabs');
