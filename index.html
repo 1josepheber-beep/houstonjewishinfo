@@ -2683,15 +2683,15 @@
     function el(id){ return document.getElementById(id); }
 
     var url='https://api.open-meteo.com/v1/forecast?latitude=29.7604&longitude=-95.3698'
-      +'&current=temperature_2m,apparent_temperature,weathercode'
-      +'&daily=weathercode,temperature_2m_max,temperature_2m_min'
+      +'&current=temperature_2m,apparent_temperature,weather_code'
+      +'&daily=weather_code,temperature_2m_max,temperature_2m_min'
       +'&temperature_unit=fahrenheit&timezone=America%2FChicago&forecast_days=7';
 
     function renderWeather(data){
       var cur=data.current, daily=data.daily;
       var temp=Math.round(cur.temperature_2m);
       var feels=Math.round(cur.apparent_temperature);
-      var info=look(cur.weathercode);
+      var info=look(cur.weather_code!=null?cur.weather_code:cur.weathercode);
       var hi=Math.round(daily.temperature_2m_max[0]);
       var lo=Math.round(daily.temperature_2m_min[0]);
 
@@ -2718,7 +2718,7 @@
       for(var i=0;i<times.length;i++){
         var d=new Date(times[i]+'T12:00:00');
         if(d.getDay()===6){ // Saturday
-          var sInfo=look(daily.weathercode[i]);
+          var sInfo=look((daily.weather_code||daily.weathercode||[])[i]);
           var sHi=Math.round(daily.temperature_2m_max[i]);
           var sLo=Math.round(daily.temperature_2m_min[i]);
           el('weather-shabbos-val').textContent=sInfo[1]+'  '+sHi+'° / '+sLo+'°';
