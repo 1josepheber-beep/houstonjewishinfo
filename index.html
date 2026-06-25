@@ -536,11 +536,11 @@
   }
   .weather-main {
     display: flex;
-    align-items: center;
+    align-items: flex-end;
     justify-content: center;
-    gap: 4px;
+    gap: 5px;
   }
-  .weather-icon { font-size: 42px; line-height: 1; flex-shrink: 0; }
+  .weather-icon { display: inline-flex; align-items: flex-end; line-height: 0; flex-shrink: 0; }
   .weather-temp {
     font-family: 'Playfair Display', serif;
     font-size: 42px;
@@ -583,7 +583,7 @@
     font-size: 9px; letter-spacing: .1em; text-transform: uppercase;
     opacity: .7;
   }
-  .weather-shabbos-val { font-size: 12px; font-weight: 700; }
+  .weather-shabbos-val { font-size: 12px; font-weight: 700; display: inline-flex; align-items: center; gap: 4px; }
 
   /* Mobile weather bar — hidden on desktop, shown via media query on mobile */
   .mobile-weather {
@@ -2673,14 +2673,33 @@
     // Map NWS free-text conditions to an icon + the existing weather-box class
     function look(txt){
       var t=(''+(txt||'')).toLowerCase();
-      if(/thunder|tstorm|squall/.test(t))                         return ['\u26c8\ufe0f','is-storm'];
-      if(/snow|sleet|flurr|ice|icy|wintry|blizzard/.test(t))      return ['\u2744\ufe0f','is-snow'];
-      if(/rain|shower|drizzle|sprinkle/.test(t))                  return ['\ud83c\udf27\ufe0f','is-rain'];
-      if(/fog|haze|mist|smoke/.test(t))                           return ['\ud83c\udf2b\ufe0f','is-cloud'];
-      if(/partly sunny|mostly sunny|partly cloudy|few clouds|scattered clouds/.test(t)) return ['\u26c5','is-cloud'];
-      if(/overcast|mostly cloudy|cloudy/.test(t))                 return ['\u2601\ufe0f','is-cloud'];
-      if(/clear|sunny|fair/.test(t))                              return ['\u2600\ufe0f','is-clear'];
-      return ['\ud83c\udf21\ufe0f','is-cloud'];
+      if(/thunder|tstorm|squall/.test(t))                         return ['storm','is-storm'];
+      if(/snow|sleet|flurr|ice|icy|wintry|blizzard/.test(t))      return ['snow','is-snow'];
+      if(/rain|shower|drizzle|sprinkle/.test(t))                  return ['rain','is-rain'];
+      if(/fog|haze|mist|smoke/.test(t))                           return ['fog','is-cloud'];
+      if(/partly sunny|mostly sunny|partly cloudy|few clouds|scattered clouds/.test(t)) return ['partly','is-cloud'];
+      if(/overcast|mostly cloudy|cloudy/.test(t))                 return ['cloud','is-cloud'];
+      if(/clear|sunny|fair/.test(t))                              return ['clear','is-clear'];
+      return ['cloud','is-cloud'];
+    }
+    // Crisp inline SVG weather icons — sized to the exact pixel, identical on every device
+    function svgIcon(key, px){
+      px = px || 38;
+      function cloud(c1x,c1y,r1,c2x,c2y,r2,rx,ry,rw,rh){
+        return '<g fill="#EAF0F7"><circle cx="'+c1x+'" cy="'+c1y+'" r="'+r1+'"/><circle cx="'+c2x+'" cy="'+c2y+'" r="'+r2+'"/><rect x="'+rx+'" y="'+ry+'" width="'+rw+'" height="'+rh+'" rx="'+(rh/2)+'"/></g>';
+      }
+      var sun='<circle cx="12" cy="12" r="5" fill="#FFD23F"/><g stroke="#FFB020" stroke-width="2" stroke-linecap="round"><line x1="12" y1="1.5" x2="12" y2="3.7"/><line x1="12" y1="20.3" x2="12" y2="22.5"/><line x1="1.5" y1="12" x2="3.7" y2="12"/><line x1="20.3" y1="12" x2="22.5" y2="12"/><line x1="4.3" y1="4.3" x2="5.8" y2="5.8"/><line x1="18.2" y1="18.2" x2="19.7" y2="19.7"/><line x1="4.3" y1="19.7" x2="5.8" y2="18.2"/><line x1="18.2" y1="5.8" x2="19.7" y2="4.3"/></g>';
+      var inner;
+      switch(key){
+        case 'clear':  inner=sun; break;
+        case 'partly': inner='<circle cx="8" cy="8" r="3.2" fill="#FFD23F"/><g stroke="#FFB020" stroke-width="1.5" stroke-linecap="round"><line x1="8" y1="2.4" x2="8" y2="3.6"/><line x1="2.4" y1="8" x2="3.6" y2="8"/><line x1="4.1" y1="4.1" x2="5" y2="5"/><line x1="11.9" y1="4.1" x2="11" y2="5"/></g>'+cloud(11,15,3.6,16,14.5,4,9,15,10.5,5); break;
+        case 'rain':   inner=cloud(9,11,3.6,14.5,10.5,4,6.5,11,11,5)+'<g stroke="#5BB8F5" stroke-width="2" stroke-linecap="round"><line x1="9" y1="18" x2="8" y2="21"/><line x1="12.5" y1="18" x2="11.5" y2="21"/><line x1="16" y1="18" x2="15" y2="21"/></g>'; break;
+        case 'snow':   inner=cloud(9,11,3.6,14.5,10.5,4,6.5,11,11,5)+'<g fill="#FFFFFF"><circle cx="9" cy="19.3" r="1.1"/><circle cx="12.5" cy="20.4" r="1.1"/><circle cx="16" cy="19.3" r="1.1"/></g>'; break;
+        case 'storm':  inner=cloud(9,11,3.6,14.5,10.5,4,6.5,11,11,5)+'<path d="M12.7 16.3l-3.4 4.5h2.5l-1.1 3.2 4-4.7h-2.4z" fill="#FFC400"/>'; break;
+        case 'fog':    inner=cloud(9,10,3.3,14.5,9.5,3.7,6.5,10,11,4.5)+'<g stroke="#CBD7E6" stroke-width="2" stroke-linecap="round"><line x1="6" y1="18" x2="18" y2="18"/><line x1="8" y1="21" x2="20" y2="21"/></g>'; break;
+        default:       inner=cloud(9,13,4,15,12.5,4.5,6,13,12,5.5);
+      }
+      return '<svg viewBox="0 0 24 24" width="'+px+'" height="'+px+'" style="display:block">'+inner+'</svg>';
     }
     // Plain header-less fetch keeps this a "simple" CORS request (weather.gov rejects custom headers)
     function getJSON(u){ return fetch(u).then(function(r){ if(!r.ok) throw 0; return r.json(); }); }
@@ -2688,7 +2707,7 @@
     function paint(temp, feels, desc, info, hi, lo){
       var t = (temp!=null) ? Math.round(temp) : null;
       if(el('weather-temp')) el('weather-temp').innerHTML = (t!=null?t:'--')+'<span class="deg">\u00b0</span>';
-      if(el('weather-icon')) el('weather-icon').textContent = info[0];
+      if(el('weather-icon')) el('weather-icon').innerHTML = svgIcon(info[0], 40);
       if(el('weather-desc')) el('weather-desc').textContent = desc||'';
       var meta='';
       if(feels!=null) meta='Feels '+Math.round(feels)+'\u00b0';
@@ -2698,7 +2717,7 @@
       if(el('weather-box'))  el('weather-box').className = 'weather-box '+info[1];
       if(el('mw-temp')){
         el('mw-temp').textContent = (t!=null?t:'--')+'\u00b0';
-        el('mw-icon').textContent = info[0];
+        el('mw-icon').innerHTML = svgIcon(info[0], 26);
         el('mw-desc').textContent = desc||'';
         el('mw-feels').textContent = (feels!=null)?('Feels '+Math.round(feels)+'\u00b0'):'';
         el('mw-hilo').textContent = (hi!=null?'H '+Math.round(hi)+'\u00b0':'')+(lo!=null?'  L '+Math.round(lo)+'\u00b0':'');
@@ -2713,9 +2732,10 @@
           var sInfo=look(periods[j].shortForecast);
           var sHi=periods[j].temperature, sLo=null;
           for(var k=j;k<periods.length;k++){ if(!periods[k].isDaytime && /saturday/i.test(periods[k].name||'')){ sLo=periods[k].temperature; break; } }
-          var val=sInfo[0]+'  '+sHi+'\u00b0'+(sLo!=null?(' / '+sLo+'\u00b0'):'');
-          if(el('weather-shabbos-val')){ el('weather-shabbos-val').textContent=val; el('weather-shabbos').style.display='flex'; }
-          if(el('mw-shabbos')){ el('mw-shabbos').textContent=val; if(el('mw-shabbos-row')) el('mw-shabbos-row').style.display='flex'; }
+          var tmp=sHi+'\u00b0'+(sLo!=null?(' / '+sLo+'\u00b0'):'');
+          var val=svgIcon(sInfo[0], 20)+'<span>'+tmp+'</span>';
+          if(el('weather-shabbos-val')){ el('weather-shabbos-val').innerHTML=val; el('weather-shabbos').style.display='flex'; }
+          if(el('mw-shabbos')){ el('mw-shabbos').innerHTML=val; if(el('mw-shabbos-row')) el('mw-shabbos-row').style.display='flex'; }
           return;
         }
       }
