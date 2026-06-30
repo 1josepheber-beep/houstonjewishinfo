@@ -1070,6 +1070,9 @@
     text-decoration: none; transition: background .15s; white-space: nowrap;
   }
   .gem-website-btn:hover { background: #095c5c; color: #fff; }
+  .hechsher-tags{display:inline-flex;flex-wrap:wrap;align-items:center;gap:5px;margin:6px 0 2px}
+  .hechsher-sym{height:26px;width:auto;max-width:66px;object-fit:contain;border-radius:3px;background:#fff;border:1px solid var(--border);padding:1px}
+  .hechsher-txt{font-family:sans-serif;font-size:10px;font-weight:700;color:var(--muted);border:1px solid var(--border);border-radius:10px;padding:2px 7px}
   .biz-card {
     background: var(--white);
     border: 1px solid var(--border);
@@ -2555,6 +2558,42 @@ function getBadgeClass(badge) {
   return 'badge-friendly';
 }
 
+var HECHSHER_MAP=null;
+function hechsherImgUrl(v){v=String(v||'').trim();if(!v)return '';if(/^https?:\/\//i.test(v))return v;if(/^\//.test(v))return 'https://houstonjewishinfo.com'+v;return 'https://houstonjewishinfo.com/images/hechsher/'+v;}
+function loadHechsherLib(){
+  fetch('https://docs.google.com/spreadsheets/d/' + SHEET_ID + '/gviz/tq?tqx=out:json&headers=1&sheet=Hechsherim')
+    .then(function(r){return r.text();})
+    .then(function(text){
+      var json=JSON.parse(text.substring(47,text.length-2));
+      var cols=json.table.cols.map(function(cc){return (cc.label||'').toLowerCase().trim();});
+      var map={};
+      (json.table.rows||[]).forEach(function(row){
+        var o={}; cols.forEach(function(col,i){o[col]=row.c&&row.c[i]?(row.c[i].v||''):'';});
+        var name=String(o.name||'').trim(); if(!name)return;
+        map[name.toLowerCase()]={name:name,img:hechsherImgUrl(o.image),authority:String(o.authority||'').trim()};
+      });
+      HECHSHER_MAP=map; paintHechshers();
+    }).catch(function(){HECHSHER_MAP={};});
+}
+function hechsherInner(names){
+  return names.map(function(n){
+    var h=HECHSHER_MAP?HECHSHER_MAP[n.toLowerCase()]:null;
+    if(h&&h.img) return '<img class="hechsher-sym" src="'+h.img+'" alt="'+charEsc(h.name)+'" title="'+charEsc(h.authority||h.name)+'" loading="lazy">';
+    return '<span class="hechsher-txt">'+charEsc(n)+'</span>';
+  }).join('');
+}
+function hechsherTags(cell){
+  var names=String(cell||'').split(/\s*,\s*/).map(function(s){return s.trim();}).filter(Boolean);
+  if(!names.length) return '';
+  return '<span class="hechsher-tags" data-hechsher="'+charEsc(names.join(', '))+'">'+(HECHSHER_MAP?hechsherInner(names):'')+'</span>';
+}
+function paintHechshers(){
+  if(!HECHSHER_MAP)return;
+  document.querySelectorAll('.hechsher-tags[data-hechsher]').forEach(function(el){
+    var nm=String(el.getAttribute('data-hechsher')||'').split(/\s*,\s*/).map(function(s){return s.trim();}).filter(Boolean);
+    el.innerHTML=hechsherInner(nm);
+  });
+}
 function kashrutTag(v){
   var parts=String(v||'').split(/[,;/]+/).map(function(s){return s.trim();}).filter(Boolean);
   if(!parts.length) return '';
@@ -2586,7 +2625,7 @@ function buildBizCard(item) {
     var inner =
       '<img class="biz-premium-img" src="' + img + '" alt="' + item.name + ' business card" loading="lazy">' +
       '<div class="biz-premium-meta"><span class="biz-premium-name">' + item.name + '</span>' +
-      (cat ? '<span class="biz-premium-cat">' + cat + '</span>' : '') + '</div>';
+      (cat ? '<span class="biz-premium-cat">' + cat + '</span>' : '') + hechsherTags(item.hechsher) + '</div>';
     var card = website
       ? '<a class="biz-premium-link" href="' + website + '" target="_blank" rel="noopener">' + inner + '</a>'
       : inner;
@@ -2608,6 +2647,7 @@ function buildBizCard(item) {
     (item.phone ? '<div class="biz-detail">📞 ' + item.phone + '</div>' : '') +
     (item.email ? '<div class="biz-detail">📧 <a href="mailto:' + item.email + '" style="color:var(--gold);">' + item.email + '</a></div>' : '') +
     (item.description ? '<div class="biz-desc">' + item.description + '</div><button type="button" class="biz-read-more" style="display:none;">Read more ↓</button>' : '') +
+    hechsherTags(item.hechsher) +
     '<div class="biz-card-footer">' +
     '<span style="font-family:sans-serif;font-size:11px;color:var(--muted);">' + (item.hours||'') + '</span>' +
     (website ? '<a href="' + website + '" target="_blank" class="biz-website">Visit Website →</a>' : '') +
@@ -2754,6 +2794,7 @@ function preloadServiceCounts() {
     }).catch(function(e){console.error('Service preload error:',e);});
 }
 preloadServiceCounts();
+loadHechsherLib();
 
 /* Collapse any category text to a comparable key: lowercase, strip the
  * word "services", punctuation and spaces. So "Security", "security",
@@ -3014,6 +3055,7 @@ function showServiceProviders(type, bodyEl) {
     return '<div class="service-listing-item"' + (isLast ? ' style="border-radius:0 0 6px 6px;"' : '') + '>' +
       '<div>' +
       '<div class="sli-name">' + p.name + '</div>' +
+      hechsherTags(p.hechsher) +
       '<div class="sli-meta">' + (p.address||'') + (p.description ? ' · ' + p.description : '') + '</div>' +
       (p.email ? '<div class="sli-meta">📧 <a href="mailto:'+p.email+'" style="color:var(--gold);">'+p.email+'</a></div>' : '') +
       '</div>' +

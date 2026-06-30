@@ -788,6 +788,9 @@
   .nav-bar { margin-top: 0 !important; }
   /* Center masthead title — balance logo on left with invisible spacer on right */
   .masthead-inner::after { content: ''; width: 140px; flex-shrink: 0; }
+  .hechsher-tags{display:inline-flex;flex-wrap:wrap;align-items:center;gap:5px;margin:6px 0 2px}
+  .hechsher-sym{height:26px;width:auto;max-width:66px;object-fit:contain;border-radius:3px;background:#fff;border:1px solid #e2e6ec;padding:1px}
+  .hechsher-txt{font-family:sans-serif;font-size:10px;font-weight:700;color:#777;border:1px solid #e2e6ec;border-radius:10px;padding:2px 7px}
 </style>
 <style>
   /* ── SYNAGOGUE PAGE EXTRAS ── */
@@ -1452,6 +1455,32 @@
     return '<span class="ttd-tag" style="background:'+m[1]+';color:'+m[2]+';">'+m[0]+'</span>';
   }
   function kashrutTag(v){ return splitTags(v).map(oneKashrutTag).join(''); }
+  var HECHSHER_MAP=null;
+  function hechsherImgUrl(v){v=String(v||'').trim();if(!v)return '';if(/^https?:\/\//i.test(v))return v;if(/^\//.test(v))return 'https://houstonjewishinfo.com'+v;return 'https://houstonjewishinfo.com/images/hechsher/'+v;}
+  function loadHechsherLib(){
+    ttdRows('Hechsherim', function(rows){
+      var map={};
+      (rows||[]).forEach(function(d){ var name=String(d.name||'').trim(); if(!name)return; map[name.toLowerCase()]={name:name,img:hechsherImgUrl(d.image),authority:String(d.authority||'').trim()}; });
+      HECHSHER_MAP=map; paintHechshers();
+    });
+  }
+  function hechInner(names){
+    return names.map(function(n){
+      var h=HECHSHER_MAP?HECHSHER_MAP[n.toLowerCase()]:null;
+      if(h&&h.img) return '<img class="hechsher-sym" src="'+ttdAttr(h.img)+'" alt="'+ttdAttr(h.name)+'" title="'+ttdAttr(h.authority||h.name)+'" loading="lazy">';
+      return '<span class="hechsher-txt">'+ttdEsc(n)+'</span>';
+    }).join('');
+  }
+  function hechsherTags(cell){
+    var names=splitTags(cell); if(!names.length) return '';
+    return '<span class="hechsher-tags" data-hechsher="'+ttdAttr(names.join(', '))+'">'+(HECHSHER_MAP?hechInner(names):'')+'</span>';
+  }
+  function paintHechshers(){
+    if(!HECHSHER_MAP)return;
+    document.querySelectorAll('.hechsher-tags[data-hechsher]').forEach(function(el){
+      var nm=splitTags(el.getAttribute('data-hechsher')); el.innerHTML=hechInner(nm);
+    });
+  }
   function eatCard(d){
     var web=ttdWeb(d.website);
     return '<div class="ttd-card ttd-card-eat">'+
@@ -1460,6 +1489,7 @@
         '<div class="ttd-tagrow">'+(d.badge?'<span class="ttd-tag" style="background:#edf7ed;color:#1a5a1a;">'+ttdEsc(d.badge)+'</span>':'')+kashrutTag(d.kashrut)+'</div>'+
         '<div class="ttd-name">'+ttdEsc(d.name)+'</div>'+
         (d.description?'<div class="ttd-desc">'+ttdEsc(d.description)+'</div>':'')+
+        hechsherTags(d.hechsher)+
         (d.address?'<div class="ttd-detail">📍 '+ttdEsc(d.address)+'</div>':'')+
         (d.phone?'<div class="ttd-detail">📞 '+ttdEsc(d.phone)+'</div>':'')+
         (d.hours?'<div class="ttd-detail" style="color:#888;">🕐 '+ttdEsc(d.hours)+'</div>':'')+
@@ -1484,6 +1514,7 @@
     if(btn) btn.classList.add('active');
     renderEats();
   }
+  loadHechsherLib();
   ttdRows('KosherRestaurants', function(rows){
     var grid=document.getElementById('eat-grid');
     if(!rows){ grid.innerHTML='<div class="ttd-empty">Restaurants are taking a moment to load. Please refresh.</div>'; return; }
@@ -1516,6 +1547,7 @@
         '<div class="ttd-tagrow">'+catTag(d.category)+ioTag(d.indooroutdoor)+freeTag(d.free)+'</div>'+
         '<div class="ttd-name">'+ttdEsc(d.name)+'</div>'+
         (d.address?'<div class="ttd-detail">📍 '+ttdEsc(d.address)+'</div>':'')+
+        hechsherTags(d.hechsher)+
         (link?'<div class="ttd-footer">'+link+'</div>':'')+
       '</div>'+
       '</div>';

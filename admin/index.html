@@ -322,6 +322,9 @@ var STATUSY = ['Status','Approved','Free','Women'];
 // Each option is either a string (value=label) or [value,label].
 // An "Other (type my own)" choice is added automatically to every one of these.
 var FIELD_OPTIONS = {
+  'KosherRestaurants.Hechsher': { multi:true, dynamic:'hechsher' },
+  'Services.Hechsher':          { multi:true, dynamic:'hechsher' },
+  'Activities.Hechsher':        { multi:true, dynamic:'hechsher' },
   'Services.Category': { multi:true, options:[
     ['24hour','24 Hour Services'], ['legal','Attorney / Legal'],
     ['beauty','Beauty, Sheitels & Alterations'], ['books-gifts','Books & Gifts'],
@@ -453,6 +456,18 @@ function refreshCurrent(){
   else if(S.current){selectCollection(S.current,collLabel(S.current));}
   else {selectInitialCollection();}
 }
+function loadHechsherNames(){
+  var reader=(S.mode==='full')?api('list',{sheet:'Hechsherim'}):gvizRead('Hechsherim');
+  reader.then(function(res){
+    if(!res)return;
+    var headers=res.headers||[], rows=res.rows||[];
+    var nameCol=headers.find(function(x){return String(x).toLowerCase().trim()==='name';})||'Name';
+    var names=[];
+    rows.forEach(function(r){ var n=String(r[nameCol]||'').trim(); if(n&&names.indexOf(n)<0)names.push(n); });
+    names.sort(function(a,b){return String(a).localeCompare(String(b));});
+    S.hechsherNames=names;
+  }).catch(function(){});
+}
 function enterApp(){
   $('loginScreen').style.display='none';$('app').style.display='grid';
   var b=$('modeBadge');
@@ -462,6 +477,7 @@ function enterApp(){
   $('btnAdd').style.display=(S.mode==='full')?'':'none';
   buildNav();
   buildSearchIndex();
+  loadHechsherNames();
   if(S.mode==='full'){
     api('pending').then(function(res){
       if(res&&res.ok){S.pending=res;lastPendingTotal=res.total;updatePendingUI();}
@@ -1298,7 +1314,7 @@ function openForm(row){
     var val=row?(row[h]||''):'';var input;
     if(imgFieldKeys(h)){body.appendChild(buildImageField(h,val));return;}
     var fo=FIELD_OPTIONS[S.current+'.'+h];
-    if(fo){ body.appendChild(buildOptionField(h,normOpts(fo.options),!!fo.multi,val)); return; }
+    if(fo){ var foOpts=(fo.dynamic==='hechsher')?(S.hechsherNames||[]):fo.options; body.appendChild(buildOptionField(h,normOpts(foOpts),!!fo.multi,val)); return; }
     if(STATUSY.indexOf(h)>=0){
       input=el('select','field');input.id='f-'+h;
       var opts;
