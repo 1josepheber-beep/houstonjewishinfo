@@ -1471,6 +1471,7 @@
             <label><input type="checkbox" name="category" value="Electrician"> Electrician</label>
             <label><input type="checkbox" name="category" value="Financial / Accounting"> Financial / Accounting</label>
             <label><input type="checkbox" name="category" value="Funeral Home"> Funeral Home</label>
+            <label><input type="checkbox" name="category" value="Home-Based Businesses"> Home-Based Businesses</label>
             <label><input type="checkbox" name="category" value="HVAC"> HVAC</label>
             <label><input type="checkbox" name="category" value="Insurance"> Insurance</label>
             <label><input type="checkbox" name="category" value="Jewish Books & Gifts"> Jewish Books &amp; Gifts</label>
@@ -1662,6 +1663,7 @@
         <option value="electric">Electrician</option>
         <option value="financial">Financial / Accounting</option>
         <option value="funeral">Funeral Home</option>
+        <option value="home-based">Home-Based Businesses</option>
         <option value="hvac">HVAC</option>
         <option value="insurance">Insurance</option>
         <option value="jewelry">Jewelry</option>
@@ -1798,6 +1800,12 @@
       <div class="service-card" onclick="openService('catering')">
         <div class="service-icon">🍽️</div>
         <div class="service-name">Catering & Events</div>
+        <div class="service-count">Submit your listing</div>
+        <div class="service-arrow">View Providers →</div>
+      </div>
+      <div class="service-card" onclick="openService('home-based')">
+        <div class="service-icon">🏠</div>
+        <div class="service-name">Home-Based Businesses</div>
         <div class="service-count">Submit your listing</div>
         <div class="service-arrow">View Providers →</div>
       </div>
@@ -2397,7 +2405,8 @@ function mapServiceCat(v){
     doors:'doors', doorsandhardware:'doors', locks:'doors', hardware:'doors',
     mortgage:'mortgage', mortgagebroker:'mortgage',
     recruiting:'recruiting', recruitingandstaffing:'recruiting', recruiter:'recruiting', staffing:'recruiting',
-    coaching:'coaching', coach:'coaching'
+    coaching:'coaching', coach:'coaching',
+    homebasedbusinesses:'home-based', homebasedbusiness:'home-based', homebased:'home-based', homebusiness:'home-based', homebusinesses:'home-based'
   };
   if (M[k]) return M[k];
   // Fallback: resolve compound labels like "Medical / Healthcare" or
@@ -2918,7 +2927,8 @@ var serviceLabels = {
   doors:'Doors & Hardware', jewelry:'Jewelry',
   beauty:'Beauty, Sheitels & Alterations', mortgage:'Mortgage Broker',
   shipping:'Shipping & Courier', recruiting:'Recruiting & Staffing',
-  coaching:'Coaching'
+  coaching:'Coaching',
+  'home-based':'Home-Based Businesses'
 };
 
 function openService(type) {

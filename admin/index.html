@@ -311,6 +311,7 @@ var COLLECTIONS = [
   ['Ads','📣 Ads'], ['shuls','🕍 Shuls'], ['mikvahs','💧 Mikvahs'],
   ['Education','🎓 Education'], ['Charities','💛 Charities'], ['Gemachim','🤝 Gemachim'],
   ['Services','🛠️ Services'], ['KosherRestaurants','🍽️ Kosher Restaurants'],
+  ['Hechsherim','🏷️ Hechsherim'],
   ['SelfHelp','📚 Self Help'],
   ['Activities','🎡 Activities'], ['Eruv','🗺️ Eruv']
 ];
@@ -328,7 +329,7 @@ var FIELD_OPTIONS = {
     ['community-org','Community Organizations'], ['construction','Construction'],
     ['doors','Doors & Hardware'], ['electric','Electrician'],
     ['financial','Financial / Accounting'], ['funeral','Funeral Home'],
-    ['hvac','HVAC'], ['insurance','Insurance'], ['jewelry','Jewelry'],
+    ['home-based','Home-Based Businesses'], ['hvac','HVAC'], ['insurance','Insurance'], ['jewelry','Jewelry'],
     ['jfs','Jewish Family Service'], ['kosher-market','Kosher Market'],
     ['marketing','Marketing & Digital'], ['medical','Medical / Healthcare'],
     ['mortgage','Mortgage Broker'], ['photography','Photography'],
@@ -476,7 +477,7 @@ function enterApp(){
 var NAV_GROUPS=[
   {label:'Home', keys:['Stories','Events','MazalTov','Passings']},
   {label:'Jewish', keys:['shuls','Education','mikvahs','Eruv']},
-  {label:'Services', keys:['Services','Charities','Gemachim','KosherRestaurants','SelfHelp']}
+  {label:'Services', keys:['Services','Charities','Gemachim','KosherRestaurants','Hechsherim','SelfHelp']}
 ];
 var NAV_STANDALONE=['Jobs','RealEstate','Activities'];
 function collLabel(key){var c=COLLECTIONS.find(function(x){return x[0]===key;});return c?c[1]:key;}
@@ -1242,7 +1243,7 @@ function readField(h){
   var f=$('f-'+h);return f?f.value:'';
 }
 function sectionImg(){
-  var m={Stories:'images/stories',Events:'images/events',Passings:'images/passings',Ads:'images/ads',Education:'images/education',Services:'images/cards',shuls:'images/synagogues',Charities:'images/charities',SelfHelp:'images/selfhelp',RealEstate:'images/realestate'};
+  var m={Stories:'images/stories',Events:'images/events',Passings:'images/passings',Ads:'images/ads',Education:'images/education',Services:'images/cards',shuls:'images/synagogues',Charities:'images/charities',SelfHelp:'images/selfhelp',RealEstate:'images/realestate',Hechsherim:'images/hechsher'};
   var folder=m[S.current]||('images/'+String(S.current||'misc').toLowerCase());
   return {folder:folder, base:'https://houstonjewishinfo.com/'+folder+'/'};
 }
