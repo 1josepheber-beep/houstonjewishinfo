@@ -1126,7 +1126,7 @@
   .biz-badge {
     display: inline-block; font-family: sans-serif; font-size: 9px; font-weight: 700;
     letter-spacing: .07em; text-transform: uppercase; padding: 3px 8px;
-    border-radius: 3px; white-space: nowrap; flex-shrink: 0;
+    border-radius: 3px; white-space: nowrap; flex-shrink: 0; margin: 2px 0 0 4px;
   }
   .badge-kosher   { background: #edf7ed; color: #1a5a1a; }
   .badge-jewish   { background: #e8f0fb; color: #1a3a7a; }
@@ -1514,13 +1514,12 @@
         <textarea name="tell_the_community_about_your_" class="form-textarea" placeholder="Tell the community about your business or service (2–3 sentences)..."></textarea>
       </div>
       <div class="form-group">
-        <label class="form-label">Badge (optional)</label>
-        <select class="form-select">
-          <option value="">None</option>
-          <option>Kosher Certified</option>
-          <option>Jewish-Owned</option>
-          <option>Jewish-Friendly</option>
-        </select>
+        <label class="form-label">Badge <span style="font-weight:400;color:var(--muted);font-size:11px;">(optional — check all that apply)</span></label>
+        <div class="cat-checks">
+          <label><input type="checkbox" name="badge" value="Kosher Certified"> Kosher Certified</label>
+          <label><input type="checkbox" name="badge" value="Jewish-Owned"> Jewish-Owned</label>
+          <label><input type="checkbox" name="badge" value="Jewish-Friendly"> Jewish-Friendly</label>
+        </div>
       </div>
       <div class="form-row">
         <div class="form-group">
@@ -2557,6 +2556,11 @@ function getBadgeClass(badge) {
   if(b.indexOf('jewish') > -1) return 'badge-jewish';
   return 'badge-friendly';
 }
+function badgesHtml(v){
+  return String(v||'').split(/\s*,\s*/).map(function(s){return s.trim();}).filter(Boolean).map(function(bd){
+    return '<span class="biz-badge '+getBadgeClass(bd)+'">'+charEsc(bd)+'</span>';
+  }).join('');
+}
 
 var HECHSHER_MAP=null;
 function hechsherImgUrl(v){v=String(v||'').trim();if(!v)return '';if(/^https?:\/\//i.test(v))return v;if(/^\//.test(v))return 'https://houstonjewishinfo.com'+v;return 'https://houstonjewishinfo.com/images/hechsher/'+v;}
@@ -2639,7 +2643,7 @@ function buildBizCard(item) {
     '<div class="biz-name">' + item.name + '</div>' +
     '</div>' +
     '<div style="display:flex;flex-wrap:wrap;justify-content:flex-end;gap:0;">' +
-    (item.badge ? '<span class="biz-badge ' + getBadgeClass(item.badge) + '">' + item.badge + '</span>' : '') +
+    badgesHtml(item.badge) +
     kashrutTag(item.kashrut) +
     '</div>' +
     '</div>' +

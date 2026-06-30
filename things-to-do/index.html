@@ -1481,12 +1481,13 @@
       var nm=splitTags(el.getAttribute('data-hechsher')); el.innerHTML=hechInner(nm);
     });
   }
+  function badgeTags(v){ return splitTags(v).map(function(bd){ return '<span class="ttd-tag" style="background:#edf7ed;color:#1a5a1a;">'+ttdEsc(bd)+'</span>'; }).join(''); }
   function eatCard(d){
     var web=ttdWeb(d.website);
     return '<div class="ttd-card ttd-card-eat">'+
       '<div class="ttd-card-banner"></div>'+
       '<div class="ttd-card-body">'+
-        '<div class="ttd-tagrow">'+(d.badge?'<span class="ttd-tag" style="background:#edf7ed;color:#1a5a1a;">'+ttdEsc(d.badge)+'</span>':'')+kashrutTag(d.kashrut)+'</div>'+
+        '<div class="ttd-tagrow">'+badgeTags(d.badge)+kashrutTag(d.kashrut)+'</div>'+
         '<div class="ttd-name">'+ttdEsc(d.name)+'</div>'+
         (d.description?'<div class="ttd-desc">'+ttdEsc(d.description)+'</div>':'')+
         hechsherTags(d.hechsher)+
