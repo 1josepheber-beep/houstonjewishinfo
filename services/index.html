@@ -2615,6 +2615,21 @@ function kashrutTag(v){
     return '<span class="biz-badge" style="background:'+m.bg+';color:'+m.col+';margin-left:6px;">'+m.label+'</span>';
   }).join('');
 }
+function bizLinkHref(url){
+  url=String(url||'').trim(); if(!url) return '';
+  if(/^(https?:|mailto:|tel:)/i.test(url)) return url;
+  if(/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(url)) return 'mailto:'+url;
+  if(/^[+()\-.\s\d]{7,}$/.test(url)) return 'tel:'+url.replace(/[^\d+]/g,'');
+  return 'https://'+url;
+}
+function bizLinkBtn(item, website, cls, extra){
+  var rawUrl=String(item.linkurl||item['link url']||'').trim();
+  var txt=String(item.linktext||item['link text']||'').trim();
+  cls=cls||'biz-website'; extra=extra?(' style="'+extra+'"'):'';
+  if(rawUrl) return '<a href="'+charEsc(bizLinkHref(rawUrl))+'" target="_blank" rel="noopener" class="'+cls+'"'+extra+'>'+charEsc(txt||'Visit \u2192')+'</a>';
+  if(website) return '<a href="'+charEsc(website)+'" target="_blank" rel="noopener" class="'+cls+'"'+extra+'>'+charEsc(txt||'Visit Website \u2192')+'</a>';
+  return '';
+}
 function buildBizCard(item) {
   var website = item.website || '';
   if(website && website.indexOf('http') !== 0) website = 'https://' + website;
@@ -2630,8 +2645,9 @@ function buildBizCard(item) {
       '<img class="biz-premium-img" src="' + img + '" alt="' + item.name + ' business card" loading="lazy">' +
       '<div class="biz-premium-meta"><span class="biz-premium-name">' + item.name + '</span>' +
       (cat ? '<span class="biz-premium-cat">' + cat + '</span>' : '') + hechsherTags(item.hechsher) + '</div>';
-    var card = website
-      ? '<a class="biz-premium-link" href="' + website + '" target="_blank" rel="noopener">' + inner + '</a>'
+    var pHref = bizLinkHref(item.linkurl||item['link url']||'') || website;
+    var card = pHref
+      ? '<a class="biz-premium-link" href="' + charEsc(pHref) + '" target="_blank" rel="noopener">' + inner + '</a>'
       : inner;
     return '<div class="biz-card biz-card-premium" data-cat="' + item._cat + '" data-name="' + item.name + '">' +
       card + '</div>';
@@ -2654,7 +2670,7 @@ function buildBizCard(item) {
     hechsherTags(item.hechsher) +
     '<div class="biz-card-footer">' +
     '<span style="font-family:sans-serif;font-size:11px;color:var(--muted);">' + (item.hours||'') + '</span>' +
-    (website ? '<a href="' + website + '" target="_blank" class="biz-website">Visit Website →</a>' : '') +
+    bizLinkBtn(item, website) +
     '</div></div>';
 }
 
@@ -3065,7 +3081,7 @@ function showServiceProviders(type, bodyEl) {
       '</div>' +
       '<div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;">' +
       (p.phone ? '<span class="sli-phone">' + p.phone + '</span>' : '') +
-      (website ? '<a href="'+website+'" target="_blank" class="biz-website" style="font-size:10px;">Visit Website →</a>' : '') +
+      bizLinkBtn(p, website, 'biz-website', 'font-size:10px;') +
       '</div></div>';
   }).join('');
 }
