@@ -1966,6 +1966,7 @@ window.addEventListener('resize',function(){var m=document.getElementById('hji-j
     var card=document.createElement('div'); card.className='hjipop-card'; card.innerHTML=h;
     bd.appendChild(card); document.body.appendChild(bd);
     requestAnimationFrame(function(){bd.classList.add('show');});
+    setTimeout(function(){bd.classList.add('show');},80);
     function close(){bd.classList.remove('show');setTimeout(function(){if(bd.parentNode)bd.parentNode.removeChild(bd);},250);document.removeEventListener('keydown',onKey);}
     card.querySelector('.hjipop-x').onclick=close;
     bd.addEventListener('click',function(e){if(e.target===bd)close();});
@@ -2039,7 +2040,21 @@ window.addEventListener('resize',function(){var m=document.getElementById('hji-j
         }
       }).catch(function(){});
   }
-  window.hjiPopupDebug=function(){ return {page:slug(), section:currentSection(), popupsLoaded:(LIST?LIST.length:'(none - fetch failed?)'), rowsInTab:(typeof window.__hjiRows!=='undefined'?window.__hjiRows:null), columnsFound:(window.__hjiCols||null), targets:(LIST?LIST.map(function(p){return p.target+(p.active?'':' [off]');}):null)}; };
+  window.hjiPopupDebug=function(){
+    var me=slug(), sec=currentSection(), matched=null;
+    if(LIST)LIST.forEach(function(p){var ci=p.target.indexOf(':'),base=ci>=0?p.target.slice(0,ci):p.target,psec=ci>=0?p.target.slice(ci+1):'';var ok=(p.target==='all')||(psec?(base===me&&psec===sec):(base===me));if(ok&&p.active&&inWindow(p.start,p.end))matched=p;});
+    return {page:me, section:sec, popupsLoaded:(LIST?LIST.length:'(none - fetch failed?)'), rowsInTab:(typeof window.__hjiRows!=='undefined'?window.__hjiRows:null), columnsFound:(window.__hjiCols||null),
+      popups:(LIST?LIST.map(function(p){return {target:p.target,active:p.active,title:p.title,hasMessage:!!p.message};}):null),
+      matchesThisView:(matched?matched.target:'(nothing targets this page/tab)'),
+      matchedContent:(matched?{title:matched.title,message:matched.message,image:matched.image}:null),
+      popupOnScreen:!!document.querySelector('.hjipop-backdrop')};
+  };
+  window.hjiPopupForce=function(){
+    try{Object.keys(sessionStorage).forEach(function(k){if(k.indexOf('hjipop_')===0)sessionStorage.removeItem(k);});}catch(e){}
+    var bd=document.querySelector('.hjipop-backdrop'); if(bd&&bd.parentNode)bd.parentNode.removeChild(bd);
+    evaluate();
+    return document.querySelector('.hjipop-backdrop')?'popup shown ✓':'no popup matched this page/tab';
+  };
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',function(){setTimeout(run,350);});
   else setTimeout(run,350);
 })();
