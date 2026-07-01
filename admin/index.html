@@ -313,7 +313,7 @@ var BAKED_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx1yJzRglJ8SQ-bN
 var COLLECTIONS = [
   ['Stories','📰 Stories'], ['Events','📅 Events'], ['Passings','🕯️ Passings'],
   ['MazalTov','🎉 Mazal Tov'], ['Jobs','💼 Jobs'], ['RealEstate','🏡 Real Estate'],
-  ['Ads','📣 Ads'], ['shuls','🕍 Shuls'], ['mikvahs','💧 Mikvahs'],
+  ['Ads','📣 Ads'], ['Popups','🔔 Popups'], ['shuls','🕍 Shuls'], ['mikvahs','💧 Mikvahs'],
   ['Education','🎓 Education'], ['Charities','💛 Charities'], ['Gemachim','🤝 Gemachim'],
   ['Services','🛠️ Services'], ['KosherRestaurants','🍽️ Kosher Restaurants'],
   ['Hechsherim','🏷️ Hechsherim'],
@@ -330,6 +330,41 @@ var FIELD_OPTIONS = {
   'KosherRestaurants.Hechsher': { multi:true, dynamic:'hechsher' },
   'Services.Hechsher':          { multi:true, dynamic:'hechsher' },
   'Activities.Hechsher':        { multi:true, dynamic:'hechsher' },
+  'Popups.Target': { options:[
+    ['all','All pages'],
+    ['home','Homepage'],
+    ['services','Services \u2014 whole page'],
+    ['services:browse','Services \u2192 Browse Businesses'],
+    ['services:services','Services \u2192 Find a Service'],
+    ['services:charities','Services \u2192 Charities'],
+    ['services:selfhelp','Services \u2192 Self Help & How-To'],
+    ['services:gemachim','Services \u2192 Gemachim'],
+    ['education','Education \u2014 whole page'],
+    ['education:adult','Education \u2192 Adult Learning'],
+    ['education:camps','Education \u2192 Camps'],
+    ['education:kids','Education \u2192 Kids'],
+    ['real-estate','Real Estate \u2014 whole page'],
+    ['real-estate:all','Real Estate \u2192 All'],
+    ['real-estate:sale','Real Estate \u2192 For Sale'],
+    ['real-estate:rent','Real Estate \u2192 For Rent'],
+    ['jobs','Jobs \u2014 whole page'],
+    ['jobs:all','Jobs \u2192 All'],
+    ['jobs:hiring','Jobs \u2192 Hiring'],
+    ['jobs:seeking','Jobs \u2192 Seeking'],
+    ['charities','Charities \u2014 whole page'],
+    ['charities:char','Charities \u2192 Charities'],
+    ['charities:gem','Charities \u2192 Gemachim'],
+    ['things-to-do','Things to Do \u2014 whole page'],
+    ['things-to-do:act','Things to Do \u2192 Activities'],
+    ['things-to-do:eat','Things to Do \u2192 Eat'],
+    ['things-to-do:map','Things to Do \u2192 Map'],
+    ['shuls','Shuls'],
+    ['mikvahs','Mikvahs'],
+    ['contact','Contact'],
+    ['privacy','Privacy'],
+    ['terms','Terms']
+  ] },
+  'Popups.Active': { options:['yes','no'] },
   'Services.Badge':          { multi:true, options:['Kosher Certified','Jewish-Owned','Jewish-Friendly'] },
   'KosherRestaurants.Badge': { multi:true, options:['Kosher Certified','Jewish-Owned','Jewish-Friendly'] },
   'Services.Category': { multi:true, options:[
@@ -502,7 +537,7 @@ var NAV_GROUPS=[
   {label:'Jewish', keys:['shuls','Education','mikvahs','Eruv']},
   {label:'Services', keys:['Services','Charities','Gemachim','KosherRestaurants','Hechsherim','SelfHelp']}
 ];
-var NAV_STANDALONE=['Jobs','RealEstate','Activities'];
+var NAV_STANDALONE=['Jobs','RealEstate','Activities','Popups'];
 function collLabel(key){var c=COLLECTIONS.find(function(x){return x[0]===key;});return c?c[1]:key;}
 function groupOf(key){for(var i=0;i<NAV_GROUPS.length;i++){if(NAV_GROUPS[i].keys.indexOf(key)>=0)return NAV_GROUPS[i].label;}return null;}
 function navItemEl(key){
@@ -561,16 +596,6 @@ var SETTINGS_CATS=[
     {key:'story_days',label:'Stories — hide from feed after (days)',type:'number',def:'30'},
     {key:'mazal_days',label:'Mazal Tov — hide after (days)',type:'number',def:'14'},
     {key:'passing_days',label:'Passings — hide after (days)',type:'number',def:'14'}
-  ]},
-  {id:'popup',label:'Popup',fields:[
-    {key:'popup_on',label:'Show popup on the homepage?',type:'toggle',def:'no'},
-    {key:'popup_title',label:'Title',type:'text',def:''},
-    {key:'popup_message',label:'Message',type:'textarea',def:''},
-    {key:'popup_button_text',label:'Button text (optional)',type:'text',def:''},
-    {key:'popup_button_link',label:'Button link / URL (optional)',type:'text',def:''},
-    {key:'popup_image',label:'Image (optional)',type:'image',def:'',hint:'880 \u00d7 420 px, landscape (2:1) \u2014 shown across the top of the popup'},
-    {key:'popup_start',label:'Auto-show starting on (optional)',type:'date',def:''},
-    {key:'popup_end',label:'Auto-hide after (optional)',type:'date',def:''}
   ]},
   {id:'announce',label:'Announcement',fields:[
     {key:'announce_on',label:'Show announcement bar?',type:'toggle',def:'no'},
