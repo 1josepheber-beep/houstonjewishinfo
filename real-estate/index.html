@@ -127,6 +127,8 @@
   .filter-reset:hover { background: #163a75; }
   .re-sidebar { display: flex; flex-direction: column; gap: 16px; }
   .re-ads-head { font-family: sans-serif; font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--navy); text-align: center; margin-bottom: 4px; padding-bottom: 8px; border-bottom: 2px solid var(--gold); }
+  .ad-only-mob { display: none; }
+  @media (max-width: 900px){ .ad-only-desk { display: none; } .ad-only-mob { display: block; } }
 
   /* ── TABS ── */
   .re-tabs { display: flex; gap: 0; margin-bottom: 16px; border-bottom: 2px solid var(--border); }
@@ -677,10 +679,15 @@
     </aside>
 
     <!-- Agent ad slots — managed via the Ads sheet (placements real-estate-1..4). Hidden until at least one is active. -->
-    <div id="re-ad-block" class="re-ads" style="display:none;">
+    <div id="re-ad-block" class="re-ads ad-only-desk" style="display:none;">
       <div class="re-ads-head">Real Estate Agents</div>
-      <!-- Real estate ads — UNLIMITED. In the Ads sheet use placement real-estate-1, real-estate-2, real-estate-3 … (add as many as you like). They render here in number order. -->
+      <!-- DESKTOP real estate ads — Ads sheet placements real-estate-1, real-estate-2 … -->
       <div class="ad-managed" data-ad-area="real-estate"></div>
+    </div>
+    <div id="re-ad-block-mob" class="re-ads ad-only-mob" style="display:none;">
+      <div class="re-ads-head">Real Estate Agents</div>
+      <!-- MOBILE real estate ads — Ads sheet placements real-estate-mobile-1, real-estate-mobile-2 … -->
+      <div class="ad-managed" data-ad-area="real-estate-mobile" data-ad-fallback-area="real-estate"></div>
     </div>
     </div>
 
@@ -1097,6 +1104,7 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape')closeMobileM
       document.querySelectorAll('[data-ad-area]').forEach(function(cont){
         var area = cont.getAttribute('data-ad-area').toLowerCase().trim();
         var list = byArea[area]||[];
+        if(!list.length){ var fb=cont.getAttribute('data-ad-fallback-area'); if(fb)list=byArea[fb.toLowerCase().trim()]||[]; }
         cont.innerHTML = list.map(function(it){ return adBox(it.d, it.placement); }).join('');
       });
       document.querySelectorAll('[data-ad-slot]').forEach(function(el){
@@ -1107,8 +1115,7 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape')closeMobileM
         trackAdView(b, b.getAttribute('data-ad-name'), b.getAttribute('data-ad-box'));
       });
       // show the agent block only if at least one ad rendered inside it
-      var block = document.getElementById('re-ad-block');
-      if(block){ block.style.display = block.querySelector('a[data-ad-box]') ? '' : 'none'; }
+      document.querySelectorAll('.re-ads').forEach(function(block){ block.style.display = block.querySelector('a[data-ad-box]') ? '' : 'none'; });
     }).catch(function(){});
 
     function trackAdView(el, adName, slotName){

@@ -734,10 +734,12 @@ function saveSettings(){
 /* ====================== ADS (area-based, unlimited) ====================== */
 var AD_TAB='Ads';
 var AD_AREAS=[
-  {id:'right-sidebar', label:'Homepage \u2014 Sidebar',     hint:'Shows in the right-hand column on the homepage (desktop).'},
-  {id:'mobile',        label:'Homepage \u2014 Mobile feed', hint:'Shows woven between the stories on phones.'},
-  {id:'mazaltov',      label:'Homepage \u2014 Mazal Tov',   hint:'Shows inside the Mazal Tov section.'},
-  {id:'real-estate',   label:'Real Estate page',            hint:'Shows on the Real Estate page (desktop and mobile).'}
+  {id:'right-sidebar',      label:'Homepage \u2014 Sidebar',      hint:'Shows in the right-hand column on the homepage (desktop).'},
+  {id:'mobile',             label:'Homepage \u2014 Mobile feed',  hint:'Shows woven between the stories on phones.'},
+  {id:'mazaltov',           label:'Mazal Tov \u2014 Desktop',     hint:'Shows in the Mazal Tov feed on desktop / wider screens.'},
+  {id:'mazaltov-mobile',    label:'Mazal Tov \u2014 Mobile',      hint:'Shows in the Mazal Tov feed on phones (wider shape).'},
+  {id:'real-estate',        label:'Real Estate \u2014 Desktop',   hint:'Shows on the Real Estate page on desktop / wider screens.'},
+  {id:'real-estate-mobile', label:'Real Estate \u2014 Mobile',    hint:'Shows on the Real Estate page on phones (wider shape).'}
 ];
 function adColName(headers,want){
   var h=(headers||[]).find(function(x){return String(x).toLowerCase().replace(/[^a-z]/g,'')===want;});
@@ -1313,7 +1315,7 @@ function sectionImg(){
 function resolveImg(v){v=(v||'').trim();if(!v)return '';if(/^https?:\/\//i.test(v))return v;if(/^\//.test(v))return 'https://houstonjewishinfo.com'+v;return sectionImg().base+v;}
 function imgFieldKeys(h){return /image|img|photo|flyer|logo/i.test(h);}
 function cleanName(s){var x=String(s||'').trim().toLowerCase().replace(/[^a-z0-9._-]+/g,'-').replace(/-+/g,'-').replace(/^[-.]+|[-.]+$/g,'');return x||'image';}
-var AD_SIZES={'right-sidebar':'600 \u00d7 500 px, landscape \u2014 shows small on desktop, full width on phones','mobile':'1000 \u00d7 400 px, wide banner \u2014 spans the feed on phones','mazaltov':'800 \u00d7 500 px, landscape','real-estate':'600 \u00d7 500 px, landscape'};
+var AD_SIZES={'right-sidebar':'600 \u00d7 500 px, landscape \u2014 shows small on desktop, full width on phones','mobile':'1000 \u00d7 400 px, wide banner \u2014 spans the feed on phones','mazaltov':'800 \u00d7 500 px, landscape','mazaltov-mobile':'1000 \u00d7 400 px, wide banner \u2014 for phones','real-estate':'600 \u00d7 500 px, landscape','real-estate-mobile':'1000 \u00d7 400 px, wide banner \u2014 for phones'};
 function adSizeHint(area){ return AD_SIZES[area]||'landscape, about 800 \u00d7 500 px'; }
 function imgSizeHint(coll, field){
   var f=String(field||'').toLowerCase();

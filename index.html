@@ -987,6 +987,7 @@
   #mobile-ad-strip { display: none; }
   /* Z Biltong between-stories ad: mobile only */
   .zb-mobile-ad { display: none; }
+  .ad-only-mob { display: none; }
 
   /* Mobile ad slots — between articles, hidden on desktop */
   .mobile-ad-slot {
@@ -1027,6 +1028,8 @@
     #mobile-ad-strip { display: block !important; }
     .mobile-ad-slot  { display: block !important; }
     .zb-mobile-ad    { display: block !important; }
+    .ad-only-desk { display: none !important; }
+    .ad-only-mob  { display: block !important; }
 
     /* Shabbat strip on mobile — compact, centered, wraps cleanly */
     #shabbat-strip { padding: 0 !important; }
@@ -2510,7 +2513,7 @@
     }
 
     function adSlot(name){var id=(name==='mobile-1')?' id="mobile-ad-strip"':'';var cls=(name==='mobile-1')?'ad-managed':'zb-mobile-ad ad-managed';return '<div'+id+' class="'+cls+'" data-ad-slot="'+name+'"></div>';}
-    function mazalSlot(name){return '<div class="ad-managed" data-ad-slot="'+name+'"></div>';}
+    function mazalSlot(name){var n=String(name).replace('mazaltov-','');return '<div class="ad-managed ad-only-desk" data-ad-slot="mazaltov-'+n+'"></div><div class="ad-managed ad-only-mob" data-ad-slot="mazaltov-mobile-'+n+'" data-ad-fallback="mazaltov-'+n+'"></div>';}
 
     function currentList(){
       var today=cfToday();
@@ -2876,7 +2879,9 @@
         });
         // FIXED / INTERLEAVED SLOTS — one ad per exact placement (collapses if none)
         document.querySelectorAll('[data-ad-slot]').forEach(function(el) {
-          var d = byPlacement[el.getAttribute('data-ad-slot').toLowerCase().trim()];
+          var slot = el.getAttribute('data-ad-slot').toLowerCase().trim();
+          var d = byPlacement[slot];
+          if(!d){ var fb=el.getAttribute('data-ad-fallback'); if(fb)d=byPlacement[fb.toLowerCase().trim()]; }
           el.innerHTML = d ? adBox(d, el.getAttribute('data-ad-slot')) : '';
         });
         // ad_view tracking for every rendered ad box
