@@ -2208,7 +2208,8 @@ window.addEventListener('resize',function(){var m=document.getElementById('hji-j
     document.addEventListener('keydown',onKey);
   }
   function today(){var d=new Date();return d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2);}
-  function inWindow(s,e){var t=today();s=(''+(s||'')).slice(0,10);e=(''+(e||'')).slice(0,10);if(s&&t<s)return false;if(e&&t>e)return false;return true;}
+  function toYMD(v){v=(''+(v||'')).trim();if(!v)return '';var m=v.match(/Date\((\d+),(\d+),(\d+)/);if(m)return (+m[1])+'-'+('0'+((+m[2])+1)).slice(-2)+'-'+('0'+(+m[3])).slice(-2);m=v.match(/(\d{4})-(\d{2})-(\d{2})/);if(m)return m[1]+'-'+m[2]+'-'+m[3];var d=new Date(v);return isNaN(d.getTime())?'':(d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2));}
+  function inWindow(s,e){var t=today();s=toYMD(s);e=toYMD(e);if(s&&t<s)return false;if(e&&t>e)return false;return true;}
   // which sub-section is active on this page? (never throws)
   function currentSection(){
     try{
@@ -2227,7 +2228,7 @@ window.addEventListener('resize',function(){var m=document.getElementById('hji-j
     var me=slug(), sec=currentSection(), best=null;   // page-level never depends on sec
     LIST.forEach(function(p){
       if(!p.active||!inWindow(p.start,p.end))return;
-      var ci=p.target.indexOf(':'), base=ci>=0?p.target.slice(0,ci):p.target, psec=ci>=0?p.target.slice(ci+1):'';
+      var ci=p.target.indexOf(':'), base=(ci>=0?p.target.slice(0,ci):p.target).trim(), psec=(ci>=0?p.target.slice(ci+1):'').trim();
       var spec=-1;
       if(p.target==='all')spec=0;
       else if(psec){ if(base===me && psec===sec)spec=2; }
@@ -2276,11 +2277,16 @@ window.addEventListener('resize',function(){var m=document.getElementById('hji-j
   }
   window.hjiPopupDebug=function(){
     var me=slug(), sec=currentSection(), matched=null;
-    if(LIST)LIST.forEach(function(p){var ci=p.target.indexOf(':'),base=ci>=0?p.target.slice(0,ci):p.target,psec=ci>=0?p.target.slice(ci+1):'';var ok=(p.target==='all')||(psec?(base===me&&psec===sec):(base===me));if(ok&&p.active&&inWindow(p.start,p.end))matched=p;});
-    return {page:me, section:sec, popupsLoaded:(LIST?LIST.length:'(none - fetch failed?)'), rowsInTab:(typeof window.__hjiRows!=='undefined'?window.__hjiRows:null), columnsFound:(window.__hjiCols||null),
-      popups:(LIST?LIST.map(function(p){return {target:p.target,active:p.active,title:p.title,hasMessage:!!p.message};}):null),
-      matchesThisView:(matched?matched.target:'(nothing targets this page/tab)'),
-      matchedContent:(matched?{title:matched.title,message:matched.message,image:matched.image}:null),
+    var det=(LIST||[]).map(function(p){
+      var ci=p.target.indexOf(':'),base=(ci>=0?p.target.slice(0,ci):p.target).trim(),psec=(ci>=0?p.target.slice(ci+1):'').trim();
+      var targetOK=(p.target==='all')||(psec?(base===me&&psec===sec):(base===me));
+      var dateOK=inWindow(p.start,p.end), hasContent=!!(p.title||p.message||p.image);
+      if(targetOK&&p.active&&dateOK&&hasContent&&!matched)matched=p;
+      return {target:p.target,active:p.active,hasContent:hasContent,start:p.start,end:p.end,targetMatchesThisView:targetOK,dateOK:dateOK};
+    });
+    return {page:me, section:sec, popupsLoaded:(LIST?LIST.length:'(none - fetch failed?)'), columnsFound:(window.__hjiCols||null),
+      popups:det, matchesThisView:(matched?matched.target:'(nothing shows here)'),
+      matchedContent:(matched?{title:matched.title,message:matched.message}:null),
       popupOnScreen:!!document.querySelector('.hjipop-backdrop')};
   };
   window.hjiPopupForce=function(){
