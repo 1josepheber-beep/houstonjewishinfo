@@ -1726,6 +1726,8 @@ window.addEventListener('resize',function(){var m=document.getElementById('hji-j
     if(logo){document.querySelectorAll('header img[src*="logo"], .sn-logo img').forEach(function(im){im.removeAttribute('onerror');im.src=logo;});}
     var flogo=g(S,'footer_logo');
     if(flogo){var fm=document.querySelector('.foot-mark');if(fm){fm.innerHTML='';var im=document.createElement('img');im.src=flogo;im.alt='Houston Jewish Info';im.style.cssText='height:48px;width:auto';fm.appendChild(im);}}
+    var fav=g(S,'favicon_url');
+    if(fav){document.querySelectorAll('link[rel~="icon"]').forEach(function(l){if(l.parentNode)l.parentNode.removeChild(l);});var fl=document.createElement('link');fl.rel='icon';fl.href=fav;document.head.appendChild(fl);var at=document.querySelector('link[rel="apple-touch-icon"]');if(at)at.href=fav;}
     if(on(S.announce_on)&&g(S,'announce_text')&&!document.getElementById('hji-announce')){
       var COL={navy:'#1a2744',rust:'#B94218',gold:'#c9933a',green:'#1f7a3d',red:'#b83030'};
       var bg=COL[(g(S,'announce_color')||'navy').toLowerCase()]||COL.navy;

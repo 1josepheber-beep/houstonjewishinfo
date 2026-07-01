@@ -583,8 +583,9 @@ var SETTINGS_CATS=[
     {key:'color_accent',label:'Accent color (rust)',type:'color',def:'#B94218'},
     {key:'color_highlight',label:'Highlight color',type:'color',def:'#C9933A'},
     {key:'color_background',label:'Background color (cream)',type:'color',def:'#FAF8F3'},
-    {key:'logo_url',label:'Header logo',type:'image',def:''},
-    {key:'footer_logo',label:'Footer logo',type:'image',def:''},
+    {key:'logo_url',label:'Header logo',type:'image',def:'',hint:'a transparent PNG works best'},
+    {key:'footer_logo',label:'Footer logo',type:'image',def:'',hint:'a transparent PNG works best'},
+    {key:'favicon_url',label:'Favicon (browser tab icon)',type:'image',def:'',hint:'square, 512 \u00d7 512 px \u2014 a transparent PNG works best'},
     {key:'site_font',label:'Body font',type:'select',options:['Default','Inter','Source Serif 4','Georgia','System sans-serif'],def:'Default'},
     {key:'corner_style',label:'Corners',type:'select',options:['rounded','square'],def:'rounded'}
   ]},
@@ -676,7 +677,7 @@ function buildSettingField(f,cur){
       file.onchange=function(){ uploadSettingImage(f.key,file); };
       actions.appendChild(up); actions.appendChild(file);
     }
-    ir.appendChild(prev); ir.appendChild(turl); ir.appendChild(actions); box.appendChild(ir);
+    ir.appendChild(prev); ir.appendChild(turl); if(f.hint)ir.appendChild(el('div','imghint','Recommended size: '+f.hint)); ir.appendChild(actions); box.appendChild(ir);
   } else {
     var inp=el('input','field'); inp.type=(f.type==='number')?'number':(f.type==='date'?'date':'text'); inp.value=cur; inp.id='set-'+f.key; box.appendChild(inp);
   }
