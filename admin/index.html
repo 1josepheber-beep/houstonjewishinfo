@@ -538,7 +538,7 @@ var NAV_GROUPS=[
   {label:'Jewish', keys:['shuls','Education','mikvahs','Eruv']},
   {label:'Services', keys:['Services','Charities','Gemachim','KosherRestaurants','Hechsherim','SelfHelp']}
 ];
-var NAV_STANDALONE=['Jobs','RealEstate','Activities','Popups'];
+var NAV_STANDALONE=['Jobs','RealEstate','Activities'];
 function collLabel(key){var c=COLLECTIONS.find(function(x){return x[0]===key;});return c?c[1]:key;}
 function groupOf(key){for(var i=0;i<NAV_GROUPS.length;i++){if(NAV_GROUPS[i].keys.indexOf(key)>=0)return NAV_GROUPS[i].label;}return null;}
 function navItemEl(key){
@@ -564,6 +564,7 @@ function buildNav(){
   if(!S.openNav)S.openNav={};
   var placed={};
   placed['Ads']=1; // Ads has its own dedicated screen in the Site section
+  placed['Popups']=1; // Popups lives in the Site section (it's a setting, not content)
   NAV_GROUPS.forEach(function(g){
     var hdr=el('button','navgroup');hdr.setAttribute('data-group',g.label);
     hdr.appendChild(el('span','gchev','▸'));
@@ -586,6 +587,7 @@ function buildNav(){
   sb.appendChild(el('span',null,'⚙️ Settings'));
   sb.onclick=function(){openSettings();toggleDrawer(false);};
   nav.appendChild(sb);
+  nav.appendChild(navItemEl('Popups'));   // Popups management, under Site
   NAV_GROUPS.forEach(function(g){applyNavGroup(g.label);});
   if(S.current)openNavGroupFor(S.current);
 }
