@@ -568,7 +568,7 @@ var SETTINGS_CATS=[
     {key:'popup_message',label:'Message',type:'textarea',def:''},
     {key:'popup_button_text',label:'Button text (optional)',type:'text',def:''},
     {key:'popup_button_link',label:'Button link / URL (optional)',type:'text',def:''},
-    {key:'popup_image',label:'Image (optional)',type:'image',def:''},
+    {key:'popup_image',label:'Image (optional)',type:'image',def:'',hint:'880 \u00d7 420 px, landscape (2:1) \u2014 shown across the top of the popup'},
     {key:'popup_start',label:'Auto-show starting on (optional)',type:'date',def:''},
     {key:'popup_end',label:'Auto-hide after (optional)',type:'date',def:''}
   ]},
@@ -576,7 +576,8 @@ var SETTINGS_CATS=[
     {key:'announce_on',label:'Show announcement bar?',type:'toggle',def:'no'},
     {key:'announce_text',label:'Banner text',type:'text',def:''},
     {key:'announce_link',label:'Link / URL (optional)',type:'text',def:''},
-    {key:'announce_color',label:'Bar color',type:'select',options:['navy','rust','gold','green','red'],def:'navy'}
+    {key:'announce_image',label:'Banner image (optional \u2014 use as an ad)',type:'image',def:'',hint:'wide banner, about 1200 \u00d7 150 px \u2014 fills the bar and links to the URL above'},
+    {key:'announce_color',label:'Bar color',type:'color',def:'#1a2744'}
   ]},
   {id:'look',label:'Look & Feel',fields:[
     {key:'color_primary',label:'Primary color (navy)',type:'color',def:'#143D75'},

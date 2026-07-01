@@ -3258,16 +3258,22 @@ window.addEventListener('resize',function(){var m=document.getElementById('hji-j
     if(flogo){var fm=document.querySelector('.foot-mark');if(fm){fm.innerHTML='';var im=document.createElement('img');im.src=flogo;im.alt='Houston Jewish Info';im.style.cssText='height:48px;width:auto';fm.appendChild(im);}}
     var fav=g(S,'favicon_url');
     if(fav){document.querySelectorAll('link[rel~="icon"]').forEach(function(l){if(l.parentNode)l.parentNode.removeChild(l);});var fl=document.createElement('link');fl.rel='icon';fl.href=fav;document.head.appendChild(fl);var at=document.querySelector('link[rel="apple-touch-icon"]');if(at)at.href=fav;}
-    if(on(S.announce_on)&&g(S,'announce_text')&&!document.getElementById('hji-announce')){
+    if(on(S.announce_on)&&(g(S,'announce_text')||g(S,'announce_image'))&&!document.getElementById('hji-announce')){
       var COL={navy:'#1a2744',rust:'#B94218',gold:'#c9933a',green:'#1f7a3d',red:'#b83030'};
-      var bg=COL[(g(S,'announce_color')||'navy').toLowerCase()]||COL.navy;
+      var ac=(g(S,'announce_color')||'').trim();var bg=COL[ac.toLowerCase()]||ac||COL.navy;
       var bar=document.createElement('div');bar.id='hji-announce';
-      bar.style.cssText='background:'+bg+';color:#fff;font-family:sans-serif;font-size:14px;font-weight:600;text-align:center;padding:9px 38px 9px 16px;position:relative;z-index:950;line-height:1.4';
-      var link=g(S,'announce_link');
-      if(link){var a=document.createElement('a');a.href=link;a.textContent=g(S,'announce_text');a.style.cssText='color:#fff;text-decoration:underline';bar.appendChild(a);}
-      else bar.appendChild(document.createTextNode(g(S,'announce_text')));
+      var aimg=g(S,'announce_image');var alink=g(S,'announce_link');
+      if(aimg){
+        bar.style.cssText='background:'+bg+';text-align:center;padding:0;position:relative;z-index:950;line-height:0';
+        var im=document.createElement('img');im.src=aimg;im.alt=g(S,'announce_text')||'Announcement';im.style.cssText='display:block;max-width:100%;max-height:150px;width:auto;height:auto;margin:0 auto';
+        if(alink){var la=document.createElement('a');la.href=alink;la.style.display='block';la.appendChild(im);bar.appendChild(la);}else bar.appendChild(im);
+      } else {
+        bar.style.cssText='background:'+bg+';color:#fff;font-family:sans-serif;font-size:14px;font-weight:600;text-align:center;padding:9px 38px 9px 16px;position:relative;z-index:950;line-height:1.4';
+        if(alink){var a=document.createElement('a');a.href=alink;a.textContent=g(S,'announce_text');a.style.cssText='color:#fff;text-decoration:underline';bar.appendChild(a);}
+        else bar.appendChild(document.createTextNode(g(S,'announce_text')));
+      }
       var x=document.createElement('button');x.type='button';x.setAttribute('aria-label','Dismiss');x.innerHTML='&times;';
-      x.style.cssText='position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;color:#fff;font-size:20px;line-height:1;cursor:pointer;opacity:.85';
+      x.style.cssText='position:absolute;right:10px;top:50%;transform:translateY(-50%);background:rgba(0,0,0,.28);border:none;color:#fff;font-size:20px;line-height:1;cursor:pointer;opacity:.9;border-radius:50%;width:26px;height:26px;display:flex;align-items:center;justify-content:center';
       x.onclick=function(){if(bar.parentNode)bar.parentNode.removeChild(bar);};
       bar.appendChild(x);document.body.insertBefore(bar,document.body.firstChild);
     }
