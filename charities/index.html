@@ -1712,7 +1712,7 @@ window.addEventListener('resize',function(){var m=document.getElementById('hji-j
 </script>
 <script>
 (function(){
-  // === HJI Popups engine (v2 — page + sub-section targeting) ===
+  // === HJI Popups engine (v3 — page + sub-section targeting, defensive) ===
   var SHEET_ID=(typeof SHEET!=='undefined'&&SHEET)?SHEET:'1in7Ac7zknqyR9neWKOCAjOAG4jXCIVTJQfU6jJ72CV8';
   function slug(){var p=location.pathname.replace(/\/index\.html$/i,'').replace(/\/+$/,'');var s=p.split('/').filter(Boolean).pop();return (s||'home').toLowerCase();}
   function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(ch){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch];});}
@@ -1732,7 +1732,7 @@ window.addEventListener('resize',function(){var m=document.getElementById('hji-j
   function show(p){
     var sig='hjipop_'+ph([p.title,p.message,p.btnText,p.btnLink,p.image,p.target].join('|'));
     try{ if(sessionStorage.getItem(sig))return; sessionStorage.setItem(sig,'1'); }catch(e){}
-    if(document.querySelector('.hjipop-backdrop'))return;   // don't stack two at once
+    if(document.querySelector('.hjipop-backdrop'))return;   // never stack two
     if(!document.getElementById('hjipop-css')){var st=document.createElement('style');st.id='hjipop-css';st.textContent=CSS;document.head.appendChild(st);}
     var bd=document.createElement('div'); bd.className='hjipop-backdrop';
     var h='<button class="hjipop-x" aria-label="Close">\u00d7</button>';
@@ -1753,20 +1753,22 @@ window.addEventListener('resize',function(){var m=document.getElementById('hji-j
   }
   function today(){var d=new Date();return d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2);}
   function inWindow(s,e){var t=today();s=(''+(s||'')).slice(0,10);e=(''+(e||'')).slice(0,10);if(s&&t<s)return false;if(e&&t>e)return false;return true;}
-  // which sub-section (tab / category) is currently active on this page?
+  // which sub-section is active on this page? (never throws)
   function currentSection(){
-    var dc=document.querySelector('[data-cat].active,[data-cat].selected');
-    if(dc){var v=dc.getAttribute('data-cat');if(v)return v.toLowerCase();}
-    var el=document.querySelector('[id^="tab-"].active,[id^="panel-"].active');
-    if(el){var m=el.id.match(/^(?:tab|panel)-(.+)$/);if(m)return m[1].toLowerCase();}
-    var cands=document.querySelectorAll('[id^="tab-"],[id^="panel-"]');
-    for(var i=0;i<cands.length;i++){var c=cands[i];if(c.offsetParent!==null){var mm=c.id.match(/^(?:tab|panel)-(.+)$/);if(mm)return mm[1].toLowerCase();}}
+    try{
+      // education categories (scoped to edu-tile so it can't catch other pages' data-cat cards)
+      var edu=document.querySelector('.edu-tile.active[data-cat]');
+      if(edu){var v=edu.getAttribute('data-cat');if(v)return v.toLowerCase();}
+      // active tab panel/button: services, real-estate, jobs, charities, things-to-do, contact
+      var el=document.querySelector('[id^="tab-"].active,[id^="panel-"].active');
+      if(el){var m=el.id.match(/^(?:tab|panel)-(.+)$/);if(m)return m[1].toLowerCase();}
+    }catch(e){}
     return '';
   }
   var LIST=null;
   function evaluate(){
     if(!LIST||!LIST.length)return;
-    var me=slug(), sec=currentSection(), best=null;
+    var me=slug(), sec=currentSection(), best=null;   // page-level never depends on sec
     LIST.forEach(function(p){
       if(!p.active||!inWindow(p.start,p.end))return;
       var ci=p.target.indexOf(':'), base=ci>=0?p.target.slice(0,ci):p.target, psec=ci>=0?p.target.slice(ci+1):'';
@@ -1786,10 +1788,10 @@ window.addEventListener('resize',function(){var m=document.getElementById('hji-j
     function g(r,keys){for(var k=0;k<keys.length;k++){var i=idx[keys[k]];if(i!=null){var v=r.c&&r.c[i];if(v&&v.v!=null)return (''+v.v);}}return '';}
     var out=[];
     rows.forEach(function(r){
-      var act=g(r,['active','on','status']).toLowerCase();
+      var act=g(r,['active','on','status','live']).toLowerCase();
       var tgt=g(r,['target','page','pages','show']).toLowerCase().trim(); if(!tgt)return;
       out.push({
-        active:(act==='yes'||act==='on'||act==='true'||act==='1'||act==='active'||act==='show'),
+        active:(act==='yes'||act==='on'||act==='true'||act==='1'||act==='active'||act==='show'||act==='live'),
         target:tgt,start:g(r,['showfrom','start','startdate','from']),end:g(r,['showuntil','end','enddate','until']),
         title:g(r,['title']),message:g(r,['message','body','text']),image:g(r,['image','img','photo']),
         btnText:g(r,['buttontext','btntext','button']),btnLink:g(r,['buttonlink','btnlink','link','url'])
@@ -1797,20 +1799,19 @@ window.addEventListener('resize',function(){var m=document.getElementById('hji-j
     });
     return out;
   }
-  var et=null;
-  function recheck(){ if(et)return; et=setTimeout(function(){et=null;evaluate();},90); }
   function run(){
     fetch('https://docs.google.com/spreadsheets/d/'+SHEET_ID+'/gviz/tq?tqx=out:json&sheet=Popups&cb='+Date.now())
       .then(function(r){return r.text();})
       .then(function(t){
         LIST=parse(t); evaluate();
-        if(LIST.some(function(p){return p.target.indexOf(':')>=0;})){   // section popups exist -> watch for tab changes
-          document.addEventListener('click',recheck,true);
-          window.addEventListener('hashchange',recheck);
-          setTimeout(evaluate,900);   // catch a late-set default tab
+        if(LIST.some(function(p){return p.target.indexOf(':')>=0;})){   // section popups exist -> watch which tab is active
+          var lastSec=currentSection();
+          setInterval(function(){ var s=currentSection(); if(s!==lastSec){ lastSec=s; evaluate(); } }, 500);
+          window.addEventListener('hashchange',function(){ setTimeout(evaluate,60); });
         }
       }).catch(function(){});
   }
+  window.hjiPopupDebug=function(){ return {page:slug(), section:currentSection(), popupsLoaded:(LIST?LIST.length:'(none - fetch failed?)'), targets:(LIST?LIST.map(function(p){return p.target+(p.active?'':' [off]');}):null)}; };
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',function(){setTimeout(run,350);});
   else setTimeout(run,350);
 })();
