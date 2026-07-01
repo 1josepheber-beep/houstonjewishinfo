@@ -1808,13 +1808,10 @@ window.addEventListener('resize',function(){var m=document.getElementById('hji-j
   function inWindow(s,e){var t=today();s=(''+(s||'')).slice(0,10);e=(''+(e||'')).slice(0,10);if(s&&t<s)return false;if(e&&t>e)return false;return true;}
   // which sub-section (tab / category) is currently active on this page?
   function currentSection(){
-    // 1) active tab panel — services, real-estate, jobs, charities, things-to-do, contact
+    var dc=document.querySelector('[data-cat].active,[data-cat].selected');
+    if(dc){var v=dc.getAttribute('data-cat');if(v)return v.toLowerCase();}
     var el=document.querySelector('[id^="tab-"].active,[id^="panel-"].active');
     if(el){var m=el.id.match(/^(?:tab|panel)-(.+)$/);if(m)return m[1].toLowerCase();}
-    // 2) education category tiles (edu-tile.active carries data-cat)
-    var dc=document.querySelector('.edu-tile.active[data-cat],[data-cat].active,[data-cat].selected');
-    if(dc){var v=dc.getAttribute('data-cat');if(v)return v.toLowerCase();}
-    // 3) visibility fallback
     var cands=document.querySelectorAll('[id^="tab-"],[id^="panel-"]');
     for(var i=0;i<cands.length;i++){var c=cands[i];if(c.offsetParent!==null){var mm=c.id.match(/^(?:tab|panel)-(.+)$/);if(mm)return mm[1].toLowerCase();}}
     return '';
@@ -1853,19 +1850,20 @@ window.addEventListener('resize',function(){var m=document.getElementById('hji-j
     });
     return out;
   }
+  var et=null;
+  function recheck(){ if(et)return; et=setTimeout(function(){et=null;evaluate();},90); }
   function run(){
     fetch('https://docs.google.com/spreadsheets/d/'+SHEET_ID+'/gviz/tq?tqx=out:json&sheet=Popups&cb='+Date.now())
       .then(function(r){return r.text();})
       .then(function(t){
         LIST=parse(t); evaluate();
-        if(LIST.some(function(p){return p.target.indexOf(':')>=0;})){   // section popups exist -> watch which tab is active
-          var lastSec=currentSection();
-          setInterval(function(){ var s=currentSection(); if(s!==lastSec){ lastSec=s; evaluate(); } }, 500);
-          window.addEventListener('hashchange',function(){ setTimeout(evaluate,60); });
+        if(LIST.some(function(p){return p.target.indexOf(':')>=0;})){   // section popups exist -> watch for tab changes
+          document.addEventListener('click',recheck,true);
+          window.addEventListener('hashchange',recheck);
+          setTimeout(evaluate,900);   // catch a late-set default tab
         }
       }).catch(function(){});
   }
-  window.hjiPopupDebug=function(){ return {page:slug(), section:currentSection(), popupsLoaded:(LIST?LIST.length:'(none - fetch failed?)'), targets:(LIST?LIST.map(function(p){return p.target+(p.active?'':' [off]');}):null)}; };
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',function(){setTimeout(run,350);});
   else setTimeout(run,350);
 })();
