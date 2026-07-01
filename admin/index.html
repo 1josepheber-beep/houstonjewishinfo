@@ -180,6 +180,7 @@
   .setnote b{color:var(--navy)}
   .setbar{margin-top:24px}
   .imgfield{display:block}
+  .imghint{font-family:sans-serif;font-size:11.5px;color:var(--muted);margin:3px 0 6px;line-height:1.45}
   .imgprev{display:none;max-width:150px;max-height:110px;border-radius:8px;border:1px solid var(--line);margin:8px 0;object-fit:cover;background:#f4f6fa}
   .imgup{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-bottom:4px}
   .imgfile{font-size:12.5px;max-width:210px}
@@ -804,6 +805,7 @@ function adCardEl(area,card,pos){
   box.appendChild(head);
   var iv=card?card.image:'';
   var imf=el('div','setfield'); imf.appendChild(el('label',null,'Ad image'));
+  imf.appendChild(el('div','imghint','Recommended size: '+adSizeHint(area)));
   var ir=el('div','set-img-row');
   var prev=el('img','set-img-preview'); prev.id='adprev-'+cid; prev.alt=''; if(iv){prev.src=adImgResolve(iv);prev.style.display='block';}else prev.style.display='none';
   var turl=el('input','field'); turl.type='text'; turl.id='adimg-'+cid; turl.value=iv; turl.placeholder='Paste an image URL, or upload \u2192';
@@ -1287,6 +1289,17 @@ function sectionImg(){
 function resolveImg(v){v=(v||'').trim();if(!v)return '';if(/^https?:\/\//i.test(v))return v;if(/^\//.test(v))return 'https://houstonjewishinfo.com'+v;return sectionImg().base+v;}
 function imgFieldKeys(h){return /image|img|photo|flyer|logo/i.test(h);}
 function cleanName(s){var x=String(s||'').trim().toLowerCase().replace(/[^a-z0-9._-]+/g,'-').replace(/-+/g,'-').replace(/^[-.]+|[-.]+$/g,'');return x||'image';}
+var AD_SIZES={'right-sidebar':'600 \u00d7 500 px, landscape \u2014 shows small on desktop, full width on phones','mobile':'1000 \u00d7 400 px, wide banner \u2014 spans the feed on phones','mazaltov':'800 \u00d7 500 px, landscape','real-estate':'600 \u00d7 500 px, landscape'};
+function adSizeHint(area){ return AD_SIZES[area]||'landscape, about 800 \u00d7 500 px'; }
+function imgSizeHint(coll, field){
+  var f=String(field||'').toLowerCase();
+  if(coll==='Hechsherim'||/hechsher/.test(f)) return 'square, about 200 \u00d7 200 px \u2014 a transparent PNG works best';
+  if(coll==='Stories') return '800 \u00d7 400 px, landscape \u2014 shown as a wide thumbnail';
+  if(/card/.test(f)) return '1050 \u00d7 600 px, landscape \u2014 business-card shape (1.75:1)';
+  if(/flyer/.test(f)) return 'portrait flyer, about 1080 \u00d7 1350 px';
+  if(/logo/.test(f)) return 'square-ish, about 400 \u00d7 400 px \u2014 a transparent PNG works best';
+  return 'landscape, about 1000 \u00d7 600 px';
+}
 function buildImageField(h,val){
   var wrap=el('div','imgfield');
   var inp=el('input','field');inp.id='f-'+h;inp.value=val;inp.placeholder='filename or full URL';
@@ -1322,7 +1335,7 @@ function buildImageField(h,val){
     rd.readAsDataURL(f);
   };
   up.appendChild(file);up.appendChild(nm);up.appendChild(btn);up.appendChild(st);
-  wrap.appendChild(inp);wrap.appendChild(prev);wrap.appendChild(up);
+  wrap.appendChild(inp);wrap.appendChild(el('div','imghint','Recommended size: '+imgSizeHint(S.current,h)));wrap.appendChild(prev);wrap.appendChild(up);
   return wrap;
 }
 function openForm(row){
