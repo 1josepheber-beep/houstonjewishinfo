@@ -1782,9 +1782,14 @@ window.addEventListener('resize',function(){var m=document.getElementById('hji-j
     +".hjipop-msg{font-size:15.5px;color:#1c1c1c;line-height:1.55;white-space:pre-wrap}"
     +".hjipop-btn{display:inline-block;margin-top:18px;background:#1a2744;color:#fff;text-decoration:none;font-weight:600;padding:11px 22px;border-radius:8px;font-size:15px}"
     +".hjipop-btn:hover{background:#10192e}";
+  var shownLoad={};
   function show(p){
     var sig='hjipop_'+ph([p.title,p.message,p.btnText,p.btnLink,p.image,p.target].join('|'));
-    try{ if(sessionStorage.getItem(sig))return; sessionStorage.setItem(sig,'1'); }catch(e){}
+    if(p.repeat==='always'){
+      if(shownLoad[sig])return; shownLoad[sig]=1;          // reminder: shows once per page load, reappears on refresh / return
+    }else{
+      try{ if(sessionStorage.getItem(sig))return; sessionStorage.setItem(sig,'1'); }catch(e){}  // once per visit
+    }
     if(document.querySelector('.hjipop-backdrop'))return;   // never stack two
     if(!document.getElementById('hjipop-css')){var st=document.createElement('style');st.id='hjipop-css';st.textContent=CSS;document.head.appendChild(st);}
     var bd=document.createElement('div'); bd.className='hjipop-backdrop';
@@ -1852,11 +1857,13 @@ window.addEventListener('resize',function(){var m=document.getElementById('hji-j
     rows.forEach(function(r){
       var act=g(r,['active','on','status','live']).toLowerCase();
       var tgt=g(r,['target','page','pages','show']).toLowerCase().trim(); if(!tgt)return;
+      var rep=g(r,['repeat','frequency','showevery','every','recurring','reappear']).toLowerCase().trim();
       out.push({
         active:(act==='yes'||act==='on'||act==='true'||act==='1'||act==='active'||act==='show'||act==='live'),
         target:tgt,start:g(r,['showfrom','start','startdate','from']),end:g(r,['showuntil','end','enddate','until']),
         title:g(r,['title']),message:g(r,['message','body','text']),image:g(r,['image','img','photo']),
-        btnText:g(r,['buttontext','btntext','button']),btnLink:g(r,['buttonlink','btnlink','link','url'])
+        btnText:g(r,['buttontext','btntext','button']),btnLink:g(r,['buttonlink','btnlink','link','url']),
+        repeat:(rep==='always'||rep==='every'||rep==='everytime'||rep==='eachtime'||rep==='yes'||rep==='refresh'||rep==='reload'||rep==='recurring'||rep==='reappear')?'always':'once'
       });
     });
     return out;
