@@ -991,7 +991,7 @@ function highlightPending(){
   var rows=document.querySelectorAll('#content tbody tr'), hit=null,i;
   for(i=0;i<rows.length;i++){ if((rows[i].getAttribute('data-rk')||'')===want){hit=rows[i];break;} }
   if(!hit){ for(i=0;i<rows.length;i++){ if((rows[i].getAttribute('data-rk')||'').indexOf(want)>=0){hit=rows[i];break;} } }
-  if(hit){ var ck=hit.getAttribute('data-catkey'); if(ck&&S.openCats&&!S.openCats[ck])toggleCat(ck); hit.scrollIntoView({behavior:'smooth',block:'center'}); hit.classList.add('rowflash'); setTimeout(function(){hit.classList.remove('rowflash');},2100); }
+  if(hit){ var ck=hit.getAttribute('data-catkey'); if(ck&&S.openCats&&!S.openCats[ck])toggleCat(ck); hit.scrollIntoView({behavior:'smooth',block:'center'}); hit.classList.add('rowflash'); setTimeout(function(){hit.classList.remove('rowflash');},2100); var eb=hit.querySelector('.rowact button'); if(eb)eb.click(); }
 }
 (function(){
   var inp=$('admSearch'),clr=$('admSearchClear');
