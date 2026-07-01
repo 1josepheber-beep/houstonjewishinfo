@@ -1665,6 +1665,13 @@ window.addEventListener('resize',function(){var m=document.getElementById('hji-j
     var j=JSON.parse(t.substring(s,e+1));
     var cols=(j.table&&j.table.cols)||[],rows=(j.table&&j.table.rows)||[],idx={};
     cols.forEach(function(c,i){var l=((c.label||'')+'').toLowerCase().replace(/[^a-z0-9]/g,'');if(l&&idx[l]==null)idx[l]=i;});
+    // self-heal: if headers weren't recognised, treat the first data row as the header row
+    if(idx.target==null&&idx.page==null&&rows.length){
+      var i2={},hc=rows[0].c||[];
+      hc.forEach(function(cell,i){var lab=(cell&&cell.v!=null?(''+cell.v):'').toLowerCase().replace(/[^a-z0-9]/g,'');if(lab&&i2[lab]==null)i2[lab]=i;});
+      if(i2.target!=null||i2.page!=null){idx=i2;rows=rows.slice(1);}
+    }
+    try{window.__hjiCols=cols.map(function(c){return c.label||'';});window.__hjiRows=rows.length;}catch(e2){}
     function g(r,keys){for(var k=0;k<keys.length;k++){var i=idx[keys[k]];if(i!=null){var v=r.c&&r.c[i];if(v&&v.v!=null)return (''+v.v);}}return '';}
     var out=[];
     rows.forEach(function(r){
@@ -1680,7 +1687,7 @@ window.addEventListener('resize',function(){var m=document.getElementById('hji-j
     return out;
   }
   function run(){
-    fetch('https://docs.google.com/spreadsheets/d/'+SHEET_ID+'/gviz/tq?tqx=out:json&sheet=Popups&cb='+Date.now())
+    fetch('https://docs.google.com/spreadsheets/d/'+SHEET_ID+'/gviz/tq?tqx=out:json&sheet=Popups&headers=1&cb='+Date.now())
       .then(function(r){return r.text();})
       .then(function(t){
         LIST=parse(t); evaluate();
@@ -1691,7 +1698,7 @@ window.addEventListener('resize',function(){var m=document.getElementById('hji-j
         }
       }).catch(function(){});
   }
-  window.hjiPopupDebug=function(){ return {page:slug(), section:currentSection(), popupsLoaded:(LIST?LIST.length:'(none - fetch failed?)'), targets:(LIST?LIST.map(function(p){return p.target+(p.active?'':' [off]');}):null)}; };
+  window.hjiPopupDebug=function(){ return {page:slug(), section:currentSection(), popupsLoaded:(LIST?LIST.length:'(none - fetch failed?)'), rowsInTab:(typeof window.__hjiRows!=='undefined'?window.__hjiRows:null), columnsFound:(window.__hjiCols||null), targets:(LIST?LIST.map(function(p){return p.target+(p.active?'':' [off]');}):null)}; };
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',function(){setTimeout(run,350);});
   else setTimeout(run,350);
 })();
