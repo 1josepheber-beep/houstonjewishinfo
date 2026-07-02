@@ -3710,5 +3710,60 @@ window.addEventListener('resize',function(){var m=document.getElementById('hji-j
   }
 })();
 </script>
+<script>
+(function(){
+  // === HJI submissions pause guard ===
+  var SHEET_ID=(typeof SHEET!=='undefined'&&SHEET)?SHEET:'1in7Ac7zknqyR9neWKOCAjOAG4jXCIVTJQfU6jJ72CV8';
+  var paused=false, msg='';
+  function dmsg(){ var m=(''+(msg||'')).trim(); return m?m:'New submissions are temporarily paused. Please check back soon.'; }
+  var CSS=".hji-pm-bg{position:fixed;inset:0;background:rgba(26,39,68,.55);display:flex;align-items:center;justify-content:center;padding:20px;z-index:100001;opacity:0;transition:opacity .2s ease}"
+    +".hji-pm-bg.show{opacity:1}"
+    +".hji-pm{background:#fff;max-width:400px;width:100%;border-radius:14px;box-shadow:0 20px 60px rgba(0,0,0,.32);padding:28px 24px 22px;position:relative;text-align:center;font-family:'Source Serif 4',Georgia,serif;transform:translateY(12px) scale(.98);transition:transform .2s ease}"
+    +".hji-pm-bg.show .hji-pm{transform:none}"
+    +".hji-pm-x{position:absolute;top:9px;right:12px;width:28px;height:28px;border:none;background:rgba(0,0,0,.06);border-radius:50%;font-size:17px;line-height:1;color:#333;cursor:pointer}"
+    +".hji-pm-x:hover{background:rgba(0,0,0,.12)}"
+    +".hji-pm-msg{font-size:16px;color:#1a2744;line-height:1.5;white-space:pre-wrap;margin:8px 0 20px;font-weight:600}"
+    +".hji-pm-ok{background:#143D75;color:#fff;border:none;border-radius:9px;padding:10px 28px;font-weight:700;font-size:15px;cursor:pointer}"
+    +".hji-pm-ok:hover{background:#10305c}";
+  function ensureCSS(){ if(document.getElementById('hji-pm-css'))return; var s=document.createElement('style');s.id='hji-pm-css';s.textContent=CSS;document.head.appendChild(s); }
+  function showModal(){
+    if(document.querySelector('.hji-pm-bg'))return;   // one at a time
+    ensureCSS();
+    var bg=document.createElement('div'); bg.className='hji-pm-bg';
+    bg.innerHTML='<div class="hji-pm"><button class="hji-pm-x" aria-label="Close">\u00d7</button><div class="hji-pm-msg"></div><button class="hji-pm-ok">OK</button></div>';
+    bg.querySelector('.hji-pm-msg').textContent=dmsg();
+    document.body.appendChild(bg);
+    requestAnimationFrame(function(){ bg.classList.add('show'); });
+    function close(){ bg.classList.remove('show'); setTimeout(function(){ if(bg.parentNode)bg.parentNode.removeChild(bg); },220); }
+    bg.querySelector('.hji-pm-x').onclick=close;
+    bg.querySelector('.hji-pm-ok').onclick=close;
+    bg.addEventListener('click',function(e){ if(e.target===bg)close(); });
+  }
+  // capturing listeners so we run before the page's own handlers
+  document.addEventListener('click',function(e){
+    if(!paused)return;
+    var b=(e.target&&e.target.closest)?e.target.closest('[onclick*="submitForm"]'):null;
+    if(b){ e.stopImmediatePropagation(); e.preventDefault(); showModal(); }
+  },true);
+  document.addEventListener('change',function(e){
+    if(!paused)return;
+    var s=e.target;
+    if(s&&s.matches&&s.matches('.type-select,#contact-type')){ e.stopImmediatePropagation(); e.preventDefault(); showModal(); try{ s.selectedIndex=0; }catch(_){} }
+  },true);
+  document.addEventListener('submit',function(e){ if(paused){ e.stopImmediatePropagation(); e.preventDefault(); showModal(); } },true);
+  function on(v){ v=(''+(v||'')).toLowerCase().trim(); return v==='yes'||v==='on'||v==='true'||v==='1'||v==='paused'||v==='pause'; }
+  function run(){
+    fetch('https://docs.google.com/spreadsheets/d/'+SHEET_ID+'/gviz/tq?tqx=out:json&sheet=Settings&cb='+Date.now())
+      .then(function(r){return r.text();})
+      .then(function(t){
+        var s=t.indexOf('{'),e=t.lastIndexOf('}'); if(s<0||e<0)return;
+        var j=JSON.parse(t.substring(s,e+1)); var rows=(j.table&&j.table.rows)||[], S={};
+        rows.forEach(function(row){var c=row.c||[];var k=(c[0]&&c[0].v!=null?(''+c[0].v):'').trim().toLowerCase();var v=(c[1]&&c[1].v!=null?(''+c[1].v):'');if(k)S[k]=v;});
+        paused=on(S['submissions_paused']); msg=S['submissions_message']||'';
+      }).catch(function(){});
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',run); else run();
+})();
+</script>
 </body>
 </html>
