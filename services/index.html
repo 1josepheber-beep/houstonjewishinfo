@@ -3636,5 +3636,79 @@ window.addEventListener('resize',function(){var m=document.getElementById('hji-j
   else setTimeout(run,350);
 })();
 </script>
+<script>
+(function(){
+  // === HJI install banner: Android/desktop native prompt + iOS Safari instructions ===
+  // Skip if already installed (running as an app)
+  if(window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) return;
+  if(window.navigator.standalone === true) return;
+
+  var DKEY='hji_pwa_dismissed', SKEY='hji_pwa_shown';
+  function dismissedRecently(){ try{var t=localStorage.getItem(DKEY);return t && (Date.now()-(+t) < 14*24*60*60*1000);}catch(e){return false;} }
+  function markDismissed(){ try{localStorage.setItem(DKEY,''+Date.now());}catch(e){} }
+  function shownThisVisit(){ try{return !!sessionStorage.getItem(SKEY);}catch(e){return false;} }
+  function markShown(){ try{sessionStorage.setItem(SKEY,'1');}catch(e){} }
+  if(dismissedRecently() || shownThisVisit()) return;
+
+  var ua=navigator.userAgent||'';
+  var isIOS = (/iphone|ipad|ipod/i.test(ua) || (navigator.platform==='MacIntel' && navigator.maxTouchPoints>1)) && !window.MSStream;
+  var isSafari = /safari/i.test(ua) && !/crios|fxios|chrome|android|edg/i.test(ua);
+  var deferred=null;
+
+  var CSS=".hji-pwa{position:fixed;left:12px;right:12px;bottom:12px;z-index:99998;max-width:520px;margin:0 auto;background:#143D75;color:#fff;border-radius:14px;box-shadow:0 12px 44px rgba(0,0,0,.4);display:flex;align-items:center;gap:12px;padding:12px 14px;font-family:'Inter',system-ui,-apple-system,sans-serif;transform:translateY(160%);transition:transform .38s cubic-bezier(.2,.9,.3,1)}"
+    +".hji-pwa.show{transform:none}"
+    +".hji-pwa-ico{width:46px;height:46px;border-radius:11px;background:#fff;flex:0 0 auto;display:flex;align-items:center;justify-content:center;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.2)}"
+    +".hji-pwa-ico img{width:82%;height:82%;object-fit:contain}"
+    +".hji-pwa-txt{flex:1;font-size:13.5px;line-height:1.4;min-width:0}"
+    +".hji-pwa-txt b.hd{display:block;font-size:15px;margin-bottom:2px;font-weight:700}"
+    +".hji-pwa-shr{display:inline-flex;vertical-align:-4px;margin:0 3px}"
+    +".hji-pwa-shr svg{width:17px;height:17px}"
+    +".hji-pwa-btn{flex:0 0 auto;background:#B94218;color:#fff;border:none;border-radius:9px;padding:10px 18px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap}"
+    +".hji-pwa-btn:hover{background:#a2380f}"
+    +".hji-pwa-x{flex:0 0 auto;background:transparent;border:none;color:rgba(255,255,255,.65);font-size:22px;line-height:1;cursor:pointer;padding:2px 4px;align-self:flex-start}"
+    +".hji-pwa-x:hover{color:#fff}";
+
+  function css(){ if(document.getElementById('hji-pwa-css'))return; var s=document.createElement('style'); s.id='hji-pwa-css'; s.textContent=CSS; document.head.appendChild(s); }
+  var SHARE='<span class="hji-pwa-shr"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V4"/><path d="M8.5 7.5 12 4l3.5 3.5"/><path d="M7 11H5.5A1.5 1.5 0 0 0 4 12.5v6A1.5 1.5 0 0 0 5.5 20h13a1.5 1.5 0 0 0 1.5-1.5v-6A1.5 1.5 0 0 0 18.5 11H17"/></svg></span>';
+
+  function remove(){ var b=document.getElementById('hji-pwa'); if(b){b.classList.remove('show'); setTimeout(function(){if(b.parentNode)b.parentNode.removeChild(b);},380);} }
+
+  function showBanner(mode){
+    if(document.getElementById('hji-pwa')) return;
+    css(); markShown();
+    var b=document.createElement('div'); b.className='hji-pwa'; b.id='hji-pwa';
+    var h='<div class="hji-pwa-ico"><img src="/apple-touch-icon.png" alt="HJI" onerror="this.style.display=\'none\'"></div>';
+    if(mode==='ios'){
+      h+='<div class="hji-pwa-txt"><b class="hd">Add HJI to your Home Screen</b>Tap '+SHARE+' below, then choose <b>&ldquo;Add to Home Screen.&rdquo;</b></div>';
+      h+='<button class="hji-pwa-x" aria-label="Close">\u00d7</button>';
+    }else{
+      h+='<div class="hji-pwa-txt"><b class="hd">Install the HJI app</b>Get Houston Jewish Info on your home screen.</div>';
+      h+='<button class="hji-pwa-btn">Install</button><button class="hji-pwa-x" aria-label="Close">\u00d7</button>';
+    }
+    b.innerHTML=h; document.body.appendChild(b);
+    requestAnimationFrame(function(){ b.classList.add('show'); });
+    var x=b.querySelector('.hji-pwa-x'); if(x)x.onclick=function(){ markDismissed(); remove(); };
+    var btn=b.querySelector('.hji-pwa-btn');
+    if(btn) btn.onclick=function(){
+      if(!deferred){ remove(); return; }
+      deferred.prompt();
+      deferred.userChoice.then(function(res){ if(res && res.outcome==='accepted')markDismissed(); deferred=null; remove(); });
+    };
+  }
+
+  // Android / desktop Chrome: capture the native prompt, show our button
+  window.addEventListener('beforeinstallprompt', function(e){
+    e.preventDefault(); deferred=e;
+    if(!dismissedRecently() && !shownThisVisit()) setTimeout(function(){ showBanner('android'); }, 2500);
+  });
+  window.addEventListener('appinstalled', function(){ markDismissed(); remove(); });
+
+  // iOS Safari: no prompt event exists — show instructions
+  if(isIOS && isSafari){
+    var go=function(){ setTimeout(function(){ if(!dismissedRecently() && !shownThisVisit()) showBanner('ios'); }, 2500); };
+    if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', go); else go();
+  }
+})();
+</script>
 </body>
 </html>
