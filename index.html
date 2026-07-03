@@ -1451,7 +1451,8 @@
 @media(prefers-reduced-motion:reduce){.mz-bl{animation:none}}
 #community-feed .article-card.mz-girl .cf-tag-mz{background:#F5C4D7;color:#9E3B60}
 #community-feed .article-card.mz-boy .cf-tag-mz{background:#CADFF6;color:#2C5A8E}
-#community-feed .article-card.mz-boy .cf-type-mazal{background:#dde8f6;color:#375a9a}
+#community-feed .article-card.mz-girl .cf-type-mazal{background:#fff;color:#A83D62;border:1px solid #EBB8CB}
+#community-feed .article-card.mz-boy .cf-type-mazal{background:#fff;color:#2C5A8E;border:1px solid #C0D6EE}
 .mz-cheer{font-family:'DM Serif Display',Georgia,serif;font-size:21px;line-height:1.05;margin:3px 0 1px}
 #community-feed .mz-girl .mz-cheer{color:#B14A72}
 #community-feed .mz-boy .mz-cheer{color:#2F6198}
@@ -2429,6 +2430,7 @@
       return null;
     }
     function cellStr(c){if(!c)return '';return c.f!=null?c.f:(c.v==null?'':c.v);}
+    function mazalDate(r){ if(r&&r._cells){ if(r._cells.date){var d=parseDate(r._cells.date);if(d)return d;} for(var k in r._cells){ if(/date|born|birth/.test(k)){ var d2=parseDate(r._cells[k]); if(d2)return d2; } } } return null; }
     function tabURL(tab){return 'https://docs.google.com/spreadsheets/d/'+SHEET_ID+'/gviz/tq?tqx=out:json&headers=1&sheet='+encodeURIComponent(tab);}
     function getTab(tab){return fetch(tabURL(tab)).then(function(r){return r.text();}).then(function(text){
       var json=JSON.parse(text.substring(47,text.length-2));
@@ -2436,6 +2438,7 @@
       return (json.table.rows||[]).map(function(row){var o={_cells:{}};cols.forEach(function(col,i){var c=row.c?row.c[i]:null;o[col]=cellStr(c);o._cells[col]=c;});return o;});
     });}
     function active(o){return String(o.status||'').toLowerCase().trim()==='active';}
+    window.hjiMazalDebug=function(){getTab('MazalTov').then(function(rows){console.log('=== Mazal Tov rows ===');rows.forEach(function(r){console.log(r.name||'(no name)','| columns:',Object.keys(r).filter(function(k){return k!=='_cells';}).join(', '),'| date cell:',JSON.stringify(r._cells.date),'| reads as:',(mazalDate(r)?mazalDate(r).toDateString():'NULL'));});}).catch(function(e){console.log('debug error',e);});return 'fetching\u2026 see console output above';};
 
     function buildItems(stories,events,mazals,passings){
       var out=[];
@@ -2444,7 +2447,7 @@
       events.forEach(function(r){if(!active(r)||!r.title)return;
         out.push({type:'event',date:parseDate(r._cells.date),time:r.time||'',title:r.title,cat:r.category||'Event',org:r.presenter||'',loc:r.location||'',desc:r.description||'',img:imgList(r.imageurl,EVENT_IMG)[0]||'',imgs:imgList(r.imageurl,EVENT_IMG),link:r.ticketurl||'',linkText:(r.buttontext||'More Details'),women:String(r.women||'').toLowerCase().trim()==='yes'});});
       mazals.forEach(function(r){if(!active(r)||!r.name)return;
-        out.push({type:'mazal',date:parseDate(r._cells.date),time:'',title:r.name,cat:r.type||'',org:'',loc:r.city||'',desc:r.message||'',img:'',imgs:[],link:'',linkText:'',women:false});});
+        out.push({type:'mazal',date:mazalDate(r),time:'',title:r.name,cat:r.type||'',org:'',loc:r.city||'',desc:r.message||'',img:'',imgs:[],link:'',linkText:'',women:false});});
       (passings||[]).forEach(function(r){if(!active(r)||!r.name)return;
         out.push({type:'passing',date:parseDate(r._cells.date),time:'',title:r.name,cat:'',org:'',loc:r.city||'',desc:'',pmsg:r.message||'',plev:r.levaya||'',pshiva:r.shiva||'',img:imgList(r.image,PASSING_IMG)[0]||'',imgs:imgList(r.image,PASSING_IMG),link:'',linkText:'',women:false});});
       return out;
