@@ -1439,6 +1439,19 @@
 .sticky-nav .sn-burger span{display:block;width:26px;height:3px;background:var(--navy);border-radius:2px}
 @media (max-width:768px){.sticky-nav{display:flex}}
 </style>
+<style>
+/* Mazal Tov baby theming (soft) */
+.article-card.mz-theme{position:relative}
+.article-card.mz-girl{background:linear-gradient(160deg,#FBE1EB 0%,#fff 66%);border-color:#f3cdda;--mzb-a:#F2A6C2;--mzb-c:#F4B4CC}
+.article-card.mz-boy{background:linear-gradient(160deg,#DCE9F9 0%,#fff 66%);border-color:#c9ddf3;--mzb-a:#8FB6E4;--mzb-c:#9EC0EA}
+.mz-theme .cf-body{position:relative;z-index:1}
+.mz-balloons{position:absolute;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+.mz-bl{position:absolute;width:var(--bw,44px);animation:mzbob var(--dur,7s) ease-in-out infinite;animation-delay:var(--dl,0s)}
+@keyframes mzbob{0%,100%{transform:translateY(0) rotate(var(--rot,0deg))}50%{transform:translateY(-8px) rotate(var(--rot,0deg))}}
+@media(prefers-reduced-motion:reduce){.mz-bl{animation:none}}
+.mz-girl .cf-tag-mz{background:#F8D9E4;color:#A83D62}
+.mz-boy .cf-tag-mz{background:#D6E5F7;color:#2C5A8E}
+</style>
 </head>
 <body style="-webkit-tap-highlight-color: transparent;">
 <div class="bsd-mark" aria-hidden="true"><span>בס״ד</span></div>
@@ -2366,6 +2379,7 @@
     var MAZAL_AD_SLOTS=['mazaltov-1','mazaltov-2','mazaltov-3','mazaltov-4','mazaltov-5'];
     var TYPE={news:'News',event:'Event',mazal:'Mazal Tov',passing:'In Memoriam'};
     var MONTHS=['January','February','March','April','May','June','July','August','September','October','November','December'];
+    var MZ_BALLOONS='<div class="mz-balloons">'+'<svg class="mz-bl" style="--bw:46px;top:-12px;right:14px;--rot:8deg;opacity:.5;--dur:7s" viewBox="0 0 40 60"><ellipse cx="20" cy="19" rx="15" ry="18" fill="var(--mzb-a)"/><path d="M20 37l-3 5h6z" fill="var(--mzb-a)"/><path d="M20 42q5 8 0 17" stroke="var(--mzb-a)" stroke-width="1.1" fill="none"/><ellipse cx="14" cy="13" rx="4" ry="6" fill="#fff" opacity=".4"/></svg>'+'<svg class="mz-bl" style="--bw:30px;bottom:-6px;left:16px;--rot:6deg;opacity:.32;--dur:9s;--dl:.6s" viewBox="0 0 40 60"><ellipse cx="20" cy="19" rx="15" ry="18" fill="var(--mzb-c)"/><path d="M20 37l-3 5h6z" fill="var(--mzb-c)"/><path d="M20 42q5 8 0 17" stroke="var(--mzb-c)" stroke-width="1.1" fill="none"/></svg>'+'</div>';
 
     var items=[], filter='all', view='list', showWomen=false, page=1, wired=false;
     var calM, calY;
@@ -2509,7 +2523,8 @@
       }else if(x.type==='news'&&x.link){
         foot='<div class="cf-foot"><a href="'+attr(extURL(x.link))+'" target="_blank" rel="noopener" class="article-read-more">'+esc(x.linkText||'Read More \u2192')+'</a></div>';
       }
-      return '<article class="article-card">'+banner+'<div class="cf-body"><div class="cf-row1">'+dline+badge+'</div><div class="cf-tags">'+typeTag+catTag+'</div><h2 class="article-headline">'+esc(x.title)+'</h2>'+meta+desc+foot+'</div></article>';
+      var mzCls='',mzBl='';if(x.type==='mazal'&&x.cat){var _mc=(''+x.cat).toLowerCase();if(/girl/.test(_mc)){mzCls=' mz-theme mz-girl';mzBl=MZ_BALLOONS;}else if(/boy/.test(_mc)){mzCls=' mz-theme mz-boy';mzBl=MZ_BALLOONS;}}
+      return '<article class="article-card'+mzCls+'">'+mzBl+banner+'<div class="cf-body"><div class="cf-row1">'+dline+badge+'</div><div class="cf-tags">'+typeTag+catTag+'</div><h2 class="article-headline">'+esc(x.title)+'</h2>'+meta+desc+foot+'</div></article>';
     }
 
     function adSlot(name){var id=(name==='mobile-1')?' id="mobile-ad-strip"':'';var cls=(name==='mobile-1')?'ad-managed':'zb-mobile-ad ad-managed';return '<div'+id+' class="'+cls+'" data-ad-slot="'+name+'"></div>';}
