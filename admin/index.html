@@ -1394,6 +1394,8 @@ function buildImageField(h,val){
   wrap.appendChild(inp);wrap.appendChild(el('div','imghint','Recommended size: '+imgSizeHint(S.current,h)));wrap.appendChild(prev);wrap.appendChild(up);
   return wrap;
 }
+function isDateField(h){ return /(^|[^a-z])date([^a-z]|$)|showfrom|showuntil|(^|[^a-z])born|birth/i.test(h); }
+function toDateInput(v){ v=String(v||'').trim(); if(!v)return ''; var m=v.match(/^Date\((\d+),(\d+),(\d+)/); if(m)return m[1]+'-'+('0'+(+m[2]+1)).slice(-2)+'-'+('0'+(+m[3])).slice(-2); if(/^\d{4}-\d{2}-\d{2}/.test(v))return v.slice(0,10); var d=new Date(v); return isNaN(d.getTime())?'':(d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2)); }
 function openForm(row){
   if(S.mode!=='full')return;
   editing=row||null;
@@ -1405,6 +1407,7 @@ function openForm(row){
     if(imgFieldKeys(h)){body.appendChild(buildImageField(h,val));return;}
     var fo=FIELD_OPTIONS[S.current+'.'+h];
     if(fo){ var foOpts=(fo.dynamic==='hechsher')?(S.hechsherNames||[]):fo.options; body.appendChild(buildOptionField(h,normOpts(foOpts),!!fo.multi,val)); return; }
+    if(isDateField(h)){ var di=el('input','field'); di.type='date'; di.id='f-'+h; di.value=toDateInput(val); body.appendChild(di); return; }
     if(STATUSY.indexOf(h)>=0){
       input=el('select','field');input.id='f-'+h;
       var opts;
