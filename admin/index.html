@@ -405,6 +405,17 @@ function el(t,c,x){var e=document.createElement(t);if(c)e.className=c;if(x!=null
 function remember(){try{localStorage.setItem('hji_admin',JSON.stringify({sheetId:S.sheetId,scriptUrl:S.scriptUrl,token:S.token}));}catch(e){}}
 function recall(){try{return JSON.parse(localStorage.getItem('hji_admin')||'{}');}catch(e){return {};}}
 function forget(){try{localStorage.removeItem('hji_admin');localStorage.removeItem('hji_admin_tab');}catch(e){}}
+function preloadSettings(){
+  var reader=(S.mode==='full')?api('list',{sheet:SETTINGS_TAB}):gvizRead(SETTINGS_TAB);
+  reader.then(function(res){
+    if(!res)return;
+    var map={};
+    (res.rows||[]).forEach(function(r){var k=((r.Key!=null?r.Key:(r.key!=null?r.key:''))+'').trim().toLowerCase();if(k)map[k]={value:((r.Value!=null?r.Value:(r.value!=null?r.value:''))+''),_row:r._row};});
+    S.settingsMap=map;
+    var fn=document.querySelector('.feednote');
+    if(fn&&S.current&&FEED_WINDOWS[S.current]!==undefined){ fn.outerHTML=feedNote(S.current); }
+  }).catch(function(){});
+}
 function selectInitialCollection(){
   var last; try{last=localStorage.getItem('hji_admin_tab');}catch(e){}
   var c=last&&COLLECTIONS.find(function(x){return x[0]===last;});
@@ -521,6 +532,7 @@ function enterApp(){
   buildNav();
   buildSearchIndex();
   loadHechsherNames();
+  preloadSettings();
   if(S.mode==='full'){
     api('pending').then(function(res){
       if(res&&res.ok){S.pending=res;lastPendingTotal=res.total;updatePendingUI();}
@@ -1130,6 +1142,8 @@ function statusPill(v){
    Mazal Tov & Passings 14 days, Events hide once the date passes.
    An item must have Status "active" to appear in the feed at all. */
 var FEED_WINDOWS = { 'Stories':30, 'MazalTov':14, 'Passings':14, 'Events':'event' };
+var FEED_DAYS_KEY = { 'Stories':'story_days', 'MazalTov':'mazal_days', 'Passings':'passing_days' };
+function feedWindow(key){ var base=FEED_WINDOWS[key]; if(base===undefined||base==='event')return base; var sk=FEED_DAYS_KEY[key]; if(sk&&S.settingsMap&&S.settingsMap[sk]){ var raw=S.settingsMap[sk]; var rv=(raw&&raw.value!=null)?raw.value:raw; var v=parseInt(rv,10); if(!isNaN(v)&&v>0)return v; } return base; }
 function parseAdminDate(s){
   s=String(s||'').trim(); if(!s)return null;
   var m=s.match(/^Date\((\d+),(\d+),(\d+)/); if(m)return new Date(+m[1],+m[2],+m[3]);
@@ -1142,7 +1156,7 @@ function feedStatusActive(row){
   return String(row[k]||'').toLowerCase().trim()==='active';
 }
 function feedRowState(row,key){
-  var win=FEED_WINDOWS[key]; if(win===undefined)return null;
+  var win=feedWindow(key); if(win===undefined)return null;
   if(!feedStatusActive(row))return {state:'off',days:0};
   var dk=Object.keys(row).find(function(h){return h.toLowerCase()==='date';});
   var d=dk?parseAdminDate(row[dk]):null;
@@ -1158,7 +1172,7 @@ function feedRowState(row,key){
     :{state:'hidden',days:Math.floor((now-agedOut)/DAY)};
 }
 function feedNote(key){
-  var w=FEED_WINDOWS[key]; if(w===undefined)return '';
+  var w=feedWindow(key); if(w===undefined)return '';
   var txt=(w==='event')?'Hides from the feed <b>once the date passes</b> — then stays searchable.'
     :'Hides from the feed <b>'+w+' days</b> after the date — then stays searchable.';
   return '<div class="feednote">⏳ '+txt+'</div>';
