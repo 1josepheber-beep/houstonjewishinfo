@@ -3373,7 +3373,7 @@ window.addEventListener('resize',function(){var m=document.getElementById('hji-j
       var steps=stepsArr.length?'<details><summary>▸ Show steps</summary><ol class="shg-steps">'+stepsArr.map(function(x){return '<li>'+esc(x)+'</li>';}).join('')+'</ol></details>':'';
       var safety=String(r.safety||'').trim()?'<div class="shg-safety">⚠️ '+esc(r.safety)+'</div>':'';
       var btn=String(r.linkurl||'').trim()?'<a class="btn-primary" style="margin-top:auto;align-self:flex-start;text-decoration:none;display:inline-block" href="'+esc(String(r.linkurl).trim())+'" target="_blank" rel="noopener">'+esc(r.linktext||'Learn more →')+'</a>':'';
-      out+='<div class="sh-guide-card shg-card" style="display:flex;flex-direction:column">'+media+'<span class="shg-badge '+badge+'">'+esc(blabel)+'</span><div class="shg-title">'+esc(r.title)+'</div>'+(r.summary?'<p class="shg-summary">'+esc(r.summary)+'</p>':'')+safety+steps+btn+'</div>';
+      out+='<div class="sh-guide-card shg-card" style="display:flex;flex-direction:column">'+media+'<span class="shg-badge '+badge+'">'+esc(blabel)+'</span><div class="shg-title">'+esc(r.title)+'</div>'+(r.summary?'<p class="shg-summary">'+(/<([a-z][a-z0-9]*)\b[^>]*>/i.test(r.summary||'')?(r.summary||''):esc(r.summary).replace(/\n/g,'<br>'))+'</p>':'')+safety+steps+btn+'</div>';
     });
     grid.innerHTML=n?out:'<div style="padding:24px;color:var(--muted);font-family:sans-serif;grid-column:1/-1">No guides found yet. Check back soon.</div>';
   };
@@ -3472,8 +3472,8 @@ window.addEventListener('resize',function(){var m=document.getElementById('hji-j
         if(alink){var la=document.createElement('a');la.href=alink;la.style.display='block';la.appendChild(im);bar.appendChild(la);}else bar.appendChild(im);
       } else {
         bar.style.cssText='background:'+bg+';color:#fff;font-family:sans-serif;font-size:14px;font-weight:600;text-align:center;padding:9px 38px 9px 16px;position:relative;z-index:950;line-height:1.4';
-        if(alink){var a=document.createElement('a');a.href=alink;a.textContent=g(S,'announce_text');a.style.cssText='color:#fff;text-decoration:underline';bar.appendChild(a);}
-        else bar.appendChild(document.createTextNode(g(S,'announce_text')));
+        if(alink){var a=document.createElement('a');a.href=alink;a.style.cssText='color:#fff;text-decoration:underline';var _at=g(S,'announce_text');if(/<([a-z][a-z0-9]*)\b[^>]*>/i.test(_at))a.innerHTML=_at;else a.textContent=_at;bar.appendChild(a);}
+        else {var _at2=g(S,'announce_text');if(/<([a-z][a-z0-9]*)\b[^>]*>/i.test(_at2)){var _asp=document.createElement('span');_asp.innerHTML=_at2;bar.appendChild(_asp);}else bar.appendChild(document.createTextNode(_at2));}
       }
       var x=document.createElement('button');x.type='button';x.setAttribute('aria-label','Dismiss');x.innerHTML='&times;';
       x.style.cssText='position:absolute;right:10px;top:50%;transform:translateY(-50%);background:rgba(0,0,0,.28);border:none;color:#fff;font-size:20px;line-height:1;cursor:pointer;opacity:.9;border-radius:50%;width:26px;height:26px;display:flex;align-items:center;justify-content:center';
@@ -3530,7 +3530,7 @@ window.addEventListener('resize',function(){var m=document.getElementById('hji-j
     if(p.image)h+='<img class="hjipop-img" src="'+esc(p.image)+'" alt="">';
     h+='<div class="hjipop-body">';
     if(p.title)h+='<div class="hjipop-title">'+esc(p.title)+'</div>';
-    if(p.message)h+='<div class="hjipop-msg">'+esc(p.message)+'</div>';
+    if(p.message)h+='<div class="hjipop-msg">'+(/<([a-z][a-z0-9]*)\b[^>]*>/i.test(p.message||'')?(p.message||''):esc(p.message).replace(/\n/g,'<br>'))+'</div>';
     if(p.btnText&&p.btnLink)h+='<a class="hjipop-btn" href="'+esc(p.btnLink)+'" target="_blank" rel="noopener">'+esc(p.btnText)+'</a>';
     h+='</div>';
     var card=document.createElement('div'); card.className='hjipop-card'; card.innerHTML=h;

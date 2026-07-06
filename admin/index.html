@@ -410,6 +410,7 @@ var COLLECTIONS = [
   ['Activities','🎡 Activities'], ['Eruv','🗺️ Eruv']
 ];
 var LONG_FIELDS = ['Description','Message','Notes','Excerpt','Program','ServiceTimes','Amenities','Hours','Summary','Steps'];
+var RICH_FIELDS = ['Description','Message','Notes','Summary','About'];
 var STATUSY = ['Status','Approved','Free','Women'];
 
 // Official option lists per "Sheet.Column". multi:true = pick several (joined with ", ").
@@ -721,7 +722,7 @@ var SETTINGS_CATS=[
   ]},
   {id:'announce',label:'Announcement',fields:[
     {key:'announce_on',label:'Show announcement bar?',type:'toggle',def:'no'},
-    {key:'announce_text',label:'Banner text',type:'text',def:''},
+    {key:'announce_text',label:'Banner text',type:'text',rich:true,def:''},
     {key:'announce_link',label:'Link / URL (optional)',type:'text',def:''},
     {key:'announce_image',label:'Banner image (optional \u2014 use as an ad)',type:'image',def:'',hint:'wide banner, about 1200 \u00d7 150 px \u2014 fills the bar and links to the URL above'},
     {key:'announce_color',label:'Bar color',type:'color',def:'#1a2744'}
@@ -1444,6 +1445,7 @@ function buildOptionField(h,opts,multi,val){
   return wrap;
 }
 function readField(h){
+  if(RICH_FIELDS.indexOf(h)>=0 && S.formRte && S.formRte[h]) return S.formRte[h].getHTML();
   var fo=FIELD_OPTIONS[S.current+'.'+h];
   if(fo){
     if(fo.multi){
@@ -1522,7 +1524,7 @@ function openForm(row){
   if(S.mode!=='full')return;
   editing=row||null;
   $('modalTitle').textContent=(row?'Edit ':'Add new ')+S.current.replace(/s$/,'');
-  var body=$('modalBody');body.innerHTML='';
+  var body=$('modalBody');body.innerHTML=''; S.formRte={};
   S.headers.forEach(function(h){
     body.appendChild(el('label',null,h));
     var val=row?(row[h]||''):'';var input;
@@ -1530,6 +1532,7 @@ function openForm(row){
     var fo=FIELD_OPTIONS[S.current+'.'+h];
     if(fo){ var foOpts=(fo.dynamic==='hechsher')?(S.hechsherNames||[]):fo.options; body.appendChild(buildOptionField(h,normOpts(foOpts),!!fo.multi,val)); return; }
     if(isDateField(h)){ var di=el('input','field'); di.type='date'; di.id='f-'+h; di.value=toDateInput(val); body.appendChild(di); return; }
+    if(RICH_FIELDS.indexOf(h)>=0 && window.HJI_RTE){ var _fr=HJI_RTE.create(val); S.formRte[h]=_fr; body.appendChild(_fr.el); return; }
     if(STATUSY.indexOf(h)>=0){
       input=el('select','field');input.id='f-'+h;
       var opts;
