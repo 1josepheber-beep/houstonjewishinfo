@@ -18,12 +18,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Houston Mikvah Directory — Mikvaot Near You | Houston Jewish Info</title>
-<meta name="description" content="Find a mikvah in Houston — locations, hours, and contact details for mikvaot serving the Jewish community across Meyerland, Bellaire and Greater Houston.">
+<meta name="description" content="Mikvaot in Houston — locations, hours, and contact details for the community mikvah facilities serving the frum Jewish community.">
 <link rel="canonical" href="https://houstonjewishinfo.com/mikvahs/">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Houston Jewish Info">
 <meta property="og:title" content="Houston Mikvah Directory — Mikvaot Near You | Houston Jewish Info">
-<meta property="og:description" content="Find a mikvah in Houston — locations, hours, and contact details for mikvaot serving the Jewish community across Meyerland, Bellaire and Greater Houston.">
+<meta property="og:description" content="Mikvaot in Houston — locations, hours, and contact details for the community mikvah facilities serving the frum Jewish community.">
 <meta property="og:url" content="https://houstonjewishinfo.com/mikvahs/">
 <meta property="og:image" content="https://houstonjewishinfo.com/images/logo.png">
 <meta name="twitter:card" content="summary">
@@ -1227,7 +1227,7 @@
         
             <button class="hamburger" id="hamburger-btn" aria-label="Toggle navigation" onclick="openMobileMenu()"><span></span><span></span><span></span></button>
 </div>
-      <nav class="nav-bar" aria-label="Main navigation">
+      <nav class="nav-bar" aria-label="Main navigation" data-nosnippet>
         <a href="/">Home</a><div class="nav-dd active" id="nav-jewish"><button type="button" class="nav-dd-btn" aria-haspopup="true" aria-expanded="false" onclick="hjiToggleJewish(event)">Jewish <span class="nav-dd-caret">▾</span></button></div>
         <a href="/services">Services</a>
         <a href="/jobs">Jobs</a>
@@ -1719,6 +1719,7 @@ window.addEventListener('resize',function(){var m=document.getElementById('hji-j
     var flogo=g(S,'footer_logo');
     if(flogo){var fm=document.querySelector('.foot-mark');if(fm){fm.innerHTML='';var im=document.createElement('img');im.src=flogo;im.alt='Houston Jewish Info';im.style.cssText='height:48px;width:auto';fm.appendChild(im);}}
     var fav=g(S,'favicon_url');
+    try{ var _sl=(location.pathname.replace(/\/index\.html$/i,'').replace(/\/+$/,'').split('/').filter(Boolean).pop()||'home').toLowerCase().replace(/[^a-z0-9]/g,''); var _sd=g(S,'seo_'+_sl+'_desc'); if(_sd){var _md=document.querySelector('meta[name="description"]');if(_md)_md.setAttribute('content',_sd);var _od=document.querySelector('meta[property="og:description"]');if(_od)_od.setAttribute('content',_sd);} }catch(e){}
     if(fav){document.querySelectorAll('link[rel~="icon"]').forEach(function(l){if(l.parentNode)l.parentNode.removeChild(l);});var fl=document.createElement('link');fl.rel='icon';fl.href=fav;document.head.appendChild(fl);var at=document.querySelector('link[rel="apple-touch-icon"]');if(at)at.href=fav;}
     if(on(S.announce_on)&&(g(S,'announce_text')||g(S,'announce_image'))&&!document.getElementById('hji-announce')){
       var COL={navy:'#1a2744',rust:'#B94218',gold:'#c9933a',green:'#1f7a3d',red:'#b83030'};
