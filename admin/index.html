@@ -306,6 +306,95 @@
 <div class="toast" id="toast"></div>
 
 <script>
+/* === HJI Rich Text Editor (self-contained, no external library) ===
+   HJI_RTE.create(initialHTML) -> { el, getHTML }
+   Produces standard HTML (strong/em/u/ul/ol/li/a + inline styles for color/align)
+   that renders on the public site with normal CSS — no editor library needed there. */
+window.HJI_RTE=(function(){
+  var CSS=".hji-rte{border:1px solid #cfd6e0;border-radius:10px;overflow:hidden;background:#fff}"
+    +".hji-rte-tb{display:flex;flex-wrap:wrap;gap:2px;padding:6px;background:#f4f6f9;border-bottom:1px solid #e2e7ee}"
+    +".hji-rte-b{min-width:30px;height:30px;border:1px solid transparent;background:transparent;border-radius:6px;cursor:pointer;font-size:14px;color:#28324a;display:inline-flex;align-items:center;justify-content:center;padding:0 7px}"
+    +".hji-rte-b:hover{background:#e4eaf3;border-color:#d3dcea}"
+    +".hji-rte-b.on{background:#dce6f6;border-color:#b9cdea}"
+    +".hji-rte-sep{width:1px;background:#dbe1ea;margin:3px 3px}"
+    +".hji-rte-ed{min-height:150px;max-height:420px;overflow:auto;padding:12px 14px;font-family:'Source Serif 4',Georgia,serif;font-size:15px;line-height:1.55;color:#1c1c1c;outline:none}"
+    +".hji-rte-ed:focus{box-shadow:inset 0 0 0 2px #cfe0f8}"
+    +".hji-rte-ed p{margin:0 0 10px}.hji-rte-ed h3{font-size:19px;margin:6px 0 8px;color:#143D75}.hji-rte-ed ul,.hji-rte-ed ol{margin:0 0 10px 22px}.hji-rte-ed a{color:#B94218}"
+    +".hji-rte-swatches{display:flex;flex-wrap:wrap;gap:4px;padding:6px;position:absolute;background:#fff;border:1px solid #cfd6e0;border-radius:8px;box-shadow:0 8px 24px rgba(0,0,0,.18);z-index:100050}"
+    +".hji-rte-sw{width:22px;height:22px;border-radius:5px;border:1px solid rgba(0,0,0,.15);cursor:pointer}";
+  function ensureCSS(){ if(document.getElementById('hji-rte-css'))return; var s=document.createElement('style'); s.id='hji-rte-css'; s.textContent=CSS; document.head.appendChild(s); }
+  function looksHtml(s){ return /<([a-z][a-z0-9]*)\b[^>]*>/i.test(String(s||'')); }
+  function esc(s){ return String(s==null?'':s).replace(/[&<>]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;'}[c];}); }
+  var COLORS=['#1c1c1c','#143D75','#B94218','#c9933a','#1f7a3d','#b83030','#6E4585','#2C5A8E','#888888','#ffffff'];
+  var HILITES=['#fff3bf','#ffe0e0','#e0f0ff','#e6f7e6','#f0e6f7','#eeeeee'];
+
+  function create(initial){
+    ensureCSS();
+    var wrap=document.createElement('div'); wrap.className='hji-rte';
+    var tb=document.createElement('div'); tb.className='hji-rte-tb';
+    var ed=document.createElement('div'); ed.className='hji-rte-ed'; ed.contentEditable='true'; ed.setAttribute('role','textbox');
+    ed.innerHTML = looksHtml(initial) ? initial : esc(initial||'').replace(/\r?\n/g,'<br>');
+    wrap.appendChild(tb); wrap.appendChild(ed);
+
+    function focusEd(){ ed.focus(); }
+    function exec(cmd,val){ focusEd(); try{ document.execCommand('styleWithCSS',false,true); }catch(e){} try{ document.execCommand(cmd,false,val||null); }catch(e){} }
+    function btn(label,title,fn){ var b=document.createElement('button'); b.type='button'; b.className='hji-rte-b'; b.title=title; b.innerHTML=label; b.onmousedown=function(e){e.preventDefault();}; b.onclick=function(e){e.preventDefault(); fn(b);}; tb.appendChild(b); return b; }
+    function sep(){ var s=document.createElement('div'); s.className='hji-rte-sep'; tb.appendChild(s); }
+
+    btn('<b>B</b>','Bold',function(){exec('bold');});
+    btn('<i>I</i>','Italic',function(){exec('italic');});
+    btn('<u>U</u>','Underline',function(){exec('underline');});
+    sep();
+    btn('H','Heading',function(){ var blk=queryBlock(); exec('formatBlock', blk==='h3'?'<p>':'<h3>'); });
+    btn('&#8226;','Bullet list',function(){exec('insertUnorderedList');});
+    btn('1.','Numbered list',function(){exec('insertOrderedList');});
+    sep();
+    btn('&#128279;','Add link',function(){ var url=prompt('Link URL (https://\u2026 or mailto:)'); if(url){ url=url.trim(); if(url) exec('createLink', url); } });
+    btn('&#10006;','Remove link',function(){exec('unlink');});
+    sep();
+    btn('<span style="color:#B94218;font-weight:700">A</span>','Text color',function(b){ swatch(b, COLORS, function(c){ exec('foreColor', c); }); });
+    btn('<span style="background:#fff3bf;padding:0 3px">A</span>','Highlight',function(b){ swatch(b, HILITES, function(c){ exec('hiliteColor', c); }); });
+    sep();
+    btn('&#8676;','Align left',function(){exec('justifyLeft');});
+    btn('&#8596;','Center',function(){exec('justifyCenter');});
+    btn('&#8677;','Align right',function(){exec('justifyRight');});
+    sep();
+    btn('&#9003;','Clear formatting',function(){exec('removeFormat');});
+
+    function queryBlock(){ try{ return (document.queryCommandValue('formatBlock')||'').toLowerCase(); }catch(e){ return ''; } }
+    function swatch(anchor, colors, pick){
+      var old=document.querySelector('.hji-rte-swatches'); if(old&&old.parentNode)old.parentNode.removeChild(old);
+      var pop=document.createElement('div'); pop.className='hji-rte-swatches';
+      colors.forEach(function(c){ var s=document.createElement('div'); s.className='hji-rte-sw'; s.style.background=c; s.title=c; s.onmousedown=function(e){e.preventDefault();}; s.onclick=function(){ pick(c); if(pop.parentNode)pop.parentNode.removeChild(pop); }; pop.appendChild(s); });
+      document.body.appendChild(pop);
+      var r=anchor.getBoundingClientRect(); pop.style.left=(window.pageXOffset+r.left)+'px'; pop.style.top=(window.pageYOffset+r.bottom+4)+'px';
+      setTimeout(function(){ document.addEventListener('mousedown', function h(ev){ if(!pop.contains(ev.target)){ if(pop.parentNode)pop.parentNode.removeChild(pop); document.removeEventListener('mousedown',h); } }); },0);
+    }
+
+    function getHTML(){
+      var h=ed.innerHTML.trim();
+      // treat an empty editor as truly empty (so it falls back to nothing / default)
+      if(h==='<br>'||h==='<p><br></p>'||h==='<div><br></div>'||h==='') return '';
+      return h;
+    }
+    return { el:wrap, getHTML:getHTML, editor:ed };
+  }
+  function esc2(t){return String(t).replace(/[&<>]/g,function(x){return {'&':'&amp;','<':'&lt;','>':'&gt;'}[x];});}
+  function inl(t){ t=esc2(t); t=t.replace(/\*\*([^*]+)\*\*/g,'<strong>$1</strong>'); t=t.replace(/\[([^\]]+)\]\(([^)\s]+)\)/g,'<a href="$2">$1</a>'); return t; }
+  function mdToHtml(src){
+    return String(src||'').replace(/\r\n/g,'\n').split(/\n\s*\n/).map(function(b){
+      b=b.replace(/^\n+|\n+$/g,''); if(!b)return '';
+      var ls=b.split('\n');
+      if(ls.every(function(l){return /^\s*-\s+/.test(l);})) return '<ul>'+ls.map(function(l){return '<li>'+inl(l.replace(/^\s*-\s+/,''))+'</li>';}).join('')+'</ul>';
+      if(ls.length===1&&/^#{1,3}\s+/.test(ls[0])) return '<h3>'+inl(ls[0].replace(/^#{1,3}\s+/,''))+'</h3>';
+      if(ls.length===1&&/^_.+_$/.test(ls[0])) return '<p><em>'+inl(ls[0].replace(/^_/,'').replace(/_$/,''))+'</em></p>';
+      return '<p>'+inl(b.replace(/\n/g,'<br>'))+'</p>';
+    }).join('');
+  }
+  return { create:create, looksHtml:looksHtml, md:mdToHtml };
+})();
+</script>
+<script>
 /* ====================== CONFIG ====================== */
 var LIVE_SHEET_ID = '1in7Ac7zknqyR9neWKOCAjOAG4jXCIVTJQfU6jJ72CV8';
 var BAKED_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx1yJzRglJ8SQ-bNbUjx-gIA2EDyfsdJZFaA6zSQmvqMeHT9T7JjVlcKdcQAuqHmxM/exec';
@@ -613,8 +702,8 @@ var SETTINGS_CATS=[
     {key:'passing_days',label:'Passings — hide after (days)',type:'number',def:'14'}
   ]},
   {id:'legal',label:'Legal Pages',intro:"<b>Formatting guide</b> \u2014 your text is already written this way, so just edit it:<br>\u2022 <code>## Section title</code> \u2014 a heading<br>\u2022 Leave a <b>blank line</b> between blocks to separate paragraphs<br>\u2022 <code>- item</code> at the start of a line \u2014 a bullet point<br>\u2022 <code>**text**</code> \u2014 makes text <b>bold</b><br>\u2022 <code>[words](https://link.com)</code> \u2014 makes a clickable link<br>\u2022 <code>_Last updated: July 2026_</code> \u2014 the small dated line at the top",fields:[
-    {key:'privacy_content',label:'Privacy Policy content',type:'textarea',def:"_Last updated: June 2, 2026_\n\n## 1. Introduction\n\nThis Privacy Policy explains how houstonjewishinfo.com (the \"Site\") handles information when you visit. We are committed to protecting your privacy and collecting only the minimal information needed to operate and improve the Site.\n\n## 2. Information We Collect\n\nWe do not require you to create an account or submit personal information to read the Site. We collect limited information automatically through analytics tools, including:\n\n- **Usage data:** pages visited, time spent on pages, referring website, and similar browsing activity.\n- **Device and technical data:** browser type, device type, operating system, and general (city/region-level) geographic location inferred from your IP address.\n\nWe do not knowingly collect names, email addresses, payment information, or other directly identifying personal information through the Site.\n\n## 3. Cookies and Analytics\n\nThe Site uses Google Analytics, a web analytics service provided by Google. Google Analytics uses cookies \u2014 small text files stored on your device \u2014 to help us understand how visitors use the Site. The information generated about your use of the Site is transmitted to and stored by Google.\n\nYou can control or disable cookies through your browser settings. You can also opt out of Google Analytics by installing the Google Analytics Opt-out Browser Add-on, available at [https://tools.google.com/dlpage/gaoptout](https://tools.google.com/dlpage/gaoptout).\n\nFor more on how Google uses data, see Google's Privacy Policy at [https://policies.google.com/privacy](https://policies.google.com/privacy).\n\n## 4. How We Use Information\n\nWe use the automatically collected information to:\n\n- Understand how visitors interact with the Site;\n- Monitor and improve content, performance, and usability;\n- Maintain the security and proper functioning of the Site.\n\nWe do not sell, rent, or trade your information.\n\n## 5. Sharing of Information\n\nWe do not share information with third parties except:\n\n- With service providers such as Google Analytics that process data on our behalf;\n- When required by law, legal process, or to protect our rights.\n\n## 6. Data Retention\n\nAnalytics data is retained according to the default retention settings of our analytics provider. We retain information only as long as necessary for the purposes described in this policy.\n\n## 7. Children's Privacy\n\nThe Site is not directed to children under 13, and we do not knowingly collect personal information from children under 13. If you believe a child has provided information to us, please contact us so we can address it.\n\n## 8. Your Choices\n\nYou can:\n\n- Disable or delete cookies through your browser settings;\n- Opt out of Google Analytics using the tool linked above;\n- Contact us with any questions about your information.\n\n## 9. Changes to This Policy\n\nWe may update this Privacy Policy from time to time. Changes will be posted on this page with an updated \"Last updated\" date. We encourage you to review it periodically.\n\n## 10. Contact\n\nIf you have questions about this Privacy Policy, contact us at [info@houstonjewishinfo.com](mailto:info@houstonjewishinfo.com)."},
-    {key:'terms_content',label:'Terms of Use content',type:'textarea',def:"_Last updated: June 2, 2026_\n\n## 1. Acceptance of Terms\n\nBy accessing or using houstonjewishinfo.com (the \"Site\"), you agree to be bound by these Terms of Use. If you do not agree, please do not use the Site.\n\n## 2. Purpose of the Site\n\nThe Site is an informational resource providing news, articles, and general information related to the Jewish community in Houston and surrounding areas. The content is provided for general informational purposes only.\n\n## 3. No Warranty / Accuracy of Information\n\nWhile we strive to keep information accurate and up to date, we make no representations or warranties of any kind, express or implied, about the completeness, accuracy, reliability, or availability of the Site or its content. Any reliance you place on such information is strictly at your own risk. Information may include event listings, organizational details, or community news that can change without notice.\n\n## 4. Intellectual Property\n\nUnless otherwise stated, all content on the Site \u2014 including text, graphics, logos, and images \u2014 is the property of Joseph Eber or its content suppliers and is protected by applicable copyright and intellectual property laws. You may view and share content for personal, non-commercial use with appropriate attribution, but you may not reproduce, republish, or distribute it for commercial purposes without prior written permission.\n\n## 5. Third-Party Links\n\nThe Site may contain links to third-party websites or organizations. These links are provided for convenience only. We have no control over the content of those sites and accept no responsibility for them or for any loss or damage arising from your use of them.\n\n## 6. User Conduct\n\nYou agree not to use the Site in any way that is unlawful, harmful, or that could damage, disable, or impair the Site. You agree not to attempt unauthorized access to any part of the Site or its systems.\n\n## 7. Limitation of Liability\n\nTo the fullest extent permitted by law, Joseph Eber shall not be liable for any direct, indirect, incidental, consequential, or punitive damages arising out of your access to or use of, or inability to use, the Site or its content.\n\n## 8. Changes to These Terms\n\nWe may revise these Terms of Use at any time without notice. By continuing to use the Site, you agree to be bound by the then-current version. We encourage you to review this page periodically.\n\n## 9. Governing Law\n\nThese Terms are governed by and construed in accordance with the laws of the State of Texas, without regard to its conflict of law principles.\n\n## 10. Contact\n\nQuestions about these Terms of Use can be directed to [info@houstonjewishinfo.com](mailto:info@houstonjewishinfo.com)."}
+    {key:'privacy_content',label:'Privacy Policy content',type:'textarea',rich:true,def:"_Last updated: June 2, 2026_\n\n## 1. Introduction\n\nThis Privacy Policy explains how houstonjewishinfo.com (the \"Site\") handles information when you visit. We are committed to protecting your privacy and collecting only the minimal information needed to operate and improve the Site.\n\n## 2. Information We Collect\n\nWe do not require you to create an account or submit personal information to read the Site. We collect limited information automatically through analytics tools, including:\n\n- **Usage data:** pages visited, time spent on pages, referring website, and similar browsing activity.\n- **Device and technical data:** browser type, device type, operating system, and general (city/region-level) geographic location inferred from your IP address.\n\nWe do not knowingly collect names, email addresses, payment information, or other directly identifying personal information through the Site.\n\n## 3. Cookies and Analytics\n\nThe Site uses Google Analytics, a web analytics service provided by Google. Google Analytics uses cookies \u2014 small text files stored on your device \u2014 to help us understand how visitors use the Site. The information generated about your use of the Site is transmitted to and stored by Google.\n\nYou can control or disable cookies through your browser settings. You can also opt out of Google Analytics by installing the Google Analytics Opt-out Browser Add-on, available at [https://tools.google.com/dlpage/gaoptout](https://tools.google.com/dlpage/gaoptout).\n\nFor more on how Google uses data, see Google's Privacy Policy at [https://policies.google.com/privacy](https://policies.google.com/privacy).\n\n## 4. How We Use Information\n\nWe use the automatically collected information to:\n\n- Understand how visitors interact with the Site;\n- Monitor and improve content, performance, and usability;\n- Maintain the security and proper functioning of the Site.\n\nWe do not sell, rent, or trade your information.\n\n## 5. Sharing of Information\n\nWe do not share information with third parties except:\n\n- With service providers such as Google Analytics that process data on our behalf;\n- When required by law, legal process, or to protect our rights.\n\n## 6. Data Retention\n\nAnalytics data is retained according to the default retention settings of our analytics provider. We retain information only as long as necessary for the purposes described in this policy.\n\n## 7. Children's Privacy\n\nThe Site is not directed to children under 13, and we do not knowingly collect personal information from children under 13. If you believe a child has provided information to us, please contact us so we can address it.\n\n## 8. Your Choices\n\nYou can:\n\n- Disable or delete cookies through your browser settings;\n- Opt out of Google Analytics using the tool linked above;\n- Contact us with any questions about your information.\n\n## 9. Changes to This Policy\n\nWe may update this Privacy Policy from time to time. Changes will be posted on this page with an updated \"Last updated\" date. We encourage you to review it periodically.\n\n## 10. Contact\n\nIf you have questions about this Privacy Policy, contact us at [info@houstonjewishinfo.com](mailto:info@houstonjewishinfo.com)."},
+    {key:'terms_content',label:'Terms of Use content',type:'textarea',rich:true,def:"_Last updated: June 2, 2026_\n\n## 1. Acceptance of Terms\n\nBy accessing or using houstonjewishinfo.com (the \"Site\"), you agree to be bound by these Terms of Use. If you do not agree, please do not use the Site.\n\n## 2. Purpose of the Site\n\nThe Site is an informational resource providing news, articles, and general information related to the Jewish community in Houston and surrounding areas. The content is provided for general informational purposes only.\n\n## 3. No Warranty / Accuracy of Information\n\nWhile we strive to keep information accurate and up to date, we make no representations or warranties of any kind, express or implied, about the completeness, accuracy, reliability, or availability of the Site or its content. Any reliance you place on such information is strictly at your own risk. Information may include event listings, organizational details, or community news that can change without notice.\n\n## 4. Intellectual Property\n\nUnless otherwise stated, all content on the Site \u2014 including text, graphics, logos, and images \u2014 is the property of Joseph Eber or its content suppliers and is protected by applicable copyright and intellectual property laws. You may view and share content for personal, non-commercial use with appropriate attribution, but you may not reproduce, republish, or distribute it for commercial purposes without prior written permission.\n\n## 5. Third-Party Links\n\nThe Site may contain links to third-party websites or organizations. These links are provided for convenience only. We have no control over the content of those sites and accept no responsibility for them or for any loss or damage arising from your use of them.\n\n## 6. User Conduct\n\nYou agree not to use the Site in any way that is unlawful, harmful, or that could damage, disable, or impair the Site. You agree not to attempt unauthorized access to any part of the Site or its systems.\n\n## 7. Limitation of Liability\n\nTo the fullest extent permitted by law, Joseph Eber shall not be liable for any direct, indirect, incidental, consequential, or punitive damages arising out of your access to or use of, or inability to use, the Site or its content.\n\n## 8. Changes to These Terms\n\nWe may revise these Terms of Use at any time without notice. By continuing to use the Site, you agree to be bound by the then-current version. We encourage you to review this page periodically.\n\n## 9. Governing Law\n\nThese Terms are governed by and construed in accordance with the laws of the State of Texas, without regard to its conflict of law principles.\n\n## 10. Contact\n\nQuestions about these Terms of Use can be directed to [info@houstonjewishinfo.com](mailto:info@houstonjewishinfo.com)."}
   ]},
   {id:'seo',label:'Search (SEO)',intro:'These control the description that can appear under your site in Google search results. Each page has a solid default already \u2014 edit any of them here.',fields:[
     {key:'seo_home_desc',label:'Homepage description',type:'textarea',def:'Houston\'s frum community hub \u2014 kosher restaurants, shuls, mikvaot, schools, businesses, gemachim, jobs, simchas, and community events across Greater Houston.'},
@@ -705,6 +794,7 @@ function uploadSettingImage(key,file){
 function buildSettingField(f,cur){
   var box=el('div','setfield');
   var lb=el('label',null,f.label); lb.setAttribute('for','set-'+f.key); box.appendChild(lb);
+  if(f.rich && window.HJI_RTE){ var _init=HJI_RTE.looksHtml(cur)?cur:HJI_RTE.md(cur||''); var _rte=HJI_RTE.create(_init); (S.rte=S.rte||{})[f.key]=_rte; box.appendChild(_rte.el); return box; }
   if(f.type==='textarea'){
     var ta=el('textarea','field'); ta.value=cur; ta.rows=4; ta.id='set-'+f.key; box.appendChild(ta);
   } else if(f.type==='select'){
@@ -743,7 +833,7 @@ function buildSettingField(f,cur){
   return box;
 }
 function renderSettings(map){
-  S.settingsMap=map;
+  S.settingsMap=map; S.rte={};
   var c=$('content'); c.innerHTML='';
   var w=el('div','setwrap');
   var intro=el('div','setnote');
@@ -776,10 +866,9 @@ function saveSettings(){
   var btn=$('setSave'); if(btn){btn.disabled=true;btn.textContent='Saving…';}
   var map=S.settingsMap||{}; var calls=[];
   flattenSettings().forEach(function(f){
-    var inp=$('set-'+f.key); if(!inp)return;
     var val;
-    if(f.type==='toggle')val=inp.checked?'yes':'no';
-    else val=(inp.value!=null?(''+inp.value):'').trim();
+    if(f.rich&&S.rte&&S.rte[f.key]){ val=S.rte[f.key].getHTML(); }
+    else { var inp=$('set-'+f.key); if(!inp)return; if(f.type==='toggle')val=inp.checked?'yes':'no'; else val=(inp.value!=null?(''+inp.value):'').trim(); }
     var ex=map[f.key];
     if(ex&&ex._row)calls.push(api('update',{sheet:SETTINGS_TAB,row:ex._row,data:{Value:val}}));
     else calls.push(api('create',{sheet:SETTINGS_TAB,data:{Key:f.key,Value:val}}));

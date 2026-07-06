@@ -1901,7 +1901,7 @@ window.addEventListener('resize',function(){var m=document.getElementById('hji-j
   fetch('https://docs.google.com/spreadsheets/d/'+SHEET_ID+'/gviz/tq?tqx=out:json&sheet=Settings&cb='+Date.now())
     .then(function(r){return r.text();})
     .then(function(t){ var S=parseKV(t); var content=S[pg+'_content'];
-      if(content&&String(content).trim()) box.innerHTML=md(content);
+      if(content&&String(content).trim()) box.innerHTML=(/<([a-z][a-z0-9]*)\b[^>]*>/i.test(content)?content:md(content));
       else box.innerHTML='<p>This page is being updated \u2014 please check back soon, or <a href="/contact">contact us</a>.</p>';
     })
     .catch(function(){});
