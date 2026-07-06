@@ -2168,5 +2168,38 @@ window.addEventListener('resize',function(){var m=document.getElementById('hji-j
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',run); else run();
 })();
 </script>
+<script>
+(function(){
+  // === HJI back-to-top button ===
+  var CSS=".hji-totop{position:fixed;right:20px;bottom:20px;width:46px;height:46px;border-radius:50%;border:none;background:#143D75;color:#fff;cursor:pointer;box-shadow:0 6px 20px rgba(20,61,117,.35);opacity:0;transform:translateY(16px);pointer-events:none;transition:opacity .25s ease,transform .25s ease,bottom .25s ease;z-index:99998;display:flex;align-items:center;justify-content:center;padding:0}"
+    +".hji-totop.show{opacity:1;transform:none;pointer-events:auto}"
+    +".hji-totop:hover{background:#10305c}"
+    +".hji-totop:active{transform:scale(.93)}"
+    +"@media(max-width:600px){.hji-totop{right:16px;width:44px;height:44px}}";
+  function init(){
+    if(document.getElementById('hji-totop'))return;
+    var st=document.createElement('style'); st.textContent=CSS; document.head.appendChild(st);
+    var btn=document.createElement('button'); btn.id='hji-totop'; btn.className='hji-totop'; btn.setAttribute('aria-label','Back to top');
+    btn.innerHTML='<svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M18 15l-6-6-6 6"/></svg>';
+    document.body.appendChild(btn);
+    var threshold=350, ticking=false;
+    function update(){
+      ticking=false;
+      var y=window.pageYOffset||document.documentElement.scrollTop||0;
+      if(y>threshold)btn.classList.add('show'); else btn.classList.remove('show');
+      var ib=document.getElementById('hji-install-bar');   // sit above the install banner if it's showing
+      btn.style.bottom=(ib?96:20)+'px';
+    }
+    window.addEventListener('scroll',function(){ if(!ticking){ ticking=true; requestAnimationFrame(update); } },{passive:true});
+    window.addEventListener('resize',update,{passive:true});
+    btn.addEventListener('click',function(){
+      var rm=window.matchMedia&&window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+      try{ window.scrollTo({top:0,behavior:rm?'auto':'smooth'}); }catch(e){ window.scrollTo(0,0); }
+    });
+    update();
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init); else init();
+})();
+</script>
 </body>
 </html>
