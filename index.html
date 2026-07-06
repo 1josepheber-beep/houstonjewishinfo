@@ -1971,6 +1971,10 @@
       #community-feed .desc-inline-link{color:#b8860b;font-weight:700;text-decoration:underline;text-underline-offset:2px;}
       #community-feed .desc-inline-link:hover{color:#1a2744;}
       #community-feed .cf-desc.clamped{display:-webkit-box;-webkit-line-clamp:5;-webkit-box-orient:vertical;overflow:hidden;}
+      #community-feed .cf-desc p,#community-feed .cf-pass-text p{margin:0 0 8px}
+      #community-feed .cf-desc p:last-child,#community-feed .cf-pass-text p:last-child{margin-bottom:0}
+      #community-feed .cf-desc>:first-child,#community-feed .cf-pass-text>:first-child{margin-top:0}
+      #community-feed .cf-desc ul,#community-feed .cf-desc ol,#community-feed .cf-pass-text ul,#community-feed .cf-pass-text ol{margin:4px 0 8px 20px}
       #community-feed .cf-pass-loc{font-family:sans-serif;font-size:13px;color:var(--muted);margin:2px 0 4px;}
       #community-feed .cf-pass-extra{display:none;clear:both;}
       #community-feed .cf-pass-extra.open{display:block;}
@@ -2500,7 +2504,7 @@
         var pdline=x.date?'<span class="cf-dateline">'+esc(fmtDate(x.date))+(hebFmt(x.date)?' <span class="cf-hebdate">\u00b7 '+esc(hebFmt(x.date))+'</span>':'')+'</span>':'<span class="cf-dateline"></span>';
         var ploc=x.loc?'<div class="cf-pass-loc"><span>\uD83D\uDCCD '+esc(cleanLoc(x.loc))+'</span></div>':'';
         var pbody='';
-        if(x.pmsg)pbody+='<p class="cf-pass-text">'+descHTML(x.pmsg)+'</p>';
+        if(x.pmsg)pbody+='<div class="cf-pass-text">'+descHTML(x.pmsg)+'</div>';
         if(x.plev)pbody+='<p class="cf-pass-text"><strong>Levaya:</strong> '+esc(x.plev).replace(/\n/g,'<br>')+'</p>';
         if(x.pshiva)pbody+='<p class="cf-pass-text"><strong>Shiva:</strong> '+esc(x.pshiva).replace(/\n/g,'<br>')+'</p>';
         var toggle=pbody?'<button type="button" class="cf-pass-toggle" onclick="cfPassToggle(this)">Read more \u2193</button>':'';
@@ -2538,7 +2542,7 @@
       if(x.org)mi.push('<span>\u270D\uFE0F '+esc(x.org)+'</span>');
       var meta=mi.length?'<div class="cf-meta">'+mi.join('')+'</div>':'';
       var descBody=(x.type==='event'||x.type==='news')?descHTML(x.desc):esc(x.desc).replace(/\n/g,'<br>');
-      var desc=x.desc?'<p class="cf-desc">'+descBody+'</p><button type="button" class="read-more-btn" style="display:none;">Read more \u2193</button>':'';
+      var desc=x.desc?'<div class="cf-desc">'+descBody+'</div><button type="button" class="read-more-btn" style="display:none;">Read more \u2193</button>':'';
       var foot='';
       if(x.type==='event'){
         var primary=x.link?'<a href="'+attr(extURL(x.link))+'" target="_blank" rel="noopener" class="article-read-more">'+esc(x.linkText||'More Details')+'</a>':'';
