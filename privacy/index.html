@@ -1175,49 +1175,7 @@
 <!-- MAIN -->
 <div class="legal-wrap">
   <div class="legal-box">
-    <div class="updated">Last updated: June 2, 2026</div>
-    <h2>1. Introduction</h2>
-    <p>This Privacy Policy explains how houstonjewishinfo.com (the "Site") handles information when you visit. We are committed to protecting your privacy and collecting only the minimal information needed to operate and improve the Site.</p>
-    <h2>2. Information We Collect</h2>
-    <p>We do not require you to create an account or submit personal information to read the Site. We collect limited information automatically through analytics tools, including:</p>
-    <ul>
-      <li><strong>Usage data:</strong> pages visited, time spent on pages, referring website, and similar browsing activity.</li>
-      <li><strong>Device and technical data:</strong> browser type, device type, operating system, and general (city/region-level) geographic location inferred from your IP address.</li>
-    </ul>
-    <p>We do not knowingly collect names, email addresses, payment information, or other directly identifying personal information through the Site.</p>
-    <h2>3. Cookies and Analytics</h2>
-    <p>The Site uses Google Analytics, a web analytics service provided by Google. Google Analytics uses cookies — small text files stored on your device — to help us understand how visitors use the Site. The information generated about your use of the Site is transmitted to and stored by Google.</p>
-    <p>You can control or disable cookies through your browser settings. You can also opt out of Google Analytics by installing the Google Analytics Opt-out Browser Add-on, available at <a href="https://tools.google.com/dlpage/gaoptout" target="_blank" rel="noopener">https://tools.google.com/dlpage/gaoptout</a>.</p>
-    <p>For more on how Google uses data, see Google's Privacy Policy at <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">https://policies.google.com/privacy</a>.</p>
-    <h2>4. How We Use Information</h2>
-    <p>We use the automatically collected information to:</p>
-    <ul>
-      <li>Understand how visitors interact with the Site;</li>
-      <li>Monitor and improve content, performance, and usability;</li>
-      <li>Maintain the security and proper functioning of the Site.</li>
-    </ul>
-    <p>We do not sell, rent, or trade your information.</p>
-    <h2>5. Sharing of Information</h2>
-    <p>We do not share information with third parties except:</p>
-    <ul>
-      <li>With service providers such as Google Analytics that process data on our behalf;</li>
-      <li>When required by law, legal process, or to protect our rights.</li>
-    </ul>
-    <h2>6. Data Retention</h2>
-    <p>Analytics data is retained according to the default retention settings of our analytics provider. We retain information only as long as necessary for the purposes described in this policy.</p>
-    <h2>7. Children's Privacy</h2>
-    <p>The Site is not directed to children under 13, and we do not knowingly collect personal information from children under 13. If you believe a child has provided information to us, please contact us so we can address it.</p>
-    <h2>8. Your Choices</h2>
-    <p>You can:</p>
-    <ul>
-      <li>Disable or delete cookies through your browser settings;</li>
-      <li>Opt out of Google Analytics using the tool linked above;</li>
-      <li>Contact us with any questions about your information.</li>
-    </ul>
-    <h2>9. Changes to This Policy</h2>
-    <p>We may update this Privacy Policy from time to time. Changes will be posted on this page with an updated "Last updated" date. We encourage you to review it periodically.</p>
-    <h2>10. Contact</h2>
-    <p>If you have questions about this Privacy Policy, contact us at <a href="mailto:info@houstonjewishinfo.com">info@houstonjewishinfo.com</a>.</p>
+    <p class="legal-loading" style="color:#999">Loading…</p>
   </div>
 </div>
 
@@ -1938,7 +1896,10 @@ window.addEventListener('resize',function(){var m=document.getElementById('hji-j
   function parseKV(t){ var s=t.indexOf('{'),e=t.lastIndexOf('}'); if(s<0||e<0)return {}; var j=JSON.parse(t.substring(s,e+1)); var rows=(j.table&&j.table.rows)||[],S={}; rows.forEach(function(r){var c=r.c||[];var k=(c[0]&&c[0].v!=null?(''+c[0].v):'').trim().toLowerCase();var v=(c[1]&&c[1].v!=null?(''+c[1].v):'');if(k)S[k]=v;}); return S; }
   fetch('https://docs.google.com/spreadsheets/d/'+SHEET_ID+'/gviz/tq?tqx=out:json&sheet=Settings&cb='+Date.now())
     .then(function(r){return r.text();})
-    .then(function(t){ var S=parseKV(t); var content=S[pg+'_content']; if(content&&String(content).trim()) box.innerHTML=md(content); })
+    .then(function(t){ var S=parseKV(t); var content=S[pg+'_content'];
+      if(content&&String(content).trim()) box.innerHTML=md(content);
+      else box.innerHTML='<p>This page is being updated \u2014 please check back soon, or <a href="/contact">contact us</a>.</p>';
+    })
     .catch(function(){});
 })();
 </script>

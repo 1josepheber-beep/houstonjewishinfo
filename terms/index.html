@@ -1175,27 +1175,7 @@
 <!-- MAIN -->
 <div class="legal-wrap">
   <div class="legal-box">
-    <div class="updated">Last updated: June 2, 2026</div>
-    <h2>1. Acceptance of Terms</h2>
-    <p>By accessing or using houstonjewishinfo.com (the "Site"), you agree to be bound by these Terms of Use. If you do not agree, please do not use the Site.</p>
-    <h2>2. Purpose of the Site</h2>
-    <p>The Site is an informational resource providing news, articles, and general information related to the Jewish community in Houston and surrounding areas. The content is provided for general informational purposes only.</p>
-    <h2>3. No Warranty / Accuracy of Information</h2>
-    <p>While we strive to keep information accurate and up to date, we make no representations or warranties of any kind, express or implied, about the completeness, accuracy, reliability, or availability of the Site or its content. Any reliance you place on such information is strictly at your own risk. Information may include event listings, organizational details, or community news that can change without notice.</p>
-    <h2>4. Intellectual Property</h2>
-    <p>Unless otherwise stated, all content on the Site — including text, graphics, logos, and images — is the property of Joseph Eber or its content suppliers and is protected by applicable copyright and intellectual property laws. You may view and share content for personal, non-commercial use with appropriate attribution, but you may not reproduce, republish, or distribute it for commercial purposes without prior written permission.</p>
-    <h2>5. Third-Party Links</h2>
-    <p>The Site may contain links to third-party websites or organizations. These links are provided for convenience only. We have no control over the content of those sites and accept no responsibility for them or for any loss or damage arising from your use of them.</p>
-    <h2>6. User Conduct</h2>
-    <p>You agree not to use the Site in any way that is unlawful, harmful, or that could damage, disable, or impair the Site. You agree not to attempt unauthorized access to any part of the Site or its systems.</p>
-    <h2>7. Limitation of Liability</h2>
-    <p>To the fullest extent permitted by law, Joseph Eber shall not be liable for any direct, indirect, incidental, consequential, or punitive damages arising out of your access to or use of, or inability to use, the Site or its content.</p>
-    <h2>8. Changes to These Terms</h2>
-    <p>We may revise these Terms of Use at any time without notice. By continuing to use the Site, you agree to be bound by the then-current version. We encourage you to review this page periodically.</p>
-    <h2>9. Governing Law</h2>
-    <p>These Terms are governed by and construed in accordance with the laws of the State of Texas, without regard to its conflict of law principles.</p>
-    <h2>10. Contact</h2>
-    <p>Questions about these Terms of Use can be directed to <a href="mailto:info@houstonjewishinfo.com">info@houstonjewishinfo.com</a>.</p>
+    <p class="legal-loading" style="color:#999">Loading…</p>
   </div>
 </div>
 
@@ -1916,7 +1896,10 @@ window.addEventListener('resize',function(){var m=document.getElementById('hji-j
   function parseKV(t){ var s=t.indexOf('{'),e=t.lastIndexOf('}'); if(s<0||e<0)return {}; var j=JSON.parse(t.substring(s,e+1)); var rows=(j.table&&j.table.rows)||[],S={}; rows.forEach(function(r){var c=r.c||[];var k=(c[0]&&c[0].v!=null?(''+c[0].v):'').trim().toLowerCase();var v=(c[1]&&c[1].v!=null?(''+c[1].v):'');if(k)S[k]=v;}); return S; }
   fetch('https://docs.google.com/spreadsheets/d/'+SHEET_ID+'/gviz/tq?tqx=out:json&sheet=Settings&cb='+Date.now())
     .then(function(r){return r.text();})
-    .then(function(t){ var S=parseKV(t); var content=S[pg+'_content']; if(content&&String(content).trim()) box.innerHTML=md(content); })
+    .then(function(t){ var S=parseKV(t); var content=S[pg+'_content'];
+      if(content&&String(content).trim()) box.innerHTML=md(content);
+      else box.innerHTML='<p>This page is being updated \u2014 please check back soon, or <a href="/contact">contact us</a>.</p>';
+    })
     .catch(function(){});
 })();
 </script>
