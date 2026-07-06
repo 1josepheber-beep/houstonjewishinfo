@@ -1860,8 +1860,12 @@ window.addEventListener('resize',function(){var m=document.getElementById('hji-j
       ticking=false;
       var y=window.pageYOffset||document.documentElement.scrollTop||0;
       if(y>threshold)btn.classList.add('show'); else btn.classList.remove('show');
-      var ib=document.getElementById('hji-install-bar');   // sit above the install banner if it's showing
-      btn.style.bottom=(ib?96:20)+'px';
+      var b=20;
+      var dn=document.getElementById('hji-donate');            // sit above the floating donate button
+      if(dn&&dn.style.position==='fixed'){ b=16+(dn.offsetHeight||46)+12; }
+      var ib=document.getElementById('hji-install-bar');       // and above the install banner
+      if(ib){ b=Math.max(b,96); }
+      btn.style.bottom=b+'px';
     }
     window.addEventListener('scroll',function(){ if(!ticking){ ticking=true; requestAnimationFrame(update); } },{passive:true});
     window.addEventListener('resize',update,{passive:true});
@@ -1869,7 +1873,7 @@ window.addEventListener('resize',function(){var m=document.getElementById('hji-j
       var rm=window.matchMedia&&window.matchMedia('(prefers-reduced-motion:reduce)').matches;
       try{ window.scrollTo({top:0,behavior:rm?'auto':'smooth'}); }catch(e){ window.scrollTo(0,0); }
     });
-    update();
+    update(); setTimeout(update,1600); setTimeout(update,3200);
   }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init); else init();
 })();
