@@ -1442,6 +1442,7 @@
 <style>
 /* Mazal Tov baby theming (soft) */
 .article-card.mz-theme{position:relative}
+.cf-hebdate{color:#9a7b3f;font-weight:600;white-space:nowrap}
 #community-feed .article-card.mz-girl{background:linear-gradient(160deg,#FAD9E6 0%,#FCEAF1 62%,#FBE4ED 100%)!important;border-color:#F1C4D6!important;--mzb-a:#EF9EC0;--mzb-c:#F4B9D0}
 #community-feed .article-card.mz-boy{background:linear-gradient(160deg,#D6E6FA 0%,#EAF2FC 62%,#E1ECF9 100%)!important;border-color:#C2D8F1!important;--mzb-a:#7FB0E6;--mzb-c:#A7CBF0}
 .mz-theme .cf-body{position:relative;z-index:1}
@@ -2418,6 +2419,23 @@
     function imgURL(v,base){v=String(v||'').trim();if(!v)return '';return /^https?:\/\//i.test(v)?v:base+v;}
     function imgList(v,base){return String(v||'').split(',').map(function(s){return imgURL(s,base);}).filter(Boolean);}
     function cfToday(){var d=new Date();d.setHours(0,0,0,0);return d;}
+    var hebFmt=(function(){
+      function isGL(y){return (y%4===0&&y%100!==0)||y%400===0;}
+      function g2f(y,m,d){return 365*(y-1)+Math.floor((y-1)/4)-Math.floor((y-1)/100)+Math.floor((y-1)/400)+Math.floor((367*m-362)/12)+(m<=2?0:(isGL(y)?-1:-2))+d;}
+      var EP=-1373427;
+      function leap(y){return ((7*y+1)%19)<7;}
+      function lastM(y){return leap(y)?13:12;}
+      function elapsed(y){var m=Math.floor((235*y-234)/19),pp=12084+13753*m,day=m*29+Math.floor(pp/25920);return ((3*(day+1))%7<3)?day+1:day;}
+      function delay(y){var a=elapsed(y-1),b=elapsed(y),cc=elapsed(y+1);if(cc-b===356)return 2;if(b-a===382)return 1;return 0;}
+      function ny(y){return EP+elapsed(y)+delay(y);}
+      function ylen(y){return ny(y+1)-ny(y);}
+      function mlen(y,m){if(m===2||m===4||m===6||m===10||m===13)return 29;if(m===8&&ylen(y)%10!==5)return 29;if(m===9&&ylen(y)%10===3)return 29;if(m===12&&!leap(y))return 29;return 30;}
+      function h2f(y,m,d){var f=ny(y)+d-1,mm;if(m<7){for(mm=7;mm<=lastM(y);mm++)f+=mlen(y,mm);for(mm=1;mm<m;mm++)f+=mlen(y,mm);}else{for(mm=7;mm<m;mm++)f+=mlen(y,mm);}return f;}
+      function f2h(f){var y=Math.floor((f-EP)/366)+1;while(ny(y+1)<=f)y++;var m=(f<h2f(y,1,1))?7:1;while(f>h2f(y,m,mlen(y,m)))m++;return {y:y,m:m,d:f-h2f(y,m,1)+1};}
+      var MON=['','Nisan','Iyar','Sivan','Tammuz','Av','Elul','Tishrei','Cheshvan','Kislev','Tevet','Shevat','Adar','Adar II'];
+      function mname(y,m){if(m===12)return leap(y)?'Adar I':'Adar';if(m===13)return 'Adar II';return MON[m];}
+      return function(d){if(!d||isNaN(d.getTime()))return '';try{var h=f2h(g2f(d.getFullYear(),d.getMonth()+1,d.getDate()));return h.d+' '+mname(h.y,h.m)+' '+h.y;}catch(e){return '';}};
+    })();
     function fmtDate(d){return d?d.toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'}).toUpperCase():'';}
 
     function parseDate(cell){
@@ -2479,7 +2497,7 @@
       var today=cfToday();
       if(x.type==='passing'){
         var photo=x.img?'<img src="'+attr(x.img)+'" alt="'+attr(x.title)+'" loading="lazy">':CANDLE_SVG;
-        var pdline=x.date?'<span class="cf-dateline">'+esc(fmtDate(x.date))+'</span>':'<span class="cf-dateline"></span>';
+        var pdline=x.date?'<span class="cf-dateline">'+esc(fmtDate(x.date))+(hebFmt(x.date)?' <span class="cf-hebdate">\u00b7 '+esc(hebFmt(x.date))+'</span>':'')+'</span>':'<span class="cf-dateline"></span>';
         var ploc=x.loc?'<div class="cf-pass-loc"><span>\uD83D\uDCCD '+esc(cleanLoc(x.loc))+'</span></div>':'';
         var pbody='';
         if(x.pmsg)pbody+='<p class="cf-pass-text">'+esc(x.pmsg).replace(/\n/g,'<br>')+'</p>';
@@ -2511,7 +2529,7 @@
       var badge='';
       if(x.type==='event')badge='<span class="cf-tag '+(up?'cf-up':'cf-past')+'">'+(up?'UPCOMING':'PAST')+'</span>';
       else if(x.type==='mazal'&&x.cat)badge='<span class="cf-tag cf-tag-mz">'+esc(x.cat).toUpperCase()+'</span>';
-      var dline=x.date?'<span class="cf-dateline">\uD83D\uDCC5 '+esc(fmtDate(x.date))+(firstLine(x.time)?' \u00b7 '+esc(firstLine(x.time)):'')+'</span>':'<span class="cf-dateline"></span>';
+      var dline=x.date?'<span class="cf-dateline">\uD83D\uDCC5 '+esc(fmtDate(x.date))+(hebFmt(x.date)?' <span class="cf-hebdate">\u00b7 '+esc(hebFmt(x.date))+'</span>':'')+(firstLine(x.time)?' \u00b7 '+esc(firstLine(x.time)):'')+'</span>':'<span class="cf-dateline"></span>';
       var typeTag='<span class="cf-tag cf-type-'+x.type+'">'+esc(TYPE[x.type])+'</span>';
       var catCls=/alert/i.test(x.cat||'')?'cf-tag-alert':'cf-cat';
       var catTag=(x.cat&&x.type!=='mazal')?'<span class="cf-tag '+catCls+'">'+esc(x.cat).toUpperCase()+'</span>':'';
