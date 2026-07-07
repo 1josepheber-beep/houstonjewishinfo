@@ -2580,13 +2580,11 @@
       });
       arr.sort(function(a,b){
         if(showWomen&&filter==='all'&&a.women!==b.women)return a.women?-1:1; /* women's events to top when toggle on (All view) */
-        var _aM=(a.type==='mazal'),_bM=(b.type==='mazal');
-        if(_aM!==_bM)return _aM?-1:1; /* Mazal Tov rides at the top of the feed */
-        if(_aM&&_bM){var _am=a.date?a.date.getTime():Infinity,_bm=b.date?b.date.getTime():Infinity;return _bm-_am;} /* newest first; blank date = brand new */
-        var at=a.date?a.date.getTime():null, bt=b.date?b.date.getTime():null;
+        var today=cfToday().getTime(), tomorrow=today+86400000;
+        function eff(x){ return x.date?x.date.getTime():(x.type==='mazal'?today:null); } /* a Mazal Tov with NO date counts as today so it isn't buried; dated ones sort by their date like everything else */
+        var at=eff(a), bt=eff(b);
         if(at==null&&bt==null)return 0; if(at==null)return 1; if(bt==null)return -1;
         if(filter==='event')return at-bt;
-        var today=cfToday().getTime(), tomorrow=today+86400000;
         function bk(t){return t>=tomorrow?1:(t<today?2:0);}
         var ab=bk(at), bb=bk(bt);
         if(ab!==bb)return ab-bb;
