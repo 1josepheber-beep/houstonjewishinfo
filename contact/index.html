@@ -1711,6 +1711,7 @@
       if (value === '') return;
       fields.push({ label: label, value: value });
     });
+    var _m={},_o=[];fields.forEach(function(f){if(_m[f.label]===undefined){_m[f.label]=f.value;_o.push(f.label);}else{_m[f.label]+=', '+f.value;}});fields=_o.map(function(l){return {label:l,value:_m[l]};}); /* combine multi-check groups (badges, categories) into one field per label */
     var payload = { form_id: wrapId, fields: fields, page: location.href, submitted_at: new Date().toString(), hp: (window.hjiHP?window.hjiHP(wrapId):''), elapsed: (window.hjiElapsed?window.hjiElapsed():0) };
     var btn = wrap.querySelector('.btn-primary');
     var btnText = btn ? btn.innerHTML : '';

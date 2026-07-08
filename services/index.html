@@ -2132,6 +2132,7 @@ function submitForm(formId, successId) {
     if (value === '') return;
     fields.push({ label: label, value: value });
   });
+  var _m={},_o=[];fields.forEach(function(f){if(_m[f.label]===undefined){_m[f.label]=f.value;_o.push(f.label);}else{_m[f.label]+=', '+f.value;}});fields=_o.map(function(l){return {label:l,value:_m[l]};}); /* combine multi-check groups (badges, categories) into one field per label */
   var payload = { form_id: formId, fields: fields, page: location.href, submitted_at: new Date().toString() };
 
   // Show a loading state on the submit button so the user knows it's working
