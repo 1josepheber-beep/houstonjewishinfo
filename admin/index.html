@@ -1220,7 +1220,7 @@ function updatePendingUI(){
   });
 }
 
-function selectCollection(key,label){
+function selectCollection(key,label,onLoaded){
   S.current=key;
   try{localStorage.setItem('hji_admin_tab',key);}catch(e){}
   $('colTitle').textContent=label.replace(/^\S+\s/,'');
@@ -1234,6 +1234,7 @@ function selectCollection(key,label){
     S.headers=res.headers;S.rows=res.rows;
     var c=$('cnt-'+key);if(c)c.textContent=S.rows.length;
     renderTable();
+    if(typeof onLoaded==='function'){try{onLoaded();}catch(_e){}}
   }).catch(function(err){
     $('content').innerHTML='<div class="empty">Could not load <b>'+key+'</b>.<br><span style="font-size:13px">'+(err||'')+'</span></div>';
   });
@@ -1387,7 +1388,7 @@ function openReview(){
     card.appendChild(meta);
     var acts=el('div','review-actions');
     var ap=el('button','btn good sm','Approve');ap.onclick=function(){approveItem(it);};
-    var op=el('button','btn ghost sm','Open');op.onclick=function(){selectCollection(it.sheet,(COLLECTIONS.find(function(c){return c[0]===it.sheet;})||[it.sheet,it.sheet])[1]);};
+    var op=el('button','btn ghost sm','Open');op.onclick=function(){var _lbl=(COLLECTIONS.find(function(c){return c[0]===it.sheet;})||[it.sheet,it.sheet])[1];selectCollection(it.sheet,_lbl,function(){var _r=(S.rows||[]).filter(function(r){return String(r._row)===String(it._row);})[0];if(_r){openForm(_r);}else{toast('Opened the collection \u2014 couldn\'t find that exact item.',true);}});};
     var dl=el('button','btn danger sm','Delete');dl.onclick=function(){deletePending(it);};
     acts.appendChild(ap);acts.appendChild(op);acts.appendChild(dl);
     card.appendChild(acts);wrap.appendChild(card);
