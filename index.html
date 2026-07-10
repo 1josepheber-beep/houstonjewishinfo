@@ -1985,6 +1985,7 @@
       #community-feed .cf-pass-foot{clear:both;display:flex;align-items:center;justify-content:flex-end;gap:16px;flex-wrap:wrap;margin-top:12px;}
       #community-feed .cf-pass-foot .cf-pass-toggle{margin-top:0;margin-right:auto;}
       #community-feed .cf-foot{display:flex;gap:16px;align-items:center;justify-content:flex-end;margin-top:12px;flex-wrap:wrap;}
+      #community-feed .cf-foot .read-more-btn{margin:0 auto 0 0;}
       #community-feed .article-read-more{font-family:sans-serif;font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;background:var(--navy);color:#fff;padding:9px 16px;border-radius:6px;text-decoration:none;display:inline-block;}
       #community-feed .article-read-more:hover{background:var(--gold);color:#fff;}
       #community-feed .cf-addcal{font-family:sans-serif;background:none;border:none;color:var(--gold);font-size:13px;font-weight:700;cursor:pointer;padding:0;}
@@ -2545,19 +2546,21 @@
       if(x.loc)mi.push('<span>\uD83D\uDCCD '+esc(cleanLoc(x.loc))+'</span>');
       if(x.org)mi.push('<span>\u270D\uFE0F '+esc(x.org)+'</span>');
       var meta=mi.length?'<div class="cf-meta">'+mi.join('')+'</div>':'';
-      var descBody=(x.type==='event'||x.type==='news')?descHTML(x.desc):esc(x.desc).replace(/\n/g,'<br>');
-      var desc=x.desc?'<div class="cf-desc">'+descBody+'</div><button type="button" class="read-more-btn" style="display:none;">Read more \u2193</button>':'';
-      var foot='';
+      var descBody=descHTML(x.desc);
+      var desc=x.desc?'<div class="cf-desc">'+descBody+'</div>':'';
+      var rmBtn=x.desc?'<button type="button" class="read-more-btn" style="display:none;">Read more \u2193</button>':'';
+      var acts='';
       if(x.type==='event'){
         var primary=x.link?'<a href="'+attr(extURL(x.link))+'" target="_blank" rel="noopener" class="article-read-more">'+esc(x.linkText||'More Details')+'</a>':'';
         var gc=gcal(x);
         var addcal=gc?'<button type="button" class="cf-addcal" onclick="cfAddCal(\''+encodeURIComponent(gc)+'\')">\uD83D\uDCC5 Add to calendar</button>':'';
-        if(primary||addcal)foot='<div class="cf-foot">'+addcal+primary+'</div>';
+        acts=addcal+primary;
       }else if(x.type==='mazal'&&x.link){
-        foot='<div class="cf-foot"><a href="'+attr(extURL(x.link))+'" target="_blank" rel="noopener" class="article-read-more">'+esc(x.linkText||'More Details')+'</a></div>';
+        acts='<a href="'+attr(extURL(x.link))+'" target="_blank" rel="noopener" class="article-read-more">'+esc(x.linkText||'More Details')+'</a>';
       }else if(x.type==='news'&&x.link){
-        foot='<div class="cf-foot"><a href="'+attr(extURL(x.link))+'" target="_blank" rel="noopener" class="article-read-more">'+esc(x.linkText||'Read More \u2192')+'</a></div>';
+        acts='<a href="'+attr(extURL(x.link))+'" target="_blank" rel="noopener" class="article-read-more">'+esc(x.linkText||'Read More \u2192')+'</a>';
       }
+      var foot=(rmBtn||acts)?'<div class="cf-foot">'+rmBtn+acts+'</div>':'';
       var mzCls='',mzBl='',mzCheer='';if(x.type==='mazal'&&x.cat){var _mc=(''+x.cat).toLowerCase();if(/girl/.test(_mc)){mzCls=' mz-theme mz-girl';mzBl=MZ_BALLOONS;mzCheer='<div class="mz-cheer">It\u2019s a girl!</div>';}else if(/boy/.test(_mc)){mzCls=' mz-theme mz-boy';mzBl=MZ_BALLOONS;mzCheer='<div class="mz-cheer">It\u2019s a boy!</div>';}}
       return '<article class="article-card'+mzCls+'">'+mzBl+banner+'<div class="cf-body"><div class="cf-row1">'+dline+badge+'</div><div class="cf-tags">'+typeTag+catTag+'</div>'+mzCheer+'<h2 class="article-headline">'+esc(x.title)+'</h2>'+meta+desc+foot+'</div></article>';
     }
@@ -2604,12 +2607,18 @@
     function cfReadMore(scope){
       var ps=(scope||document).querySelectorAll('#cf-list .cf-desc, #cf-cal .cf-desc');
       Array.prototype.forEach.call(ps,function(p){
-        var btn=p.nextElementSibling;
+        var _card=(p.closest?p.closest('.article-card'):null);
+        var btn=(_card&&_card.querySelector('.read-more-btn'))||p.nextElementSibling;
         if(!btn||!btn.classList.contains('read-more-btn'))return;
         var lh=parseFloat(getComputedStyle(p).lineHeight)||22;
         if(p.scrollHeight>lh*5+2){p.classList.add('clamped');btn.style.display='inline-block';
           btn.onclick=function(){if(p.classList.contains('clamped')){p.classList.remove('clamped');btn.textContent='Read less \u2191';}else{p.classList.add('clamped');btn.textContent='Read more \u2193';}};}
         else{btn.style.display='none';}
+        var _foot=btn.parentNode;
+        if(_foot&&_foot.classList&&_foot.classList.contains('cf-foot')){
+          var _others=_foot.querySelectorAll('.article-read-more,.cf-addcal').length;
+          _foot.style.display=(btn.style.display==='none'&&!_others)?'none':'';
+        }
       });
     }
 
