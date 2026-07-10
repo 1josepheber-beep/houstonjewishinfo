@@ -1982,7 +1982,9 @@
       #community-feed .cf-pass-extra .cf-pass-text:last-child{margin-bottom:0;}
       #community-feed .cf-pass-key{font-weight:700;color:var(--ink);}
       #community-feed .cf-pass-toggle{clear:both;display:block;width:-moz-fit-content;width:fit-content;font-family:sans-serif;font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;background:none;border:none;color:var(--gold);cursor:pointer;padding:0;margin-top:12px;}
-      #community-feed .cf-foot{display:flex;gap:16px;align-items:center;margin-top:12px;flex-wrap:wrap;}
+      #community-feed .cf-pass-foot{clear:both;display:flex;align-items:center;justify-content:flex-end;gap:16px;flex-wrap:wrap;margin-top:12px;}
+      #community-feed .cf-pass-foot .cf-pass-toggle{margin-top:0;margin-right:auto;}
+      #community-feed .cf-foot{display:flex;gap:16px;align-items:center;justify-content:flex-end;margin-top:12px;flex-wrap:wrap;}
       #community-feed .article-read-more{font-family:sans-serif;font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;background:var(--navy);color:#fff;padding:9px 16px;border-radius:6px;text-decoration:none;display:inline-block;}
       #community-feed .article-read-more:hover{background:var(--gold);color:#fff;}
       #community-feed .cf-addcal{font-family:sans-serif;background:none;border:none;color:var(--gold);font-size:13px;font-weight:700;cursor:pointer;padding:0;}
@@ -2469,9 +2471,9 @@
       events.forEach(function(r){if(!active(r)||!r.title)return;
         out.push({type:'event',date:parseDate(r._cells.date),time:r.time||'',title:r.title,cat:r.category||'Event',org:r.presenter||'',loc:r.location||'',desc:r.description||'',img:imgList(r.imageurl,EVENT_IMG)[0]||'',imgs:imgList(r.imageurl,EVENT_IMG),link:r.ticketurl||'',linkText:(r.buttontext||'More Details'),women:String(r.women||'').toLowerCase().trim()==='yes'});});
       mazals.forEach(function(r){if(!active(r)||!r.name)return;
-        out.push({type:'mazal',date:mazalDate(r),time:'',title:r.name,cat:r.type||'',org:'',loc:r.city||'',desc:r.message||'',img:'',imgs:[],link:'',linkText:'',women:false});});
+        out.push({type:'mazal',date:mazalDate(r),time:'',title:r.name,cat:r.type||'',org:'',loc:r.city||'',desc:r.message||'',img:'',imgs:[],link:(r.buttonlink||r.linkurl||''),linkText:(r.buttontext||r.linktext||'More Details'),women:false});});
       (passings||[]).forEach(function(r){if(!active(r)||!r.name)return;
-        out.push({type:'passing',date:parseDate(r._cells.date),time:'',title:r.name,cat:'',org:'',loc:r.city||'',desc:'',pmsg:r.message||'',plev:r.levaya||'',pshiva:r.shiva||'',img:imgList(r.image,PASSING_IMG)[0]||'',imgs:imgList(r.image,PASSING_IMG),link:'',linkText:'',women:false});});
+        out.push({type:'passing',date:parseDate(r._cells.date),time:'',title:r.name,cat:'',org:'',loc:r.city||'',desc:'',pmsg:r.message||'',plev:r.levaya||'',pshiva:r.shiva||'',img:imgList(r.image,PASSING_IMG)[0]||'',imgs:imgList(r.image,PASSING_IMG),link:(r.buttonlink||r.linkurl||''),linkText:(r.buttontext||r.linktext||'More Details'),women:false});});
       return out;
     }
 
@@ -2508,6 +2510,8 @@
         if(x.plev)pbody+='<p class="cf-pass-text"><strong>Levaya:</strong> '+esc(x.plev).replace(/\n/g,'<br>')+'</p>';
         if(x.pshiva)pbody+='<p class="cf-pass-text"><strong>Shiva:</strong> '+esc(x.pshiva).replace(/\n/g,'<br>')+'</p>';
         var toggle=pbody?'<button type="button" class="cf-pass-toggle" onclick="cfPassToggle(this)">Read more \u2193</button>':'';
+        var pbtn=x.link?'<a href="'+attr(extURL(x.link))+'" target="_blank" rel="noopener" class="article-read-more">'+esc(x.linkText||'More Details')+'</a>':'';
+        var pfoot=(toggle||pbtn)?'<div class="cf-pass-foot">'+toggle+pbtn+'</div>':'';
         return '<article class="article-card cf-passing"><div class="cf-body cf-pass-wrap">'+
           '<div class="cf-pass-photo">'+photo+'</div>'+
           '<div class="cf-row1">'+pdline+'</div>'+
@@ -2516,7 +2520,7 @@
           '<h2 class="article-headline">'+esc(x.title)+'</h2>'+
           ploc+
           (pbody?'<div class="cf-pass-extra">'+pbody+'</div>':'')+
-          toggle+
+          pfoot+
           '</div></article>';
       }
       var up=x.date?(x.date>=today):true;
@@ -2548,7 +2552,9 @@
         var primary=x.link?'<a href="'+attr(extURL(x.link))+'" target="_blank" rel="noopener" class="article-read-more">'+esc(x.linkText||'More Details')+'</a>':'';
         var gc=gcal(x);
         var addcal=gc?'<button type="button" class="cf-addcal" onclick="cfAddCal(\''+encodeURIComponent(gc)+'\')">\uD83D\uDCC5 Add to calendar</button>':'';
-        if(primary||addcal)foot='<div class="cf-foot">'+primary+addcal+'</div>';
+        if(primary||addcal)foot='<div class="cf-foot">'+addcal+primary+'</div>';
+      }else if(x.type==='mazal'&&x.link){
+        foot='<div class="cf-foot"><a href="'+attr(extURL(x.link))+'" target="_blank" rel="noopener" class="article-read-more">'+esc(x.linkText||'More Details')+'</a></div>';
       }else if(x.type==='news'&&x.link){
         foot='<div class="cf-foot"><a href="'+attr(extURL(x.link))+'" target="_blank" rel="noopener" class="article-read-more">'+esc(x.linkText||'Read More \u2192')+'</a></div>';
       }
