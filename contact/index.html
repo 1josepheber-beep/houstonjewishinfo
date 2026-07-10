@@ -1717,6 +1717,7 @@
     var btnText = btn ? btn.innerHTML : '';
     function hjiSend() {
       if (btn) { btn.disabled = true; btn.style.opacity = '0.7'; btn.style.cursor = 'wait'; btn.innerHTML = '<span class="hji-spinner" aria-hidden="true"></span>Submitting\u2026'; }
+      if(typeof gtag==='function'){try{gtag('event','form_submit',{form_id:payload.form_id});}catch(_e){}}
       fetch(HJI_INTAKE_URL, {
         method: 'POST', mode: 'no-cors',
         headers: { 'Content-Type': 'text/plain;charset=utf-8' },
@@ -2400,6 +2401,30 @@ window.addEventListener('resize',function(){var m=document.getElementById('hji-j
     update(); setTimeout(update,1600); setTimeout(update,3200);
   }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init); else init();
+})();
+</script>
+<script>
+/* GA4 interaction tracking (donate / call / website / google reviews) */
+(function(){
+  document.addEventListener('click', function(e){
+    if (typeof gtag !== 'function') return;
+    var t = e.target && e.target.closest ? e.target.closest('a,button') : null;
+    if (!t) return;
+    var card = t.closest ? t.closest('.biz-card') : null;
+    var biz  = card ? (card.getAttribute('data-name') || '') : '';
+    var href = (t.getAttribute && t.getAttribute('href')) || '';
+    try {
+      if (t.id === 'hji-donate' || (''+(t.className||'')).indexOf('donate-btn') >= 0) {
+        gtag('event','donate_click',{});
+      } else if (/^tel:/i.test(href)) {
+        gtag('event','call_click',{business:biz});
+      } else if (t.classList && t.classList.contains('biz-website')) {
+        gtag('event','website_click',{business:biz});
+      } else if (t.classList && t.classList.contains('biz-greviews')) {
+        gtag('event','reviews_click',{business:biz});
+      }
+    } catch(_e){}
+  }, true);
 })();
 </script>
 </body>
