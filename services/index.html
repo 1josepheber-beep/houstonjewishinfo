@@ -2678,7 +2678,7 @@ function buildBizCard(item) {
     '</div>' +
     '</div>' +
     (item.address ? '<div class="biz-detail">📍 ' + item.address + '</div>' : '') +
-    (item.phone ? '<div class="biz-detail">📞 ' + item.phone + '</div>' : '') +
+    (item.phone ? '<div class="biz-detail">📞 <a href="tel:' + String(item.phone).replace(/[^0-9+]/g,'') + '" style="color:inherit;text-decoration:none;">' + item.phone + '</a></div>' : '') +
     (item.email ? '<div class="biz-detail">📧 <a href="mailto:' + item.email + '" style="color:var(--gold);">' + item.email + '</a></div>' : '') +
     ((item.description||item.hours) ? '<div class="biz-desc">' + (item.description||'') + (item.hours ? '<div class="biz-hours">\uD83D\uDD50 '+charEsc(item.hours).replace(/\n/g,'<br>')+'</div>' : '') + '</div><button type="button" class="biz-read-more" style="display:none;">Read more ↓</button>' : '') +
     hechsherTags(item.hechsher) +
