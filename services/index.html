@@ -3834,7 +3834,9 @@ window.addEventListener('resize',function(){var m=document.getElementById('hji-j
       } else if (/^tel:/i.test(href)) {
         gtag('event','call_click',{business:biz});
       } else if (t.classList && t.classList.contains('biz-website')) {
-        gtag('event','website_click',{business:biz});
+        gtag('event','website_click',{business:biz,via:'button'});
+      } else if ((''+(t.className||'')).indexOf('premium-link') >= 0) {
+        gtag('event','website_click',{business:biz,via:'premium_card'});
       } else if (t.classList && t.classList.contains('biz-greviews')) {
         gtag('event','reviews_click',{business:biz});
       }
