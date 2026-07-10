@@ -1138,7 +1138,11 @@
   .biz-read-more { display: inline-block; background: none; border: none; padding: 0; margin: 0 0 8px; font-family: sans-serif; font-size: 12px; font-weight: 700; color: var(--navy, #1f3f6e); cursor: pointer; }
   .biz-read-more:hover { text-decoration: underline; }
   .biz-desc { font-size: 12px; color: #555; line-height: 1.5; margin-top: 2px; }
-  .biz-card-footer { display: flex; align-items: center; justify-content: space-between; margin-top: auto; padding-top: 10px; border-top: 1px solid var(--border); }
+  .biz-card-footer { display: flex; align-items: center; justify-content: space-between; margin-top: auto; padding-top: 10px; border-top: 1px solid var(--border); gap: 10px; }
+  .biz-foot-left { min-width: 0; }
+  .biz-greviews { display:none; align-items:center; gap:5px; font-family:sans-serif; font-size:10px; font-weight:700; letter-spacing:.04em; text-transform:uppercase; color:var(--navy); border:1.5px solid var(--navy); border-radius:6px; padding:6px 11px; text-decoration:none; white-space:nowrap; }
+  body.greviews-on .biz-greviews { display:inline-flex; }
+  .biz-greviews:hover { background:var(--navy); color:#fff; }
   .biz-website {
     font-family: sans-serif; font-size: 10px; font-weight: 700; letter-spacing: .05em;
     text-transform: uppercase; color: var(--gold); border: 1px solid var(--gold);
@@ -2624,6 +2628,12 @@ function bizLinkHref(url){
   if(/^[+()\-.\s\d]{7,}$/.test(url)) return 'tel:'+url.replace(/[^\d+]/g,'');
   return 'https://'+url;
 }
+function googleReviewsBtn(item){
+  var q=[item.name,item.address].filter(Boolean).join(' ');
+  if(!q) return '';                                            /* no name/address -> skip */
+  var url='https://www.google.com/search?q='+encodeURIComponent(q+' reviews');
+  return '<a href="'+charEsc(url)+'" target="_blank" rel="noopener" class="biz-greviews">\u2605 Google Reviews</a>';
+}
 function bizLinkBtn(item, website, cls, extra){
   var rawUrl=String(item.linkurl||item['link url']||'').trim();
   var txt=String(item.linktext||item['link text']||'').trim();
@@ -2671,7 +2681,7 @@ function buildBizCard(item) {
     (item.description ? '<div class="biz-desc">' + item.description + '</div><button type="button" class="biz-read-more" style="display:none;">Read more ↓</button>' : '') +
     hechsherTags(item.hechsher) +
     '<div class="biz-card-footer">' +
-    '<span style="font-family:sans-serif;font-size:11px;color:var(--muted);">' + (item.hours||'') + '</span>' +
+    '<span class="biz-foot-left">' + (item.hours? '<span style="font-family:sans-serif;font-size:11px;color:var(--muted);">'+item.hours+'</span>' : googleReviewsBtn(item)) + '</span>' +
     bizLinkBtn(item, website) +
     '</div></div>';
 }
@@ -3453,6 +3463,7 @@ window.addEventListener('resize',function(){var m=document.getElementById('hji-j
   function g(S,k){return (S[k]!=null?(''+S[k]):'').trim();}
   function apply(S){
     var rs=document.documentElement.style;
+    try{document.body.classList.toggle('greviews-on', on(g(S,'google_reviews_on')));}catch(_e){}
     if(g(S,'color_primary'))rs.setProperty('--navy',g(S,'color_primary'));
     if(g(S,'color_highlight'))rs.setProperty('--gold',g(S,'color_highlight'));
     if(g(S,'color_background'))rs.setProperty('--cream',g(S,'color_background'));
