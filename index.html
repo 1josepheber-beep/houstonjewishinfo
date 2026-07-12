@@ -2671,6 +2671,18 @@
         })
         .catch(function(){ btn.disabled=false; note.textContent='Network error. Try again.'; note.className='cf-cm-note bad'; });
     }
+    function cfUpdateCounts(){
+      var boxes=document.querySelectorAll('.cf-comments');
+      if(!boxes.length) return;
+      cfLoadComments().then(function(map){
+        Array.prototype.forEach.call(boxes,function(box){
+          var pid=box.getAttribute('data-postid');
+          var n=(map&&map[pid])?map[pid].length:0;
+          var toggle=box.querySelector('.cf-cm-toggle');
+          if(toggle) toggle.innerHTML='\uD83D\uDCAC Comments'+(n>0?' ('+n+')':'');
+        });
+      });
+    }
     document.addEventListener('click',function(e){
       var t=e.target; if(!t||!t.closest) return;
       var tog=t.closest('.cf-cm-toggle'); if(tog){ var b1=tog.closest('.cf-comments'); if(b1) cfCmOpen(b1); return; }
@@ -2781,6 +2793,7 @@
       else{pg.style.display='none';}
       if(typeof loadAds==='function')loadAds();
       cfReadMore(document.getElementById('cf-list'));
+      cfUpdateCounts();
     }
 
     /* ---- Share a specific post / open a shared link ---- */
@@ -2849,7 +2862,7 @@
     }
     window.cfCalNav=function(d){calM+=d;if(calM<0){calM=11;calY--;}if(calM>11){calM=0;calY++;}cfRenderCal();};
     window.cfCalDay=function(n){var its=(window.__cfByDay||{})[n]||[];var box=document.getElementById('cf-cal-day');
-      box.innerHTML=its.length?its.map(cfCard).join(''):'';if(typeof loadAds==='function')loadAds();cfReadMore(document.getElementById('cf-cal'));};
+      box.innerHTML=its.length?its.map(cfCard).join(''):'';if(typeof loadAds==='function')loadAds();cfReadMore(document.getElementById('cf-cal'));cfUpdateCounts();};
 
     window.cfPage=function(d){page+=d;renderList();var sec=document.getElementById('community-feed');if(sec)sec.scrollIntoView({behavior:'smooth',block:'start'});};
 
