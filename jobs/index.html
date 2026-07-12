@@ -912,6 +912,11 @@
     position: relative;
     overflow: hidden;
   }
+    .job-share{ display:inline-flex; align-items:center; gap:5px; background:none; border:none; padding:0; cursor:pointer; font-family:sans-serif; font-size:12px; font-weight:700; color:var(--navy); margin-top:8px; }
+    .job-share svg{ display:block; }
+    .job-share:hover{ color:var(--gold); }
+    .job-listing.job-shared-hl{ animation:jobSharedHl 3s ease-out; }
+    @keyframes jobSharedHl{ 0%,55%{ box-shadow:0 0 0 3px rgba(201,147,58,.6); } 100%{ box-shadow:0 0 0 3px rgba(201,147,58,0); } }
   .job-listing::before {
     content: '';
     position: absolute;
@@ -1418,6 +1423,12 @@ function jobDescHTML(text){
   });
 }
 
+/* ---- Shareable job links ---- */
+function jobSlug(s){ return String(s||'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,42); }
+function jobHash(s){ var h=5381; s=String(s||''); for(var i=0;i<s.length;i++){ h=((h*33)^s.charCodeAt(i))>>>0; } return h.toString(36); }
+function jobId(job){ var t=(job&&job.title||'')+'|'+(job&&(job.organization||job.company)||''); return (jobSlug(job&&job.title)||'job')+'-'+jobHash(t); }
+var JOB_SHARE_SVG='<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>';
+function jobShareBtn(job){ return '<button type="button" class="job-share" onclick="jobShare(event,\''+jobId(job)+'\')" aria-label="Share this job" title="Share">'+JOB_SHARE_SVG+'<span class="job-share-lbl">Share</span></button>'; }
 function buildJobCard(job){
   var status=(job.status||'').toLowerCase().trim();
   var type=(job.type||'').toLowerCase();
@@ -1465,7 +1476,7 @@ function buildJobCard(job){
     ? '<a class="job-apply-btn" href="'+String(applyHref).replace(/"/g,'&quot;')+'"'+(/^mailto:/i.test(applyHref)?'':' target="_blank" rel="noopener"')+'>Apply →</a>'
     : '';
 
-  return '<div class="job-listing'+(status==='seeking'?' seeking':'')+'">'+
+  return '<div class="job-listing'+(status==='seeking'?' seeking':'')+'" id="job-item-'+jobId(job)+'">'+
     '<div class="job-listing-left">'+
     '<div class="job-title">'+job.title+'</div>'+
     (org?'<div class="job-org">'+org+'</div>':'')+
@@ -1476,6 +1487,7 @@ function buildJobCard(job){
     (pay?'<div class="job-pay">💰 '+pay+'</div>':'')+
     (contact?'<div class="job-contact">'+contact+'</div>':'')+
     applyBtn+
+    jobShareBtn(job)+
     '</div>'+
     '</div>';
 }
@@ -1576,6 +1588,40 @@ function renderJobs(){
   document.getElementById('jobs-grid').innerHTML=filtered.map(buildJobCard).join('');
   pruneJobReadMore();
 }
+
+window.jobShare=function(ev,id){
+  if(ev){ if(ev.preventDefault)ev.preventDefault(); if(ev.stopPropagation)ev.stopPropagation(); }
+  var btn=ev&&(ev.currentTarget||ev.target);
+  var url=location.origin+location.pathname+'#job-'+id;
+  try{ if(typeof gtag==='function') gtag('event','share_click',{type:'job'}); }catch(e){}
+  if(navigator.share){ navigator.share({title:document.title,url:url}).catch(function(){}); return; }
+  var flash=function(){ var b=btn&&btn.closest?btn.closest('.job-share'):btn; var lbl=b&&b.querySelector?b.querySelector('.job-share-lbl'):null; if(lbl){ var o=lbl.textContent; lbl.textContent='Copied!'; setTimeout(function(){ lbl.textContent=o; },1600); } };
+  if(navigator.clipboard&&navigator.clipboard.writeText){ navigator.clipboard.writeText(url).then(flash).catch(function(){ window.prompt('Copy this link:',url); }); }
+  else { window.prompt('Copy this link:',url); }
+};
+window.jobOpenShared=function(id){
+  if(!window.allJobs || !allJobs.length) return false;
+  var known=false; for(var i=0;i<allJobs.length;i++){ if(jobId(allJobs[i])===id){ known=true; break; } }
+  if(!known) return true;
+  var sb=document.getElementById('job-search'); if(sb) sb.value='';
+  document.querySelectorAll('.jobs-filters input[type=checkbox]').forEach(function(el){ var v=(el.value||'').toLowerCase(); el.checked=(v==='hiring'||v==='seeking'); });
+  var allTab=null; document.querySelectorAll('[onclick*="switchJobsTab"]').forEach(function(t){ if((t.getAttribute('onclick')||'').indexOf("'all'")>-1) allTab=t; });
+  if(allTab){ try{ switchJobsTab('all', allTab); }catch(e){ currentTab='all'; renderJobs(); } } else { currentTab='all'; renderJobs(); }
+  setTimeout(function(){
+    var el=document.getElementById('job-item-'+id); if(!el) return;
+    try{ if(typeof gtag==='function') gtag('event','shared_link_open',{type:'job'}); }catch(e){}
+    var doScroll=function(){
+      var sticky=0, sn=document.getElementById('stickyNav');
+      if(sn){ var st=getComputedStyle(sn); if(st.display!=='none'&&st.visibility!=='hidden'&&sn.offsetHeight) sticky=sn.offsetHeight; }
+      var top=el.getBoundingClientRect().top + (window.pageYOffset||document.documentElement.scrollTop||0) - sticky - 14;
+      window.scrollTo({top:Math.max(0,top), behavior:'smooth'});
+    };
+    doScroll(); setTimeout(doScroll,450); setTimeout(doScroll,1200);
+    el.classList.add('job-shared-hl'); setTimeout(function(){ if(el)el.classList.remove('job-shared-hl'); },3000);
+  },100);
+  return true;
+};
+(function(){ var m=(location.hash||'').match(/^#job-(.+)$/); if(!m) return; var id=m[1], n=0; var iv=setInterval(function(){ n++; if((window.jobOpenShared&&jobOpenShared(id))||n>90){ clearInterval(iv); } },200); })();
 
 function switchJobsTab(tab,btn){
   currentTab=tab;

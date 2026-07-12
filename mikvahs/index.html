@@ -932,6 +932,13 @@
   .mikvah-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-bottom: 20px; }
   @media (max-width: 700px){ .mikvah-grid { grid-template-columns: 1fr; } }
   .mikvah-card { background: var(--white); border: 1px solid var(--border); border-radius: 8px; padding: 16px 18px; }
+  .mikvah-card{ position:relative; }
+  .mik-share{ display:inline-flex; align-items:center; gap:5px; background:none; border:none; padding:0; cursor:pointer; font-family:sans-serif; font-size:12px; font-weight:700; color:var(--navy); }
+  .mik-share svg{ display:block; }
+  .mik-share:hover{ color:var(--gold); }
+  .mik-share-abs{ position:absolute; top:8px; right:8px; z-index:3; background:rgba(255,255,255,.94); border-radius:6px; padding:5px 8px; box-shadow:0 1px 5px rgba(0,0,0,.14); }
+  .mikvah-card.mik-shared-hl{ animation:mikSharedHl 3s ease-out; }
+  @keyframes mikSharedHl{ 0%,55%{ box-shadow:0 0 0 3px rgba(201,147,58,.6); } 100%{ box-shadow:0 0 0 3px rgba(201,147,58,0); } }
   .mikvah-website-btn {
     display: inline-block;
     margin-top: 12px;
@@ -1309,13 +1316,41 @@
     var MIK_SHEET_TAB = 'Mikvahs';
     function esc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
     function mikWeb(u){u=String(u||'').trim();return u?(/^https?:\/\//i.test(u)?u:'https://'+u):'';}
+    function mikSlug(s){ return String(s||'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,42); }
+    function mikHash(s){ var h=5381; s=String(s||''); for(var i=0;i<s.length;i++){ h=((h*33)^s.charCodeAt(i))>>>0; } return h.toString(36); }
+    function mikShareId(d){ return (mikSlug(d&&d.name)||'mikvah')+'-'+mikHash((d&&d.name)||''); }
+    var MIK_SHARE_SVG='<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>';
+    function mikShareBtn(d){ return '<button type="button" class="mik-share mik-share-abs" onclick="mikvahShare(event,\''+mikShareId(d)+'\')" aria-label="Share" title="Share">'+MIK_SHARE_SVG+'<span class="mik-share-lbl">Share</span></button>'; }
+    window.mikvahShare=function(ev,id){
+      if(ev){ if(ev.preventDefault)ev.preventDefault(); if(ev.stopPropagation)ev.stopPropagation(); }
+      var btn=ev&&(ev.currentTarget||ev.target);
+      var url=location.origin+location.pathname+'#mik-'+id;
+      try{ if(typeof gtag==='function') gtag('event','share_click',{type:'mikvah'}); }catch(e){}
+      if(navigator.share){ navigator.share({title:document.title,url:url}).catch(function(){}); return; }
+      var flash=function(){ var b=btn&&btn.closest?btn.closest('.mik-share'):btn; var lbl=b&&b.querySelector?b.querySelector('.mik-share-lbl'):null; if(lbl){ var o=lbl.textContent; lbl.textContent='Copied!'; setTimeout(function(){ lbl.textContent=o; },1600); } };
+      if(navigator.clipboard&&navigator.clipboard.writeText){ navigator.clipboard.writeText(url).then(flash).catch(function(){ window.prompt('Copy this link:',url); }); }
+      else { window.prompt('Copy this link:',url); }
+    };
+    window.mikvahOpenShared=function(id){
+      if(!document.querySelector('.mikvah-card')) return false;
+      var el=document.getElementById('mik-item-'+id); if(!el) return true;
+      setTimeout(function(){
+        var el2=document.getElementById('mik-item-'+id); if(!el2) return;
+        try{ if(typeof gtag==='function') gtag('event','shared_link_open',{type:'mikvah'}); }catch(e){}
+        var doScroll=function(){ var sticky=0, sn=document.getElementById('stickyNav'); if(sn){ var st=getComputedStyle(sn); if(st.display!=='none'&&st.visibility!=='hidden'&&sn.offsetHeight) sticky=sn.offsetHeight; } var top=el2.getBoundingClientRect().top + (window.pageYOffset||document.documentElement.scrollTop||0) - sticky - 14; window.scrollTo({top:Math.max(0,top), behavior:'smooth'}); };
+        doScroll(); setTimeout(doScroll,450); setTimeout(doScroll,1200);
+        el2.classList.add('mik-shared-hl'); setTimeout(function(){ if(el2)el2.classList.remove('mik-shared-hl'); },3000);
+      },110);
+      return true;
+    };
+    (function(){ var m=(location.hash||'').match(/^#mik-(.+)$/); if(!m) return; var id=m[1], n=0; var iv=setInterval(function(){ n++; if((window.mikvahOpenShared&&mikvahOpenShared(id))||n>90){ clearInterval(iv); } },200); })();
     function mikCard(d){
       var phone=d.phone?'<div class="mikvah-detail">\uD83D\uDCDE '+esc(d.phone)+'</div>':'';
       var email=d.email?'<div class="mikvah-detail">\u2709\uFE0F <a href="mailto:'+esc(d.email)+'">'+esc(d.email)+'</a></div>':'';
       var addr=d.address?'<div class="mikvah-detail">\uD83D\uDCCD '+esc(d.address)+'</div>':'';
       var notes=d.notes?'<div class="mikvah-detail" style="color:#777;">'+(/<([a-z][a-z0-9]*)\b[^>]*>/i.test(d.notes||'')?(d.notes||''):esc(d.notes).replace(/\n/g,'<br>'))+'</div>':'';
       var website=d.website?'<div class="mikvah-foot"><a href="'+esc(mikWeb(d.website))+'" target="_blank" rel="noopener" class="mikvah-website-btn">Visit Website \u2192</a></div>':'';
-      return '<div class="mikvah-card"><span class="mikvah-tag">Mikvah</span>'+
+      return '<div class="mikvah-card" id="mik-item-'+mikShareId(d)+'">'+mikShareBtn(d)+'<span class="mikvah-tag">Mikvah</span>'+
         '<div class="mikvah-name">'+esc(d.name)+'</div>'+addr+phone+email+notes+website+'</div>';
     }
     var url='https://docs.google.com/spreadsheets/d/'+MIK_SHEET_ID+'/gviz/tq?tqx=out:json&sheet='+encodeURIComponent(MIK_SHEET_TAB)+'&headers=1';

@@ -820,6 +820,13 @@
   .school-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; margin-bottom: 40px; }
 
   .school-card { background: var(--white); border: 1px solid var(--border); border-radius: 6px; overflow: hidden; transition: box-shadow .2s; }
+  .school-card{ position:relative; }
+  .school-share{ display:inline-flex; align-items:center; gap:5px; background:none; border:none; padding:0; cursor:pointer; font-family:sans-serif; font-size:12px; font-weight:700; color:var(--navy); }
+  .school-share svg{ display:block; }
+  .school-share:hover{ color:var(--gold); }
+  .school-share-abs{ position:absolute; top:8px; right:8px; z-index:3; background:rgba(255,255,255,.94); border-radius:6px; padding:5px 8px; box-shadow:0 1px 5px rgba(0,0,0,.14); }
+  .school-card.school-shared-hl{ animation:schoolSharedHl 3s ease-out; }
+  @keyframes schoolSharedHl{ 0%,55%{ box-shadow:0 0 0 3px rgba(201,147,58,.6); } 100%{ box-shadow:0 0 0 3px rgba(201,147,58,0); } }
   .school-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,.10); }
 
   .school-card-img { width: 100%; height: 140px; display: flex; align-items: center; justify-content: center; font-size: 48px; overflow: hidden; }
@@ -1236,6 +1243,12 @@
         };
         return M[k] || {label:(raw||'Other'),bg:'#f0f0f0',fg:'#555',grad:'#eceae4,#bdbcb4'};
       }
+      function schoolSlug(s){ return String(s||'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,42); }
+      function schoolHash(s){ var h=5381; s=String(s||''); for(var i=0;i<s.length;i++){ h=((h*33)^s.charCodeAt(i))>>>0; } return h.toString(36); }
+      function schoolShareId(d){ return (schoolSlug(d&&d.name)||'school')+'-'+schoolHash((d&&d.name)||''); }
+      window.schoolShareId=schoolShareId;
+      var SCHOOL_SHARE_SVG='<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>';
+      function schoolShareBtn(d){ return '<button type="button" class="school-share school-share-abs" onclick="schoolShare(event,\''+schoolShareId(d)+'\')" aria-label="Share" title="Share">'+SCHOOL_SHARE_SVG+'<span class="school-share-lbl">Share</span></button>'; }
       function cardHTML(d){
       var rawTypes=String(d.type||'').split(',').map(function(x){return x.trim();}).filter(Boolean);
       if(!rawTypes.length) rawTypes=['Other'];
@@ -1266,7 +1279,7 @@
       var tuition = d.tuition
         ? '<div class="school-tuition"><div class="school-tuition-label">Tuition</div><div class="school-tuition-val">'+esc(d.tuition)+'</div></div>'
         : '<div class="school-tuition"></div>';
-      return '<div class="school-card" data-type="'+attr(key)+'">'+imgBlock+
+      return '<div class="school-card" id="school-item-'+schoolShareId(d)+'" data-type="'+attr(key)+'">'+schoolShareBtn(d)+imgBlock+
         '<div class="school-card-body">'+
           badges+
           '<div class="school-name">'+esc(d.name)+'</div>'+
@@ -1332,6 +1345,33 @@
   })();
 
   var EDU_LABELS={ kids:"Schools", adult:"Adult Learning", camps:"Camps" };
+  window.schoolShare=function(ev,id){
+    if(ev){ if(ev.preventDefault)ev.preventDefault(); if(ev.stopPropagation)ev.stopPropagation(); }
+    var btn=ev&&(ev.currentTarget||ev.target);
+    var url=location.origin+location.pathname+'#school-'+id;
+    try{ if(typeof gtag==='function') gtag('event','share_click',{type:'school'}); }catch(e){}
+    if(navigator.share){ navigator.share({title:document.title,url:url}).catch(function(){}); return; }
+    var flash=function(){ var b=btn&&btn.closest?btn.closest('.school-share'):btn; var lbl=b&&b.querySelector?b.querySelector('.school-share-lbl'):null; if(lbl){ var o=lbl.textContent; lbl.textContent='Copied!'; setTimeout(function(){ lbl.textContent=o; },1600); } };
+    if(navigator.clipboard&&navigator.clipboard.writeText){ navigator.clipboard.writeText(url).then(flash).catch(function(){ window.prompt('Copy this link:',url); }); }
+    else { window.prompt('Copy this link:',url); }
+  };
+  window.schoolOpenShared=function(id){
+    if(!window.EDU_BY_CAT) return false;
+    var cats=['kids','adult','camps'], found=null;
+    for(var i=0;i<cats.length && !found;i++){ var arr=window.EDU_BY_CAT[cats[i]]||[]; for(var j=0;j<arr.length;j++){ if(window.schoolShareId&&window.schoolShareId(arr[j])===id){ found=cats[i]; break; } } }
+    if(!found) return true;
+    var tile=document.querySelector('.edu-tile[data-cat="'+found+'"]');
+    if(typeof showEduCat==='function'){ try{ showEduCat(found, tile); }catch(e){ if(window.renderEduCat)renderEduCat(found); } } else if(window.renderEduCat){ renderEduCat(found); }
+    setTimeout(function(){
+      var el=document.getElementById('school-item-'+id); if(!el) return;
+      try{ if(typeof gtag==='function') gtag('event','shared_link_open',{type:'school'}); }catch(e){}
+      var doScroll=function(){ var sticky=0, sn=document.getElementById('stickyNav'); if(sn){ var st=getComputedStyle(sn); if(st.display!=='none'&&st.visibility!=='hidden'&&sn.offsetHeight) sticky=sn.offsetHeight; } var top=el.getBoundingClientRect().top + (window.pageYOffset||document.documentElement.scrollTop||0) - sticky - 14; window.scrollTo({top:Math.max(0,top), behavior:'smooth'}); };
+      doScroll(); setTimeout(doScroll,450); setTimeout(doScroll,1200);
+      el.classList.add('school-shared-hl'); setTimeout(function(){ if(el)el.classList.remove('school-shared-hl'); },3000);
+    },140);
+    return true;
+  };
+  (function(){ var m=(location.hash||'').match(/^#school-(.+)$/); if(!m) return; var id=m[1], n=0; var iv=setInterval(function(){ n++; if((window.schoolOpenShared&&schoolOpenShared(id))||n>90){ clearInterval(iv); } },200); })();
   function showEduCat(cat, tile){
     document.querySelectorAll('.edu-tile').forEach(function(t){ t.classList.remove('active'); });
     if(tile) tile.classList.add('active');

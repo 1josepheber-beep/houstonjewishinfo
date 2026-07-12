@@ -819,6 +819,8 @@
   .gem-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:16px; margin-bottom:30px; }
   @media (max-width:680px){ .gem-grid { grid-template-columns:1fr; } }
   .gem-card { background:var(--white); border:1px solid var(--border); border-radius:8px; overflow:hidden; display:flex; flex-direction:column; transition:box-shadow .2s; }
+    .gem-card{ position:relative; }
+    .gem-share-row{ margin-top:8px; }
   .gem-card:hover { box-shadow:0 3px 12px rgba(0,0,0,.09); }
   .gem-card-banner { height:8px; background:linear-gradient(90deg,#0d7d7d,#16a8a8); }
   .gem-card-body { padding:16px 20px; display:flex; flex-direction:column; flex:1; }
@@ -916,6 +918,13 @@
     flex-wrap: wrap;
     gap: 8px;
   }
+    .charity-card{ position:relative; }
+    .char-share{ display:inline-flex; align-items:center; gap:5px; background:none; border:none; padding:0; cursor:pointer; font-family:sans-serif; font-size:12px; font-weight:700; color:var(--navy); }
+    .char-share svg{ display:block; }
+    .char-share:hover{ color:var(--gold); }
+    .char-share-abs{ position:absolute; top:8px; right:8px; z-index:3; background:rgba(255,255,255,.94); border-radius:6px; padding:5px 8px; box-shadow:0 1px 5px rgba(0,0,0,.14); }
+    .charity-card.char-shared-hl{ animation:charSharedHl 3s ease-out; }
+    @keyframes charSharedHl{ 0%,55%{ box-shadow:0 0 0 3px rgba(201,147,58,.6); } 100%{ box-shadow:0 0 0 3px rgba(201,147,58,0); } }
   .charity-meta {
     font-family: sans-serif; font-size: 11px; color: var(--muted);
   }
@@ -1249,6 +1258,12 @@
   function catList(cat){
     return String(cat||'').split(/[,;/]+/).map(function(s){return s.trim();}).filter(Boolean).map(catInfo);
   }
+  /* ---- Shareable charity links ---- */
+  function charSlug(s){ return String(s||'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,42); }
+  function charHash(s){ var h=5381; s=String(s||''); for(var i=0;i<s.length;i++){ h=((h*33)^s.charCodeAt(i))>>>0; } return h.toString(36); }
+  function charShareId(d){ return (charSlug(d&&d.name)||'charity')+'-'+charHash((d&&d.name)||''); }
+  var CHAR_SHARE_SVG='<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>';
+  function charShareBtn(d, abs){ return '<button type="button" class="char-share'+(abs?' char-share-abs':'')+'" onclick="charShare(event,\''+charShareId(d)+'\')" aria-label="Share" title="Share">'+CHAR_SHARE_SVG+'<span class="char-share-lbl">Share</span></button>'; }
   function buildCharityCard(d){
     // PREMIUM image card (if CardImage set), clickable to website/donate.
     if (d.cardimage) {
@@ -1264,7 +1279,7 @@
         : pinner;
       var cats0=catList(d.category);
       var keys0=cats0.length?cats0.map(function(c){return c.key;}).join('|'):catInfo(d.category).key;
-      return '<div class="charity-card biz-card-premium" data-cat="'+charEsc(keys0)+'">'+pcard+'</div>';
+      return '<div class="charity-card biz-card-premium" id="char-item-'+charShareId(d)+'" data-cat="'+charEsc(keys0)+'">'+pcard+charShareBtn(d,true)+'</div>';
     }
     var cats=catList(d.category);
     var ci=cats.length?cats[0]:catInfo(d.category);
@@ -1278,7 +1293,7 @@
     var donate=d.donateurl
       ? '<a href="'+charEsc(/^https?:\/\//i.test(d.donateurl)?d.donateurl:'https://'+d.donateurl)+'" target="_blank" rel="noopener" class="charity-donate-btn">Donate →</a>'
       : (d.website ? '<a href="'+charEsc(/^https?:\/\//i.test(d.website)?d.website:'https://'+d.website)+'" target="_blank" rel="noopener" class="charity-donate-btn">Visit →</a>' : '');
-    return '<div class="charity-card" data-cat="'+charEsc(allKeys)+'">'+
+    return '<div class="charity-card" id="char-item-'+charShareId(d)+'" data-cat="'+charEsc(allKeys)+'">'+
       '<div class="charity-card-banner" style="background:'+ci.grad+';"></div>'+
       '<div class="charity-card-body">'+
         '<div class="charity-card-top">'+
@@ -1288,10 +1303,35 @@
         '<div class="charity-name">'+charEsc(d.name)+'</div>'+
         '<div class="charity-desc">'+(/<([a-z][a-z0-9]*)\b[^>]*>/i.test(d.description||'')?(d.description||''):charEsc(d.description))+'</div>'+
         '<div class="charity-footer">'+
-          '<span class="charity-meta">'+charEsc(meta)+'</span>'+donate+
+          charShareBtn(d)+'<span class="charity-meta">'+charEsc(meta)+'</span>'+donate+
         '</div>'+
       '</div></div>';
   }
+  window.charShare=function(ev,id){
+    if(ev){ if(ev.preventDefault)ev.preventDefault(); if(ev.stopPropagation)ev.stopPropagation(); }
+    var btn=ev&&(ev.currentTarget||ev.target);
+    var url=location.origin+location.pathname+'#char-'+id;
+    try{ if(typeof gtag==='function') gtag('event','share_click',{type:'charity'}); }catch(e){}
+    if(navigator.share){ navigator.share({title:document.title,url:url}).catch(function(){}); return; }
+    var flash=function(){ var b=btn&&btn.closest?btn.closest('.char-share'):btn; var lbl=b&&b.querySelector?b.querySelector('.char-share-lbl'):null; if(lbl){ var o=lbl.textContent; lbl.textContent='Copied!'; setTimeout(function(){ lbl.textContent=o; },1600); } };
+    if(navigator.clipboard&&navigator.clipboard.writeText){ navigator.clipboard.writeText(url).then(flash).catch(function(){ window.prompt('Copy this link:',url); }); }
+    else { window.prompt('Copy this link:',url); }
+  };
+  window.charOpenShared=function(id){
+    if(!document.querySelector('.charity-card')) return false;
+    var el=document.getElementById('char-item-'+id); if(!el) return true;
+    var allBtn=null; document.querySelectorAll('.filter-btn').forEach(function(b){ if((b.getAttribute('onclick')||'').indexOf("filterCharities('all'")>-1) allBtn=b; });
+    if(allBtn){ try{ allBtn.click(); }catch(e){} }
+    setTimeout(function(){
+      var el2=document.getElementById('char-item-'+id); if(!el2) return;
+      try{ if(typeof gtag==='function') gtag('event','shared_link_open',{type:'charity'}); }catch(e){}
+      var doScroll=function(){ var sticky=0, sn=document.getElementById('stickyNav'); if(sn){ var st=getComputedStyle(sn); if(st.display!=='none'&&st.visibility!=='hidden'&&sn.offsetHeight) sticky=sn.offsetHeight; } var top=el2.getBoundingClientRect().top + (window.pageYOffset||document.documentElement.scrollTop||0) - sticky - 14; window.scrollTo({top:Math.max(0,top), behavior:'smooth'}); };
+      doScroll(); setTimeout(doScroll,450); setTimeout(doScroll,1200);
+      el2.classList.add('char-shared-hl'); setTimeout(function(){ if(el2)el2.classList.remove('char-shared-hl'); },3000);
+    },130);
+    return true;
+  };
+  (function(){ var m=(location.hash||'').match(/^#char-(.+)$/); if(!m) return; var id=m[1], n=0; var iv=setInterval(function(){ n++; if((window.charOpenShared&&charOpenShared(id))||n>90){ clearInterval(iv); } },200); })();
   (function loadCharities(){
     var url='https://docs.google.com/spreadsheets/d/'+CHAR_SHEET_ID+'/gviz/tq?tqx=out:json&headers=1&sheet='+encodeURIComponent(CHAR_SHEET_TAB);
     fetch(url).then(function(r){return r.text();}).then(function(text){
@@ -1333,6 +1373,8 @@
   // ===== GEMACHIM — Google Sheets driven =====
   var GEM_ALL=[];
   function gemEsc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+  function gemShareId(d){ return (charSlug(d&&d.name)||'gemach')+'-'+charHash((d&&d.name)||''); }
+  function gemShareBtn(d, abs){ return '<button type="button" class="char-share'+(abs?' char-share-abs':'')+'" onclick="gemShare(event,\''+gemShareId(d)+'\')" aria-label="Share" title="Share">'+CHAR_SHARE_SVG+'<span class="char-share-lbl">Share</span></button>'; }
   function gemCard(d){
     var phone=d.phone?'<div class="gem-detail">📞 <a href="tel:'+gemEsc(String(d.phone).replace(/[^0-9+]/g,''))+'">'+gemEsc(d.phone)+'</a></div>':'';
     var email=d.email?'<div class="gem-detail">✉️ <a href="mailto:'+gemEsc(d.email)+'">'+gemEsc(d.email)+'</a></div>':'';
@@ -1354,16 +1396,17 @@
       var link=d.website
         ? '<a class="biz-premium-link" href="'+gemEsc(/^https?:\/\//i.test(d.website)?d.website:'https://'+d.website)+'" target="_blank" rel="noopener">'+inner+'</a>'
         : inner;
-      return '<div class="gem-card biz-card-premium">'+link+'</div>';
+      return '<div class="gem-card biz-card-premium" id="gem-item-'+gemShareId(d)+'">'+link+gemShareBtn(d,true)+'</div>';
     }
 
-    return '<div class="gem-card">'+
+    return '<div class="gem-card" id="gem-item-'+gemShareId(d)+'">'+
       '<div class="gem-card-banner"></div>'+
       '<div class="gem-card-body">'+
         (d.category?'<span class="gem-cat">'+gemEsc(d.category)+'</span>':'')+
         '<div class="gem-name">'+gemEsc(d.name)+'</div>'+
         (d.lends?'<div class="gem-lends">Lends: '+gemEsc(d.lends)+'</div>':'')+
         contact+area+phone+email+hours+notes+website+
+        '<div class="gem-share-row">'+gemShareBtn(d)+'</div>'+
       '</div>'+
       '</div>';
   }
@@ -1379,6 +1422,31 @@
       : '<div style="grid-column:1/-1;text-align:center;font-family:sans-serif;font-size:13px;color:var(--muted);padding:40px;">No gemachim match your search.</div>';
     document.getElementById('gem-count').textContent=list.length;
   }
+  window.gemShare=function(ev,id){
+    if(ev){ if(ev.preventDefault)ev.preventDefault(); if(ev.stopPropagation)ev.stopPropagation(); }
+    var btn=ev&&(ev.currentTarget||ev.target);
+    var url=location.origin+location.pathname+'#gem-'+id;
+    try{ if(typeof gtag==='function') gtag('event','share_click',{type:'gemach'}); }catch(e){}
+    if(navigator.share){ navigator.share({title:document.title,url:url}).catch(function(){}); return; }
+    var flash=function(){ var b=btn&&btn.closest?btn.closest('.char-share'):btn; var lbl=b&&b.querySelector?b.querySelector('.char-share-lbl'):null; if(lbl){ var o=lbl.textContent; lbl.textContent='Copied!'; setTimeout(function(){ lbl.textContent=o; },1600); } };
+    if(navigator.clipboard&&navigator.clipboard.writeText){ navigator.clipboard.writeText(url).then(flash).catch(function(){ window.prompt('Copy this link:',url); }); }
+    else { window.prompt('Copy this link:',url); }
+  };
+  window.gemOpenShared=function(id){
+    var tg=document.getElementById('tab-gem'); if(tg){ try{ tg.click(); }catch(e){} }
+    var gs=document.getElementById('gem-search'); if(gs && gs.value){ gs.value=''; try{ if(gs.oninput) gs.oninput(); }catch(e){} }
+    var cards=document.querySelectorAll('.gem-card'); if(!cards.length) return false;
+    var el=document.getElementById('gem-item-'+id); if(!el) return true;
+    setTimeout(function(){
+      var el2=document.getElementById('gem-item-'+id); if(!el2) return;
+      try{ if(typeof gtag==='function') gtag('event','shared_link_open',{type:'gemach'}); }catch(e){}
+      var doScroll=function(){ var sticky=0, sn=document.getElementById('stickyNav'); if(sn){ var st=getComputedStyle(sn); if(st.display!=='none'&&st.visibility!=='hidden'&&sn.offsetHeight) sticky=sn.offsetHeight; } var top=el2.getBoundingClientRect().top + (window.pageYOffset||document.documentElement.scrollTop||0) - sticky - 14; window.scrollTo({top:Math.max(0,top), behavior:'smooth'}); };
+      doScroll(); setTimeout(doScroll,450); setTimeout(doScroll,1200);
+      el2.classList.add('char-shared-hl'); setTimeout(function(){ if(el2)el2.classList.remove('char-shared-hl'); },3000);
+    },160);
+    return true;
+  };
+  (function(){ var m=(location.hash||'').match(/^#gem-(.+)$/); if(!m) return; var id=m[1], n=0; var iv=setInterval(function(){ n++; if((window.gemOpenShared&&gemOpenShared(id))||n>90){ clearInterval(iv); } },200); })();
   (function loadGemachim(){
     var url='https://docs.google.com/spreadsheets/d/'+CHAR_SHEET_ID+'/gviz/tq?tqx=out:json&headers=1&sheet=Gemachim';
     fetch(url).then(function(r){return r.text();}).then(function(text){

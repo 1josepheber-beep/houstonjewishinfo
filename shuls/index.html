@@ -878,6 +878,13 @@
     overflow: hidden;
     transition: box-shadow .2s;
   }
+    .syn-card{ position:relative; }
+    .shul-share{ display:inline-flex; align-items:center; gap:5px; background:none; border:none; padding:0; cursor:pointer; font-family:sans-serif; font-size:12px; font-weight:700; color:var(--navy); }
+    .shul-share svg{ display:block; }
+    .shul-share:hover{ color:var(--gold); }
+    .shul-share-abs{ position:absolute; top:8px; right:8px; z-index:3; background:rgba(255,255,255,.94); border-radius:6px; padding:5px 8px; box-shadow:0 1px 5px rgba(0,0,0,.14); }
+    .syn-card.shul-shared-hl{ animation:shulSharedHl 3s ease-out; }
+    @keyframes shulSharedHl{ 0%,55%{ box-shadow:0 0 0 3px rgba(201,147,58,.6); } 100%{ box-shadow:0 0 0 3px rgba(201,147,58,0); } }
   .syn-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,.10); }
   .syn-card-img {
     width: 100%;
@@ -1400,6 +1407,11 @@
     function webDisplay(u){ return String(u||'').replace(/^https?:\/\//i,'').replace(/^www\./i,'').replace(/\/+$/,''); }
     function detail(icon,val){ return val ? '<div class="syn-detail"><span class="syn-detail-icon">'+icon+'</span> '+esc(val)+'</div>' : ''; }
 
+    function shulSlug(s){ return String(s||'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,42); }
+    function shulHash(s){ var h=5381; s=String(s||''); for(var i=0;i<s.length;i++){ h=((h*33)^s.charCodeAt(i))>>>0; } return h.toString(36); }
+    function shulShareId(d){ return (shulSlug(d&&d.name)||'shul')+'-'+shulHash((d&&d.name)||''); }
+    var SHUL_SHARE_SVG='<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>';
+    function shulShareBtn(d){ return '<button type="button" class="shul-share shul-share-abs" onclick="shulShare(event,\''+shulShareId(d)+'\')" aria-label="Share" title="Share">'+SHUL_SHARE_SVG+'<span class="shul-share-lbl">Share</span></button>'; }
     function cardHTML(d){
       var key=String(d.denomination||'other').toLowerCase().trim();
       var dn=DENOM[key]||DENOM['other'];
@@ -1417,7 +1429,7 @@
       var nusachList=nusach.split(/[,;/]+/).map(function(s){return s.trim();}).filter(Boolean);
       var nusachTag=nusachList.map(function(nz,i){ var ml=(!hasDenom&&i===0)?' style="margin-left:0"':''; return '<span class="syn-nusach"'+ml+'>'+esc(nz)+'</span>'; }).join('');
       var nusachData=nusachList.map(function(nz){return nz.toLowerCase();}).join('|');
-      return '<div class="syn-card" data-denom="'+attr(key)+'" data-nusach="'+attr(nusachData)+'">'+imgBlock+
+      return '<div class="syn-card" id="shul-item-'+shulShareId(d)+'" data-denom="'+attr(key)+'" data-nusach="'+attr(nusachData)+'">'+shulShareBtn(d)+imgBlock+
         '<div class="syn-card-body">'+
           denomTag+nusachTag+
           '<div class="syn-name">'+esc(d.name)+'</div>'+
@@ -1454,6 +1466,31 @@
   })();
 
   // Filter — matches by denomination OR nusach
+  window.shulShare=function(ev,id){
+    if(ev){ if(ev.preventDefault)ev.preventDefault(); if(ev.stopPropagation)ev.stopPropagation(); }
+    var btn=ev&&(ev.currentTarget||ev.target);
+    var url=location.origin+location.pathname+'#shul-'+id;
+    try{ if(typeof gtag==='function') gtag('event','share_click',{type:'shul'}); }catch(e){}
+    if(navigator.share){ navigator.share({title:document.title,url:url}).catch(function(){}); return; }
+    var flash=function(){ var b=btn&&btn.closest?btn.closest('.shul-share'):btn; var lbl=b&&b.querySelector?b.querySelector('.shul-share-lbl'):null; if(lbl){ var o=lbl.textContent; lbl.textContent='Copied!'; setTimeout(function(){ lbl.textContent=o; },1600); } };
+    if(navigator.clipboard&&navigator.clipboard.writeText){ navigator.clipboard.writeText(url).then(flash).catch(function(){ window.prompt('Copy this link:',url); }); }
+    else { window.prompt('Copy this link:',url); }
+  };
+  window.shulOpenShared=function(id){
+    if(!document.querySelector('.syn-card')) return false;
+    var el=document.getElementById('shul-item-'+id); if(!el) return true;
+    var allBtn=null; document.querySelectorAll('.filter-btn').forEach(function(b){ if((b.getAttribute('onclick')||'').indexOf("filterSyn('all'")>-1) allBtn=b; });
+    if(allBtn){ try{ allBtn.click(); }catch(e){} }
+    setTimeout(function(){
+      var el2=document.getElementById('shul-item-'+id); if(!el2) return;
+      try{ if(typeof gtag==='function') gtag('event','shared_link_open',{type:'shul'}); }catch(e){}
+      var doScroll=function(){ var sticky=0, sn=document.getElementById('stickyNav'); if(sn){ var st=getComputedStyle(sn); if(st.display!=='none'&&st.visibility!=='hidden'&&sn.offsetHeight) sticky=sn.offsetHeight; } var top=el2.getBoundingClientRect().top + (window.pageYOffset||document.documentElement.scrollTop||0) - sticky - 14; window.scrollTo({top:Math.max(0,top), behavior:'smooth'}); };
+      doScroll(); setTimeout(doScroll,450); setTimeout(doScroll,1200);
+      el2.classList.add('shul-shared-hl'); setTimeout(function(){ if(el2)el2.classList.remove('shul-shared-hl'); },3000);
+    },120);
+    return true;
+  };
+  (function(){ var m=(location.hash||'').match(/^#shul-(.+)$/); if(!m) return; var id=m[1], n=0; var iv=setInterval(function(){ n++; if((window.shulOpenShared&&shulOpenShared(id))||n>90){ clearInterval(iv); } },200); })();
   function filterSyn(val, btn) {
     document.querySelectorAll('.filter-btn').forEach(function(b) { b.classList.remove('active'); });
     btn.classList.add('active');
