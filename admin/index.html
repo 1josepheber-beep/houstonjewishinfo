@@ -151,6 +151,8 @@
   .searchnote{padding:16px;text-align:center;color:var(--muted);font-size:13px}
   tbody tr.rowflash{animation:rowflash 2s ease}
   @keyframes rowflash{0%,18%{background:#fff3e2}100%{background:transparent}}
+  .setfield.setflash,.setflash{animation:setflash 2.2s ease;border-radius:8px}
+  @keyframes setflash{0%,20%{box-shadow:0 0 0 3px #f4c76a}100%{box-shadow:0 0 0 3px rgba(244,199,106,0)}}
 
   @media (max-width:760px){
     .app{grid-template-columns:1fr}
@@ -398,6 +400,7 @@ window.HJI_RTE=(function(){
 /* ====================== CONFIG ====================== */
 var LIVE_SHEET_ID = '1in7Ac7zknqyR9neWKOCAjOAG4jXCIVTJQfU6jJ72CV8';
 var BAKED_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx1yJzRglJ8SQ-bNbUjx-gIA2EDyfsdJZFaA6zSQmvqMeHT9T7JjVlcKdcQAuqHmxM/exec';
+var PUSH_URL = 'https://script.google.com/macros/s/AKfycbzq1JrF6LxrTdTxQLc3OEr9KkrGuxwm_hZNLA8B9_R52jCyb1jMkprxzG87NaNzZoQ/exec';
 
 var COLLECTIONS = [ ['Comments','💬 Comments'],
   ['Stories','📰 Stories'], ['Events','📅 Events'], ['Passings','🕯️ Passings'],
@@ -689,6 +692,7 @@ function buildNav(){
   sb.appendChild(el('span',null,'⚙️ Settings'));
   sb.onclick=function(){openSettings();toggleDrawer(false);};
   nav.appendChild(sb);
+  var pb=el('button','navitem');pb.dataset.key='__push__';pb.appendChild(el('span',null,'📣 Push Notifications'));pb.onclick=function(){openPush();toggleDrawer(false);};nav.appendChild(pb);
   nav.appendChild(navItemEl('Popups'));   // Popups management, under Site
   NAV_GROUPS.forEach(function(g){applyNavGroup(g.label);});
   if(S.current)openNavGroupFor(S.current);
@@ -755,6 +759,77 @@ var SETTINGS_CATS=[
     {key:'google_reviews_on',label:'Show "Google Reviews" button on business listings?',type:'toggle',def:'no'}
   ]}
 ];
+function pushEsc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+function openPush(){
+  S.current='__push__';
+  $('colTitle').textContent='Push Notifications';
+  $('btnAdd').style.display='none';
+  document.querySelectorAll('.navitem').forEach(function(n){n.classList.toggle('active',n.dataset.key==='__push__');});
+  renderPushComposer();
+}
+function renderPushComposer(){
+  var c=$('content');
+  if(S.mode!=='full'){ c.innerHTML='<div class="setwrap"><div class="setnote">Log in with your password to send push notifications.</div></div>'; return; }
+  c.innerHTML='<div class="setwrap" style="max-width:640px">'
+    +'<div class="setnote">Send a push notification to <b>all subscribers</b>. It shows on their device, and tapping it opens the link you set.</div>'
+    +'<div class="setfield"><label for="push-title">Title (optional)</label><input id="push-title" class="field" maxlength="120" placeholder="e.g. New in the community"></div>'
+    +'<div class="setfield"><label for="push-msg">Message</label><textarea id="push-msg" class="field" maxlength="240" rows="3" placeholder="What do you want to say?"></textarea></div>'
+    +'<div class="setfield"><label for="push-url">Link (optional)</label><input id="push-url" class="field" maxlength="500" placeholder="https://houstonjewishinfo.com/…"><div class="setnote" style="margin-top:4px">Tapping the notification opens this page. Leave blank for no link.</div></div>'
+    +'<div id="push-actions" style="margin-top:6px"><button class="btn" id="push-review-btn" onclick="pushReview()">Review &amp; send</button></div>'
+    +'<div id="push-confirm" style="margin-top:12px;display:none"></div>'
+    +'<div id="push-result" style="margin-top:12px"></div>'
+    +'</div>';
+}
+function pushReview(){
+  var msg=(($('push-msg')||{}).value||'').trim();
+  if(!msg){toast('Message is required.',true); var m=$('push-msg'); if(m)m.focus(); return;}
+  var title=(($('push-title')||{}).value||'').trim();
+  var url=(($('push-url')||{}).value||'').trim();
+  var html='<div style="background:#fff8ee;border:1px solid #f0d9b5;padding:12px 14px;border-radius:8px">'
+    +'<div style="font-weight:700;margin-bottom:6px;color:#8a5a12">Send to ALL subscribers?</div>'
+    +(title?'<div style="margin:2px 0"><b>Title:</b> '+pushEsc(title)+'</div>':'')
+    +'<div style="margin:2px 0"><b>Message:</b> '+pushEsc(msg)+'</div>'
+    +(url?'<div style="margin:2px 0"><b>Opens:</b> '+pushEsc(url)+'</div>':'<div style="margin:2px 0;color:#888">No link</div>')
+    +'</div>'
+    +'<div style="margin-top:10px;display:flex;gap:10px"><button class="btn" onclick="pushSend()">Send now</button>'
+    +'<button class="btn" style="background:#fff;color:#13294b;border:1px solid #d7dbe6" onclick="pushEdit()">Edit</button></div>';
+  var cf=$('push-confirm'); cf.innerHTML=html; cf.style.display='';
+  var rb=$('push-review-btn'); if(rb)rb.style.display='none';
+  $('push-result').innerHTML='';
+}
+function pushEdit(){ var cf=$('push-confirm'); if(cf){cf.style.display='none';cf.innerHTML='';} var rb=$('push-review-btn'); if(rb)rb.style.display=''; }
+function pushSend(){
+  var msg=(($('push-msg')||{}).value||'').trim(); if(!msg)return;
+  var title=(($('push-title')||{}).value||'').trim();
+  var url=(($('push-url')||{}).value||'').trim();
+  var cf=$('push-confirm'); cf.innerHTML='<div class="setnote">Sending…</div>';
+  fetch(PUSH_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({token:S.token,title:title,message:msg,url:url})})
+    .then(function(r){return r.json();})
+    .then(function(res){
+      if(res&&res.ok){
+        var n=res.recipients;
+        $('push-result').innerHTML='<div style="color:#1f7a3d;font-weight:600">✓ Sent'+(n!=null?(' to '+n+' subscriber'+(n===1?'':'s')):'')+'.</div>';
+        cf.style.display='none'; cf.innerHTML='';
+        var a=$('push-title'),b=$('push-msg'),d=$('push-url'); if(a)a.value=''; if(b)b.value=''; if(d)d.value='';
+        var rb=$('push-review-btn'); if(rb)rb.style.display='';
+      } else {
+        cf.innerHTML='<div style="color:#b83030">Could not send: '+pushEsc((res&&res.error)||'Unknown error')+'</div><div style="margin-top:10px"><button class="btn" onclick="pushEdit()">Back</button></div>';
+      }
+    })
+    .catch(function(){ cf.innerHTML='<div style="color:#b83030">Could not reach the sender. Please try again.</div><div style="margin-top:10px"><button class="btn" onclick="pushEdit()">Back</button></div>'; });
+}
+function highlightPendingSetting(){
+  if(!S.pendingSetting)return;
+  var ps=S.pendingSetting; S.pendingSetting=null;
+  if(ps.cat && typeof setSettingsTab==='function') setSettingsTab(ps.cat);
+  var fld=$('set-'+ps.key);
+  var box=(fld&&fld.closest)?fld.closest('.setfield'):null;
+  var target=box||fld; if(!target)return;
+  target.scrollIntoView({behavior:'smooth',block:'center'});
+  target.classList.add('setflash');
+  setTimeout(function(){target.classList.remove('setflash');},2200);
+  if(fld&&fld.focus){try{fld.focus();}catch(_e){}}
+}
 function openSettings(){
   S.current='__settings__';
   $('colTitle').textContent='Settings';
@@ -865,6 +940,7 @@ function renderSettings(map){
     bar.appendChild(save); w.appendChild(bar);
   }
   c.appendChild(w);
+  if(S.pendingSetting) setTimeout(highlightPendingSetting,60);
 }
 function saveSettings(){
   var btn=$('setSave'); if(btn){btn.disabled=true;btn.textContent='Saving…';}
@@ -1107,6 +1183,12 @@ function runPool(tasks,n){
 }
 function buildSearchIndex(){
   S.searchIndex=[]; S.searchReady=false;
+  (typeof SETTINGS_CATS!=='undefined'?SETTINGS_CATS:[]).forEach(function(cat){
+    (cat.fields||[]).forEach(function(f){
+      if(!f.label)return;
+      S.searchIndex.push({settings:true,cat:cat.id,skey:f.key,name:f.label,sub:cat.label,label:'⚙️ Settings',nameL:(f.label||'').toLowerCase(),blob:((f.label||'')+' '+cat.label+' '+(f.key||'')).toLowerCase()});
+    });
+  });
   var inp=$('admSearch'); if(inp)inp.placeholder='Building search…';
   var tasks=COLLECTIONS.map(function(c){
     return function(){
@@ -1161,9 +1243,15 @@ function runSearch(q){
 function closeSearchDD(){var dd=$('admSearchDD'); if(dd)dd.className='searchdd';}
 function gotoResult(e){
   closeSearchDD();
-  S.pendingHighlight=e.nameL;
   var inp=$('admSearch'),clr=$('admSearchClear');
   if(inp)inp.value=''; if(clr)clr.className='searchclear';
+  if(e.settings){
+    S.pendingSetting={cat:e.cat,key:e.skey};
+    openSettings();
+    toggleDrawer(false);
+    return;
+  }
+  S.pendingHighlight=e.nameL;
   if(S.current===e.coll){ highlightPending(); }
   else { selectCollection(e.coll,e.label); }
   toggleDrawer(false);
