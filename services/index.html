@@ -1150,6 +1150,13 @@
     padding: 4px 10px; border-radius: 3px; transition: all .15s; white-space: nowrap;
   }
   .biz-website:hover { background: var(--gold); color: #fff; }
+  .biz-card { position: relative; }
+  .biz-share { display:inline-flex; align-items:center; gap:4px; background:none; border:none; padding:0; cursor:pointer; font-family:sans-serif; font-size:11px; font-weight:700; color:var(--navy); line-height:1; }
+  .biz-share svg { display:block; flex:none; }
+  .biz-share:hover { color:var(--gold); }
+  .biz-share-abs { position:absolute; top:8px; right:8px; z-index:3; background:rgba(255,255,255,.94); border-radius:6px; padding:5px 8px; box-shadow:0 1px 5px rgba(0,0,0,.14); }
+  .biz-card.biz-shared-hl { animation:bizSharedHl 3s ease-out; }
+  @keyframes bizSharedHl { 0%,55%{ box-shadow:0 0 0 3px rgba(201,147,58,.6); } 100%{ box-shadow:0 0 0 3px rgba(201,147,58,0); } }
 
   /* ── SERVICE FINDER CARDS ── */
   .service-grid {
@@ -2644,6 +2651,12 @@ function bizLinkBtn(item, website, cls, extra){
   if(website) return '<a href="'+charEsc(website)+'" target="_blank" rel="noopener" class="'+cls+'"'+extra+'>'+charEsc(txt||'Visit Website \u2192')+'</a>';
   return '';
 }
+/* ---- Shareable business links: stable id + share button + tracking ---- */
+function bizSlug(s){ return String(s||'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,42); }
+function bizHash(s){ var h=5381; s=String(s||''); for(var i=0;i<s.length;i++){ h=((h*33)^s.charCodeAt(i))>>>0; } return h.toString(36); }
+function bizId(item){ return (bizSlug(item&&item.name)||'biz')+'-'+bizHash((item&&item.name)||''); }
+var BIZ_SHARE_SVG='<svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>';
+function bizShareBtn(item, abs){ return '<button type="button" class="biz-share'+(abs?' biz-share-abs':'')+'" onclick="bizShare(event,\''+bizId(item)+'\')" aria-label="Share this business" title="Share">'+BIZ_SHARE_SVG+'<span class="biz-share-lbl">Share</span></button>'; }
 function buildBizCard(item) {
   var website = item.website || '';
   if(website && website.indexOf('http') !== 0) website = 'https://' + website;
@@ -2663,11 +2676,11 @@ function buildBizCard(item) {
     var card = pHref
       ? '<a class="biz-premium-link" href="' + charEsc(pHref) + '" target="_blank" rel="noopener">' + inner + '</a>'
       : inner;
-    return '<div class="biz-card biz-card-premium" data-cat="' + item._cat + '" data-name="' + item.name + '">' +
-      card + '</div>';
+    return '<div class="biz-card biz-card-premium" id="biz-item-'+bizId(item)+'" data-cat="' + item._cat + '" data-name="' + item.name + '">' +
+      card + bizShareBtn(item, true) + '</div>';
   }
 
-  return '<div class="biz-card" data-cat="' + item._cat + '" data-name="' + item.name + '">' +
+  return '<div class="biz-card" id="biz-item-'+bizId(item)+'" data-cat="' + item._cat + '" data-name="' + item.name + '">' +
     '<div class="biz-card-top"><div>' +
     '<div class="biz-category">' + cat + '</div>' +
     '<div class="biz-name">' + item.name + '</div>' +
@@ -2683,10 +2696,55 @@ function buildBizCard(item) {
     ((item.description||item.hours) ? '<div class="biz-desc">' + (item.description||'') + (item.hours ? '<div class="biz-hours">\uD83D\uDD50 '+charEsc(item.hours).replace(/\n/g,'<br>')+'</div>' : '') + '</div><button type="button" class="biz-read-more" style="display:none;">Read more ↓</button>' : '') +
     hechsherTags(item.hechsher) +
     '<div class="biz-card-footer">' +
-    '<span class="biz-foot-left">' + googleReviewsBtn(item) + '</span>' +
+    '<span class="biz-foot-left">' + bizShareBtn(item) + googleReviewsBtn(item) + '</span>' +
     bizLinkBtn(item, website) +
     '</div></div>';
 }
+
+/* ---- Share a business / open a shared business link (with GA tracking) ---- */
+window.bizShare=function(ev,id){
+  if(ev){ if(ev.preventDefault)ev.preventDefault(); if(ev.stopPropagation)ev.stopPropagation(); }
+  var btn=ev&&(ev.currentTarget||ev.target);
+  var card=btn&&btn.closest?btn.closest('.biz-card'):null;
+  var biz=card?(card.getAttribute('data-name')||''):'';
+  var url=location.origin+location.pathname+'#biz-'+id;
+  try{ if(typeof gtag==='function') gtag('event','share_click',{business:biz,type:'business'}); }catch(e){}
+  if(navigator.share){ navigator.share({title:document.title,url:url}).catch(function(){}); return; }
+  var flash=function(){ var b=btn&&btn.closest?btn.closest('.biz-share'):btn; var lbl=b&&b.querySelector?b.querySelector('.biz-share-lbl'):null; if(lbl){ var o=lbl.textContent; lbl.textContent='Copied!'; setTimeout(function(){ lbl.textContent=o; },1600); } };
+  if(navigator.clipboard&&navigator.clipboard.writeText){ navigator.clipboard.writeText(url).then(flash).catch(function(){ window.prompt('Copy this link:',url); }); }
+  else { window.prompt('Copy this link:',url); }
+};
+window.bizOpenShared=function(id){
+  if(!window.allBizListings || !allBizListings.length) return false;   /* directory not loaded yet */
+  var known=false; for(var i=0;i<allBizListings.length;i++){ if(bizId(allBizListings[i])===id){ known=true; break; } }
+  if(!known) return true;                                             /* unknown/renamed -> stop */
+  var sb=document.getElementById('biz-search'); if(sb) sb.value='';   /* clear search so it's not hidden */
+  var cs=document.getElementById('biz-cat-select'); if(cs) cs.value='all';
+  renderBizGrid('all');                                               /* show all categories */
+  var pos=-1; for(var j=0;j<bizPageList.length;j++){ if(bizId(bizPageList[j])===id){ pos=j; break; } }
+  if(pos<0) return true;
+  bizPageNum=Math.floor(pos/BIZ_PER_PAGE)+1; renderBizPage();          /* jump to the right page */
+  setTimeout(function(){
+    var el=document.getElementById('biz-item-'+id); if(!el) return;
+    try{ if(typeof gtag==='function') gtag('event','shared_link_open',{business:(el.getAttribute('data-name')||''),type:'business'}); }catch(e){}
+    var doScroll=function(){
+      var sticky=0, sn=document.getElementById('stickyNav');
+      if(sn){ var st=getComputedStyle(sn); if(st.display!=='none'&&st.visibility!=='hidden'&&sn.offsetHeight) sticky=sn.offsetHeight; }
+      var top=el.getBoundingClientRect().top + (window.pageYOffset||document.documentElement.scrollTop||0) - sticky - 14;
+      window.scrollTo({top:Math.max(0,top), behavior:'smooth'});
+    };
+    doScroll(); setTimeout(doScroll,450); setTimeout(doScroll,1200);
+    el.classList.add('biz-shared-hl');
+    var rm=el.querySelector('.biz-read-more'); if(rm&&rm.style.display!=='none'){ try{rm.click();}catch(e){} }
+    setTimeout(function(){ if(el)el.classList.remove('biz-shared-hl'); },3000);
+  },100);
+  return true;
+};
+(function(){
+  var m=(location.hash||'').match(/^#biz-(.+)$/); if(!m) return;
+  var id=m[1], n=0;
+  var iv=setInterval(function(){ n++; if((window.bizOpenShared&&bizOpenShared(id))||n>90){ clearInterval(iv); } },200);
+})();
 
 var BIZ_PER_PAGE = 24;
 var bizPageList = [];   // current filtered+sorted list
