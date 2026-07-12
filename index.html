@@ -2786,7 +2786,7 @@
       var el=document.getElementById('cf-focus'); if(el) return el;
       el=document.createElement('div'); el.id='cf-focus'; el.className='cf-focus';
       el.innerHTML='<div class="cf-focus-panel"><button type="button" class="cf-focus-x" aria-label="Close">\u00d7</button><div class="cf-focus-scroll"><div class="cf-focus-inner"></div></div></div>';
-      document.body.appendChild(el);
+      (document.getElementById('community-feed')||document.body).appendChild(el);
       el.addEventListener('click',function(ev){ if(ev.target===el) history.back(); });
       el.querySelector('.cf-focus-x').addEventListener('click',function(){ history.back(); });
       return el;
