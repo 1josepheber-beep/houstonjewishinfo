@@ -2587,7 +2587,7 @@
       var newsCutoff=new Date(today.getTime()-HJI_SETTINGS.storyDays*86400000); /* Stories hide window (admin Settings, default 30) */
       var passingCutoff=new Date(today.getTime()-HJI_SETTINGS.passingDays*86400000); /* Passings hide window (admin Settings, default 14) */
       var rev=(window.__cfReveal||'');
-      function rv(x){ return !!rev && String(x.title||'').toLowerCase().indexOf(rev)>-1; }
+      function rv(x){ if(window.__cfShareId && cfItemId(x)===window.__cfShareId) return true; return !!rev && String(x.title||'').toLowerCase().indexOf(rev)>-1; }
       var arr=items.filter(function(x){
         if(x.women&&!showWomen)return false;
         if(filter==='news')return x.type==='news'&&(!x.date||x.date>=newsCutoff||rv(x));
@@ -2675,6 +2675,7 @@
       if(!items||!items.length) return false;                 /* feed not loaded yet */
       var known=false; for(var i=0;i<items.length;i++){ if(cfItemId(items[i])===id){ known=true; break; } }
       if(!known) return true;                                 /* unknown/renamed id -> stop */
+      window.__cfShareId=id;                                   /* reveal it even if past the feed's date cutoff */
       var allPill=document.querySelector('#cf-pills .cf-pill[data-f="all"]');
       if(allPill){ try{ allPill.click(); }catch(e){} }        /* force All + list view so it shows */
       var arr=currentList(), pos=-1;
