@@ -2337,7 +2337,7 @@
     /* ===== Admin-driven settings (feed hide-windows + homepage popup) =====
        Defaults are baked in so the page NEVER waits on the Settings tab.
        A Settings tab (columns: Key | Value) simply overrides them. */
-    var HJI_SETTINGS={storyDays:30,mazalDays:14,passingDays:14,popup:null};
+    var HJI_SETTINGS={storyDays:30,mazalDays:14,passingDays:14,popup:null,commentsPaused:false};
     function applySettings(rows){
       var map={};
       (rows||[]).forEach(function(r){var k=((r.key||'')+'').trim().toLowerCase();if(k)map[k]=(r.value!=null?(''+r.value):'');});
@@ -2345,6 +2345,9 @@
       HJI_SETTINGS.storyDays=num('story_days',30);
       HJI_SETTINGS.mazalDays=num('mazal_days',14);
       HJI_SETTINGS.passingDays=num('passing_days',14);
+      var cp=(map['comments_paused']||'').trim().toLowerCase();
+      HJI_SETTINGS.commentsPaused=(cp==='yes'||cp==='on'||cp==='true'||cp==='1');
+      try{ document.body.classList.toggle('cf-comments-off', HJI_SETTINGS.commentsPaused); }catch(e){}
       var on=(map['popup_on']||'').trim().toLowerCase();
       HJI_SETTINGS.popup={on:(on==='yes'||on==='on'||on==='true'||on==='1'),
         title:map['popup_title']||'',message:map['popup_message']||'',
@@ -2601,6 +2604,7 @@
       return _cfCm;
     }
     function cfComments(x){
+      if(HJI_SETTINGS.commentsPaused) return '';
       if(!x.comments) return '';
       return '<div class="cf-comments" data-postid="'+cfCmEsc(cfItemId(x))+'" data-type="'+cfCmEsc(x.type)+'">'+
         '<button type="button" class="cf-cm-toggle">\uD83D\uDCAC Comments</button>'+
@@ -2673,7 +2677,8 @@
       var snd=t.closest('.cf-cm-send'); if(snd){ var b2=snd.closest('.cf-comments'); if(b2) cfCmSend(b2,snd); return; }
     });
     (function(){
-      var css='.cf-comments{border-top:1px solid #e0dbd0;margin-top:14px;padding-top:10px}'
+      var css='.cf-comments-off .cf-comments{display:none}'
+      +'.cf-comments{border-top:1px solid #e0dbd0;margin-top:14px;padding-top:10px}'
       +'.cf-cm-toggle{background:none;border:none;color:#143D75;font-weight:600;font-size:13.5px;cursor:pointer;padding:4px 0;display:inline-flex;align-items:center;gap:6px;font-family:inherit}'
       +'.cf-cm-toggle:hover,.cf-cm-toggle.open{color:#B94218}'
       +'.cf-cm-panel{margin-top:10px}'
