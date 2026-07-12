@@ -2657,7 +2657,7 @@
           if(res.approved){
             var listEl=box.querySelector('.cf-cm-list');
             var empty=listEl.querySelector('.cf-cm-empty'); if(empty) listEl.innerHTML='';
-            var when=new Date().toLocaleDateString(undefined,{month:'short',day:'numeric'});
+            var when=new Date().toLocaleString('en-US',{month:'short',day:'numeric',year:'numeric',hour:'numeric',minute:'2-digit'});
             listEl.insertAdjacentHTML('beforeend',cfCmRow(name,text,when));
             note.textContent='Posted!'; note.className='cf-cm-note ok';
           } else {

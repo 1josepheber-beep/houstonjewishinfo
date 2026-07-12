@@ -1322,7 +1322,9 @@ function toggleCat(cn){
 function renderTable(){
   if(!S.rows.length){$('content').innerHTML=feedNote(S.current)+'<div class="empty">No entries yet in <b>'+S.current+'</b>.'+(S.mode==='full'?'<br>Use “+ Add new” to create the first one.':'')+'</div>';return;}
   var statusCol=S.headers.find(function(h){return STATUSY.indexOf(h)>=0;});
-  var showCols=S.headers.filter(function(h){return h!==statusCol;}).slice(0,4);
+  var showCols;
+  if(S.current==='Comments'){ showCols=['Name','Comment','Date'].filter(function(h){return S.headers.indexOf(h)>=0;}); }
+  else { showCols=S.headers.filter(function(h){return h!==statusCol;}).slice(0,4); }
   var t=el('table'),thead=el('thead'),trh=el('tr');
   showCols.forEach(function(h,i){trh.appendChild(el('th',i>1?'hideMobile':null,h));});
   if(statusCol)trh.appendChild(el('th',null,statusCol));
