@@ -399,7 +399,7 @@ window.HJI_RTE=(function(){
 var LIVE_SHEET_ID = '1in7Ac7zknqyR9neWKOCAjOAG4jXCIVTJQfU6jJ72CV8';
 var BAKED_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx1yJzRglJ8SQ-bNbUjx-gIA2EDyfsdJZFaA6zSQmvqMeHT9T7JjVlcKdcQAuqHmxM/exec';
 
-var COLLECTIONS = [
+var COLLECTIONS = [ ['Comments','💬 Comments'],
   ['Stories','📰 Stories'], ['Events','📅 Events'], ['Passings','🕯️ Passings'],
   ['MazalTov','🎉 Mazal Tov'], ['Jobs','💼 Jobs'], ['RealEstate','🏡 Real Estate'],
   ['Ads','📣 Ads'], ['Popups','🔔 Popups'], ['shuls','🕍 Shuls'], ['mikvahs','💧 Mikvahs'],
@@ -411,7 +411,7 @@ var COLLECTIONS = [
 ];
 var LONG_FIELDS = ['Description','Message','Notes','Excerpt','Program','ServiceTimes','Amenities','Hours','Summary','Steps'];
 var RICH_FIELDS = ['Description','Message','Notes','Summary','About','Excerpt'];
-var STATUSY = ['Status','Approved','Free','Women'];
+var STATUSY = ['Status','Approved','AllowComments','Free','Women'];
 
 // Official option lists per "Sheet.Column". multi:true = pick several (joined with ", ").
 // Each option is either a string (value=label) or [value,label].
@@ -636,7 +636,7 @@ function enterApp(){
 }
 
 var NAV_GROUPS=[
-  {label:'Home', keys:['Stories','Events','MazalTov','Passings']},
+  {label:'Home', keys:['Stories','Events','MazalTov','Passings','Comments']},
   {label:'Jewish', keys:['shuls','Education','mikvahs','Eruv']},
   {label:'Services', keys:['Services','Charities','Gemachim','KosherRestaurants','Hechsherim','SelfHelp']}
 ];
