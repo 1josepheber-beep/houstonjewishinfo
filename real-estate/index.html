@@ -181,6 +181,12 @@
   .re-tag.jewish { background: #edf7ed; color: #2a7a2a; }
   .re-card-desc { font-size: 13px; color: #555; line-height: 1.6; margin-bottom: 10px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
   .re-card-contact { display: flex; gap: 14px; font-family: sans-serif; font-size: 11px; flex-wrap: wrap; }
+    .re-card-foot{ padding-top:10px; margin-top:8px; border-top:1px solid var(--border); }
+    .re-share{ display:inline-flex; align-items:center; gap:5px; background:none; border:none; padding:0; cursor:pointer; font-family:sans-serif; font-size:12px; font-weight:700; color:var(--navy); }
+    .re-share svg{ display:block; }
+    .re-share:hover{ color:var(--gold); }
+    .re-card.re-shared-hl{ animation:reSharedHl 3s ease-out; }
+    @keyframes reSharedHl{ 0%,55%{ box-shadow:0 0 0 3px rgba(201,147,58,.6); } 100%{ box-shadow:0 0 0 3px rgba(201,147,58,0); } }
   .re-card-contact a { color: var(--gold); transition: color .15s; }
   .re-card-contact a:hover { color: var(--navy); }
 
@@ -889,6 +895,12 @@ document.addEventListener('click', function(e){
   openLightbox(list, idx<0?0:idx, t.getAttribute('data-alt'));
 });
 
+/* ---- Shareable real-estate links ---- */
+function reSlug(s){ return String(s||'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,42); }
+function reHash(s){ var h=5381; s=String(s||''); for(var i=0;i<s.length;i++){ h=((h*33)^s.charCodeAt(i))>>>0; } return h.toString(36); }
+function reId(l){ var t=l&&(l.title||l.address); return (reSlug(t)||'listing')+'-'+reHash(t||''); }
+var RE_SHARE_SVG='<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>';
+function reShareBtn(l){ return '<button type="button" class="re-share" onclick="reShare(event,\''+reId(l)+'\')" aria-label="Share this listing" title="Share">'+RE_SHARE_SVG+'<span class="re-share-lbl">Share</span></button>'; }
 function buildCard(l){
   var type=(l.type||l.listingtype||'').toLowerCase();
   var isSale=type.indexOf('sale')>-1, isRent=type.indexOf('rent')>-1;
@@ -908,7 +920,7 @@ function buildCard(l){
   var contact='';
   if(l.phone) contact+='<a href="tel:'+l.phone+'">📞 '+l.phone+'</a>';
   if(l.email) contact+='<a href="mailto:'+l.email+'">✉️ '+l.email+'</a>';
-  return '<div class="re-card">'+
+  return '<div class="re-card" id="re-item-'+reId(l)+'">'+
     galleryHTML(l)+
     '<div class="re-card-body">'+
       '<div class="re-card-top">'+
@@ -920,6 +932,7 @@ function buildCard(l){
         (l.description?'<div class="re-card-desc">'+l.description+'</div>':'')+
       '</div>'+
       (contact?'<div class="re-card-contact">'+contact+'</div>':'')+
+      '<div class="re-card-foot">'+reShareBtn(l)+'</div>'+
     '</div>'+
   '</div>';
 }
@@ -962,6 +975,40 @@ function renderListings(){
     ?'<div class="re-empty"><strong>No listings yet</strong><span>Be the first to post a property for sale or rent!</span></div>'
     :filtered.map(buildCard).join('');
 }
+
+window.reShare=function(ev,id){
+  if(ev){ if(ev.preventDefault)ev.preventDefault(); if(ev.stopPropagation)ev.stopPropagation(); }
+  var btn=ev&&(ev.currentTarget||ev.target);
+  var url=location.origin+location.pathname+'#re-'+id;
+  try{ if(typeof gtag==='function') gtag('event','share_click',{type:'real_estate'}); }catch(e){}
+  if(navigator.share){ navigator.share({title:document.title,url:url}).catch(function(){}); return; }
+  var flash=function(){ var b=btn&&btn.closest?btn.closest('.re-share'):btn; var lbl=b&&b.querySelector?b.querySelector('.re-share-lbl'):null; if(lbl){ var o=lbl.textContent; lbl.textContent='Copied!'; setTimeout(function(){ lbl.textContent=o; },1600); } };
+  if(navigator.clipboard&&navigator.clipboard.writeText){ navigator.clipboard.writeText(url).then(flash).catch(function(){ window.prompt('Copy this link:',url); }); }
+  else { window.prompt('Copy this link:',url); }
+};
+window.reOpenShared=function(id){
+  if(!window.allListings || !allListings.length) return false;
+  var known=false; for(var i=0;i<allListings.length;i++){ if(reId(allListings[i])===id){ known=true; break; } }
+  if(!known) return true;
+  var sb=document.getElementById('re-search'); if(sb) sb.value='';
+  document.querySelectorAll('.re-filters input[type=checkbox]').forEach(function(el){ el.checked=(el.value==='sale'||el.value==='rent'); });
+  var allTab=null; document.querySelectorAll('.re-tab').forEach(function(t){ if((t.getAttribute('onclick')||'').indexOf("'all'")>-1) allTab=t; });
+  if(allTab){ try{ switchTab('all', allTab); }catch(e){ currentTab='all'; renderListings(); } } else { currentTab='all'; renderListings(); }
+  setTimeout(function(){
+    var el=document.getElementById('re-item-'+id); if(!el) return;
+    try{ if(typeof gtag==='function') gtag('event','shared_link_open',{type:'real_estate'}); }catch(e){}
+    var doScroll=function(){
+      var sticky=0, sn=document.getElementById('stickyNav');
+      if(sn){ var st=getComputedStyle(sn); if(st.display!=='none'&&st.visibility!=='hidden'&&sn.offsetHeight) sticky=sn.offsetHeight; }
+      var top=el.getBoundingClientRect().top + (window.pageYOffset||document.documentElement.scrollTop||0) - sticky - 14;
+      window.scrollTo({top:Math.max(0,top), behavior:'smooth'});
+    };
+    doScroll(); setTimeout(doScroll,450); setTimeout(doScroll,1200);
+    el.classList.add('re-shared-hl'); setTimeout(function(){ if(el)el.classList.remove('re-shared-hl'); },3000);
+  },100);
+  return true;
+};
+(function(){ var m=(location.hash||'').match(/^#re-(.+)$/); if(!m) return; var id=m[1], n=0; var iv=setInterval(function(){ n++; if((window.reOpenShared&&reOpenShared(id))||n>90){ clearInterval(iv); } },200); })();
 
 function switchTab(tab,btn){
   currentTab=tab;
