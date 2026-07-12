@@ -948,7 +948,7 @@
   .ttd-name { font-family: 'Playfair Display', serif; font-size: 17px; font-weight: 700; color: var(--navy); line-height: 1.2; margin-bottom: 6px; }
   .ttd-desc { font-family: sans-serif; font-size: 13px; color: #555; line-height: 1.55; margin-bottom: 8px; }
   .ttd-detail { font-family: sans-serif; font-size: 12.5px; color: #555; line-height: 1.5; margin-bottom: 3px; }
-  .ttd-footer { margin-top: auto; padding-top: 12px; border-top: 1px solid var(--border); text-align: right; }
+  .ttd-footer { margin-top: auto; padding-top: 12px; border-top: 1px solid var(--border); display:flex; align-items:center; justify-content:space-between; gap:12px; }
   .ttd-link { display: inline-block; font-family: sans-serif; font-size: 10px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; color: var(--gold); border: 1px solid var(--gold); padding: 4px 10px; border-radius: 3px; text-decoration: none; transition: all .15s; white-space: nowrap; }
   .ttd-link:hover { background: var(--gold); color: #fff; text-decoration: none; }
   .ttd-empty { grid-column: 1/-1; text-align: center; font-family: sans-serif; font-size: 14px; color: var(--muted); padding: 40px 0; background: var(--white); border: 2px dashed var(--border); border-radius: 8px; }
@@ -1492,10 +1492,10 @@
   function ttdHash(s){ var h=5381; s=String(s||''); for(var i=0;i<s.length;i++){ h=((h*33)^s.charCodeAt(i))>>>0; } return h.toString(36); }
   function ttdShareId(d){ return (ttdSlug(d&&d.name)||'ttd')+'-'+ttdHash((d&&d.name)||''); }
   var TTD_SHARE_SVG='<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>';
-  function ttdShareBtn(d){ return '<button type="button" class="ttd-share ttd-share-abs" onclick="ttdShare(event,\''+ttdShareId(d)+'\')" aria-label="Share" title="Share">'+TTD_SHARE_SVG+'<span class="ttd-share-lbl">Share</span></button>'; }
+  function ttdShareBtn(d){ return '<button type="button" class="ttd-share" onclick="ttdShare(event,\''+ttdShareId(d)+'\')" aria-label="Share" title="Share">'+TTD_SHARE_SVG+'<span class="ttd-share-lbl">Share</span></button>'; }
   function eatCard(d){
     var web=ttdWeb(d.website);
-    return '<div class="ttd-card ttd-card-eat" id="ttd-item-'+ttdShareId(d)+'">'+ttdShareBtn(d)+
+    return '<div class="ttd-card ttd-card-eat" id="ttd-item-'+ttdShareId(d)+'">'+
       '<div class="ttd-card-banner"></div>'+
       '<div class="ttd-card-body">'+
         '<div class="ttd-tagrow">'+badgeTags(d.badge)+kashrutTag(d.kashrut)+'</div>'+
@@ -1505,7 +1505,7 @@
         (d.address?'<div class="ttd-detail">📍 '+ttdEsc(d.address)+'</div>':'')+
         (d.phone?'<div class="ttd-detail">📞 '+ttdEsc(d.phone)+'</div>':'')+
         (d.hours?'<div class="ttd-detail" style="color:#888;">🕐 '+ttdEsc(d.hours)+'</div>':'')+
-        (web?'<div class="ttd-footer"><a href="'+ttdAttr(web)+'" target="_blank" rel="noopener" class="ttd-link">Visit Website →</a></div>':'')+
+        '<div class="ttd-footer">'+ttdShareBtn(d)+(web?'<a href="'+ttdAttr(web)+'" target="_blank" rel="noopener" class="ttd-link">Visit Website →</a>':'')+'</div>'+
       '</div>'+
       '</div>';
   }
@@ -1579,14 +1579,14 @@
   function actCard(d){
     var web=ttdWeb(d.url);
     var link = web ? '<a href="'+ttdAttr(web)+'" target="_blank" rel="noopener" class="ttd-link">Visit site →</a>' : '';
-    return '<div class="ttd-card" id="ttd-item-'+ttdShareId(d)+'">'+ttdShareBtn(d)+
+    return '<div class="ttd-card" id="ttd-item-'+ttdShareId(d)+'">'+
       '<div class="ttd-card-banner"></div>'+
       '<div class="ttd-card-body">'+
         '<div class="ttd-tagrow">'+catTag(d.category)+ioTag(d.indooroutdoor)+freeTag(d.free)+'</div>'+
         '<div class="ttd-name">'+ttdEsc(d.name)+'</div>'+
         (d.address?'<div class="ttd-detail">📍 '+ttdEsc(d.address)+'</div>':'')+
         hechsherTags(d.hechsher)+
-        (link?'<div class="ttd-footer">'+link+'</div>':'')+
+        '<div class="ttd-footer">'+ttdShareBtn(d)+link+'</div>'+
       '</div>'+
       '</div>';
   }
