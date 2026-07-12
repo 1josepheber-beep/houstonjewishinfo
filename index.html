@@ -2683,7 +2683,13 @@
       page=Math.floor(pos/PER_PAGE)+1; renderList();          /* jump to the right page */
       setTimeout(function(){
         var el=document.getElementById('cf-item-'+id); if(!el) return;
-        el.scrollIntoView({behavior:'smooth',block:'center'});
+        var cfScrollTo=function(){
+          var sticky=0, sn=document.getElementById('stickyNav');
+          if(sn){ var cs=getComputedStyle(sn); if(cs.display!=='none' && cs.visibility!=='hidden' && sn.offsetHeight) sticky=sn.offsetHeight; }
+          var top=el.getBoundingClientRect().top + (window.pageYOffset||document.documentElement.scrollTop||0) - sticky - 14;
+          window.scrollTo({top:Math.max(0,top), behavior:'smooth'});
+        };
+        cfScrollTo(); setTimeout(cfScrollTo,450); setTimeout(cfScrollTo,1200);   /* re-align as late images/ads settle on mobile */
         el.classList.add('cf-shared-hl');
         var rm=el.querySelector('.read-more-btn'); if(rm&&rm.style.display!=='none'){ try{rm.click();}catch(e){} }
         var pt=el.querySelector('.cf-pass-toggle'); if(pt){ try{pt.click();}catch(e){} }
