@@ -2337,7 +2337,7 @@
     /* ===== Admin-driven settings (feed hide-windows + homepage popup) =====
        Defaults are baked in so the page NEVER waits on the Settings tab.
        A Settings tab (columns: Key | Value) simply overrides them. */
-    var HJI_SETTINGS={storyDays:30,mazalDays:14,passingDays:14,popup:null,commentsPaused:false};
+    var HJI_SETTINGS={storyDays:30,mazalDays:14,passingDays:14,popup:null,commentsPaused:false,detailPanelOn:true};
     function applySettings(rows){
       var map={};
       (rows||[]).forEach(function(r){var k=((r.key||'')+'').trim().toLowerCase();if(k)map[k]=(r.value!=null?(''+r.value):'');});
@@ -2347,6 +2347,9 @@
       HJI_SETTINGS.passingDays=num('passing_days',14);
       var cp=(map['comments_paused']||'').trim().toLowerCase();
       HJI_SETTINGS.commentsPaused=(cp==='yes'||cp==='on'||cp==='true'||cp==='1');
+      var dp=(map['detail_panel_on']!=null?(''+map['detail_panel_on']):'').trim().toLowerCase();
+      HJI_SETTINGS.detailPanelOn=(dp==='')?true:!(dp==='no'||dp==='off'||dp==='false'||dp==='0');
+      try{ document.body.classList.toggle('cf-dp-on', HJI_SETTINGS.detailPanelOn); }catch(e){}
       try{ document.body.classList.toggle('cf-comments-off', HJI_SETTINGS.commentsPaused); }catch(e){}
       var on=(map['popup_on']||'').trim().toLowerCase();
       HJI_SETTINGS.popup={on:(on==='yes'||on==='on'||on==='true'||on==='1'),
@@ -2538,7 +2541,7 @@
           '<h2 class="article-headline">'+esc(x.title)+'</h2>'+
           ploc+
           (pbody?'<div class="cf-pass-extra">'+pbody+'</div>':'')+
-          pfoot+cfDvCardCTA(x)+
+          pfoot+cfCardComments(x)+
           '</div></article>';
       }
       var up=x.date?(x.date>=today):true;
@@ -2579,7 +2582,7 @@
       }
       var foot='<div class="cf-foot"><span class="cf-foot-left">'+cfShareBtn(x)+rmBtn+'</span>'+acts+'</div>';
       var mzCls='',mzBl='',mzCheer='';if(x.type==='mazal'&&x.cat){var _mc=(''+x.cat).toLowerCase();if(/girl/.test(_mc)){mzCls=' mz-theme mz-girl';mzBl=MZ_BALLOONS;mzCheer='<div class="mz-cheer">It\u2019s a girl!</div>';}else if(/boy/.test(_mc)){mzCls=' mz-theme mz-boy';mzBl=MZ_BALLOONS;mzCheer='<div class="mz-cheer">It\u2019s a boy!</div>';}}
-      return '<article id="cf-item-'+cfItemId(x)+'" class="article-card'+mzCls+'">'+mzBl+banner+'<div class="cf-body"><div class="cf-row1">'+dline+badge+'</div><div class="cf-tags">'+typeTag+catTag+'</div>'+mzCheer+'<h2 class="article-headline">'+esc(x.title)+'</h2>'+meta+desc+foot+cfDvCardCTA(x)+'</div></article>';
+      return '<article id="cf-item-'+cfItemId(x)+'" class="article-card'+mzCls+'">'+mzBl+banner+'<div class="cf-body"><div class="cf-row1">'+dline+badge+'</div><div class="cf-tags">'+typeTag+catTag+'</div>'+mzCheer+'<h2 class="article-headline">'+esc(x.title)+'</h2>'+meta+desc+foot+cfCardComments(x)+'</div></article>';
     }
 
     /* ================= COMMENTS ================= */
@@ -2672,13 +2675,17 @@
         .catch(function(){ btn.disabled=false; note.textContent='Network error. Try again.'; note.className='cf-cm-note bad'; });
     }
     function cfUpdateCounts(){
-      var btns=document.querySelectorAll('.cf-dv-cmbtn');
-      if(!btns.length) return;
+      var dv=document.querySelectorAll('.cf-dv-cmbtn');
+      var inl=document.querySelectorAll('.cf-comments[data-postid]');
+      if(!dv.length && !inl.length) return;
       cfLoadComments().then(function(map){
-        Array.prototype.forEach.call(btns,function(btn){
-          var pid=btn.getAttribute('data-postid');
-          var n=(map&&map[pid])?map[pid].length:0;
+        Array.prototype.forEach.call(dv,function(btn){
+          var pid=btn.getAttribute('data-postid'); var n=(map&&map[pid])?map[pid].length:0;
           btn.innerHTML='\uD83D\uDCAC Comments'+(n>0?' ('+n+')':'');
+        });
+        Array.prototype.forEach.call(inl,function(box){
+          var pid=box.getAttribute('data-postid'); var n=(map&&map[pid])?map[pid].length:0;
+          var tg=box.querySelector('.cf-cm-toggle'); if(tg) tg.innerHTML='\uD83D\uDCAC Comments'+(n>0?' ('+n+')':'');
         });
       });
     }
@@ -2712,6 +2719,7 @@
       var s=document.createElement('style'); s.textContent=css; document.head.appendChild(s);
     })();
     /* ============ DETAIL VIEW — dim centered panel ============ */
+    function cfCardComments(x){ return HJI_SETTINGS.detailPanelOn ? cfDvCardCTA(x) : cfComments(x); }
     function cfDvCardCTA(x){
       if(HJI_SETTINGS.commentsPaused || !x.comments) return '';
       return '<div class="cf-comments"><button type="button" class="cf-dv-cmbtn" data-postid="'+cfCmEsc(cfItemId(x))+'">\uD83D\uDCAC Comments</button></div>';
@@ -2809,6 +2817,7 @@
     window.addEventListener('popstate',function(){ if(_cfDvOpen) cfDvClose(); });
     document.addEventListener('keydown',function(e){ if(_cfDvOpen && (e.key==='Escape'||e.key==='Esc')) history.back(); });
     document.addEventListener('click',function(e){
+      if(!HJI_SETTINGS.detailPanelOn) return;
       var t=e.target; if(!t||!t.closest) return;
       if(t.closest('.cf-focus')) return;
       if(t.closest('a')) return;
@@ -2821,6 +2830,7 @@
       cfDvOpen(art.id.replace('cf-item-',''));
     });
     document.addEventListener('click',function(e){
+      if(!HJI_SETTINGS.detailPanelOn) return;
       var t=e.target; if(!t||!t.closest) return;
       if(t.closest('.cf-focus')) return;
       var btn=t.closest('.read-more-btn, .cf-pass-toggle'); if(!btn) return;
@@ -2845,8 +2855,8 @@
       +'.cf-comments-focus{border-top:1px solid #e0dbd0;margin-top:16px;padding-top:14px}'
       +'.cf-comments-focus .cf-cm-title{color:#143D75;font-weight:700;font-size:15px;font-family:sans-serif;margin-bottom:12px}'
       +'.cf-focus-candle{display:flex;align-items:center;justify-content:center;padding:22px;background:#faf8f4}'
-      +'#cf-list .article-headline,#cf-cal .article-headline{cursor:pointer}'
-      +'#cf-list .article-headline:hover,#cf-cal .article-headline:hover{color:#B94218}';
+      +'.cf-dp-on #cf-list .article-headline,.cf-dp-on #cf-cal .article-headline{cursor:pointer}'
+      +'.cf-dp-on #cf-list .article-headline:hover,.cf-dp-on #cf-cal .article-headline:hover{color:#B94218}';
       var s=document.createElement('style'); s.textContent=css; document.head.appendChild(s);
     })();
     function adSlot(name){var id=(name==='mobile-1')?' id="mobile-ad-strip"':'';var cls=(name==='mobile-1')?'ad-managed':'zb-mobile-ad ad-managed';return '<div'+id+' class="'+cls+'" data-ad-slot="'+name+'"></div>';}
