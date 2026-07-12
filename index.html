@@ -2759,7 +2759,7 @@
         if(x.pshiva)body+='<p class="cf-desc"><strong>Shiva:</strong> '+esc(x.pshiva).replace(/\n/g,'<br>')+'</p>';
       } else if(x.desc){ body='<div class="cf-desc">'+descHTML(x.desc)+'</div>'; }
       var linkBtn=x.link?'<a href="'+attr(extURL(x.link))+'" target="_blank" rel="noopener" class="article-read-more">'+esc(x.linkText||'More Details')+'</a>':'';
-      var actions='<div class="cf-focus-actions">'+cfShareBtn(x)+linkBtn+'</div>';
+      var actions='<div class="cf-foot"><span class="cf-foot-left">'+cfShareBtn(x)+'</span>'+linkBtn+'</div>';
       return '<article class="article-card cf-focus-card">'+media+'<div class="cf-body">'+
         '<div class="cf-row1">'+dline+'</div>'+bdhe+'<div class="cf-tags">'+typeTag+catTag+mzTag+'</div>'+
         '<h2 class="article-headline cf-focus-headline">'+esc(x.title)+'</h2>'+meta+body+actions+cfDvComments(x)+
@@ -2796,7 +2796,7 @@
       document.body.classList.add('cf-focus-lock');
       el.classList.add('open'); _cfDvOpen=true;
       try{ history.pushState({cfFocus:1},''); }catch(e){}
-      try{ if(typeof gtag==='function') gtag('event','post_open',{post_id:id,type:x.type}); }catch(e){}
+      try{ if(typeof gtag==='function') gtag('event', toComments?'comments_open':'post_open', {post_id:id,type:x.type}); }catch(e){}
       cfDvFill();
       if(toComments){ var c=el.querySelector('.cf-comments-focus'); if(c&&sc){ sc.scrollTop=Math.max(0,c.offsetTop-12); } }
     }
