@@ -2666,6 +2666,7 @@
       if(ev){ if(ev.preventDefault)ev.preventDefault(); if(ev.stopPropagation)ev.stopPropagation(); }
       var btn=ev&&(ev.currentTarget||ev.target);
       var url=location.origin+location.pathname+'#item-'+id;
+      try{ if(typeof gtag==='function') gtag('event','share_click',{post_id:id}); }catch(e){}
       if(navigator.share){ navigator.share({title:document.title,url:url}).catch(function(){}); return; }
       var flash=function(){ var b=btn&&btn.closest?btn.closest('.cf-share'):btn; var lbl=b&&b.querySelector?b.querySelector('.cf-share-lbl'):null; if(lbl){ var o=lbl.textContent; lbl.textContent='Copied!'; setTimeout(function(){ lbl.textContent=o; },1600); } };
       if(navigator.clipboard&&navigator.clipboard.writeText){ navigator.clipboard.writeText(url).then(flash).catch(function(){ window.prompt('Copy this link:',url); }); }
@@ -2684,6 +2685,7 @@
       page=Math.floor(pos/PER_PAGE)+1; renderList();          /* jump to the right page */
       setTimeout(function(){
         var el=document.getElementById('cf-item-'+id); if(!el) return;
+        try{ if(typeof gtag==='function') gtag('event','shared_link_open',{post_id:id}); }catch(e){}
         var cfScrollTo=function(){
           var sticky=0, sn=document.getElementById('stickyNav');
           if(sn){ var cs=getComputedStyle(sn); if(cs.display!=='none' && cs.visibility!=='hidden' && sn.offsetHeight) sticky=sn.offsetHeight; }
