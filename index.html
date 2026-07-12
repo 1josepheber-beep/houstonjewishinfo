@@ -2397,6 +2397,7 @@
     var MOBILE_AD_SLOTS=['mobile-1','mobile-2','mobile-3','mobile-4','mobile-5'];
     var MAZAL_AD_SLOTS=['mazaltov-1','mazaltov-2','mazaltov-3','mazaltov-4','mazaltov-5'];
     var TYPE={news:'News',event:'Event',mazal:'Mazal Tov',passing:'In Memoriam'};
+    var COMMENTS_URL='https://script.google.com/macros/s/AKfycbxD7luOdMRUJVSNkfDVepx8ctumtMcpfOGkVZRkEurv3lHWuCtXIo-dsSQw0pdUwlT_/exec';
     var MONTHS=['January','February','March','April','May','June','July','August','September','October','November','December'];
     var MZ_BALLOONS='<div class="mz-balloons">'+'<svg class="mz-bl" style="--bw:50px;top:-13px;right:14px;--rot:8deg;opacity:.55;--dur:7s" viewBox="0 0 40 60"><ellipse cx="20" cy="19" rx="15" ry="18" fill="var(--mzb-a)"/><path d="M20 37l-3 5h6z" fill="var(--mzb-a)"/><path d="M20 42q5 8 0 17" stroke="var(--mzb-a)" stroke-width="1.1" fill="none"/><ellipse cx="14" cy="13" rx="4" ry="6" fill="#fff" opacity=".4"/></svg>'+'<svg class="mz-bl" style="--bw:34px;bottom:-7px;left:16px;--rot:6deg;opacity:.4;--dur:9s;--dl:.6s" viewBox="0 0 40 60"><ellipse cx="20" cy="19" rx="15" ry="18" fill="var(--mzb-c)"/><path d="M20 37l-3 5h6z" fill="var(--mzb-c)"/><path d="M20 42q5 8 0 17" stroke="var(--mzb-c)" stroke-width="1.1" fill="none"/></svg>'+'</div>';
 
@@ -2475,13 +2476,13 @@
     function buildItems(stories,events,mazals,passings){
       var out=[];
       stories.forEach(function(r){if(!active(r)||!r.headline)return;
-        out.push({type:'news',date:parseDate(r._cells.date),time:'',title:r.headline,cat:r.label||'',org:r.byline||'',loc:'',desc:r.excerpt||'',img:imgList(r.image,STORY_IMG)[0]||'',imgs:imgList(r.image,STORY_IMG),link:r.linkurl||'',linkText:r.linktext||'Read More \u2192',women:false});});
+        out.push({type:'news',comments:cfAllow(r),date:parseDate(r._cells.date),time:'',title:r.headline,cat:r.label||'',org:r.byline||'',loc:'',desc:r.excerpt||'',img:imgList(r.image,STORY_IMG)[0]||'',imgs:imgList(r.image,STORY_IMG),link:r.linkurl||'',linkText:r.linktext||'Read More \u2192',women:false});});
       events.forEach(function(r){if(!active(r)||!r.title)return;
-        out.push({type:'event',date:parseDate(r._cells.date),time:r.time||'',title:r.title,cat:r.category||'Event',org:r.presenter||'',loc:r.location||'',desc:r.description||'',img:imgList(r.imageurl,EVENT_IMG)[0]||'',imgs:imgList(r.imageurl,EVENT_IMG),link:r.ticketurl||'',linkText:(r.buttontext||'More Details'),women:String(r.women||'').toLowerCase().trim()==='yes'});});
+        out.push({type:'event',comments:cfAllow(r),date:parseDate(r._cells.date),time:r.time||'',title:r.title,cat:r.category||'Event',org:r.presenter||'',loc:r.location||'',desc:r.description||'',img:imgList(r.imageurl,EVENT_IMG)[0]||'',imgs:imgList(r.imageurl,EVENT_IMG),link:r.ticketurl||'',linkText:(r.buttontext||'More Details'),women:String(r.women||'').toLowerCase().trim()==='yes'});});
       mazals.forEach(function(r){if(!active(r)||!r.name)return;
-        out.push({type:'mazal',date:mazalDate(r),time:'',title:r.name,cat:r.type||'',org:'',loc:r.city||'',desc:r.message||'',img:'',imgs:[],link:(r.buttonlink||r.linkurl||''),linkText:(r.buttontext||r.linktext||'More Details'),women:false});});
+        out.push({type:'mazal',comments:cfAllow(r),date:mazalDate(r),time:'',title:r.name,cat:r.type||'',org:'',loc:r.city||'',desc:r.message||'',img:'',imgs:[],link:(r.buttonlink||r.linkurl||''),linkText:(r.buttontext||r.linktext||'More Details'),women:false});});
       (passings||[]).forEach(function(r){if(!active(r)||!r.name)return;
-        out.push({type:'passing',date:parseDate(r._cells.date),time:'',title:r.name,cat:'',org:'',loc:r.city||'',desc:'',pmsg:r.message||'',plev:r.levaya||'',pshiva:r.shiva||'',img:imgList(r.image,PASSING_IMG)[0]||'',imgs:imgList(r.image,PASSING_IMG),link:(r.buttonlink||r.linkurl||''),linkText:(r.buttontext||r.linktext||'More Details'),women:false});});
+        out.push({type:'passing',comments:cfAllow(r),date:parseDate(r._cells.date),time:'',title:r.name,cat:'',org:'',loc:r.city||'',desc:'',pmsg:r.message||'',plev:r.levaya||'',pshiva:r.shiva||'',img:imgList(r.image,PASSING_IMG)[0]||'',imgs:imgList(r.image,PASSING_IMG),link:(r.buttonlink||r.linkurl||''),linkText:(r.buttontext||r.linktext||'More Details'),women:false});});
       return out;
     }
 
@@ -2534,7 +2535,7 @@
           '<h2 class="article-headline">'+esc(x.title)+'</h2>'+
           ploc+
           (pbody?'<div class="cf-pass-extra">'+pbody+'</div>':'')+
-          pfoot+
+          pfoot+cfComments(x)+
           '</div></article>';
       }
       var up=x.date?(x.date>=today):true;
@@ -2575,9 +2576,125 @@
       }
       var foot='<div class="cf-foot"><span class="cf-foot-left">'+cfShareBtn(x)+rmBtn+'</span>'+acts+'</div>';
       var mzCls='',mzBl='',mzCheer='';if(x.type==='mazal'&&x.cat){var _mc=(''+x.cat).toLowerCase();if(/girl/.test(_mc)){mzCls=' mz-theme mz-girl';mzBl=MZ_BALLOONS;mzCheer='<div class="mz-cheer">It\u2019s a girl!</div>';}else if(/boy/.test(_mc)){mzCls=' mz-theme mz-boy';mzBl=MZ_BALLOONS;mzCheer='<div class="mz-cheer">It\u2019s a boy!</div>';}}
-      return '<article id="cf-item-'+cfItemId(x)+'" class="article-card'+mzCls+'">'+mzBl+banner+'<div class="cf-body"><div class="cf-row1">'+dline+badge+'</div><div class="cf-tags">'+typeTag+catTag+'</div>'+mzCheer+'<h2 class="article-headline">'+esc(x.title)+'</h2>'+meta+desc+foot+'</div></article>';
+      return '<article id="cf-item-'+cfItemId(x)+'" class="article-card'+mzCls+'">'+mzBl+banner+'<div class="cf-body"><div class="cf-row1">'+dline+badge+'</div><div class="cf-tags">'+typeTag+catTag+'</div>'+mzCheer+'<h2 class="article-headline">'+esc(x.title)+'</h2>'+meta+desc+foot+cfComments(x)+'</div></article>';
     }
 
+    /* ================= COMMENTS ================= */
+    function cfAllow(r){ return String(r.allowcomments||'').toLowerCase().trim()!=='no'; }
+    function cfCmEsc(s){ return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
+    var _cfCm=null; /* cached promise: { postId: [ {name,comment,date}, ... ] } */
+    function cfLoadComments(){
+      if(_cfCm) return _cfCm;
+      var url='https://docs.google.com/spreadsheets/d/'+SHEET_ID+'/gviz/tq?tqx=out:json&headers=1&sheet=Comments&cb='+Date.now();
+      _cfCm=fetch(url).then(function(r){return r.text();}).then(function(t){
+        var json=JSON.parse(t.substring(t.indexOf('{'),t.lastIndexOf('}')+1));
+        var cols=(json.table.cols||[]).map(function(c){return (c.label||'').toLowerCase().trim();});
+        var map={};
+        (json.table.rows||[]).forEach(function(row){
+          var o={}; cols.forEach(function(col,i){var c=row.c?row.c[i]:null;o[col]=c?(c.f!=null?String(c.f):(c.v==null?'':String(c.v))):'';});
+          if(String(o.approved||'').toLowerCase().trim()!=='yes') return;
+          var pid=o.postid||''; if(!pid) return;
+          (map[pid]=map[pid]||[]).push({name:o.name||'Anonymous',comment:o.comment||'',date:o.date||''});
+        });
+        return map;
+      }).catch(function(){ return {}; });
+      return _cfCm;
+    }
+    function cfComments(x){
+      if(!x.comments) return '';
+      return '<div class="cf-comments" data-postid="'+cfCmEsc(cfItemId(x))+'" data-type="'+cfCmEsc(x.type)+'">'+
+        '<button type="button" class="cf-cm-toggle">\uD83D\uDCAC Comments</button>'+
+        '<div class="cf-cm-panel" hidden>'+
+          '<div class="cf-cm-list"></div>'+
+          '<div class="cf-cm-form">'+
+            '<input type="text" class="cf-cm-name" maxlength="60" placeholder="Your name" autocomplete="name">'+
+            '<input type="text" class="cf-cm-hp" tabindex="-1" autocomplete="off" aria-hidden="true">'+
+            '<textarea class="cf-cm-text" maxlength="1500" rows="3" placeholder="Add a comment\u2026"></textarea>'+
+            '<div class="cf-cm-actions"><button type="button" class="cf-cm-send">Post comment</button><span class="cf-cm-note"></span></div>'+
+          '</div>'+
+        '</div></div>';
+    }
+    function cfCmRow(name,comment,date){
+      return '<div class="cf-cm-item"><div class="cf-cm-head"><span class="cf-cm-who">'+cfCmEsc(name)+'</span>'+
+        (date?'<span class="cf-cm-when">'+cfCmEsc(date)+'</span>':'')+'</div>'+
+        '<div class="cf-cm-body">'+cfCmEsc(comment).replace(/\n/g,'<br>')+'</div></div>';
+    }
+    function cfCmRender(listEl,arr){
+      if(!arr||!arr.length){ listEl.innerHTML='<div class="cf-cm-empty">No comments yet. Be the first.</div>'; return; }
+      listEl.innerHTML=arr.map(function(c){ return cfCmRow(c.name,c.comment,c.date); }).join('');
+    }
+    function cfCmOpen(box){
+      var panel=box.querySelector('.cf-cm-panel'), toggle=box.querySelector('.cf-cm-toggle');
+      if(panel.hasAttribute('hidden')){ panel.removeAttribute('hidden'); toggle.classList.add('open'); }
+      else { panel.setAttribute('hidden',''); toggle.classList.remove('open'); return; }
+      if(box.getAttribute('data-loaded')==='1') return;
+      box.setAttribute('data-loaded','1');
+      var listEl=box.querySelector('.cf-cm-list');
+      listEl.innerHTML='<div class="cf-cm-empty">Loading\u2026</div>';
+      var pid=box.getAttribute('data-postid');
+      cfLoadComments().then(function(map){
+        var arr=(map&&map[pid])||[];
+        cfCmRender(listEl,arr);
+        if(arr.length) toggle.innerHTML='\uD83D\uDCAC Comments ('+arr.length+')';
+      });
+    }
+    function cfCmSend(box,btn){
+      var name=box.querySelector('.cf-cm-name').value.trim();
+      var text=box.querySelector('.cf-cm-text').value.trim();
+      var hp=box.querySelector('.cf-cm-hp').value;
+      var note=box.querySelector('.cf-cm-note');
+      if(!name){ note.textContent='Please add your name.'; note.className='cf-cm-note bad'; return; }
+      if(!text){ note.textContent='Please write a comment.'; note.className='cf-cm-note bad'; return; }
+      var pid=box.getAttribute('data-postid'), type=box.getAttribute('data-type');
+      btn.disabled=true; note.textContent='Posting\u2026'; note.className='cf-cm-note';
+      fetch(COMMENTS_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({post_id:pid,post_type:type,name:name,comment:text,website:hp})})
+        .then(function(r){return r.json();})
+        .then(function(res){
+          btn.disabled=false;
+          if(!res||!res.ok){ note.textContent=(res&&res.error)||'Something went wrong. Try again.'; note.className='cf-cm-note bad'; return; }
+          try{ if(typeof gtag==='function') gtag('event','comment_submit',{post_id:pid,type:type}); }catch(e){}
+          box.querySelector('.cf-cm-text').value='';
+          if(res.approved){
+            var listEl=box.querySelector('.cf-cm-list');
+            var empty=listEl.querySelector('.cf-cm-empty'); if(empty) listEl.innerHTML='';
+            var when=new Date().toLocaleDateString(undefined,{month:'short',day:'numeric'});
+            listEl.insertAdjacentHTML('beforeend',cfCmRow(name,text,when));
+            note.textContent='Posted!'; note.className='cf-cm-note ok';
+          } else {
+            note.textContent='Thanks \u2014 your comment will appear after it\u2019s reviewed.'; note.className='cf-cm-note ok';
+          }
+          setTimeout(function(){ note.textContent=''; note.className='cf-cm-note'; },4000);
+        })
+        .catch(function(){ btn.disabled=false; note.textContent='Network error. Try again.'; note.className='cf-cm-note bad'; });
+    }
+    document.addEventListener('click',function(e){
+      var t=e.target; if(!t||!t.closest) return;
+      var tog=t.closest('.cf-cm-toggle'); if(tog){ var b1=tog.closest('.cf-comments'); if(b1) cfCmOpen(b1); return; }
+      var snd=t.closest('.cf-cm-send'); if(snd){ var b2=snd.closest('.cf-comments'); if(b2) cfCmSend(b2,snd); return; }
+    });
+    (function(){
+      var css='.cf-comments{border-top:1px solid #e0dbd0;margin-top:14px;padding-top:10px}'
+      +'.cf-cm-toggle{background:none;border:none;color:#143D75;font-weight:600;font-size:13.5px;cursor:pointer;padding:4px 0;display:inline-flex;align-items:center;gap:6px;font-family:inherit}'
+      +'.cf-cm-toggle:hover,.cf-cm-toggle.open{color:#B94218}'
+      +'.cf-cm-panel{margin-top:10px}'
+      +'.cf-cm-list{display:flex;flex-direction:column;gap:10px;margin-bottom:12px}'
+      +'.cf-cm-item{background:#faf8f4;border:1px solid #e0dbd0;border-radius:8px;padding:9px 12px}'
+      +'.cf-cm-head{display:flex;align-items:baseline;gap:8px;margin-bottom:3px}'
+      +'.cf-cm-who{font-weight:700;color:#143D75;font-size:13.5px}'
+      +'.cf-cm-when{color:#9a917f;font-size:11.5px}'
+      +'.cf-cm-body{color:#333;font-size:14px;line-height:1.5;word-wrap:break-word;overflow-wrap:anywhere}'
+      +'.cf-cm-empty{color:#9a917f;font-size:13px;font-style:italic;padding:2px 0}'
+      +'.cf-cm-form{display:flex;flex-direction:column;gap:8px;position:relative}'
+      +'.cf-cm-name,.cf-cm-text{width:100%;border:1px solid #e0dbd0;border-radius:8px;padding:8px 10px;font-family:inherit;font-size:14px;color:#222;background:#fff;box-sizing:border-box}'
+      +'.cf-cm-name:focus,.cf-cm-text:focus{outline:none;border-color:#143D75;box-shadow:0 0 0 2px rgba(20,61,117,.12)}'
+      +'.cf-cm-text{resize:vertical;min-height:60px}'
+      +'.cf-cm-hp{position:absolute;left:-9999px;width:1px;height:1px;opacity:0}'
+      +'.cf-cm-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap}'
+      +'.cf-cm-send{background:#143D75;color:#fff;border:none;border-radius:8px;padding:8px 16px;font-weight:600;font-size:13.5px;cursor:pointer;font-family:inherit}'
+      +'.cf-cm-send:hover{background:#B94218}.cf-cm-send:disabled{opacity:.6;cursor:default}'
+      +'.cf-cm-note{font-size:12.5px;color:#9a917f}.cf-cm-note.bad{color:#b83030}.cf-cm-note.ok{color:#1f7a3d}';
+      var s=document.createElement('style'); s.textContent=css; document.head.appendChild(s);
+    })();
     function adSlot(name){var id=(name==='mobile-1')?' id="mobile-ad-strip"':'';var cls=(name==='mobile-1')?'ad-managed':'zb-mobile-ad ad-managed';return '<div'+id+' class="'+cls+'" data-ad-slot="'+name+'"></div>';}
     function mazalSlot(name){var n=String(name).replace('mazaltov-','');return '<div class="ad-managed ad-only-desk" data-ad-slot="mazaltov-'+n+'"></div><div class="ad-managed ad-only-mob" data-ad-slot="mazaltov-mobile-'+n+'" data-ad-fallback="mazaltov-'+n+'"></div>';}
 
