@@ -1983,9 +1983,15 @@
       #community-feed .cf-pass-key{font-weight:700;color:var(--ink);}
       #community-feed .cf-pass-toggle{clear:both;display:block;width:-moz-fit-content;width:fit-content;font-family:sans-serif;font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;background:none;border:none;color:var(--gold);cursor:pointer;padding:0;margin-top:12px;}
       #community-feed .cf-pass-foot{clear:both;display:flex;align-items:center;justify-content:flex-end;gap:16px;flex-wrap:wrap;margin-top:12px;}
-      #community-feed .cf-pass-foot .cf-pass-toggle{margin-top:0;margin-right:auto;}
+      #community-feed .cf-pass-foot .cf-pass-toggle{margin-top:0;}
       #community-feed .cf-foot{display:flex;gap:16px;align-items:center;justify-content:flex-end;margin-top:12px;flex-wrap:wrap;}
-      #community-feed .cf-foot .read-more-btn{margin:0 auto 0 0;}
+      #community-feed .cf-foot .read-more-btn{margin:0;}
+      #community-feed .cf-foot-left{display:flex;align-items:center;gap:14px;margin-right:auto;flex-wrap:wrap;}
+      #community-feed .cf-share{display:inline-flex;align-items:center;gap:5px;background:none;border:none;padding:0;cursor:pointer;font-family:sans-serif;font-size:12px;font-weight:700;color:var(--navy);line-height:1;}
+      #community-feed .cf-share svg{display:block;flex:none;}
+      #community-feed .cf-share:hover{color:var(--gold);}
+      #community-feed .article-card.cf-shared-hl{animation:cfSharedHl 3s ease-out;}
+      @keyframes cfSharedHl{0%,55%{box-shadow:0 0 0 3px rgba(201,147,58,.60);}100%{box-shadow:0 0 0 3px rgba(201,147,58,0);}}
       #community-feed .article-read-more{font-family:sans-serif;font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;background:var(--navy);color:#fff;padding:9px 16px;border-radius:6px;text-decoration:none;display:inline-block;}
       #community-feed .article-read-more:hover{background:var(--gold);color:#fff;}
       #community-feed .cf-addcal{font-family:sans-serif;background:none;border:none;color:var(--gold);font-size:13px;font-weight:700;cursor:pointer;padding:0;}
@@ -2501,6 +2507,12 @@
     document.addEventListener('keydown',function(e){ var lb=document.getElementById('cf-lightbox'); if(!lb||!lb.classList.contains('open'))return; if(e.key==='Escape'||e.key==='Esc'){window.cfCloseLightbox();} else if(e.key==='ArrowRight'){window.cfLBNav(1);} else if(e.key==='ArrowLeft'){window.cfLBNav(-1);} });
     window.cfPassToggle=function(btn){var wrap=(btn.closest?btn.closest('.article-card'):null)||btn.parentNode;var extra=wrap.querySelector('.cf-pass-extra');if(!extra)return;var open=extra.classList.toggle('open');btn.innerHTML=open?'Read less \u2191':'Read more \u2193';};
 
+    /* ---- Shareable direct links: stable per-item id + share button ---- */
+    function cfSlug(s){ return String(s||'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,42); }
+    function cfHash(s){ var h=5381; s=String(s||''); for(var i=0;i<s.length;i++){ h=((h*33)^s.charCodeAt(i))>>>0; } return h.toString(36); }
+    function cfItemId(x){ return (cfSlug(x.title)||x.type||'post')+'-'+cfHash((x.type||'')+'|'+(x.title||'')+'|'+(x.date?x.date.getTime():'')); }
+    var CF_SHARE_SVG='<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>';
+    function cfShareBtn(x){ return '<button type="button" class="cf-share" onclick="cfShare(event,\''+cfItemId(x)+'\')" aria-label="Share this post" title="Share">'+CF_SHARE_SVG+'<span class="cf-share-lbl">Share</span></button>'; }
     function cfCard(x){
       var today=cfToday();
       if(x.type==='passing'){
@@ -2513,8 +2525,8 @@
         if(x.pshiva)pbody+='<p class="cf-pass-text"><strong>Shiva:</strong> '+esc(x.pshiva).replace(/\n/g,'<br>')+'</p>';
         var toggle=pbody?'<button type="button" class="cf-pass-toggle" onclick="cfPassToggle(this)">Read more \u2193</button>':'';
         var pbtn=x.link?'<a href="'+attr(extURL(x.link))+'" target="_blank" rel="noopener" class="article-read-more">'+esc(x.linkText||'More Details')+'</a>':'';
-        var pfoot=(toggle||pbtn)?'<div class="cf-pass-foot">'+toggle+pbtn+'</div>':'';
-        return '<article class="article-card cf-passing"><div class="cf-body cf-pass-wrap">'+
+        var pfoot='<div class="cf-pass-foot"><span class="cf-foot-left">'+cfShareBtn(x)+toggle+'</span>'+pbtn+'</div>';
+        return '<article id="cf-item-'+cfItemId(x)+'" class="article-card cf-passing"><div class="cf-body cf-pass-wrap">'+
           '<div class="cf-pass-photo">'+photo+'</div>'+
           '<div class="cf-row1">'+pdline+'</div>'+
           '<div class="cf-bdhe">Baruch Dayan HaEmes</div>'+
@@ -2561,9 +2573,9 @@
       }else if(x.type==='news'&&x.link){
         acts='<a href="'+attr(extURL(x.link))+'" target="_blank" rel="noopener" class="article-read-more">'+esc(x.linkText||'Read More \u2192')+'</a>';
       }
-      var foot=(rmBtn||acts)?'<div class="cf-foot">'+rmBtn+acts+'</div>':'';
+      var foot='<div class="cf-foot"><span class="cf-foot-left">'+cfShareBtn(x)+rmBtn+'</span>'+acts+'</div>';
       var mzCls='',mzBl='',mzCheer='';if(x.type==='mazal'&&x.cat){var _mc=(''+x.cat).toLowerCase();if(/girl/.test(_mc)){mzCls=' mz-theme mz-girl';mzBl=MZ_BALLOONS;mzCheer='<div class="mz-cheer">It\u2019s a girl!</div>';}else if(/boy/.test(_mc)){mzCls=' mz-theme mz-boy';mzBl=MZ_BALLOONS;mzCheer='<div class="mz-cheer">It\u2019s a boy!</div>';}}
-      return '<article class="article-card'+mzCls+'">'+mzBl+banner+'<div class="cf-body"><div class="cf-row1">'+dline+badge+'</div><div class="cf-tags">'+typeTag+catTag+'</div>'+mzCheer+'<h2 class="article-headline">'+esc(x.title)+'</h2>'+meta+desc+foot+'</div></article>';
+      return '<article id="cf-item-'+cfItemId(x)+'" class="article-card'+mzCls+'">'+mzBl+banner+'<div class="cf-body"><div class="cf-row1">'+dline+badge+'</div><div class="cf-tags">'+typeTag+catTag+'</div>'+mzCheer+'<h2 class="article-headline">'+esc(x.title)+'</h2>'+meta+desc+foot+'</div></article>';
     }
 
     function adSlot(name){var id=(name==='mobile-1')?' id="mobile-ad-strip"':'';var cls=(name==='mobile-1')?'ad-managed':'zb-mobile-ad ad-managed';return '<div'+id+' class="'+cls+'" data-ad-slot="'+name+'"></div>';}
@@ -2648,6 +2660,42 @@
       if(typeof loadAds==='function')loadAds();
       cfReadMore(document.getElementById('cf-list'));
     }
+
+    /* ---- Share a specific post / open a shared link ---- */
+    window.cfShare=function(ev,id){
+      if(ev){ if(ev.preventDefault)ev.preventDefault(); if(ev.stopPropagation)ev.stopPropagation(); }
+      var btn=ev&&(ev.currentTarget||ev.target);
+      var url=location.origin+location.pathname+'#item-'+id;
+      if(navigator.share){ navigator.share({title:document.title,url:url}).catch(function(){}); return; }
+      var flash=function(){ var b=btn&&btn.closest?btn.closest('.cf-share'):btn; var lbl=b&&b.querySelector?b.querySelector('.cf-share-lbl'):null; if(lbl){ var o=lbl.textContent; lbl.textContent='Copied!'; setTimeout(function(){ lbl.textContent=o; },1600); } };
+      if(navigator.clipboard&&navigator.clipboard.writeText){ navigator.clipboard.writeText(url).then(flash).catch(function(){ window.prompt('Copy this link:',url); }); }
+      else { window.prompt('Copy this link:',url); }
+    };
+    window.cfOpenShared=function(id){
+      if(!items||!items.length) return false;                 /* feed not loaded yet */
+      var known=false; for(var i=0;i<items.length;i++){ if(cfItemId(items[i])===id){ known=true; break; } }
+      if(!known) return true;                                 /* unknown/renamed id -> stop */
+      var allPill=document.querySelector('#cf-pills .cf-pill[data-f="all"]');
+      if(allPill){ try{ allPill.click(); }catch(e){} }        /* force All + list view so it shows */
+      var arr=currentList(), pos=-1;
+      for(var j=0;j<arr.length;j++){ if(cfItemId(arr[j])===id){ pos=j; break; } }
+      if(pos<0) return true;
+      page=Math.floor(pos/PER_PAGE)+1; renderList();          /* jump to the right page */
+      setTimeout(function(){
+        var el=document.getElementById('cf-item-'+id); if(!el) return;
+        el.scrollIntoView({behavior:'smooth',block:'center'});
+        el.classList.add('cf-shared-hl');
+        var rm=el.querySelector('.read-more-btn'); if(rm&&rm.style.display!=='none'){ try{rm.click();}catch(e){} }
+        var pt=el.querySelector('.cf-pass-toggle'); if(pt){ try{pt.click();}catch(e){} }
+        setTimeout(function(){ if(el)el.classList.remove('cf-shared-hl'); },3000);
+      },90);
+      return true;
+    };
+    (function(){
+      var m=(location.hash||'').match(/^#item-(.+)$/); if(!m) return;
+      var id=m[1], n=0;
+      var iv=setInterval(function(){ n++; if((window.cfOpenShared&&cfOpenShared(id))||n>80){ clearInterval(iv); } },200);
+    })();
 
     function cfRenderCal(){
       if(calM==null){var t=cfToday();calM=t.getMonth();calY=t.getFullYear();}
