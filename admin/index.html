@@ -857,22 +857,35 @@ function reviewsAsk(mode){
 }
 function reviewsCancel(){ var cf=$('rev-confirm'); if(cf){cf.style.display='none';cf.innerHTML='';} }
 function reviewsRun(mode){
-  var cf=$('rev-confirm'); cf.innerHTML='<div class="setnote">Pulling\u2026 this can take a minute or two. Please keep this tab open.</div>';
-  fetch(REVIEWS_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({token:S.token,mode:mode})})
-    .then(function(r){return r.json();})
-    .then(function(res){
-      cf.style.display='none'; cf.innerHTML='';
-      if(res&&res.ok){
-        $('rev-result').innerHTML='<div style="background:#eef7ee;border:1px solid #cfe6cf;padding:12px 14px;border-radius:8px">'
-          +'<div style="color:#1f7a3d;font-weight:700;margin-bottom:4px">\u2713 Pull complete</div>'
-          +'<div style="color:#333;font-size:14px">Updated <b>'+(res.updated||0)+'</b> \u00b7 No rating for <b>'+(res.noRating||0)+'</b> \u00b7 Checked '+(res.total||0)+' total'
-          +((res.errors)?(' \u00b7 '+res.errors+' error(s)'):'')+'.</div>'
-          +'<div style="color:#888;font-size:12px;margin-top:6px">Refresh your Services page to see the stars.</div></div>';
-      } else {
-        $('rev-result').innerHTML='<div style="color:#b83030">Could not pull: '+((res&&res.error)||'Unknown error')+'</div>';
-      }
-    })
-    .catch(function(){ cf.style.display='none'; cf.innerHTML=''; $('rev-result').innerHTML='<div style="color:#b83030">The pull didn\u2019t finish \u2014 it may have timed out on a large first run. Try \u201cPull new only,\u201d or run it again.</div>'; });
+  var cf=$('rev-confirm'); cf.innerHTML='<div class="setnote">Pulling\u2026 please keep this tab open.</div>';
+  var totals={updated:0,noRating:0,processed:0};
+  var loops=0, MAXLOOPS=80;
+  function done(note){
+    cf.style.display='none'; cf.innerHTML='';
+    $('rev-result').innerHTML='<div style="background:#eef7ee;border:1px solid #cfe6cf;padding:12px 14px;border-radius:8px">'
+      +'<div style="color:#1f7a3d;font-weight:700;margin-bottom:4px">\u2713 Pull complete</div>'
+      +'<div style="color:#333;font-size:14px">Updated <b>'+totals.updated+'</b> \u00b7 No rating for <b>'+totals.noRating+'</b> \u00b7 Checked '+totals.processed+' total.</div>'
+      +(note?('<div style="color:#8a5a12;font-size:12px;margin-top:6px">'+note+'</div>'):'')
+      +'<div style="color:#888;font-size:12px;margin-top:6px">Refresh your Services page to see the stars.</div></div>';
+  }
+  function fail(msg){
+    cf.style.display='none'; cf.innerHTML='';
+    $('rev-result').innerHTML='<div style="color:#b83030">Pull stopped: '+msg+'. Progress was saved \u2014 click \u201cPull new only\u201d to finish the rest.</div>';
+  }
+  function step(start){
+    loops++;
+    if(loops>MAXLOOPS){ done('Stopped after many batches \u2014 run \u201cPull new only\u201d to finish any remainder.'); return; }
+    fetch(REVIEWS_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({token:S.token,mode:mode,start:start})})
+      .then(function(r){return r.json();})
+      .then(function(res){
+        if(!res||!res.ok){ fail((res&&res.error)||'Unknown error'); return; }
+        totals.updated+=res.updated||0; totals.noRating+=res.noRating||0; totals.processed+=res.processed||0;
+        if(res.done){ done(null); }
+        else { cf.innerHTML='<div class="setnote">Pulling\u2026 '+totals.processed+' done, '+(res.remaining||0)+' to go. Keep this tab open.</div>'; step(false); }
+      })
+      .catch(function(){ fail('timed out or lost connection'); });
+  }
+  step(true);
 }
 function highlightPendingSetting(){
   if(!S.pendingSetting)return;
