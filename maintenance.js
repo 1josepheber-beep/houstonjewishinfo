@@ -86,3 +86,33 @@
     } catch (e) {}
   }
 })();
+
+/* Fix popup button links site-wide: if a popup button's link is a bare email or
+   phone number, turn it into mailto:/tel: so it never 404s. Runs on every page,
+   independent of maintenance mode, and works no matter which popup system rendered
+   the button. */
+(function () {
+  function fixOne(a) {
+    if (!a || a.__hjiLinkFixed) return;
+    var raw = (a.getAttribute('href') || '').trim();
+    if (!raw) return;
+    if (/^(https?:|mailto:|tel:|\/|#)/i.test(raw)) { a.__hjiLinkFixed = 1; return; }
+    var href = '';
+    if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(raw)) {
+      href = 'mailto:' + raw;
+    } else {
+      var d = raw.replace(/[^0-9+]/g, '');
+      if (/^[-()+.\s0-9]{7,}$/.test(raw) && d.replace(/\D/g, '').length >= 7) href = 'tel:' + d;
+      else href = 'https://' + raw;   // bare domain
+    }
+    if (href) { a.setAttribute('href', href); if (/^(mailto:|tel:)/i.test(href)) { a.removeAttribute('target'); a.removeAttribute('rel'); } }
+    a.__hjiLinkFixed = 1;
+  }
+  function scan() {
+    var els = document.querySelectorAll('a.hjipop-btn');
+    for (var i = 0; i < els.length; i++) fixOne(els[i]);
+  }
+  try { new MutationObserver(scan).observe(document.documentElement, { childList: true, subtree: true }); } catch (e) {}
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', scan); else scan();
+  setInterval(scan, 800);
+})();
