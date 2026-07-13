@@ -842,11 +842,60 @@ function renderReviewsPanel(){
     +'<div class="setnote"><b>Pull all</b> refreshes every business (do this weekly). <b>Pull new only</b> checks just the businesses that don\u2019t have a rating yet \u2014 great right after a new signup.</div>'
     +'<div id="rev-confirm" style="margin-top:14px;display:none"></div>'
     +'<div id="rev-result" style="margin-top:14px"></div>'
-    +'<div style="margin-top:24px;padding-top:16px;border-top:1px solid #e6e3da">'
+    +'<div style="margin-top:22px;padding-top:16px;border-top:1px solid #e6e3da">'
+      +'<div style="font-weight:600;color:#13294b;margin-bottom:5px">Pull one business</div>'
+      +'<div class="setnote" style="margin-bottom:8px">Refresh just one business \u2014 handy when an owner asks you to update their reviews. Uses almost nothing.</div>'
+      +'<div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">'
+        +'<input list="rev-biz-list" id="rev-one-name" placeholder="Type a business name\u2026" style="flex:1;min-width:200px;padding:8px 10px;border:1px solid #d7dbe6;border-radius:6px;font-size:14px">'
+        +'<datalist id="rev-biz-list"></datalist>'
+        +'<button class="btn" onclick="reviewsPullOne()">Pull this business</button>'
+      +'</div>'
+      +'<div id="rev-one-result" style="margin-top:10px"></div>'
+    +'</div>'
+    +'<div style="margin-top:22px;padding-top:16px;border-top:1px solid #e6e3da">'
       +'<div id="rev-setting-wrap"><div class="setnote">Loading display setting\u2026</div></div>'
     +'</div>'
     +'</div>';
   loadReviewsSetting();
+  loadReviewsBizList();
+}
+function loadReviewsBizList(){
+  S.revBizMap={};
+  var tabs=['Services','KosherRestaurants'];
+  Promise.all(tabs.map(function(t){
+    return (S.mode==='full'?api('list',{sheet:t}):gvizRead(t)).then(function(res){return {tab:t,rows:(res&&res.rows)||[]};}).catch(function(){return {tab:t,rows:[]};});
+  })).then(function(results){
+    var names=[];
+    results.forEach(function(rr){
+      rr.rows.forEach(function(row){
+        var nm=((row.Name!=null?row.Name:(row.name!=null?row.name:''))+'').trim();
+        if(nm && !S.revBizMap[nm.toLowerCase()]){ S.revBizMap[nm.toLowerCase()]={name:nm,tab:rr.tab}; names.push(nm); }
+      });
+    });
+    names.sort(function(a,b){return a.toLowerCase()<b.toLowerCase()?-1:1;});
+    var dl=$('rev-biz-list'); if(dl) dl.innerHTML=names.map(function(n){return '<option value="'+n.replace(/"/g,'&quot;')+'"></option>';}).join('');
+  }).catch(function(){});
+}
+function reviewsPullOne(){
+  var inp=$('rev-one-name'); if(!inp) return;
+  var typed=(inp.value||'').trim();
+  if(!typed){ toast('Type or pick a business first.',true); inp.focus(); return; }
+  var entry=(S.revBizMap||{})[typed.toLowerCase()];
+  var name=entry?entry.name:typed, tab=entry?entry.tab:'';
+  var out=$('rev-one-result'); out.innerHTML='<div class="setnote">Pulling '+pushEsc(name)+'\u2026</div>';
+  fetch(REVIEWS_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({token:S.token,mode:'one',name:name,tab:tab})})
+    .then(function(r){return r.json();})
+    .then(function(res){
+      if(res&&res.ok&&res.found){
+        if(res.updated){ out.innerHTML='<div style="color:#1f7a3d;font-weight:600">\u2713 Updated '+pushEsc(res.name||name)+' \u2014 '+(res.rating!=null?res.rating:'')+(res.count!=null?(' ('+res.count+' reviews)'):'')+'.</div>'; }
+        else { out.innerHTML='<div style="color:#8a5a12">Checked '+pushEsc(res.name||name)+' \u2014 no Google rating found, so nothing shows on its card.</div>'; }
+      } else if(res&&res.ok&&!res.found){
+        out.innerHTML='<div style="color:#b83030">Couldn\u2019t find a business named \u201c'+pushEsc(name)+'.\u201d Pick it from the list so the name matches exactly.</div>';
+      } else {
+        out.innerHTML='<div style="color:#b83030">Could not pull: '+pushEsc((res&&res.error)||'Unknown error')+'</div>';
+      }
+    })
+    .catch(function(){ out.innerHTML='<div style="color:#b83030">Could not reach the puller. Try again.</div>'; });
 }
 function loadReviewsSetting(){
   api('list',{sheet:SETTINGS_TAB}).then(function(res){
