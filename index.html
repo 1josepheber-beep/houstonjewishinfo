@@ -2381,7 +2381,7 @@
       h+='<div class="hjipop-body">';
       if(p.title)h+='<div class="hjipop-title">'+esc(p.title)+'</div>';
       if(p.message)h+='<div class="hjipop-msg">'+(/<([a-z][a-z0-9]*)\b[^>]*>/i.test(p.message||'')?(p.message||''):esc(p.message).replace(/\n/g,'<br>'))+'</div>';
-      if(p.btnText&&p.btnLink)h+='<a class="hjipop-btn" href="'+attr(p.btnLink)+'" target="_blank" rel="noopener">'+esc(p.btnText)+'</a>';
+      if(p.btnText&&p.btnLink){var _pl=(function(v){v=(''+(v||'')).trim();if(!v)return '';if(/^(https?:|mailto:|tel:|\/|#)/i.test(v))return v;if(/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v))return 'mailto:'+v;var d=v.replace(/[^0-9+]/g,'');if(/^[-()+.\s0-9]{7,}$/.test(v)&&d.replace(/\D/g,'').length>=7)return 'tel:'+d;return 'https://'+v;})(p.btnLink),_ex=/^https?:/i.test(_pl);h+='<a class="hjipop-btn" href="'+esc(_pl)+'"'+(_ex?' target="_blank" rel="noopener"':'')+'>'+esc(p.btnText)+'</a>';}
       h+='</div>';
       var card=document.createElement('div'); card.className='hjipop-card'; card.innerHTML=h;
       bd.appendChild(card); document.body.appendChild(bd);
