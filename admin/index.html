@@ -1484,6 +1484,10 @@ function buildRow(row,showCols,statusCol){
   var fst=feedRowState(row,S.current);
   if(fst&&fst.state==='hidden')tr.className='row-hidden';
   else if(fst&&fst.state==='off')tr.className='row-off';
+  else if(!fst){
+    var ak=Object.keys(row).find(function(h){var l=h.toLowerCase();return l==='active'||l==='status'||l==='live'||l==='on';});
+    if(ak){var av=String(row[ak]||'').toLowerCase().trim();if(av!==''&&!/^(active|yes|on|true|1|show|live|approved)$/.test(av))tr.className='row-off';}
+  }
   showCols.forEach(function(h,i){
     var td=el('td','cell'+(i>1?' hideMobile':''));
     if(i===0&&fst&&fst.state!=='active'){
