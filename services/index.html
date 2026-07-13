@@ -1110,8 +1110,9 @@
   }
   .biz-premium-meta {
     display: flex; align-items: center; justify-content: space-between;
-    gap: 8px; padding: 8px 14px; border-top: 1px solid var(--border);
+    gap: 8px; padding: 8px 14px; border-top: 1px solid var(--border); flex-wrap: wrap;
   }
+  .biz-premium-l { display: inline-flex; align-items: center; gap: 8px; min-width: 0; }
   .biz-premium-name {
     font-family: sans-serif; font-size: 12px; font-weight: 700; color: var(--navy);
   }
@@ -2646,18 +2647,19 @@ function bizLinkHref(url){
   if(/^[+()\-.\s\d]{7,}$/.test(url)) return 'tel:'+url.replace(/[^\d+]/g,'');
   return 'https://'+url;
 }
-function googleReviewsBtn(item){
+function googleReviewsBtn(item, asLink){
+  if(asLink===undefined) asLink=true;
+  if(String(item.hide_reviews||'').toLowerCase().trim()==='yes') return '';   /* per-store off switch */
   var rating=parseFloat(item.google_rating);
   var count=parseInt(item.google_reviews_count,10);
   if(!(rating>0)||!(count>0)) return '';                       /* no real reviews -> show nothing */
   var pid=String(item.place_id||'').trim();
   var url=pid
-    ? ('https://www.google.com/maps/place/?q=place_id:'+encodeURIComponent(pid))
+    ? ('https://search.google.com/local/reviews?placeid='+encodeURIComponent(pid))
     : ('https://www.google.com/search?q='+encodeURIComponent([item.name,item.address].filter(Boolean).join(' ')+' reviews'));
-  return '<a href="'+charEsc(url)+'" target="_blank" rel="noopener" class="biz-reviews" title="View on Google">'
-    + starsHTML(rating)
-    + '<span class="biz-grating">'+rating.toFixed(1)+'</span>'
-    + '<span class="biz-gcount">('+count+')</span></a>';
+  var body=starsHTML(rating)+'<span class="biz-grating">'+rating.toFixed(1)+'</span><span class="biz-gcount">('+count+')</span>';
+  if(asLink) return '<a href="'+charEsc(url)+'" target="_blank" rel="noopener" class="biz-reviews" title="See Google reviews">'+body+'</a>';
+  return '<span class="biz-reviews">'+body+'</span>';
 }
 function starsHTML(rating){
   var pct=Math.max(0,Math.min(100,(rating/5)*100));
@@ -2688,16 +2690,20 @@ function buildBizCard(item) {
   if (item.cardimage) {
     var img = item.cardimage;
     if (img.indexOf('http') !== 0 && img.indexOf('images/') !== 0) img = 'https://houstonjewishinfo.com/images/cards/' + img;
-    var inner =
-      '<img class="biz-premium-img" src="' + img + '" alt="' + item.name + ' business card" loading="lazy">' +
-      '<div class="biz-premium-meta"><span class="biz-premium-name">' + item.name + '</span>' +
-      (cat ? '<span class="biz-premium-cat">' + cat + '</span>' : '') + hechsherTags(item.hechsher) + '</div>';
+    var media = '<img class="biz-premium-img" src="' + img + '" alt="' + item.name + ' business card" loading="lazy">';
     var pHref = bizLinkHref(item.linkurl||item['link url']||'') || website;
-    var card = pHref
-      ? '<a class="biz-premium-link" href="' + charEsc(pHref) + '" target="_blank" rel="noopener">' + inner + '</a>'
-      : inner;
+    var linked = pHref
+      ? '<a class="biz-premium-link" href="' + charEsc(pHref) + '" target="_blank" rel="noopener">' + media + '</a>'
+      : media;
+    var meta =
+      '<div class="biz-premium-meta">' +
+        '<span class="biz-premium-l">' + bizShareBtn(item) + '<span class="biz-premium-name">' + item.name + '</span></span>' +
+        googleReviewsBtn(item) +
+        (cat ? '<span class="biz-premium-cat">' + cat + '</span>' : '') +
+        hechsherTags(item.hechsher) +
+      '</div>';
     return '<div class="biz-card biz-card-premium" id="biz-item-'+bizId(item)+'" data-cat="' + item._cat + '" data-name="' + item.name + '">' +
-      card + bizShareBtn(item, true) + '</div>';
+      linked + meta + '</div>';
   }
 
   return '<div class="biz-card" id="biz-item-'+bizId(item)+'" data-cat="' + item._cat + '" data-name="' + item.name + '">' +
