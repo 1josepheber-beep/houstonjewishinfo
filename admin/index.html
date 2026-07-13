@@ -756,8 +756,7 @@ var SETTINGS_CATS=[
     {key:'submissions_paused',label:'Pause new submissions?',type:'toggle',def:'no'},
     {key:'submissions_message',label:'Message shown when paused',type:'text',def:''},
     {key:'comments_paused',label:'Pause all comments (hides the comment section on every post)?',type:'toggle',def:'no'},
-    {key:'detail_panel_on',label:'Open posts in a dim detail panel? (turn off for classic inline read-more + comments)',type:'toggle',def:'yes'},
-    {key:'google_reviews_on',label:'Show "Google Reviews" button on business listings?',type:'toggle',def:'no'}
+    {key:'detail_panel_on',label:'Open posts in a dim detail panel? (turn off for classic inline read-more + comments)',type:'toggle',def:'yes'}
   ]},
   {id:'maintenance',label:'Maintenance',fields:[
     {key:'maintenance_on',label:'Maintenance mode \u2014 block the whole site with a message?',type:'toggle',def:'no'},
@@ -843,7 +842,37 @@ function renderReviewsPanel(){
     +'<div class="setnote"><b>Pull all</b> refreshes every business (do this weekly). <b>Pull new only</b> checks just the businesses that don\u2019t have a rating yet \u2014 great right after a new signup.</div>'
     +'<div id="rev-confirm" style="margin-top:14px;display:none"></div>'
     +'<div id="rev-result" style="margin-top:14px"></div>'
+    +'<div style="margin-top:24px;padding-top:16px;border-top:1px solid #e6e3da">'
+      +'<div id="rev-setting-wrap"><div class="setnote">Loading display setting\u2026</div></div>'
+    +'</div>'
     +'</div>';
+  loadReviewsSetting();
+}
+function loadReviewsSetting(){
+  api('list',{sheet:SETTINGS_TAB}).then(function(res){
+    var row=null,val='';
+    ((res&&res.rows)||[]).forEach(function(r){
+      var k=((r.Key!=null?r.Key:(r.key!=null?r.key:''))+'').trim().toLowerCase();
+      if(k==='google_reviews_on'){ val=((r.Value!=null?r.Value:(r.value!=null?r.value:''))+'').trim(); row=r._row; }
+    });
+    S.grOnRow=row;
+    var on=/^(yes|on|true|1)$/i.test(val);
+    var w=$('rev-setting-wrap'); if(!w) return;
+    w.innerHTML='<label style="display:flex;align-items:center;gap:10px;cursor:pointer;font-weight:600;color:#13294b">'
+      +'<input type="checkbox" id="rev-greviews-on" '+(on?'checked':'')+' onchange="saveReviewsSetting()"> Show Google reviews on business listings?</label>'
+      +'<div class="setnote" style="margin-top:5px">Master switch \u2014 turn this off to hide every business\u2019s star rating across the whole site at once. <span id="rev-setting-status" style="color:#1f7a3d;font-weight:600"></span></div>';
+  }).catch(function(){ var w=$('rev-setting-wrap'); if(w) w.innerHTML='<div class="setnote" style="color:#b83030">Could not load the display setting.</div>'; });
+}
+function saveReviewsSetting(){
+  var inp=$('rev-greviews-on'); if(!inp) return;
+  var val=inp.checked?'yes':'no';
+  var st=$('rev-setting-status'); if(st) st.textContent='Saving\u2026';
+  var call=S.grOnRow ? api('update',{sheet:SETTINGS_TAB,row:S.grOnRow,data:{Value:val}})
+                     : api('create',{sheet:SETTINGS_TAB,data:{Key:'google_reviews_on',Value:val}});
+  call.then(function(res){
+    if(res&&res.ok){ if(st){st.textContent='Saved \u2713'; setTimeout(function(){if(st)st.textContent='';},2500);} if(!S.grOnRow) loadReviewsSetting(); }
+    else { if(st) st.textContent=''; toast((res&&res.error)||'Could not save.',true); }
+  }).catch(function(){ if(st) st.textContent=''; toast('Could not reach the backend.',true); });
 }
 function reviewsAsk(mode){
   var label=(mode==='all')?'ALL businesses':'only businesses with no rating yet';
@@ -1258,6 +1287,7 @@ function buildSearchIndex(){
       S.searchIndex.push({settings:true,cat:cat.id,skey:f.key,name:f.label,sub:cat.label,label:'⚙️ Settings',nameL:(f.label||'').toLowerCase(),blob:((f.label||'')+' '+cat.label+' '+(f.key||'')).toLowerCase()});
     });
   });
+  S.searchIndex.push({reviews:true,name:'Show Google reviews on business listings',sub:'Google Reviews tab',label:'★ Reviews',nameL:'google reviews',blob:'google reviews stars ratings pull all new show hide business listings display setting'});
   var inp=$('admSearch'); if(inp)inp.placeholder='Building search…';
   var tasks=COLLECTIONS.map(function(c){
     return function(){
@@ -1320,6 +1350,7 @@ function gotoResult(e){
     toggleDrawer(false);
     return;
   }
+  if(e.reviews){ openReviews(); toggleDrawer(false); return; }
   S.pendingHighlight=e.nameL;
   if(S.current===e.coll){ highlightPending(); }
   else { selectCollection(e.coll,e.label); }
