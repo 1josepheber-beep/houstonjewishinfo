@@ -1139,16 +1139,14 @@
   .biz-read-more { display: inline-block; background: none; border: none; padding: 0; margin: 0 0 8px; font-family: sans-serif; font-size: 12px; font-weight: 700; color: var(--navy, #1f3f6e); cursor: pointer; }
   .biz-read-more:hover { text-decoration: underline; }
   .biz-desc { font-size: 12px; color: #555; line-height: 1.5; margin-top: 2px; }
-  .biz-card-footer { display: flex; flex-direction: column; align-items: stretch; margin-top: auto; padding-top: 10px; border-top: 1px solid var(--border); gap: 8px; }
-  .biz-foot-actions { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+  .biz-card-footer { display: flex; align-items: center; justify-content: space-between; margin-top: auto; padding-top: 10px; border-top: 1px solid var(--border); gap: 10px; }
   .biz-foot-left { display:flex; align-items:center; gap:12px; flex-wrap:wrap; min-width: 0; }
   .biz-greviews { display:none; align-items:center; gap:4px; font-family:sans-serif; font-size:10px; font-weight:700; letter-spacing:.05em; text-transform:uppercase; color:var(--navy); border:1px solid var(--navy); border-radius:3px; padding:4px 10px; text-decoration:none; white-space:nowrap; transition:all .15s; }
   body.greviews-on .biz-greviews { display:inline-flex; }
   .biz-hours { font-family:sans-serif; font-size:12px; color:var(--muted); margin-top:8px; line-height:1.55; }
   .biz-greviews:hover { background:var(--navy); color:#fff; }
-.biz-reviews { display:none; align-items:center; gap:6px; font-family:sans-serif; text-decoration:none; white-space:nowrap; vertical-align:middle; }
-.greviews-on .biz-reviews { display:flex; }
-.biz-card-premium .biz-reviews { padding:6px 12px 8px; border-top:1px solid #f0ede6; }
+.biz-reviews { display:none; align-items:center; gap:5px; font-family:sans-serif; text-decoration:none; white-space:nowrap; vertical-align:middle; }
+.greviews-on .biz-reviews { display:inline-flex; }
 .biz-stars { position:relative; display:inline-block; color:#d9d4c8; font-size:13px; line-height:1; letter-spacing:1px; }
 .biz-stars::before { content:'★★★★★'; }
 .biz-stars-fill { position:absolute; left:0; top:0; overflow:hidden; color:#f4b400; white-space:nowrap; }
@@ -2659,7 +2657,7 @@ function googleReviewsBtn(item, asLink){
   var url=pid
     ? ('https://search.google.com/local/reviews?placeid='+encodeURIComponent(pid))
     : ('https://www.google.com/search?q='+encodeURIComponent([item.name,item.address].filter(Boolean).join(' ')+' reviews'));
-  var body=starsHTML(rating)+'<span class="biz-grating">'+rating.toFixed(1)+'</span><span class="biz-gcount">'+count+' review'+(count===1?'':'s')+' on Google</span>';
+  var body=starsHTML(rating)+'<span class="biz-grating">'+rating.toFixed(1)+'</span><span class="biz-gcount">('+count+')</span>';
   if(asLink) return '<a href="'+charEsc(url)+'" target="_blank" rel="noopener" class="biz-reviews" title="See Google reviews">'+body+'</a>';
   return '<span class="biz-reviews">'+body+'</span>';
 }
@@ -2700,10 +2698,10 @@ function buildBizCard(item) {
     var meta =
       '<div class="biz-premium-meta">' +
         '<span class="biz-premium-l">' + bizShareBtn(item) + '<span class="biz-premium-name">' + item.name + '</span></span>' +
+        googleReviewsBtn(item) +
         (cat ? '<span class="biz-premium-cat">' + cat + '</span>' : '') +
         hechsherTags(item.hechsher) +
-      '</div>' +
-      googleReviewsBtn(item);
+      '</div>';
     return '<div class="biz-card biz-card-premium" id="biz-item-'+bizId(item)+'" data-cat="' + item._cat + '" data-name="' + item.name + '">' +
       linked + meta + '</div>';
   }
@@ -2724,10 +2722,9 @@ function buildBizCard(item) {
     ((item.description||item.hours) ? '<div class="biz-desc">' + (item.description||'') + (item.hours ? '<div class="biz-hours">\uD83D\uDD50 '+charEsc(item.hours).replace(/\n/g,'<br>')+'</div>' : '') + '</div><button type="button" class="biz-read-more" style="display:none;">Read more ↓</button>' : '') +
     hechsherTags(item.hechsher) +
     '<div class="biz-card-footer">' +
-    googleReviewsBtn(item) +
-    '<div class="biz-foot-actions"><span class="biz-foot-left">' + bizShareBtn(item) + '</span>' +
+    '<span class="biz-foot-left">' + bizShareBtn(item) + googleReviewsBtn(item) + '</span>' +
     bizLinkBtn(item, website) +
-    '</div></div></div>';
+    '</div></div>';
 }
 
 /* ---- Share a business / open a shared business link (with GA tracking) ---- */
