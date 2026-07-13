@@ -401,6 +401,7 @@ window.HJI_RTE=(function(){
 var LIVE_SHEET_ID = '1in7Ac7zknqyR9neWKOCAjOAG4jXCIVTJQfU6jJ72CV8';
 var BAKED_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx1yJzRglJ8SQ-bNbUjx-gIA2EDyfsdJZFaA6zSQmvqMeHT9T7JjVlcKdcQAuqHmxM/exec';
 var PUSH_URL = 'https://script.google.com/macros/s/AKfycbzq1JrF6LxrTdTxQLc3OEr9KkrGuxwm_hZNLA8B9_R52jCyb1jMkprxzG87NaNzZoQ/exec';
+var REVIEWS_URL = 'https://script.google.com/macros/s/AKfycbyQmeWaAKmLqYSHHHjE_PysWeUvTyplu6C49PXYHQ1kZBVGKGFBtD5dAU-CiXNHGe2-/exec';
 
 var COLLECTIONS = [ ['Comments','💬 Comments'],
   ['Stories','📰 Stories'], ['Events','📅 Events'], ['Passings','🕯️ Passings'],
@@ -692,7 +693,7 @@ function buildNav(){
   sb.appendChild(el('span',null,'⚙️ Settings'));
   sb.onclick=function(){openSettings();toggleDrawer(false);};
   nav.appendChild(sb);
-  var pb=el('button','navitem');pb.dataset.key='__push__';pb.appendChild(el('span',null,'📣 Push Notifications'));pb.onclick=function(){openPush();toggleDrawer(false);};nav.appendChild(pb);
+  var pb=el('button','navitem');pb.dataset.key='__push__';pb.appendChild(el('span',null,'📣 Push Notifications'));pb.onclick=function(){openPush();toggleDrawer(false);};nav.appendChild(pb);var rb=el('button','navitem');rb.dataset.key='__reviews__';rb.appendChild(el('span',null,'\u2605 Google Reviews'));rb.onclick=function(){openReviews();toggleDrawer(false);};nav.appendChild(rb);
   nav.appendChild(navItemEl('Popups'));   // Popups management, under Site
   NAV_GROUPS.forEach(function(g){applyNavGroup(g.label);});
   if(S.current)openNavGroupFor(S.current);
@@ -822,6 +823,56 @@ function pushSend(){
       }
     })
     .catch(function(){ cf.innerHTML='<div style="color:#b83030">Could not reach the sender. Please try again.</div><div style="margin-top:10px"><button class="btn" onclick="pushEdit()">Back</button></div>'; });
+}
+function openReviews(){
+  S.current='__reviews__';
+  $('colTitle').textContent='Google Reviews';
+  $('btnAdd').style.display='none';
+  document.querySelectorAll('.navitem').forEach(function(n){n.classList.toggle('active',n.dataset.key==='__reviews__');});
+  renderReviewsPanel();
+}
+function renderReviewsPanel(){
+  var c=$('content');
+  if(S.mode!=='full'){ c.innerHTML='<div class="setwrap"><div class="setnote">Log in to pull Google reviews.</div></div>'; return; }
+  c.innerHTML='<div class="setwrap" style="max-width:640px">'
+    +'<div class="setnote">Pull current Google star ratings and review counts onto your business cards. Ratings update <b>only when you pull</b> \u2014 nothing changes on its own. Businesses with no Google reviews show nothing (never a fake 0).</div>'
+    +'<div style="display:flex;gap:10px;flex-wrap:wrap;margin:16px 0 6px">'
+      +'<button class="btn" onclick="reviewsAsk(\'all\')">Pull all businesses</button>'
+      +'<button class="btn" style="background:#fff;color:#13294b;border:1px solid #d7dbe6" onclick="reviewsAsk(\'new\')">Pull new only</button>'
+    +'</div>'
+    +'<div class="setnote"><b>Pull all</b> refreshes every business (do this weekly). <b>Pull new only</b> checks just the businesses that don\u2019t have a rating yet \u2014 great right after a new signup.</div>'
+    +'<div id="rev-confirm" style="margin-top:14px;display:none"></div>'
+    +'<div id="rev-result" style="margin-top:14px"></div>'
+    +'</div>';
+}
+function reviewsAsk(mode){
+  var label=(mode==='all')?'ALL businesses':'only businesses with no rating yet';
+  var cf=$('rev-confirm');
+  cf.innerHTML='<div style="background:#fff8ee;border:1px solid #f0d9b5;padding:12px 14px;border-radius:8px">'
+    +'<div style="font-weight:700;margin-bottom:4px;color:#8a5a12">Pull Google ratings for '+label+'?</div>'
+    +'<div style="color:#555;font-size:13px">This can take a minute or two. Keep this tab open while it runs.</div></div>'
+    +'<div style="margin-top:10px;display:flex;gap:10px"><button class="btn" onclick="reviewsRun(\''+mode+'\')">Yes, pull now</button>'
+    +'<button class="btn" style="background:#fff;color:#13294b;border:1px solid #d7dbe6" onclick="reviewsCancel()">Cancel</button></div>';
+  cf.style.display=''; $('rev-result').innerHTML='';
+}
+function reviewsCancel(){ var cf=$('rev-confirm'); if(cf){cf.style.display='none';cf.innerHTML='';} }
+function reviewsRun(mode){
+  var cf=$('rev-confirm'); cf.innerHTML='<div class="setnote">Pulling\u2026 this can take a minute or two. Please keep this tab open.</div>';
+  fetch(REVIEWS_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({token:S.token,mode:mode})})
+    .then(function(r){return r.json();})
+    .then(function(res){
+      cf.style.display='none'; cf.innerHTML='';
+      if(res&&res.ok){
+        $('rev-result').innerHTML='<div style="background:#eef7ee;border:1px solid #cfe6cf;padding:12px 14px;border-radius:8px">'
+          +'<div style="color:#1f7a3d;font-weight:700;margin-bottom:4px">\u2713 Pull complete</div>'
+          +'<div style="color:#333;font-size:14px">Updated <b>'+(res.updated||0)+'</b> \u00b7 No rating for <b>'+(res.noRating||0)+'</b> \u00b7 Checked '+(res.total||0)+' total'
+          +((res.errors)?(' \u00b7 '+res.errors+' error(s)'):'')+'.</div>'
+          +'<div style="color:#888;font-size:12px;margin-top:6px">Refresh your Services page to see the stars.</div></div>';
+      } else {
+        $('rev-result').innerHTML='<div style="color:#b83030">Could not pull: '+((res&&res.error)||'Unknown error')+'</div>';
+      }
+    })
+    .catch(function(){ cf.style.display='none'; cf.innerHTML=''; $('rev-result').innerHTML='<div style="color:#b83030">The pull didn\u2019t finish \u2014 it may have timed out on a large first run. Try \u201cPull new only,\u201d or run it again.</div>'; });
 }
 function highlightPendingSetting(){
   if(!S.pendingSetting)return;

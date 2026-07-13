@@ -1144,6 +1144,15 @@
   body.greviews-on .biz-greviews { display:inline-flex; }
   .biz-hours { font-family:sans-serif; font-size:12px; color:var(--muted); margin-top:8px; line-height:1.55; }
   .biz-greviews:hover { background:var(--navy); color:#fff; }
+.biz-reviews { display:none; align-items:center; gap:5px; font-family:sans-serif; text-decoration:none; white-space:nowrap; vertical-align:middle; }
+.greviews-on .biz-reviews { display:inline-flex; }
+.biz-stars { position:relative; display:inline-block; color:#d9d4c8; font-size:13px; line-height:1; letter-spacing:1px; }
+.biz-stars::before { content:'★★★★★'; }
+.biz-stars-fill { position:absolute; left:0; top:0; overflow:hidden; color:#f4b400; white-space:nowrap; }
+.biz-stars-fill::before { content:'★★★★★'; }
+.biz-grating { font-weight:700; font-size:12px; color:var(--navy); }
+.biz-gcount { font-size:11px; color:#8a8577; }
+.biz-reviews:hover .biz-grating { text-decoration:underline; }
   .biz-website {
     font-family: sans-serif; font-size: 10px; font-weight: 700; letter-spacing: .05em;
     text-transform: uppercase; color: var(--gold); border: 1px solid var(--gold);
@@ -2638,10 +2647,21 @@ function bizLinkHref(url){
   return 'https://'+url;
 }
 function googleReviewsBtn(item){
-  var q=[item.name,item.address].filter(Boolean).join(' ');
-  if(!q) return '';                                            /* no name/address -> skip */
-  var url='https://www.google.com/search?q='+encodeURIComponent(q+' reviews');
-  return '<a href="'+charEsc(url)+'" target="_blank" rel="noopener" class="biz-greviews">\u2605 Google Reviews</a>';
+  var rating=parseFloat(item.google_rating);
+  var count=parseInt(item.google_reviews_count,10);
+  if(!(rating>0)||!(count>0)) return '';                       /* no real reviews -> show nothing */
+  var pid=String(item.place_id||'').trim();
+  var url=pid
+    ? ('https://www.google.com/maps/place/?q=place_id:'+encodeURIComponent(pid))
+    : ('https://www.google.com/search?q='+encodeURIComponent([item.name,item.address].filter(Boolean).join(' ')+' reviews'));
+  return '<a href="'+charEsc(url)+'" target="_blank" rel="noopener" class="biz-reviews" title="View on Google">'
+    + starsHTML(rating)
+    + '<span class="biz-grating">'+rating.toFixed(1)+'</span>'
+    + '<span class="biz-gcount">('+count+')</span></a>';
+}
+function starsHTML(rating){
+  var pct=Math.max(0,Math.min(100,(rating/5)*100));
+  return '<span class="biz-stars" aria-hidden="true"><span class="biz-stars-fill" style="width:'+pct.toFixed(1)+'%"></span></span>';
 }
 function bizLinkBtn(item, website, cls, extra){
   var rawUrl=String(item.linkurl||item['link url']||'').trim();
