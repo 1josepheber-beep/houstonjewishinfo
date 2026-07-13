@@ -757,6 +757,11 @@ var SETTINGS_CATS=[
     {key:'comments_paused',label:'Pause all comments (hides the comment section on every post)?',type:'toggle',def:'no'},
     {key:'detail_panel_on',label:'Open posts in a dim detail panel? (turn off for classic inline read-more + comments)',type:'toggle',def:'yes'},
     {key:'google_reviews_on',label:'Show "Google Reviews" button on business listings?',type:'toggle',def:'no'}
+  ]},
+  {id:'maintenance',label:'Maintenance',fields:[
+    {key:'maintenance_on',label:'Maintenance mode \u2014 block the whole site with a message?',type:'toggle',def:'no'},
+    {key:'maintenance_title',label:'Maintenance heading',type:'text',def:'Under Maintenance'},
+    {key:'maintenance_message',label:'Maintenance message',type:'textarea',def:"We'll be back shortly. Thank you for your patience."}
   ]}
 ];
 function pushEsc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}

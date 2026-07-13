@@ -1,3 +1,4 @@
+(function(){try{var s=document.createElement('script');s.src='/maintenance.js';s.async=true;(document.head||document.documentElement).appendChild(s);}catch(e){}})();
 /* Houston Jewish Info — shared inline search engine.
    Lazily fetches the same Google Sheet tabs as /search/ and exposes:
      HJISearch.load()        -> Promise (idempotent) that loads + indexes listings
