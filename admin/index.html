@@ -1716,7 +1716,7 @@ function sectionImg(){
 function resolveImg(v){v=(v||'').trim();if(!v)return '';if(/^https?:\/\//i.test(v))return v;if(/^\//.test(v))return 'https://houstonjewishinfo.com'+v;return sectionImg().base+v;}
 function imgFieldKeys(h){return /image|img|photo|flyer|logo/i.test(h);}
 function cleanName(s){var x=String(s||'').trim().toLowerCase().replace(/[^a-z0-9._-]+/g,'-').replace(/-+/g,'-').replace(/^[-.]+|[-.]+$/g,'');return x||'image';}
-var AD_SIZES={'right-sidebar':'600 \u00d7 500 px, landscape \u2014 shows small on desktop, full width on phones','mobile':'1000 \u00d7 400 px, wide banner \u2014 spans the feed on phones','mazaltov':'800 \u00d7 500 px, landscape','mazaltov-mobile':'1000 \u00d7 400 px, wide banner \u2014 for phones','real-estate':'600 \u00d7 500 px, landscape','real-estate-mobile':'1000 \u00d7 400 px, wide banner \u2014 for phones'};
+var AD_SIZES={'right-sidebar':'500 px wide, portrait (taller than wide) \u2014 fills the narrow sidebar; height is flexible. About 500 \u00d7 600 px is a good default.','mobile':'1000 \u00d7 400 px, wide banner \u2014 spans the feed on phones','mazaltov':'800 \u00d7 500 px, landscape \u2014 shown in the feed','mazaltov-mobile':'1000 \u00d7 400 px, wide banner \u2014 for phones','real-estate':'500 px wide, portrait (taller than wide) \u2014 fills the sidebar column; height is flexible. About 500 \u00d7 600 px works well.','real-estate-mobile':'1000 \u00d7 400 px, wide banner \u2014 for phones'};
 function adSizeHint(area){ return AD_SIZES[area]||'landscape, about 800 \u00d7 500 px'; }
 function imgSizeHint(coll, field){
   var f=String(field||'').toLowerCase();
