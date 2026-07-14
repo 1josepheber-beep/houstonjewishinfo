@@ -1822,6 +1822,7 @@
 
       <!-- COMMUNITY RESOURCES — edit .resource-item entries here -->
       <div class="section-head" style="margin-top:22px">Community Resources</div>
+      <div id="community-resources">
 
       <a class="resource-item" href="/shuls">
         <div class="resource-icon" style="background:#e8f0fb">✡️</div>
@@ -1893,6 +1894,7 @@
           <div class="resource-sub">(832) 743-0111 · 24/7 emergency EMS</div>
         </div>
       </a>
+      </div>
       <button class="sidebar-btn" onclick="location.href='/contact/#business'">+ Submit Your Business</button>
     </aside>
 
@@ -4032,6 +4034,45 @@ window.addEventListener('resize',function(){var m=document.getElementById('hji-j
       }
     } catch(_e){}
   }, true);
+})();
+</script>
+
+<script>
+/* ===== Community Resources — editable from the admin (Resources tab) =====
+   Reads the "Resources" sheet tab and rebuilds the left sidebar list.
+   The hardcoded items in #community-resources act as a fallback so the
+   sidebar is never empty if the sheet is slow, empty, or unreachable. */
+(function(){
+  var box=document.getElementById('community-resources'); if(!box) return;
+  var SHEET_ID='1in7Ac7zknqyR9neWKOCAjOAG4jXCIVTJQfU6jJ72CV8';
+  function esc(t){return String(t==null?'':t).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+  function on(v){v=String(v==null?'':v).trim().toLowerCase();return v===''||v==='yes'||v==='active'||v==='on'||v==='true'||v==='1'||v==='show';}
+  fetch('https://docs.google.com/spreadsheets/d/'+SHEET_ID+'/gviz/tq?tqx=out:json&headers=1&sheet=Resources&cb='+Date.now())
+    .then(function(r){return r.text();})
+    .then(function(t){
+      var j=JSON.parse(t.substring(t.indexOf('{'),t.lastIndexOf('}')+1));
+      var cols=(j.table.cols||[]).map(function(c){return (c.label||'').toLowerCase().replace(/\s+/g,'');});
+      var rows=[];
+      (j.table.rows||[]).forEach(function(r){
+        var o={}; cols.forEach(function(c,i){var cell=r.c?r.c[i]:null; o[c]=cell?(cell.f!=null?String(cell.f):(cell.v==null?'':String(cell.v))):'';});
+        if(!(o.label||'').trim()) return;
+        if(!on(o.active!==undefined?o.active:o.status)) return;
+        rows.push(o);
+      });
+      if(!rows.length) return;   // keep the built-in defaults
+      rows.sort(function(a,b){var x=parseFloat(a.order),y=parseFloat(b.order); if(isNaN(x))x=9999; if(isNaN(y))y=9999; return x-y;});
+      box.innerHTML=rows.map(function(o){
+        var href=(o.link||o.url||'#').trim();
+        var ext=/^https?:/i.test(href);
+        var color=(o.color||'#e8f0fb').trim()||'#e8f0fb';
+        return '<a class="resource-item" href="'+esc(href)+'"'+(ext?' target="_blank" rel="noopener"':'')+'>'+
+                 '<div class="resource-icon" style="background:'+esc(color)+'">'+esc(o.icon||'\u2b50')+'</div>'+
+                 '<div><div class="resource-label">'+esc(o.label)+'</div>'+
+                 (String(o.sub||o.subtext||'').trim()?'<div class="resource-sub">'+esc(o.sub||o.subtext)+'</div>':'')+
+                 '</div></a>';
+      }).join('');
+    })
+    .catch(function(){ /* keep defaults */ });
 })();
 </script>
 </body>
