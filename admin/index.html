@@ -1113,7 +1113,7 @@ var AD_TAB='Ads';
 var AD_AREAS=[
   {id:'right-sidebar',      label:'Homepage \u2014 Sidebar',      hint:'Shows in the right-hand column on the homepage (desktop).'},
   {id:'mobile',             label:'Homepage \u2014 Mobile feed',  hint:'Shows woven between the stories on phones.'},
-  {id:'feed',               label:'Homepage \u2014 Desktop feed', hint:'Shows woven between the stories on the homepage (desktop). Slim strip, about 100 px tall.'},
+  {id:'feed',               label:'Homepage \u2014 Desktop feed', hint:'Shows woven between the stories on the homepage (desktop). Use a 5:1 wide banner \u2014 the ad keeps its true shape, nothing is cropped.'},
   {id:'mazaltov',           label:'Mazal Tov \u2014 Desktop',     hint:'Shows in the Mazal Tov feed on desktop / wider screens.'},
   {id:'mazaltov-mobile',    label:'Mazal Tov \u2014 Mobile',      hint:'Shows in the Mazal Tov feed on phones (wider shape).'},
   {id:'real-estate',        label:'Real Estate \u2014 Desktop',   hint:'Shows on the Real Estate page on desktop / wider screens.'},
@@ -1717,7 +1717,7 @@ function sectionImg(){
 function resolveImg(v){v=(v||'').trim();if(!v)return '';if(/^https?:\/\//i.test(v))return v;if(/^\//.test(v))return 'https://houstonjewishinfo.com'+v;return sectionImg().base+v;}
 function imgFieldKeys(h){return /image|img|photo|flyer|logo/i.test(h);}
 function cleanName(s){var x=String(s||'').trim().toLowerCase().replace(/[^a-z0-9._-]+/g,'-').replace(/-+/g,'-').replace(/^[-.]+|[-.]+$/g,'');return x||'image';}
-var AD_SIZES={'right-sidebar':'500 px wide, portrait (taller than wide) \u2014 fills the narrow sidebar; height is flexible. About 500 \u00d7 600 px is a good default.','mobile':'1000 \u00d7 400 px, wide banner \u2014 spans the feed on phones','feed':'1200 \u00d7 240 px, wide thin banner (5:1) \u2014 desktop strip between posts, shows about 100 px tall','mazaltov':'800 \u00d7 500 px, landscape \u2014 shown in the feed','mazaltov-mobile':'1000 \u00d7 400 px, wide banner \u2014 for phones','real-estate':'500 px wide, portrait (taller than wide) \u2014 fills the sidebar column; height is flexible. About 500 \u00d7 600 px works well.','real-estate-mobile':'1000 \u00d7 400 px, wide banner \u2014 for phones'};
+var AD_SIZES={'right-sidebar':'500 px wide, portrait (taller than wide) \u2014 fills the narrow sidebar; height is flexible. About 500 \u00d7 600 px is a good default.','mobile':'1000 \u00d7 400 px, wide banner \u2014 spans the feed on phones','feed':'Use a 5:1 wide banner \u2014 e.g. 1200 \u00d7 240 px or 2000 \u00d7 400 px. Any size works as long as the shape is 5:1; the ad is shown at its true proportions, nothing is cropped.','mazaltov':'800 \u00d7 500 px, landscape \u2014 shown in the feed','mazaltov-mobile':'1000 \u00d7 400 px, wide banner \u2014 for phones','real-estate':'500 px wide, portrait (taller than wide) \u2014 fills the sidebar column; height is flexible. About 500 \u00d7 600 px works well.','real-estate-mobile':'1000 \u00d7 400 px, wide banner \u2014 for phones'};
 function adSizeHint(area){ return AD_SIZES[area]||'landscape, about 800 \u00d7 500 px'; }
 function imgSizeHint(coll, field){
   var f=String(field||'').toLowerCase();
