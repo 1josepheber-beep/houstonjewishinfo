@@ -1962,6 +1962,7 @@
       #community-feed .cf-row1{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;}
       #community-feed .cf-dateline{font-family:sans-serif;color:var(--navy);font-weight:700;font-size:13px;}
       #community-feed .cf-tags{display:flex;gap:7px;margin:9px 0 4px;flex-wrap:wrap;}
+.cf-tags:empty{display:none;margin:0;}
       #community-feed .cf-tag{font-family:sans-serif;font-size:10px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;padding:3px 9px;border-radius:5px;white-space:nowrap;}
       #community-feed .cf-type-news{background:#dde8f6;color:#185fa5;}
       #community-feed .cf-type-event{background:#f3e6c8;color:#8a5a12;}
@@ -2566,7 +2567,8 @@
       if(x.type==='event')badge='<span class="cf-tag '+(up?'cf-up':'cf-past')+'">'+(up?'UPCOMING':'PAST')+'</span>';
       else if(x.type==='mazal'&&x.cat)badge='<span class="cf-tag cf-tag-mz">'+esc(x.cat).toUpperCase()+'</span>';
       var dline=x.date?'<span class="cf-dateline">\uD83D\uDCC5 '+esc(fmtDate(x.date))+(hebFmt(x.date)?' <span class="cf-hebdate">\u00b7 '+esc(hebFmt(x.date))+'</span>':'')+(firstLine(x.time)?' \u00b7 '+esc(firstLine(x.time)):'')+'</span>':'<span class="cf-dateline"></span>';
-      var typeTag='<span class="cf-tag cf-type-'+x.type+'">'+esc(TYPE[x.type])+'</span>';
+      /* Stories: no label = no badge at all (a plain post). Other types always show their tag. */
+      var typeTag=(x.type==='news'&&!String(x.cat||'').trim())?'':'<span class="cf-tag cf-type-'+x.type+'">'+esc(TYPE[x.type])+'</span>';
       var catCls=/alert/i.test(x.cat||'')?'cf-tag-alert':'cf-cat';
       var catTag=(x.cat&&x.type!=='mazal')?'<span class="cf-tag '+catCls+'">'+esc(x.cat).toUpperCase()+'</span>':'';
       var mi=[];
@@ -2760,7 +2762,8 @@
     }
     function cfDvHTML(x){
       var dline=x.date?'<span class="cf-dateline">'+(x.type==='passing'?'':'\uD83D\uDCC5 ')+esc(fmtDate(x.date))+(hebFmt(x.date)?' <span class="cf-hebdate">\u00b7 '+esc(hebFmt(x.date))+'</span>':'')+(firstLine(x.time)?' \u00b7 '+esc(firstLine(x.time)):'')+'</span>':'';
-      var typeTag='<span class="cf-tag cf-type-'+x.type+'">'+esc(TYPE[x.type])+'</span>';
+      /* Stories: no label = no badge at all (a plain post). Other types always show their tag. */
+      var typeTag=(x.type==='news'&&!String(x.cat||'').trim())?'':'<span class="cf-tag cf-type-'+x.type+'">'+esc(TYPE[x.type])+'</span>';
       var catTag=(x.cat&&x.type!=='mazal')?'<span class="cf-tag cf-cat">'+esc(x.cat).toUpperCase()+'</span>':'';
       var mzTag=(x.type==='mazal'&&x.cat)?'<span class="cf-tag cf-tag-mz">'+esc(x.cat).toUpperCase()+'</span>':'';
       var media=(x.type==='passing'&&!x.img)?'<div class="cf-banner cf-focus-candle">'+CANDLE_SVG+'</div>':cfDvMedia(x);
