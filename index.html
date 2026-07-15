@@ -987,6 +987,11 @@
   /* Z Biltong between-stories ad: mobile only */
   .zb-mobile-ad { display: none; }
   .ad-only-mob { display: none; }
+  /* Desktop in-feed ad strip — slightly narrower than a post card, ~100px tall */
+  .hji-feed-ad { margin: 14px auto; width: 92%; }
+  .hji-feed-ad a[data-ad-box] { margin: 0 !important; height: 100px; }
+  .hji-feed-ad a[data-ad-box] img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .hji-feed-ad:empty { display: none; }
 
   /* Mobile ad slots — between articles, hidden on desktop */
   .mobile-ad-slot {
@@ -2862,6 +2867,8 @@
       var s=document.createElement('style'); s.textContent=css; document.head.appendChild(s);
     })();
     function adSlot(name){var id=(name==='mobile-1')?' id="mobile-ad-strip"':'';var cls=(name==='mobile-1')?'ad-managed':'zb-mobile-ad ad-managed';return '<div'+id+' class="'+cls+'" data-ad-slot="'+name+'"></div>';}
+    /* Desktop in-feed ad strip — placements feed-1, feed-2 … in the Ads sheet. Desktop only. */
+    function feedSlot(name){return '<div class="hji-feed-ad ad-only-desk ad-managed" data-ad-slot="'+name+'"></div>';}
     function mazalSlot(name){var n=String(name).replace('mazaltov-','');return '<div class="ad-managed ad-only-desk" data-ad-slot="mazaltov-'+n+'"></div><div class="ad-managed ad-only-mob" data-ad-slot="mazaltov-mobile-'+n+'" data-ad-fallback="mazaltov-'+n+'"></div>';}
 
     function currentList(){
@@ -2928,11 +2935,12 @@
       if(!slice.length){html='<div class="cf-empty">Nothing here right now \u2014 check back soon.</div>';}
       else if(page===1){
         html+=adSlot('mobile-1');
-        var mob=2, mz=2;
+        var mob=2, mz=2, fd=1;
         slice.forEach(function(x){
           html+=cfCard(x);
           if(filter==='mazal'){html+=mazalSlot('mazaltov-'+mz);mz++;}
           html+=adSlot('mobile-'+mob);mob++;
+          html+=feedSlot('feed-'+fd);fd++;
         });
       }else{slice.forEach(function(x){html+=cfCard(x);});}
       document.getElementById('cf-list').innerHTML=html;
