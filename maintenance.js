@@ -116,3 +116,48 @@
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', scan); else scan();
   setInterval(scan, 800);
 })();
+
+/* Track popup / announcement performance site-wide.
+   Fires the SAME ad_click event as regular ads (so popups show up in the same
+   GA4 ad reports) with ad_placement = "popup", plus a popup_view event so you
+   can work out a real click-through rate. Works on every page and with both
+   popup systems. */
+(function () {
+  function ga(name, params) {
+    try { if (typeof gtag === 'function') gtag('event', name, params || {}); } catch (e) {}
+  }
+  function titleOf(card) {
+    var t = card && card.querySelector('.hjipop-title');
+    var s = t ? (t.textContent || '') : '';
+    s = s.replace(/\s+/g, ' ').trim();
+    return s || 'Popup';
+  }
+  function scanPopups() {
+    // View: fire once per popup card shown
+    var cards = document.querySelectorAll('.hjipop-card');
+    for (var i = 0; i < cards.length; i++) {
+      var c = cards[i];
+      if (c.__hjiPopSeen) continue;
+      c.__hjiPopSeen = 1;
+      ga('popup_view', { ad_name: titleOf(c), ad_placement: 'popup' });
+    }
+    // Click: track the popup's button as an ad click
+    var btns = document.querySelectorAll('a.hjipop-btn');
+    for (var j = 0; j < btns.length; j++) {
+      var b = btns[j];
+      if (b.__hjiPopTracked) continue;
+      b.__hjiPopTracked = 1;
+      b.addEventListener('click', function () {
+        var card = this.closest ? this.closest('.hjipop-card') : null;
+        ga('ad_click', {
+          ad_name: titleOf(card),
+          ad_placement: 'popup',
+          link_url: this.getAttribute('href') || ''
+        });
+      });
+    }
+  }
+  try { new MutationObserver(scanPopups).observe(document.documentElement, { childList: true, subtree: true }); } catch (e) {}
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', scanPopups); else scanPopups();
+  setInterval(scanPopups, 800);
+})();
