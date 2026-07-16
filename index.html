@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<!-- HJI-ROW-V12-sticky : action row = Read more | Comments | Share | Calendar | CTA -->
+<!-- HJI-ROW-V11 : action row = Read more | Comments | Share | Calendar | CTA -->
   <!-- Favicon -->
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png">
@@ -509,23 +509,6 @@
   .sidebar-right {
     border-left: 1px solid var(--border);
     padding-left: 18px;
-  }
-  /* Sticky sidebar ad (desktop only): once you scroll past it, the ad pins near the
-     top of the screen and rides along with the feed instead of scrolling away into
-     an empty column. Only the AD sticks — the weather box scrolls normally.
-     NOTE: sticky only works while the PARENT is still on screen, so the sidebar
-     column must stretch the full height of the grid row (hence align-self:stretch
-     + the column being a flex container). */
-  @media (min-width: 981px){
-    .main-grid > .sidebar-right{
-      align-self: stretch;
-      display: flex;
-      flex-direction: column;
-    }
-    .sidebar-right > .ad-managed{
-      position: sticky;
-      top: 16px;
-    }
   }
 
   /* -- Weather Box -- */
