@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<!-- HJI-ROW-V10 : action row = Read more | Comments | Share | Calendar | CTA -->
+<!-- HJI-ROW-V11 : action row = Read more | Comments | Share | Calendar | CTA -->
   <!-- Favicon -->
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png">
@@ -2537,7 +2537,7 @@
     function getTab(tab){return fetch(tabURL(tab)).then(function(r){return r.text();}).then(function(text){
       var json=JSON.parse(text.substring(47,text.length-2));
       var cols=json.table.cols.map(function(c){return (c.label||'').toLowerCase().trim();});
-      return (json.table.rows||[]).map(function(row){var o={_cells:{}};cols.forEach(function(col,i){var c=row.c?row.c[i]:null;o[col]=cellStr(c);o._cells[col]=c;});return o;});
+      return (json.table.rows||[]).map(function(row,ri){var o={_cells:{},_row:ri};cols.forEach(function(col,i){var c=row.c?row.c[i]:null;o[col]=cellStr(c);o._cells[col]=c;});return o;});
     });}
     function active(o){return String(o.status||'').toLowerCase().trim()==='active';}
     window.hjiMazalDebug=function(){getTab('MazalTov').then(function(rows){console.log('=== Mazal Tov rows ===');rows.forEach(function(r){console.log(r.name||'(no name)','| columns:',Object.keys(r).filter(function(k){return k!=='_cells';}).join(', '),'| date cell:',JSON.stringify(r._cells.date),'| reads as:',(mazalDate(r)?mazalDate(r).toDateString():'NULL'));});}).catch(function(e){console.log('debug error',e);});return 'fetching\u2026 see console output above';};
@@ -2545,13 +2545,13 @@
     function buildItems(stories,events,mazals,passings){
       var out=[];
       stories.forEach(function(r){if(!active(r)||!r.headline)return;
-        out.push({type:'news',comments:cfAllow(r),date:parseDate(r._cells.date),time:'',title:r.headline,cat:r.label||'',org:r.byline||'',loc:'',desc:r.excerpt||'',img:imgList(r.image,STORY_IMG)[0]||'',imgs:imgList(r.image,STORY_IMG),link:r.linkurl||'',linkText:r.linktext||'Read More \u2192',women:false});});
+        out.push({type:'news',comments:cfAllow(r),_row:r._row,date:parseDate(r._cells.date),time:'',title:r.headline,cat:r.label||'',org:r.byline||'',loc:'',desc:r.excerpt||'',img:imgList(r.image,STORY_IMG)[0]||'',imgs:imgList(r.image,STORY_IMG),link:r.linkurl||'',linkText:r.linktext||'Read More \u2192',women:false});});
       events.forEach(function(r){if(!active(r)||!r.title)return;
-        out.push({type:'event',comments:cfAllow(r),date:parseDate(r._cells.date),time:r.time||'',title:r.title,cat:r.category||'Event',org:r.presenter||'',loc:r.location||'',desc:r.description||'',img:imgList(r.imageurl,EVENT_IMG)[0]||'',imgs:imgList(r.imageurl,EVENT_IMG),link:r.ticketurl||'',linkText:(r.buttontext||'More Details'),women:String(r.women||'').toLowerCase().trim()==='yes'});});
+        out.push({type:'event',comments:cfAllow(r),_row:r._row,date:parseDate(r._cells.date),time:r.time||'',title:r.title,cat:r.category||'Event',org:r.presenter||'',loc:r.location||'',desc:r.description||'',img:imgList(r.imageurl,EVENT_IMG)[0]||'',imgs:imgList(r.imageurl,EVENT_IMG),link:r.ticketurl||'',linkText:(r.buttontext||'More Details'),women:String(r.women||'').toLowerCase().trim()==='yes'});});
       mazals.forEach(function(r){if(!active(r)||!r.name)return;
-        out.push({type:'mazal',comments:cfAllow(r),date:mazalDate(r),time:'',title:r.name,cat:r.type||'',org:'',loc:r.city||'',desc:r.message||'',img:'',imgs:[],link:(r.buttonlink||r.linkurl||''),linkText:(r.buttontext||r.linktext||'More Details'),women:false});});
+        out.push({type:'mazal',comments:cfAllow(r),_row:r._row,date:mazalDate(r),time:'',title:r.name,cat:r.type||'',org:'',loc:r.city||'',desc:r.message||'',img:'',imgs:[],link:(r.buttonlink||r.linkurl||''),linkText:(r.buttontext||r.linktext||'More Details'),women:false});});
       (passings||[]).forEach(function(r){if(!active(r)||!r.name)return;
-        out.push({type:'passing',comments:cfAllow(r),date:parseDate(r._cells.date),time:'',title:r.name,cat:'',org:'',loc:r.city||'',desc:'',pmsg:r.message||'',plev:r.levaya||'',pshiva:r.shiva||'',img:imgList(r.image,PASSING_IMG)[0]||'',imgs:imgList(r.image,PASSING_IMG),link:(r.buttonlink||r.linkurl||''),linkText:(r.buttontext||r.linktext||'More Details'),women:false});});
+        out.push({type:'passing',comments:cfAllow(r),_row:r._row,date:parseDate(r._cells.date),time:'',title:r.name,cat:'',org:'',loc:r.city||'',desc:'',pmsg:r.message||'',plev:r.levaya||'',pshiva:r.shiva||'',img:imgList(r.image,PASSING_IMG)[0]||'',imgs:imgList(r.image,PASSING_IMG),link:(r.buttonlink||r.linkurl||''),linkText:(r.buttontext||r.linktext||'More Details'),women:false});});
       return out;
     }
 
@@ -2954,13 +2954,16 @@
         function eff(x){ return x.date?x.date.getTime():(x.type==='mazal'?today:null); } /* a Mazal Tov with NO date counts as today so it isn't buried; dated ones sort by their date like everything else */
         var at=eff(a), bt=eff(b);
         if(at==null&&bt==null)return 0; if(at==null)return 1; if(bt==null)return -1;
-        if(filter==='event')return at-bt;
+        /* When two posts share a date, the one added LAST to the sheet wins the top
+           spot — so several posts on the same day read newest-first, like the feed. */
+        function tie(x,y){ var xr=(x._row==null?0:x._row), yr=(y._row==null?0:y._row); return yr-xr; }
+        if(filter==='event')return (at-bt) || tie(a,b);
         function bk(t){return t>=tomorrow?1:(t<today?2:0);}
         var ab=bk(at), bb=bk(bt);
         if(ab!==bb)return ab-bb;
-        if(ab===0)return bt-at;
-        if(ab===1)return at-bt;
-        return bt-at;
+        if(ab===0)return (bt-at) || tie(a,b);
+        if(ab===1)return (at-bt) || tie(a,b);
+        return (bt-at) || tie(a,b);
       });
       return arr;
     }
