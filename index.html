@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<!-- HJI-ROW-V4 : action row = Read more | Comments | Share | Calendar | CTA -->
   <!-- Favicon -->
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png">
@@ -1989,8 +1990,8 @@
       #community-feed .cf-pass-text{font-family:sans-serif;color:#444;font-size:14px;line-height:1.6;margin:0 0 8px;}
       #community-feed .cf-pass-extra .cf-pass-text:last-child{margin-bottom:0;}
       #community-feed .cf-pass-key{font-weight:700;color:var(--ink);}
-      #community-feed .cf-pass-toggle{clear:both;display:block;width:-moz-fit-content;width:fit-content;font-family:sans-serif;font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;background:none;border:none;color:var(--gold);cursor:pointer;padding:0;margin-top:12px;}
-      #community-feed .cf-pass-foot{clear:both;display:flex;align-items:center;justify-content:flex-end;gap:16px;flex-wrap:wrap;margin-top:12px;}
+      #community-feed .cf-pass-toggle:not(.cf-actionrow *){clear:both;display:block;width:-moz-fit-content;width:fit-content;font-family:sans-serif;font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;background:none;border:none;color:var(--gold);cursor:pointer;padding:0;margin-top:12px;}
+      #community-feed .cf-pass-foot:not(.cf-actionrow *){clear:both;display:flex;align-items:center;justify-content:flex-end;gap:16px;flex-wrap:wrap;margin-top:12px;}
       #community-feed .cf-pass-foot .cf-pass-toggle{margin-top:0;}
       #community-feed .cf-foot{display:flex;gap:16px;align-items:center;justify-content:flex-end;margin-top:12px;flex-wrap:wrap;}
       #community-feed .cf-foot .read-more-btn{margin:0;color:#B94218;font-weight:800;}
@@ -2001,24 +2002,28 @@
       /* One combined action row: Read more (primary) · Share · Comments … CTA right.
          Everything sits on ONE baseline; the CTA never wraps to its own line. */
       #community-feed .cf-actionrow{display:flex;flex-wrap:wrap;align-items:center;column-gap:16px;row-gap:8px;border-top:1px solid #f0ede6;margin-top:12px;padding-top:11px;}
-      #community-feed .cf-actionrow .cf-foot{display:contents;}
+      #community-feed .cf-actionrow .cf-foot,
+      #community-feed .cf-actionrow .cf-pass-foot{display:contents;}
       #community-feed .cf-actionrow .cf-foot-left{display:contents;}
       #community-feed .cf-actionrow .cf-comments{display:contents;}
       /* Explicit, identical order on every screen size:
          Read more | Comments | Share | Add to Calendar | CTA (pinned right) */
-      #community-feed .cf-actionrow .read-more-btn{order:1;}
+      #community-feed .cf-actionrow .read-more-btn,
+      #community-feed .cf-actionrow .cf-pass-toggle{order:1;color:#B94218;font-weight:800;
+        text-transform:none;letter-spacing:normal;margin-top:0;width:auto;clear:none;}
       #community-feed .cf-actionrow .cf-cm-toggle{order:2;align-self:center;}
       #community-feed .cf-actionrow .cf-share{order:3;}
       #community-feed .cf-actionrow .cf-cm-panel{order:9;flex:0 0 100%;width:100%;margin-top:10px;}
       #community-feed .cf-actionrow .cf-foot > a.article-read-more,
-      #community-feed .cf-actionrow .cf-foot > a.cf-pass-btn,
-      #community-feed .cf-actionrow .cf-foot > .cf-pass-btn{order:5;margin-left:auto;align-self:center;}
+      #community-feed .cf-actionrow .cf-pass-foot > a.article-read-more,
+      #community-feed .cf-actionrow a.cf-pass-btn{order:5;margin-left:auto;align-self:center;}
       /* All three text actions share one line-height + height so their text lands
          on exactly the same line (otherwise Share appears to float higher). */
       /* ONE size + ONE box for every text action, so they share a baseline.
          (Declared with high specificity so later rules can't reintroduce drift.) */
       #community-feed .cf-actionrow .cf-share,
       #community-feed .cf-actionrow .read-more-btn,
+      #community-feed .cf-actionrow .cf-pass-toggle,
       #community-feed .cf-actionrow .cf-cm-toggle,
       #community-feed .cf-actionrow .cf-addcal{
         align-self:center;display:inline-flex;align-items:center;
