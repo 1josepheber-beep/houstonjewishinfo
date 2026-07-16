@@ -1993,22 +1993,26 @@
       #community-feed .cf-pass-foot{clear:both;display:flex;align-items:center;justify-content:flex-end;gap:16px;flex-wrap:wrap;margin-top:12px;}
       #community-feed .cf-pass-foot .cf-pass-toggle{margin-top:0;}
       #community-feed .cf-foot{display:flex;gap:16px;align-items:center;justify-content:flex-end;margin-top:12px;flex-wrap:wrap;}
-      #community-feed .cf-foot .read-more-btn{margin:0;color:#B94218;font-weight:800;font-size:13.5px;order:1;}
+      #community-feed .cf-foot .read-more-btn{margin:0;color:#B94218;font-weight:800;}
       /* Share + Comments demoted to quiet secondary actions */
-      #community-feed .cf-foot .cf-share{order:3;color:#8a8577;font-size:12.5px;font-weight:600;}
+      #community-feed .cf-foot .cf-share{color:#8a8577;font-weight:600;}
       #community-feed .cf-foot .cf-share:hover{color:#B94218;}
       #community-feed .cf-foot-left{gap:18px;}
       /* One combined action row: Read more (primary) · Share · Comments … CTA right.
          Everything sits on ONE baseline; the CTA never wraps to its own line. */
       #community-feed .cf-actionrow{display:flex;flex-wrap:wrap;align-items:center;column-gap:16px;row-gap:8px;border-top:1px solid #f0ede6;margin-top:12px;padding-top:11px;}
       #community-feed .cf-actionrow .cf-foot{display:contents;}
-      #community-feed .cf-actionrow .cf-foot-left{display:flex;align-items:center;column-gap:16px;row-gap:6px;flex-wrap:wrap;margin-right:0;order:1;min-width:0;}
+      #community-feed .cf-actionrow .cf-foot-left{display:contents;}
       #community-feed .cf-actionrow .cf-comments{display:contents;}
+      /* Explicit, identical order on every screen size:
+         Read more | Comments | Share | Add to Calendar | CTA (pinned right) */
+      #community-feed .cf-actionrow .read-more-btn{order:1;}
       #community-feed .cf-actionrow .cf-cm-toggle{order:2;align-self:center;}
-      #community-feed .cf-actionrow .cf-cm-panel{order:4;flex:0 0 100%;width:100%;margin-top:10px;}
+      #community-feed .cf-actionrow .cf-share{order:3;}
+      #community-feed .cf-actionrow .cf-cm-panel{order:9;flex:0 0 100%;width:100%;margin-top:10px;}
       #community-feed .cf-actionrow .cf-foot > a.article-read-more,
       #community-feed .cf-actionrow .cf-foot > a.cf-pass-btn,
-      #community-feed .cf-actionrow .cf-foot > .cf-pass-btn{order:3;margin-left:auto;align-self:center;}
+      #community-feed .cf-actionrow .cf-foot > .cf-pass-btn{order:5;margin-left:auto;align-self:center;}
       /* All three text actions share one line-height + height so their text lands
          on exactly the same line (otherwise Share appears to float higher). */
       /* ONE size + ONE box for every text action, so they share a baseline.
@@ -2021,19 +2025,35 @@
         font-family:sans-serif;font-size:13px;line-height:20px;height:20px;
         padding:0;margin:0;border:none;background:none;vertical-align:middle;}
       /* "Add to calendar" is a secondary action: sits after Comments, before the CTA */
-      #community-feed .cf-actionrow .cf-addcal{order:2;}
+      #community-feed .cf-actionrow .cf-addcal{order:4;}
       #community-feed .cf-actionrow .cf-share svg{flex:none;display:block;}
-      /* Phones keep the FULL labels and full-size text — the row simply wraps if it
-         must. Only on genuinely tiny screens do we abbreviate. */
-      @media (max-width:420px){
+      /* Phones show FULL labels wherever they fit. When the row would overflow we
+         shed the least-important TEXT (never the action itself) so the paid CTA
+         always stays on the same line:
+           1) tighten gaps
+           2) "Add to Calendar" -> "Calendar"
+           3) Share -> icon only
+           4) Calendar -> icon only
+         Read more and Comments always keep their words. */
+      @media (max-width:520px){
         #community-feed .cf-actionrow{column-gap:12px;}
         #community-feed .cf-actionrow .cf-foot-left{column-gap:12px;}
+        #community-feed .cf-actionrow .cf-addcal .cal-long{display:none;}
       }
-      /* Very small phones only: shorten "Add to Calendar" -> "Calendar" */
-      @media (max-width:360px){
+      @media (max-width:470px){
         #community-feed .cf-actionrow{column-gap:10px;}
         #community-feed .cf-actionrow .cf-foot-left{column-gap:10px;}
-        #community-feed .cf-actionrow .cf-addcal .cal-long{display:none;}
+        #community-feed .cf-actionrow .cf-share .cf-share-lbl{display:none;}
+      }
+      @media (max-width:400px){
+        #community-feed .cf-actionrow{column-gap:9px;}
+        #community-feed .cf-actionrow .cf-foot-left{column-gap:9px;}
+        #community-feed .cf-actionrow .cf-addcal .cal-word{display:none;}
+      }
+      /* Phones: give the CTA button a slightly tighter box so busy cards (events,
+         which carry an extra action) still land on a single line. */
+      @media (max-width:520px){
+        #community-feed .cf-actionrow a.article-read-more{padding:8px 12px;font-size:10px;letter-spacing:.02em;}
       }
       #community-feed .cf-foot-left{display:flex;align-items:center;gap:14px;margin-right:auto;flex-wrap:wrap;}
       #community-feed .cf-share{display:inline-flex;align-items:center;gap:5px;background:none;border:none;padding:0;cursor:pointer;font-family:sans-serif;font-size:12px;font-weight:700;color:var(--navy);line-height:1;}
