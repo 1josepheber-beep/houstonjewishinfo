@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<!-- HJI-ROW-V5 : action row = Read more | Comments | Share | Calendar | CTA -->
+<!-- HJI-ROW-V6 : action row = Read more | Comments | Share | Calendar | CTA -->
   <!-- Favicon -->
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png">
@@ -2011,7 +2011,8 @@
       #community-feed .cf-actionrow .read-more-btn,
       #community-feed .cf-actionrow .cf-pass-toggle{order:1;color:#B94218;font-weight:800;
         text-transform:none;letter-spacing:normal;margin-top:0;width:auto;clear:none;}
-      #community-feed .cf-actionrow .cf-cm-toggle{order:2;align-self:center;}
+      #community-feed .cf-actionrow .cf-cm-toggle,
+      #community-feed .cf-actionrow .cf-dv-cmbtn{order:2;align-self:center;color:#8a8577;font-weight:600;}
       #community-feed .cf-actionrow .cf-share{order:3;}
       #community-feed .cf-actionrow .cf-cm-panel{order:9;flex:0 0 100%;width:100%;margin-top:10px;}
       #community-feed .cf-actionrow .cf-foot > a.article-read-more,
@@ -2925,7 +2926,7 @@
       +'.cf-focus-scroll{overflow-y:auto;-webkit-overflow-scrolling:touch}'
       +'.cf-focus-inner .cf-focus-card{border:none;border-radius:0}'
       +'.cf-focus-card .cf-body{padding:18px 20px!important}'
-      +'.cf-dv-cmbtn{background:none;border:none;color:#143D75;font-weight:600;font-size:13.5px;cursor:pointer;padding:4px 0;display:inline-flex;align-items:center;gap:6px;font-family:sans-serif}'
+      +'.cf-dv-cmbtn:not(.cf-actionrow *){background:none;border:none;color:#143D75;font-weight:600;font-size:13.5px;cursor:pointer;padding:4px 0;display:inline-flex;align-items:center;gap:6px;font-family:sans-serif}'
       +'.cf-dv-cmbtn:hover{color:#B94218}'
       +'.cf-focus-card .cf-desc{max-height:none;display:block;-webkit-line-clamp:unset;overflow:visible}'
       +'.cf-focus-actions{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:12px}'
