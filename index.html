@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<!-- HJI-ROW-V9 : action row = Read more | Comments | Share | Calendar | CTA -->
+<!-- HJI-ROW-V10 : action row = Read more | Comments | Share | Calendar | CTA -->
   <!-- Favicon -->
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png">
@@ -2037,25 +2037,12 @@
       /* "Add to calendar" is a secondary action: sits after Comments, before the CTA */
       #community-feed .cf-actionrow .cf-addcal{order:4;}
       #community-feed .cf-actionrow .cf-share svg{flex:none;display:block;}
-      /* Label shortening is measured, not guessed. Real widths for a busy (event)
-         row with full labels: ~443px needed. A 412px phone gives ~348px of row, a
-         480px phone ~416px. So only shorten where the numbers say we must, and shed
-         the least-important text first. Simple rows (no calendar) need ~316px and
-         fit full labels from ~390px, so they keep their words.  */
-      @media (max-width:560px){
-        #community-feed .cf-actionrow{column-gap:12px;}
-        /* busy rows: "Add to Calendar" -> "Calendar" (saves ~40px) */
-        #community-feed .cf-actionrow:has(.cf-addcal) .cal-long{display:none;}
-      }
-      @media (max-width:400px){
-        #community-feed .cf-actionrow{column-gap:10px;}
-        /* busy rows only, and only on small phones: Share -> icon */
-        #community-feed .cf-actionrow:has(.cf-addcal) .cf-share .cf-share-lbl{display:none;}
-      }
-      @media (max-width:360px){
-        #community-feed .cf-actionrow{column-gap:9px;}
-        #community-feed .cf-actionrow .cf-share .cf-share-lbl{display:none;}
-      }
+      /* Label shortening is decided at runtime by measuring the row (see cfFitRow).
+         The row starts with FULL labels; JS only adds .fit-1 / .fit-2 / .fit-3 when
+         the items genuinely overflow. That way a label is never hidden if it fits. */
+      #community-feed .cf-actionrow.fit-1 .cal-long{display:none;}
+      #community-feed .cf-actionrow.fit-2 .cf-share .cf-share-lbl{display:none;}
+      #community-feed .cf-actionrow.fit-3 .cal-word{display:none;}
       /* Phones: give the CTA button a slightly tighter box so busy cards (events,
          which carry an extra action) still land on a single line. */
       @media (max-width:520px){
@@ -4152,6 +4139,45 @@ window.addEventListener('resize',function(){var m=document.getElementById('hji-j
       }).join('');
     })
     .catch(function(){ /* keep defaults */ });
+})();
+</script>
+
+<script>
+/* Fit the card action row: show full labels when they fit, shed the least-important
+   text only when the row would actually overflow. Runs on load, on resize, and when
+   new cards are rendered. */
+(function(){
+  function fits(row){
+    var kids=row.querySelectorAll('.read-more-btn,.cf-pass-toggle,.cf-cm-toggle,.cf-dv-cmbtn,.cf-share,.cf-addcal,.article-read-more,.cf-pass-btn');
+    if(!kids.length) return true;
+    var tops={}, n=0;
+    for(var i=0;i<kids.length;i++){
+      var r=kids[i].getBoundingClientRect();
+      if(!r.width) continue;
+      var c=Math.round((r.top+r.height/2)/6);
+      if(!tops[c]){tops[c]=1;n++;}
+    }
+    return n<=1;                  // one visual line = it fits
+  }
+  function fitRow(row){
+    row.classList.remove('fit-1','fit-2','fit-3');
+    if(fits(row)) return;         // full labels fit — leave them alone
+    row.classList.add('fit-1');   // "Add to Calendar" -> "Calendar"
+    if(fits(row)) return;
+    row.classList.add('fit-2');   // Share -> icon
+    if(fits(row)) return;
+    row.classList.add('fit-3');   // Calendar -> icon
+  }
+  function fitAll(){
+    var rows=document.querySelectorAll('#community-feed .cf-actionrow');
+    for(var i=0;i<rows.length;i++) fitRow(rows[i]);
+  }
+  var t;
+  function schedule(){ clearTimeout(t); t=setTimeout(fitAll,60); }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',schedule); else schedule();
+  window.addEventListener('resize',schedule);
+  window.addEventListener('load',schedule);
+  try{ new MutationObserver(schedule).observe(document.documentElement,{childList:true,subtree:true}); }catch(e){}
 })();
 </script>
 </body>
