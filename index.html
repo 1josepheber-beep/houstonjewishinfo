@@ -2055,8 +2055,9 @@
       @media (max-width:520px){
         #community-feed .cf-actionrow a.article-read-more{padding:8px 12px;font-size:10px;letter-spacing:.02em;}
       }
-      #community-feed .cf-foot-left{display:flex;align-items:center;gap:14px;margin-right:auto;flex-wrap:wrap;}
-      #community-feed .cf-share{display:inline-flex;align-items:center;gap:5px;background:none;border:none;padding:0;cursor:pointer;font-family:sans-serif;font-size:12px;font-weight:700;color:var(--navy);line-height:1;}
+      #community-feed .cf-foot-left:not(.cf-actionrow *){display:flex;align-items:center;gap:14px;margin-right:auto;flex-wrap:wrap;}
+      #community-feed .cf-share:not(.cf-actionrow *){display:inline-flex;align-items:center;gap:5px;background:none;border:none;padding:0;cursor:pointer;font-family:sans-serif;font-size:12px;font-weight:700;color:var(--navy);line-height:1;}
+      #community-feed .cf-actionrow .cf-share{gap:5px;cursor:pointer;}
       #community-feed .cf-share svg{display:block;flex:none;}
       #community-feed .cf-share:hover{color:var(--gold);}
       #community-feed .article-card.cf-shared-hl{animation:cfSharedHl 3s ease-out;}
