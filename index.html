@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<!-- HJI-ROW-V7 : action row = Read more | Comments | Share | Calendar | CTA -->
+<!-- HJI-ROW-V9 : action row = Read more | Comments | Share | Calendar | CTA -->
   <!-- Favicon -->
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png">
@@ -2011,8 +2011,11 @@
       #community-feed .cf-actionrow .read-more-btn,
       #community-feed .cf-actionrow .cf-pass-toggle{order:1;color:#B94218;font-weight:800;
         text-transform:none;letter-spacing:normal;margin-top:0;width:auto;clear:none;}
+      /* Comments keeps its navy — it's a feature worth noticing */
       #community-feed .cf-actionrow .cf-cm-toggle,
-      #community-feed .cf-actionrow .cf-dv-cmbtn{order:2;align-self:center;color:#8a8577;font-weight:600;}
+      #community-feed .cf-actionrow .cf-dv-cmbtn{order:2;align-self:center;color:#143D75;font-weight:600;}
+      #community-feed .cf-actionrow .cf-cm-toggle:hover,
+      #community-feed .cf-actionrow .cf-dv-cmbtn:hover{color:#B94218;}
       #community-feed .cf-actionrow .cf-share{order:3;}
       #community-feed .cf-actionrow .cf-cm-panel{order:9;flex:0 0 100%;width:100%;margin-top:10px;}
       #community-feed .cf-actionrow .cf-foot > a.article-read-more,
@@ -2034,26 +2037,22 @@
       /* "Add to calendar" is a secondary action: sits after Comments, before the CTA */
       #community-feed .cf-actionrow .cf-addcal{order:4;}
       #community-feed .cf-actionrow .cf-share svg{flex:none;display:block;}
-      /* Label shortening is driven by how BUSY the card is, not just screen width.
-         A news card (Read more · Comments · Share · CTA) fits full labels from ~390px,
-         so it keeps its words. An event card carries an extra action, so only IT
-         shortens on phones. :has() lets us target just the busy rows. */
-      @media (max-width:520px){
+      /* Label shortening is measured, not guessed. Real widths for a busy (event)
+         row with full labels: ~443px needed. A 412px phone gives ~348px of row, a
+         480px phone ~416px. So only shorten where the numbers say we must, and shed
+         the least-important text first. Simple rows (no calendar) need ~316px and
+         fit full labels from ~390px, so they keep their words.  */
+      @media (max-width:560px){
         #community-feed .cf-actionrow{column-gap:12px;}
-        /* busy rows only: "Add to Calendar" -> "Calendar" */
+        /* busy rows: "Add to Calendar" -> "Calendar" (saves ~40px) */
         #community-feed .cf-actionrow:has(.cf-addcal) .cal-long{display:none;}
       }
-      @media (max-width:470px){
-        /* busy rows only: Share -> icon */
+      @media (max-width:400px){
+        #community-feed .cf-actionrow{column-gap:10px;}
+        /* busy rows only, and only on small phones: Share -> icon */
         #community-feed .cf-actionrow:has(.cf-addcal) .cf-share .cf-share-lbl{display:none;}
       }
-      @media (max-width:430px){
-        #community-feed .cf-actionrow{column-gap:10px;}
-        /* busy rows only: Calendar -> icon */
-        #community-feed .cf-actionrow:has(.cf-addcal) .cf-addcal .cal-word{display:none;}
-      }
-      /* Simple rows (no calendar) only shorten on genuinely tiny screens */
-      @media (max-width:380px){
+      @media (max-width:360px){
         #community-feed .cf-actionrow{column-gap:9px;}
         #community-feed .cf-actionrow .cf-share .cf-share-lbl{display:none;}
       }
