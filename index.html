@@ -2011,37 +2011,29 @@
       #community-feed .cf-actionrow .cf-foot > .cf-pass-btn{order:3;margin-left:auto;align-self:center;}
       /* All three text actions share one line-height + height so their text lands
          on exactly the same line (otherwise Share appears to float higher). */
+      /* ONE size + ONE box for every text action, so they share a baseline.
+         (Declared with high specificity so later rules can't reintroduce drift.) */
       #community-feed .cf-actionrow .cf-share,
       #community-feed .cf-actionrow .read-more-btn,
       #community-feed .cf-actionrow .cf-cm-toggle,
       #community-feed .cf-actionrow .cf-addcal{
         align-self:center;display:inline-flex;align-items:center;
-        line-height:18px;height:18px;padding:0;margin:0;border:none;background:none;}
+        font-family:sans-serif;font-size:13px;line-height:20px;height:20px;
+        padding:0;margin:0;border:none;background:none;vertical-align:middle;}
       /* "Add to calendar" is a secondary action: sits after Comments, before the CTA */
-      #community-feed .cf-actionrow .cf-addcal{order:2;font-size:12.5px;}
+      #community-feed .cf-actionrow .cf-addcal{order:2;}
       #community-feed .cf-actionrow .cf-share svg{flex:none;display:block;}
-      /* Phones: tighten gaps and shrink the CTA so the row still fits one line */
-      @media (max-width:560px){
+      /* Phones keep the FULL labels and full-size text — the row simply wraps if it
+         must. Only on genuinely tiny screens do we abbreviate. */
+      @media (max-width:420px){
+        #community-feed .cf-actionrow{column-gap:12px;}
+        #community-feed .cf-actionrow .cf-foot-left{column-gap:12px;}
+      }
+      /* Very small phones only: shorten "Add to Calendar" -> "Calendar" */
+      @media (max-width:360px){
         #community-feed .cf-actionrow{column-gap:10px;}
         #community-feed .cf-actionrow .cf-foot-left{column-gap:10px;}
-        #community-feed .cf-actionrow .cf-foot > a,
-        #community-feed .cf-actionrow .cf-foot > .article-read-more{padding:7px 13px;font-size:10px;}
-        #community-feed .cf-actionrow .read-more-btn{font-size:12.5px;}
-        #community-feed .cf-actionrow .cf-share,
-        #community-feed .cf-actionrow .cf-cm-toggle{font-size:11.5px;}
-      }
-      /* Phones: event cards carry an extra action ("Add to calendar"), so shorten
-         its label to the icon + "Calendar" to keep everything on one line. */
-      @media (max-width:560px){
-        #community-feed .cf-actionrow .cf-addcal{font-size:11.5px;}
         #community-feed .cf-actionrow .cf-addcal .cal-long{display:none;}
-      }
-      /* Very small phones: drop the word "Share" (icon still taps) so nothing wraps */
-      @media (max-width:380px){
-        #community-feed .cf-actionrow{column-gap:9px;}
-        #community-feed .cf-actionrow .cf-foot-left{column-gap:9px;}
-        #community-feed .cf-actionrow .cf-share .cf-share-lbl{display:none;}
-        #community-feed .cf-actionrow .cf-addcal .cal-word{display:none;}
       }
       #community-feed .cf-foot-left{display:flex;align-items:center;gap:14px;margin-right:auto;flex-wrap:wrap;}
       #community-feed .cf-share{display:inline-flex;align-items:center;gap:5px;background:none;border:none;padding:0;cursor:pointer;font-family:sans-serif;font-size:12px;font-weight:700;color:var(--navy);line-height:1;}
