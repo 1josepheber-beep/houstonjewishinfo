@@ -2006,16 +2006,19 @@
       #community-feed .cf-actionrow .cf-comments{display:contents;}
       #community-feed .cf-actionrow .cf-cm-toggle{order:2;align-self:center;}
       #community-feed .cf-actionrow .cf-cm-panel{order:4;flex:0 0 100%;width:100%;margin-top:10px;}
-      #community-feed .cf-actionrow .cf-foot > a,
-      #community-feed .cf-actionrow .cf-foot > .article-read-more,
+      #community-feed .cf-actionrow .cf-foot > a.article-read-more,
+      #community-feed .cf-actionrow .cf-foot > a.cf-pass-btn,
       #community-feed .cf-actionrow .cf-foot > .cf-pass-btn{order:3;margin-left:auto;align-self:center;}
       /* All three text actions share one line-height + height so their text lands
          on exactly the same line (otherwise Share appears to float higher). */
       #community-feed .cf-actionrow .cf-share,
       #community-feed .cf-actionrow .read-more-btn,
-      #community-feed .cf-actionrow .cf-cm-toggle{
+      #community-feed .cf-actionrow .cf-cm-toggle,
+      #community-feed .cf-actionrow .cf-addcal{
         align-self:center;display:inline-flex;align-items:center;
         line-height:18px;height:18px;padding:0;margin:0;border:none;background:none;}
+      /* "Add to calendar" is a secondary action: sits after Comments, before the CTA */
+      #community-feed .cf-actionrow .cf-addcal{order:2;font-size:12.5px;}
       #community-feed .cf-actionrow .cf-share svg{flex:none;display:block;}
       /* Phones: tighten gaps and shrink the CTA so the row still fits one line */
       @media (max-width:560px){
@@ -2027,11 +2030,18 @@
         #community-feed .cf-actionrow .cf-share,
         #community-feed .cf-actionrow .cf-cm-toggle{font-size:11.5px;}
       }
+      /* Phones: event cards carry an extra action ("Add to calendar"), so shorten
+         its label to the icon + "Calendar" to keep everything on one line. */
+      @media (max-width:560px){
+        #community-feed .cf-actionrow .cf-addcal{font-size:11.5px;}
+        #community-feed .cf-actionrow .cf-addcal .cal-long{display:none;}
+      }
       /* Very small phones: drop the word "Share" (icon still taps) so nothing wraps */
       @media (max-width:380px){
         #community-feed .cf-actionrow{column-gap:9px;}
         #community-feed .cf-actionrow .cf-foot-left{column-gap:9px;}
         #community-feed .cf-actionrow .cf-share .cf-share-lbl{display:none;}
+        #community-feed .cf-actionrow .cf-addcal .cal-word{display:none;}
       }
       #community-feed .cf-foot-left{display:flex;align-items:center;gap:14px;margin-right:auto;flex-wrap:wrap;}
       #community-feed .cf-share{display:inline-flex;align-items:center;gap:5px;background:none;border:none;padding:0;cursor:pointer;font-family:sans-serif;font-size:12px;font-weight:700;color:var(--navy);line-height:1;}
@@ -2621,7 +2631,7 @@
       if(x.type==='event'){
         var primary=x.link?'<a href="'+attr(extURL(x.link))+'" target="_blank" rel="noopener" class="article-read-more">'+esc(x.linkText||'More Details')+'</a>':'';
         var gc=gcal(x);
-        var addcal=gc?'<button type="button" class="cf-addcal" onclick="cfAddCal(\''+encodeURIComponent(gc)+'\')">\uD83D\uDCC5 Add to calendar</button>':'';
+        var addcal=gc?'<button type="button" class="cf-addcal" onclick="cfAddCal(\''+encodeURIComponent(gc)+'\')">\uD83D\uDCC5<span class="cal-word"><span class="cal-long">&nbsp;Add to</span>&nbsp;Calendar</span></button>':'';
         acts=addcal+primary;
       }else if(x.type==='mazal'&&x.link){
         acts='<a href="'+attr(extURL(x.link))+'" target="_blank" rel="noopener" class="article-read-more">'+esc(x.linkText||'More Details')+'</a>';
