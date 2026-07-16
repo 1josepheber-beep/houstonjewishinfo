@@ -1993,7 +1993,27 @@
       #community-feed .cf-pass-foot{clear:both;display:flex;align-items:center;justify-content:flex-end;gap:16px;flex-wrap:wrap;margin-top:12px;}
       #community-feed .cf-pass-foot .cf-pass-toggle{margin-top:0;}
       #community-feed .cf-foot{display:flex;gap:16px;align-items:center;justify-content:flex-end;margin-top:12px;flex-wrap:wrap;}
-      #community-feed .cf-foot .read-more-btn{margin:0;}
+      #community-feed .cf-foot .read-more-btn{margin:0;color:#B94218;font-weight:800;font-size:13.5px;order:1;}
+      /* Share + Comments demoted to quiet secondary actions */
+      #community-feed .cf-foot .cf-share{order:3;color:#8a8577;font-size:12.5px;font-weight:600;}
+      #community-feed .cf-foot .cf-share:hover{color:#B94218;}
+      #community-feed .cf-foot-left{gap:18px;}
+      /* One combined action row: Read more (primary) · Comments · Share ... CTA right */
+      #community-feed .cf-actionrow{display:flex;flex-wrap:wrap;align-items:center;gap:0 18px;border-top:1px solid #f0ede6;margin-top:12px;padding-top:11px;}
+      /* The foot is 'display:contents' so its children join the ROW's flex line.
+         That lets Comments sit beside Share, with the CTA pinned right. */
+      #community-feed .cf-actionrow .cf-foot{display:contents;}
+      #community-feed .cf-actionrow .cf-foot-left{margin-right:0;order:1;}
+      #community-feed .cf-actionrow .cf-comments{order:2;}
+      #community-feed .cf-actionrow .cf-foot > a,
+      #community-feed .cf-actionrow .cf-foot > .article-read-more,
+      #community-feed .cf-actionrow .cf-foot > .cf-pass-btn{order:3;margin-left:auto;}
+      /* .cf-comments holds BOTH the toggle and the expanding panel. Using
+         display:contents lets the toggle sit inline in the action row while the
+         panel becomes its own full-width line below. */
+      #community-feed .cf-actionrow .cf-comments{display:contents;}
+      #community-feed .cf-actionrow .cf-cm-toggle{order:2;}
+      #community-feed .cf-actionrow .cf-cm-panel{order:4;flex:0 0 100%;width:100%;margin-top:10px;}
       #community-feed .cf-foot-left{display:flex;align-items:center;gap:14px;margin-right:auto;flex-wrap:wrap;}
       #community-feed .cf-share{display:inline-flex;align-items:center;gap:5px;background:none;border:none;padding:0;cursor:pointer;font-family:sans-serif;font-size:12px;font-weight:700;color:var(--navy);line-height:1;}
       #community-feed .cf-share svg{display:block;flex:none;}
@@ -2549,7 +2569,7 @@
           '<h2 class="article-headline">'+esc(x.title)+'</h2>'+
           ploc+
           (pbody?'<div class="cf-pass-extra">'+pbody+'</div>':'')+
-          pfoot+cfCardComments(x)+
+          '<div class="cf-actionrow">'+pfoot+cfCardComments(x)+'</div>'+
           '</div></article>';
       }
       var up=x.date?(x.date>=today):true;
@@ -2591,7 +2611,7 @@
       }
       var foot='<div class="cf-foot"><span class="cf-foot-left">'+cfShareBtn(x)+rmBtn+'</span>'+acts+'</div>';
       var mzCls='',mzBl='',mzCheer='';if(x.type==='mazal'&&x.cat){var _mc=(''+x.cat).toLowerCase();if(/girl/.test(_mc)){mzCls=' mz-theme mz-girl';mzBl=MZ_BALLOONS;mzCheer='<div class="mz-cheer">It\u2019s a girl!</div>';}else if(/boy/.test(_mc)){mzCls=' mz-theme mz-boy';mzBl=MZ_BALLOONS;mzCheer='<div class="mz-cheer">It\u2019s a boy!</div>';}}
-      return '<article id="cf-item-'+cfItemId(x)+'" class="article-card'+mzCls+'">'+mzBl+banner+'<div class="cf-body"><div class="cf-row1">'+dline+badge+'</div><div class="cf-tags">'+typeTag+catTag+'</div>'+mzCheer+'<h2 class="article-headline">'+esc(x.title)+'</h2>'+meta+desc+foot+cfCardComments(x)+'</div></article>';
+      return '<article id="cf-item-'+cfItemId(x)+'" class="article-card'+mzCls+'">'+mzBl+banner+'<div class="cf-body"><div class="cf-row1">'+dline+badge+'</div><div class="cf-tags">'+typeTag+catTag+'</div>'+mzCheer+'<h2 class="article-headline">'+esc(x.title)+'</h2>'+meta+desc+'<div class="cf-actionrow">'+foot+cfCardComments(x)+'</div></div></article>';
     }
 
     /* ================= COMMENTS ================= */
@@ -2705,8 +2725,8 @@
     });
     (function(){
       var css='.cf-comments-off .cf-comments{display:none}'
-      +'.cf-comments{border-top:1px solid #e0dbd0;margin-top:14px;padding-top:10px}'
-      +'.cf-cm-toggle{background:none;border:none;color:#143D75;font-weight:600;font-size:13.5px;cursor:pointer;padding:4px 0;display:inline-flex;align-items:center;gap:6px;font-family:inherit}'
+      +'.cf-comments{margin-top:0;padding-top:0;border-top:none}'
+      +'.cf-cm-toggle{background:none;border:none;color:#8a8577;font-weight:600;font-size:12.5px;cursor:pointer;padding:0;display:inline-flex;align-items:center;gap:5px;font-family:inherit}'
       +'.cf-cm-toggle:hover,.cf-cm-toggle.open{color:#B94218}'
       +'.cf-cm-panel{margin-top:10px}'
       +'.cf-cm-list{display:flex;flex-direction:column;gap:10px;margin-bottom:12px}'
