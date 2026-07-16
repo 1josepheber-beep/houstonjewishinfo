@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<!-- HJI-ROW-V4 : action row = Read more | Comments | Share | Calendar | CTA -->
+<!-- HJI-ROW-V5 : action row = Read more | Comments | Share | Calendar | CTA -->
   <!-- Favicon -->
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png">
@@ -2032,28 +2032,28 @@
       /* "Add to calendar" is a secondary action: sits after Comments, before the CTA */
       #community-feed .cf-actionrow .cf-addcal{order:4;}
       #community-feed .cf-actionrow .cf-share svg{flex:none;display:block;}
-      /* Phones show FULL labels wherever they fit. When the row would overflow we
-         shed the least-important TEXT (never the action itself) so the paid CTA
-         always stays on the same line:
-           1) tighten gaps
-           2) "Add to Calendar" -> "Calendar"
-           3) Share -> icon only
-           4) Calendar -> icon only
-         Read more and Comments always keep their words. */
+      /* Label shortening is driven by how BUSY the card is, not just screen width.
+         A news card (Read more · Comments · Share · CTA) fits full labels from ~390px,
+         so it keeps its words. An event card carries an extra action, so only IT
+         shortens on phones. :has() lets us target just the busy rows. */
       @media (max-width:520px){
         #community-feed .cf-actionrow{column-gap:12px;}
-        #community-feed .cf-actionrow .cf-foot-left{column-gap:12px;}
-        #community-feed .cf-actionrow .cf-addcal .cal-long{display:none;}
+        /* busy rows only: "Add to Calendar" -> "Calendar" */
+        #community-feed .cf-actionrow:has(.cf-addcal) .cal-long{display:none;}
       }
       @media (max-width:470px){
-        #community-feed .cf-actionrow{column-gap:10px;}
-        #community-feed .cf-actionrow .cf-foot-left{column-gap:10px;}
-        #community-feed .cf-actionrow .cf-share .cf-share-lbl{display:none;}
+        /* busy rows only: Share -> icon */
+        #community-feed .cf-actionrow:has(.cf-addcal) .cf-share .cf-share-lbl{display:none;}
       }
-      @media (max-width:400px){
+      @media (max-width:430px){
+        #community-feed .cf-actionrow{column-gap:10px;}
+        /* busy rows only: Calendar -> icon */
+        #community-feed .cf-actionrow:has(.cf-addcal) .cf-addcal .cal-word{display:none;}
+      }
+      /* Simple rows (no calendar) only shorten on genuinely tiny screens */
+      @media (max-width:380px){
         #community-feed .cf-actionrow{column-gap:9px;}
-        #community-feed .cf-actionrow .cf-foot-left{column-gap:9px;}
-        #community-feed .cf-actionrow .cf-addcal .cal-word{display:none;}
+        #community-feed .cf-actionrow .cf-share .cf-share-lbl{display:none;}
       }
       /* Phones: give the CTA button a slightly tighter box so busy cards (events,
          which carry an extra action) still land on a single line. */
