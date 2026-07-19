@@ -3748,6 +3748,17 @@ window.addEventListener('resize',function(){var m=document.getElementById('hji-j
       x.style.cssText='position:absolute;right:10px;top:50%;transform:translateY(-50%);background:rgba(0,0,0,.28);border:none;color:#fff;font-size:20px;line-height:1;cursor:pointer;opacity:.9;border-radius:50%;width:26px;height:26px;display:flex;align-items:center;justify-content:center';
       x.onclick=function(){if(bar.parentNode)bar.parentNode.removeChild(bar);};
       bar.appendChild(x);document.body.insertBefore(bar,document.body.firstChild);
+      /* Track the announcement bar as an ad: view when shown, click when tapped. */
+      (function(){
+        var adName=(g(S,'announce_advertiser')||'').trim()||'Announcement Bar';
+        try{ if(typeof gtag==='function'){ gtag('event','ad_view',{ad_name:adName, ad_placement:'announcement'}); } }catch(e){}
+        var links=bar.querySelectorAll('a');
+        for(var i=0;i<links.length;i++){
+          links[i].addEventListener('click',function(){
+            try{ if(typeof gtag==='function'){ gtag('event','ad_click',{ad_name:adName, ad_placement:'announcement', link_url:(this.getAttribute('href')||'')}); } }catch(e){}
+          });
+        }
+      })();
     }
     if(on(S.donate_on)&&g(S,'donate_link')&&!document.getElementById('hji-donate')){
       var label=g(S,'donate_label')||'Donate',pos=(g(S,'donate_position')||'floating').toLowerCase();
