@@ -45,4 +45,4 @@ Also update: info@houstonjewishinfo.com → your actual email address.
 CNAME / JOBS SUBDOMAIN
 ------------------------
 Upload CNAME.txt (containing: jobs.houstonjewishinfo.com) to the root
-of the GitHub Pages repo hosting jobs.html.
+of the GitHub Pages repo hosting jobs.html. 
