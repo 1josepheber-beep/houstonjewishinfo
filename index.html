@@ -2583,6 +2583,21 @@
     function cfItemId(x){ return (cfSlug(x.title)||x.type||'post')+'-'+cfHash((x.type||'')+'|'+(x.title||'')+'|'+(x.date?x.date.getTime():'')); }
     var CF_SHARE_SVG='<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>';
     function cfShareBtn(x){ return '<button type="button" class="cf-share" onclick="cfShare(event,\''+cfItemId(x)+'\')" aria-label="Share this post" title="Share">'+CF_SHARE_SVG+'<span class="cf-share-lbl">Share</span></button>'; }
+    /* Split the Label field on commas and render one badge per label.
+       Any label containing "alert" gets the red treatment. Blank = no badges. */
+    function cfLabelTags(raw){
+      var v=String(raw==null?'':raw).trim();
+      if(!v) return '';
+      var parts=v.split(/\s*,\s*/);
+      var out='';
+      for(var i=0;i<parts.length;i++){
+        var lab=parts[i].trim();
+        if(!lab) continue;
+        var cls=/alert/i.test(lab)?'cf-tag-alert':'cf-cat';
+        out+='<span class="cf-tag '+cls+'">'+esc(lab).toUpperCase()+'</span>';
+      }
+      return out;
+    }
     function cfCard(x){
       var today=cfToday();
       if(x.type==='passing'){
@@ -2623,9 +2638,12 @@
       else if(x.type==='mazal'&&x.cat)badge='<span class="cf-tag cf-tag-mz">'+esc(x.cat).toUpperCase()+'</span>';
       var dline=x.date?'<span class="cf-dateline">\uD83D\uDCC5 '+esc(fmtDate(x.date))+(hebFmt(x.date)?' <span class="cf-hebdate">\u00b7 '+esc(hebFmt(x.date))+'</span>':'')+(firstLine(x.time)?' \u00b7 '+esc(firstLine(x.time)):'')+'</span>':'<span class="cf-dateline"></span>';
       /* Stories: no label = no badge at all (a plain post). Other types always show their tag. */
-      var typeTag=(x.type==='news'&&!String(x.cat||'').trim())?'':'<span class="cf-tag cf-type-'+x.type+'">'+esc(TYPE[x.type])+'</span>';
-      var catCls=/alert/i.test(x.cat||'')?'cf-tag-alert':'cf-cat';
-      var catTag=(x.cat&&x.type!=='mazal')?'<span class="cf-tag '+catCls+'">'+esc(x.cat).toUpperCase()+'</span>':'';
+      /* Stories never auto-show a "NEWS" tag — the Label field drives the badges.
+         Other post types (event / mazal / passing) keep their identifying tag. */
+      var typeTag=(x.type==='news')?'':'<span class="cf-tag cf-type-'+x.type+'">'+esc(TYPE[x.type])+'</span>';
+      /* Label can hold several values, comma-separated — render one badge each.
+         Any label containing "alert" renders red. */
+      var catTag=(x.type!=='mazal')?cfLabelTags(x.cat):'';
       var mi=[];
       if(x.loc)mi.push('<span>\uD83D\uDCCD '+esc(cleanLoc(x.loc))+'</span>');
       if(x.org)mi.push('<span>\u270D\uFE0F '+esc(x.org)+'</span>');
@@ -2818,8 +2836,8 @@
     function cfDvHTML(x){
       var dline=x.date?'<span class="cf-dateline">'+(x.type==='passing'?'':'\uD83D\uDCC5 ')+esc(fmtDate(x.date))+(hebFmt(x.date)?' <span class="cf-hebdate">\u00b7 '+esc(hebFmt(x.date))+'</span>':'')+(firstLine(x.time)?' \u00b7 '+esc(firstLine(x.time)):'')+'</span>':'';
       /* Stories: no label = no badge at all (a plain post). Other types always show their tag. */
-      var typeTag=(x.type==='news'&&!String(x.cat||'').trim())?'':'<span class="cf-tag cf-type-'+x.type+'">'+esc(TYPE[x.type])+'</span>';
-      var catTag=(x.cat&&x.type!=='mazal')?'<span class="cf-tag cf-cat">'+esc(x.cat).toUpperCase()+'</span>':'';
+      var typeTag=(x.type==='news')?'':'<span class="cf-tag cf-type-'+x.type+'">'+esc(TYPE[x.type])+'</span>';
+      var catTag=(x.type!=='mazal')?cfLabelTags(x.cat):'';
       var mzTag=(x.type==='mazal'&&x.cat)?'<span class="cf-tag cf-tag-mz">'+esc(x.cat).toUpperCase()+'</span>':'';
       var media=(x.type==='passing'&&!x.img)?'<div class="cf-banner cf-focus-candle">'+CANDLE_SVG+'</div>':cfDvMedia(x);
       var bdhe=(x.type==='passing')?'<div class="cf-bdhe">Baruch Dayan HaEmes</div>':'';

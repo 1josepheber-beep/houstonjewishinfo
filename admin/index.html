@@ -421,6 +421,19 @@ var STATUSY = ['Status','Approved','AllowComments','hide_reviews','Active','Free
 // Each option is either a string (value=label) or [value,label].
 // An "Other (type my own)" choice is added automatically to every one of these.
 var FIELD_OPTIONS = {
+  /* Story labels: tick any that apply, or type your own in the "Other" box.
+     Anything containing "alert" renders red on the site. */
+  'Stories.Label': { multi:true, options:[
+    'News',
+    'Community',
+    'Weather',
+    'Weather Alert',
+    'Alert',
+    'Fundraiser',
+    'Event',
+    'Update',
+    'Reminder'
+  ] },
   'KosherRestaurants.Hechsher': { multi:true, dynamic:'hechsher' },
   'Services.Hechsher':          { multi:true, dynamic:'hechsher' },
   'Activities.Hechsher':        { multi:true, dynamic:'hechsher' },
