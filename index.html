@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<!-- HJI-ROW-V11 : action row = Read more | Comments | Share | Calendar | CTA -->
+<!-- HJI-ROW-V13-sharepages : action row = Read more | Comments | Share | Calendar | CTA -->
   <!-- Favicon -->
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png">
@@ -2555,7 +2555,7 @@
     function buildItems(stories,events,mazals,passings){
       var out=[];
       stories.forEach(function(r){if(!active(r)||!r.headline)return;
-        out.push({type:'news',comments:cfAllow(r),_row:r._row,date:parseDate(r._cells.date),time:'',title:r.headline,cat:r.label||'',org:r.byline||'',loc:'',desc:r.excerpt||'',img:imgList(r.image,STORY_IMG)[0]||'',imgs:imgList(r.image,STORY_IMG),link:r.linkurl||'',linkText:r.linktext||'Read More \u2192',women:false});});
+        out.push({type:'news',comments:cfAllow(r),_row:r._row,pageid:(r.pageid||''),date:parseDate(r._cells.date),time:'',title:r.headline,cat:r.label||'',org:r.byline||'',loc:'',desc:r.excerpt||'',img:imgList(r.image,STORY_IMG)[0]||'',imgs:imgList(r.image,STORY_IMG),link:r.linkurl||'',linkText:r.linktext||'Read More \u2192',women:false});});
       events.forEach(function(r){if(!active(r)||!r.title)return;
         out.push({type:'event',comments:cfAllow(r),_row:r._row,date:parseDate(r._cells.date),time:r.time||'',title:r.title,cat:r.category||'Event',org:r.presenter||'',loc:r.location||'',desc:r.description||'',img:imgList(r.imageurl,EVENT_IMG)[0]||'',imgs:imgList(r.imageurl,EVENT_IMG),link:r.ticketurl||'',linkText:(r.buttontext||'More Details'),women:String(r.women||'').toLowerCase().trim()==='yes'});});
       mazals.forEach(function(r){if(!active(r)||!r.name)return;
@@ -3050,9 +3050,17 @@
     window.cfShare=function(ev,id){
       if(ev){ if(ev.preventDefault)ev.preventDefault(); if(ev.stopPropagation)ev.stopPropagation(); }
       var btn=ev&&(ev.currentTarget||ev.target);
-      var url=location.origin+location.pathname+'#item-'+id;
+      /* Prefer the story's own share page (built by StoryPages.gs) — it carries the
+         story's image + headline, so WhatsApp/Facebook show a real preview.
+         Falls back to the homepage anchor for posts that don't have one yet. */
+      var it=null;
+      for(var q=0;q<items.length;q++){ if(cfItemId(items[q])===id){ it=items[q]; break; } }
+      var pid=it&&it.pageid?String(it.pageid).trim():'';
+      var url=pid?(location.origin+'/story/'+encodeURIComponent(pid)+'/')
+                 :(location.origin+location.pathname+'#item-'+id);
+      var shareTitle=it&&it.title?it.title:document.title;
       try{ if(typeof gtag==='function') gtag('event','share_click',{post_id:id}); }catch(e){}
-      if(navigator.share){ navigator.share({title:document.title,url:url}).catch(function(){}); return; }
+      if(navigator.share){ navigator.share({title:shareTitle,text:shareTitle,url:url}).catch(function(){}); return; }
       var flash=function(){ var b=btn&&btn.closest?btn.closest('.cf-share'):btn; var lbl=b&&b.querySelector?b.querySelector('.cf-share-lbl'):null; if(lbl){ var o=lbl.textContent; lbl.textContent='Copied!'; setTimeout(function(){ lbl.textContent=o; },1600); } };
       if(navigator.clipboard&&navigator.clipboard.writeText){ navigator.clipboard.writeText(url).then(flash).catch(function(){ window.prompt('Copy this link:',url); }); }
       else { window.prompt('Copy this link:',url); }
