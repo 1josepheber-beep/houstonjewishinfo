@@ -10,7 +10,22 @@
   var TODAY=new Date(); TODAY.setHours(0,0,0,0);
   var MAZAL_CUTOFF=new Date(TODAY.getTime()-14*86400000);
 
-  function norm(s){ return String(s==null?'':s).toLowerCase(); }
+  /* Lowercase, strip any HTML the sheet's rich-text editor left behind, decode the
+     common entities, then collapse ALL whitespace (including newlines) to single
+     spaces. The query was already whitespace-collapsed, so the indexed text has to
+     be too or a stray line break in a headline/excerpt makes the item unfindable. */
+  function norm(s){
+    return String(s==null?'':s)
+      .replace(/<br\s*\/?>/gi,' ')
+      .replace(/<\/(p|div|li|h[1-6])>/gi,' ')
+      .replace(/<[^>]*>/g,' ')
+      .replace(/&nbsp;/gi,' ').replace(/&amp;/gi,'&')
+      .replace(/&quot;/gi,'"').replace(/&#39;|&apos;/gi,"'")
+      .replace(/&lt;/gi,'<').replace(/&gt;/gi,'>')
+      .toLowerCase()
+      .replace(/\s+/g,' ')
+      .trim();
+  }
   function extURL(u){ u=String(u||'').trim(); if(!u) return ''; if(/^(https?:\/\/|mailto:|tel:|\/)/i.test(u)) return u; return 'https://'+u; }
 
   function cellStr(c){ if(!c) return ''; return c.f!=null? String(c.f) : (c.v==null?'':String(c.v)); }
@@ -42,6 +57,9 @@
   function fieldsText(o){ var s=[]; for(var k in o){ if(k==='_cells')continue; var v=o[k]; if(typeof v==='string'&&v) s.push(v); } return norm(s.join(' ')); }
 
   function mk(type,label,title,date,sub,body,link){
+    /* Clean the display title too — it becomes the ?find= value used to reveal the
+       card on the homepage, so stray whitespace here breaks the deep link. */
+    title=String(title==null?'':title).replace(/\s+/g,' ').trim();
     return {type:type,label:label,title:title,date:date||null,sub:sub||'',body:body||'',link:link||'',section:'',badge:'',searchText:norm([title,sub,body,label].join(' '))};
   }
   function feedItem(kind,row){
