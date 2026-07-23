@@ -126,6 +126,8 @@ h1{font-size:26px;line-height:1.25;color:var(--navy);margin:4px 0 8px}
 </div>
 <script>(function(){
 var POST_ID="tisha-b-av-reminder-a-guide-for-adults-chi-1f8s6ya";
+var POST_TYPE="news";
+var SHEET_ID="1in7Ac7zknqyR9neWKOCAjOAG4jXCIVTJQfU6jJ72CV8";
 var CM_URL="https://script.google.com/macros/s/AKfycbxD7luOdMRUJVSNkfDVepx8ctumtMcpfOGkVZRkEurv3lHWuCtXIo-dsSQw0pdUwlT_/exec";
 var TITLE="Tisha B'Av Reminder: A Guide for Adults & Children";
 document.getElementById("shbtn").onclick=function(){
@@ -145,23 +147,33 @@ document.getElementById("cmbtn").onclick=function(){
 function esc(t){return String(t==null?"":t).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c];});}
 function loadC(){
   var l=document.getElementById("cmlist");l.innerHTML="<div class='cmnote'>Loading…</div>";
-  fetch(CM_URL+"?action=list&post="+encodeURIComponent(POST_ID)).then(function(r){return r.json();}).then(function(d){
-    var a=(d&&d.comments)||[];
+  var u="https://docs.google.com/spreadsheets/d/"+SHEET_ID+"/gviz/tq?tqx=out:json&headers=1&sheet=Comments&cb="+Date.now();
+  fetch(u).then(function(r){return r.text();}).then(function(t){
+    var j=JSON.parse(t.substring(t.indexOf("{"),t.lastIndexOf("}")+1));
+    var cols=(j.table.cols||[]).map(function(c){return (c.label||"").toLowerCase().trim();});
+    var a=[];
+    (j.table.rows||[]).forEach(function(row){
+      var o={};cols.forEach(function(col,i){var c=row.c?row.c[i]:null;o[col]=c?(c.f!=null?String(c.f):(c.v==null?"":String(c.v))):"";});
+      if(String(o.approved||"").toLowerCase().trim()!=="yes")return;
+      if((o.postid||"")!==POST_ID)return;
+      a.push({name:o.name||"Anonymous",comment:o.comment||"",date:o.date||""});
+    });
     if(!a.length){l.innerHTML="<div class='cmnote'>No comments yet — be the first.</div>";return;}
-    var o="";for(var i=0;i<a.length;i++){o+="<div class='cm'><b>"+esc(a[i].name||"Anonymous")+"</b><span>"+esc(a[i].when||"")+"</span><p>"+esc(a[i].text||"")+"</p></div>";}
-    l.innerHTML=o;
-    var n=document.getElementById("cmbtn");n.textContent="💬 Comments ("+a.length+")";
+    var o2="";for(var i=0;i<a.length;i++){o2+="<div class='cm'><b>"+esc(a[i].name)+"</b><span>"+esc(a[i].date)+"</span><p>"+esc(a[i].comment)+"</p></div>";}
+    l.innerHTML=o2;
+    document.getElementById("cmbtn").textContent="💬 Comments ("+a.length+")";
   }).catch(function(){l.innerHTML="<div class='cmnote'>Couldn't load comments.</div>";});
 }
+loadC();
 document.getElementById("cmsend").onclick=function(){
   var nm=document.getElementById("cmname").value.trim();
   var tx=document.getElementById("cmtext").value.trim();
   var note=document.getElementById("cmnote");
   if(!tx){note.textContent="Please write a comment first.";return;}
   note.textContent="Sending…";
-  fetch(CM_URL,{method:"POST",body:JSON.stringify({action:"add",post:POST_ID,name:nm||"Anonymous",text:tx}),headers:{"Content-Type":"text/plain"}})
+  fetch(CM_URL,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({post_id:POST_ID,post_type:POST_TYPE,name:nm||"Anonymous",comment:tx,website:""})})
    .then(function(r){return r.json();}).then(function(d){
-     if(d&&d.ok){note.textContent="Thanks! Your comment is awaiting approval.";document.getElementById("cmtext").value="";}
+     if(d&&(d.ok||d.status==="ok")){note.textContent="Thanks! Your comment will appear once approved.";document.getElementById("cmtext").value="";}
      else{note.textContent=(d&&d.error)||"Something went wrong.";}
    }).catch(function(){note.textContent="Something went wrong.";});
   try{gtag("event","comment_submit",{post_id:POST_ID});}catch(e){}
