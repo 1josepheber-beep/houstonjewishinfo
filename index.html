@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<!-- HJI-ROW-V14-normalized : action row = Read more | Comments | Share | Calendar | CTA -->
+<!-- HJI-ROW-V15-search : action row = Read more | Comments | Share | Calendar | CTA -->
   <!-- Favicon -->
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png">
@@ -2971,7 +2971,15 @@
       var newsCutoff=new Date(today.getTime()-HJI_SETTINGS.storyDays*86400000); /* Stories hide window (admin Settings, default 30) */
       var passingCutoff=new Date(today.getTime()-HJI_SETTINGS.passingDays*86400000); /* Passings hide window (admin Settings, default 14) */
       var rev=(window.__cfReveal||'');
-      function rv(x){ if(window.__cfShareId && cfItemId(x)===window.__cfShareId) return true; return !!rev && String(x.title||'').toLowerCase().indexOf(rev)>-1; }
+      /* Normalise BOTH sides before comparing: the ?find= value arrives whitespace-
+         collapsed, so a title carrying a stray line break or double space in the
+         sheet would never match and the item would stay hidden. */
+      function rv(x){
+        if(window.__cfShareId && cfItemId(x)===window.__cfShareId) return true;
+        if(!rev) return false;
+        var t=String(x.title||'').toLowerCase().replace(/\s+/g,' ').trim();
+        return t.indexOf(rev)>-1 || rev.indexOf(t)>-1;
+      }
       var arr=items.filter(function(x){
         if(x.women&&!showWomen)return false;
         if(filter==='news')return x.type==='news'&&(!x.date||x.date>=newsCutoff||rv(x));
@@ -3649,7 +3657,7 @@ window.addEventListener('resize',function(){var m=document.getElementById('hji-j
   function pick(){
     var cards=document.querySelectorAll('#cf-list .article-card'); if(!cards.length) return null;
     var i,h;
-    for(i=0;i<cards.length;i++){ h=cards[i].querySelector('.article-headline'); if(h&&norm(h.textContent).indexOf(find)>-1) return cards[i]; }
+    for(i=0;i<cards.length;i++){ h=cards[i].querySelector('.article-headline'); if(h&&(norm(h.textContent).indexOf(find)>-1||find.indexOf(norm(h.textContent))>-1)) return cards[i]; }
     for(i=0;i<cards.length;i++){ if(norm(cards[i].textContent).indexOf(find)>-1) return cards[i]; }
     return null;
   }
