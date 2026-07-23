@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<!-- HJI-ROW-V13-sharepages : action row = Read more | Comments | Share | Calendar | CTA -->
+<!-- HJI-ROW-V14-normalized : action row = Read more | Comments | Share | Calendar | CTA -->
   <!-- Favicon -->
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png">
@@ -2590,7 +2590,11 @@
     /* ---- Shareable direct links: stable per-item id + share button ---- */
     function cfSlug(s){ return String(s||'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,42); }
     function cfHash(s){ var h=5381; s=String(s||''); for(var i=0;i<s.length;i++){ h=((h*33)^s.charCodeAt(i))>>>0; } return h.toString(36); }
-    function cfItemId(x){ return (cfSlug(x.title)||x.type||'post')+'-'+cfHash((x.type||'')+'|'+(x.title||'')+'|'+(x.date?x.date.getTime():'')); }
+    /* Titles are whitespace-normalised before hashing so a stray line break in the
+       sheet can't produce a different id (which would split the comment thread
+       between the feed card and the story share page). */
+    function cfNormTitle(t){ return String(t==null?'':t).replace(/\s+/g,' ').trim(); }
+    function cfItemId(x){ var t=cfNormTitle(x.title); return (cfSlug(t)||x.type||'post')+'-'+cfHash((x.type||'')+'|'+t+'|'+(x.date?x.date.getTime():'')); }
     var CF_SHARE_SVG='<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>';
     function cfShareBtn(x){ return '<button type="button" class="cf-share" onclick="cfShare(event,\''+cfItemId(x)+'\')" aria-label="Share this post" title="Share">'+CF_SHARE_SVG+'<span class="cf-share-lbl">Share</span></button>'; }
     /* Known labels get their own colour; anything else uses the neutral chip. */
