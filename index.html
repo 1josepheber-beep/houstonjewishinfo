@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<!-- HJI-ROW-V15-search : action row = Read more | Comments | Share | Calendar | CTA -->
+<!-- HJI-ROW-V16-reveal : action row = Read more | Comments | Share | Calendar | CTA -->
   <!-- Favicon -->
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png">
@@ -2970,7 +2970,17 @@
       var mazalCutoff=new Date(today.getTime()-HJI_SETTINGS.mazalDays*86400000); /* Mazal Tov hide window (admin Settings, default 14) */
       var newsCutoff=new Date(today.getTime()-HJI_SETTINGS.storyDays*86400000); /* Stories hide window (admin Settings, default 30) */
       var passingCutoff=new Date(today.getTime()-HJI_SETTINGS.passingDays*86400000); /* Passings hide window (admin Settings, default 14) */
+      /* Read ?find= straight from the URL rather than relying on window.__cfReveal,
+         which is set by a script further down the page. If the feed renders first,
+         that variable is still empty and the item gets filtered out — which is why
+         searching for an older, date-hidden post sometimes failed to reveal it. */
       var rev=(window.__cfReveal||'');
+      if(!rev){
+        try{
+          var _f=new URLSearchParams(location.search).get('find');
+          if(_f) rev=String(_f).toLowerCase().replace(/\s+/g,' ').trim();
+        }catch(e){}
+      }
       /* Normalise BOTH sides before comparing: the ?find= value arrives whitespace-
          collapsed, so a title carrying a stray line break or double space in the
          sheet would never match and the item would stay hidden. */
