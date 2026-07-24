@@ -2560,6 +2560,38 @@ function dedupeBizListings(list) {
 function dedupeServiceCache(){
   if(!serviceCache) return;
   function nn(n){ return String(n||'').toLowerCase().replace(/[^a-z0-9]/g,''); }
+  /* Slug -> display label, read from the category dropdown that's already on the
+     page (so the two can never disagree). Falls back to tidy-casing anything
+     unrecognised, and handles comma-separated multi-category values. */
+  var _bizCatMap=null;
+  function bizCatLabel(raw){
+    var v=String(raw==null?'':raw).trim();
+    if(!v) return '';
+    if(!_bizCatMap){
+      _bizCatMap={};
+      var sel=document.getElementById('biz-cat-select');
+      if(sel){ for(var i=0;i<sel.options.length;i++){
+        var o=sel.options[i]; if(!o.value) continue;
+        _bizCatMap[String(o.value).toLowerCase()]=o.text;
+        _bizCatMap[String(o.text).toLowerCase()]=o.text;
+        _bizCatMap[String(o.text).toLowerCase().replace(/[^a-z0-9]+/g,'')]=o.text;
+      } }
+    }
+    var parts=v.split(/\s*,\s*/).filter(Boolean);
+    var out=[];
+    for(var k=0;k<parts.length;k++){
+      var p=parts[k], key=p.toLowerCase(), hit=_bizCatMap[key];
+      if(!hit) hit=_bizCatMap[key.replace(/[^a-z0-9]+/g,'')];
+      if(!hit){
+        /* unknown value: split on separators and title-case it */
+        hit=p.replace(/[-_]+/g,' ').replace(/\s+/g,' ').trim()
+             .replace(/\b[a-z]/g,function(c){return c.toUpperCase();});
+      }
+      if(out.indexOf(hit)<0) out.push(hit);
+    }
+    return out.join(', ');
+  }
+
   function comp(o){ var c=0; ['description','address','phone','email','website','hours','badge','cardimage'].forEach(function(k){ if(o[k]&&String(o[k]).trim()) c++; }); return c; }
   Object.keys(serviceCache).forEach(function(key){
     var seen={}, out=[];
@@ -2683,7 +2715,10 @@ function bizShareBtn(item, abs){ return '<button type="button" class="biz-share'
 function buildBizCard(item) {
   var website = item.website || '';
   if(website && website.indexOf('http') !== 0) website = 'https://' + website;
-  var cat = item.category || item._cat || '';
+  /* The Category column holds either a slug from the admin ("realestate") or an
+     older hand-typed label ("Real Estate"). Show the proper display label either
+     way, using the same list the filter dropdown is built from. */
+  var cat = bizCatLabel(item.category || item._cat || '');
 
   // PREMIUM image card: if a CardImage is provided, show the business card
   // image as the whole listing, clickable straight to their website. Name and
