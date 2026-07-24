@@ -2683,7 +2683,44 @@ function bizShareBtn(item, abs){ return '<button type="button" class="biz-share'
 function buildBizCard(item) {
   var website = item.website || '';
   if(website && website.indexOf('http') !== 0) website = 'https://' + website;
-  var cat = item.category || item._cat || '';
+  var cat = (function(raw){
+    /* The Category column holds either an admin slug ("realestate") or an older
+       hand-typed label ("Real Estate"). Show the proper display label either way,
+       reading the mapping from the filter dropdown already on the page. Any
+       failure falls through to the original value, so the page can't break. */
+    try{
+      var v=String(raw==null?'':raw).trim();
+      if(!v) return '';
+      if(!window.__bizCatMap){
+        var m={}, sel=document.getElementById('biz-cat-select');
+        if(sel&&sel.options){
+          for(var i=0;i<sel.options.length;i++){
+            var o=sel.options[i];
+            if(!o||!o.value) continue;
+            var txt=String(o.text||'').replace(/\s+/g,' ').trim();
+            if(!txt) continue;
+            m[String(o.value).toLowerCase()]=txt;
+            m[txt.toLowerCase()]=txt;
+            m[txt.toLowerCase().replace(/[^a-z0-9]+/g,'')]=txt;
+          }
+        }
+        window.__bizCatMap=m;
+      }
+      var map=window.__bizCatMap, parts=v.split(/\s*,\s*/), out=[];
+      for(var k=0;k<parts.length;k++){
+        var pp=parts[k].trim();
+        if(!pp) continue;
+        var key=pp.toLowerCase();
+        var hit=map[key]||map[key.replace(/[^a-z0-9]+/g,'')];
+        if(!hit){
+          hit=pp.replace(/[-_]+/g,' ').replace(/\s+/g,' ').trim()
+                .replace(/\b[a-z]/g,function(c){return c.toUpperCase();});
+        }
+        if(out.indexOf(hit)<0) out.push(hit);
+      }
+      return out.length?out.join(', '):v;
+    }catch(e){ return raw||''; }
+  })(item.category || item._cat || '');
 
   // PREMIUM image card: if a CardImage is provided, show the business card
   // image as the whole listing, clickable straight to their website. Name and
