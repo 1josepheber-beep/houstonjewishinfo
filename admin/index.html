@@ -281,6 +281,7 @@
       <button class="bell" id="bell">🔔 Review <span class="n" id="bellN">0</span></button>
       <span class="badge" id="modeBadge"></span>
       <button class="btn sm" id="btnAdd">+ Add new</button>
+      <button class="btn sm" id="btnSharePages" style="display:none" title="Regenerate the shareable story/event pages (their WhatsApp &amp; Facebook previews)">\u21bb Update share links</button>
       <div class="searchbar">
         <div class="searchwrap">
           <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
@@ -636,6 +637,7 @@ function enterApp(){
   else if(S.sheetId===LIVE_SHEET_ID){b.className='badge live';b.textContent='● LIVE DATA — edits go to your site';}
   else{b.className='badge test';b.textContent='✓ TEST COPY — safe to experiment';}
   $('btnAdd').style.display=(S.mode==='full')?'':'none';
+  $('btnSharePages').style.display=((S.mode==='full')&&(S.current==='Stories'||S.current==='Events'))?'':'none';
   buildNav();
   buildSearchIndex();
   loadHechsherNames();
@@ -783,6 +785,7 @@ function openPush(){
   S.current='__push__';
   $('colTitle').textContent='Push Notifications';
   $('btnAdd').style.display='none';
+  if($('btnSharePages'))$('btnSharePages').style.display='none';
   document.querySelectorAll('.navitem').forEach(function(n){n.classList.toggle('active',n.dataset.key==='__push__');});
   renderPushComposer();
 }
@@ -841,6 +844,7 @@ function openReviews(){
   S.current='__reviews__';
   $('colTitle').textContent='Google Reviews';
   $('btnAdd').style.display='none';
+  if($('btnSharePages'))$('btnSharePages').style.display='none';
   document.querySelectorAll('.navitem').forEach(function(n){n.classList.toggle('active',n.dataset.key==='__reviews__');});
   renderReviewsPanel();
 }
@@ -995,6 +999,7 @@ function openSettings(){
   S.current='__settings__';
   $('colTitle').textContent='Settings';
   $('btnAdd').style.display='none';
+  if($('btnSharePages'))$('btnSharePages').style.display='none';
   document.querySelectorAll('.navitem').forEach(function(n){n.classList.toggle('active',n.dataset.key==='__settings__');});
   $('content').innerHTML='<div class="loading">Loading settings…</div>';
   var reader=(S.mode==='full')?api('list',{sheet:SETTINGS_TAB}):gvizRead(SETTINGS_TAB);
@@ -1142,6 +1147,7 @@ function openAds(){
   S.current='__ads__';
   $('colTitle').textContent='Ads';
   $('btnAdd').style.display='none';
+  if($('btnSharePages'))$('btnSharePages').style.display='none';
   document.querySelectorAll('.navitem').forEach(function(n){n.classList.toggle('active',n.dataset.key==='__ads__');});
   $('content').innerHTML='<div class="loading">Loading ads\u2026</div>';
   var reader=(S.mode==='full')?api('list',{sheet:AD_TAB}):gvizRead(AD_TAB);
@@ -1480,6 +1486,7 @@ function selectCollection(key,label,onLoaded){
   try{localStorage.setItem('hji_admin_tab',key);}catch(e){}
   $('colTitle').textContent=label.replace(/^\S+\s/,'');
   $('btnAdd').style.display=(S.mode==='full')?'':'none';
+  $('btnSharePages').style.display=((S.mode==='full')&&(S.current==='Stories'||S.current==='Events'))?'':'none';
   document.querySelectorAll('.navitem').forEach(function(n){n.classList.toggle('active',n.dataset.key===key);});
   if(typeof openNavGroupFor==='function')openNavGroupFor(key);
   $('content').innerHTML='<div class="loading">Loading '+key+'…</div>';
@@ -1636,6 +1643,7 @@ function openReview(){
   S.current='__review__';
   $('colTitle').textContent='Needs review';
   $('btnAdd').style.display='none';
+  if($('btnSharePages'))$('btnSharePages').style.display='none';
   document.querySelectorAll('.navitem').forEach(function(n){n.classList.remove('active');});
   var items=(S.pending&&S.pending.items)||[];
   if(!items.length){$('content').innerHTML='<div class="empty">🎉 Nothing waiting — every submission has been reviewed.</div>';return;}
@@ -1824,6 +1832,15 @@ function openForm(row){
   $('overlay').style.display='grid';
 }
 $('btnAdd').onclick=function(){openForm(null);};
+$('btnSharePages').onclick=function(){
+  var b=$('btnSharePages'), orig=b.innerHTML;
+  b.disabled=true; b.innerHTML='\u21bb Updating\u2026';
+  api('rebuildSharePages').then(function(r){
+    b.disabled=false; b.innerHTML=orig;
+    if(r&&r.ok){ toast(r.message||'Share links updated.'); }
+    else{ toast('Could not update: '+((r&&r.error)||'unknown error'), true); }
+  }).catch(function(e){ b.disabled=false; b.innerHTML=orig; toast('Could not update: '+e, true); });
+};
 $('btnCancel').onclick=function(){$('overlay').style.display='none';};
 $('overlay').onclick=function(e){if(e.target===$('overlay'))$('overlay').style.display='none';};
 $('btnSave').onclick=function(){
