@@ -281,7 +281,7 @@
       <button class="bell" id="bell">🔔 Review <span class="n" id="bellN">0</span></button>
       <span class="badge" id="modeBadge"></span>
       <button class="btn sm" id="btnAdd">+ Add new</button>
-      <button class="btn sm" id="btnSharePages" style="display:none" title="Regenerate the shareable story/event pages (their WhatsApp &amp; Facebook previews)">\u21bb Update share links</button>
+      <button class="btn sm" id="btnSharePages" style="display:none" title="Regenerate the shareable story/event pages (their WhatsApp &amp; Facebook previews)">↻ Update share links</button>
       <div class="searchbar">
         <div class="searchwrap">
           <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
@@ -1834,7 +1834,7 @@ function openForm(row){
 $('btnAdd').onclick=function(){openForm(null);};
 $('btnSharePages').onclick=function(){
   var b=$('btnSharePages'), orig=b.innerHTML;
-  b.disabled=true; b.innerHTML='\u21bb Updating\u2026';
+  b.disabled=true; b.innerHTML='↻ Updating…';
   api('rebuildSharePages').then(function(r){
     b.disabled=false; b.innerHTML=orig;
     if(r&&r.ok){ toast(r.message||'Share links updated.'); }
