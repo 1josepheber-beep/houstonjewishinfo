@@ -1577,6 +1577,13 @@ function buildRow(row,showCols,statusCol){
   }
   return tr;
 }
+function toggleStatusGroup(gk){
+  var open=!(S.openStatus&&S.openStatus[gk]); if(!S.openStatus)S.openStatus={}; S.openStatus[gk]=open;
+  document.querySelectorAll('#content tbody tr').forEach(function(r){
+    if(r.classList.contains('statusgroup')){ if(r.getAttribute('data-sgroup')===gk){var ch=r.querySelector('.chev');if(ch)ch.textContent=open?'▾':'▸';} }
+    else if(r.getAttribute('data-sgkey')===gk){ r.style.display=open?'':'none'; }
+  });
+}
 function toggleCat(cn){
   var open=!(S.openCats&&S.openCats[cn]); if(!S.openCats)S.openCats={}; S.openCats[cn]=open;
   document.querySelectorAll('#content tbody tr').forEach(function(r){
@@ -1597,6 +1604,47 @@ function renderTable(){
   thead.appendChild(trh);t.appendChild(thead);
   var tb=el('tbody');
   var catCol=S.headers.find(function(h){return h.toLowerCase()==='category';});
+  /* Feed sections (Stories/Events/MazalTov/Passings) group by STATUS into three
+     collapsible sections: Live in feed / Hidden — still searchable / Deactivated.
+     A row lands in the right group automatically from feedRowState(); when a post
+     ages past its window it moves from Live to Hidden on its own, and deactivating
+     it drops it into Deactivated. Live is open by default; the others start closed. */
+  if(FEED_WINDOWS[S.current]!==undefined){
+    if(S.openStatusFor!==S.current){ S.openStatus={live:true,hidden:false,off:false}; S.openStatusFor=S.current; }
+    var totalColsS=showCols.length+(statusCol?1:0)+(S.mode==='full'?1:0);
+    var buckets={live:[],hidden:[],off:[]};
+    S.rows.forEach(function(row){
+      var st=feedRowState(row,S.current);
+      var g=(st&&st.state==='off')?'off':((st&&st.state==='hidden')?'hidden':'live');
+      buckets[g].push(row);
+    });
+    var GROUPS=[
+      {k:'live',   label:'Live in feed'},
+      {k:'hidden', label:'Hidden — still searchable'},
+      {k:'off',    label:'Deactivated'}
+    ];
+    GROUPS.forEach(function(g){
+      var rowsIn=buckets[g.k];
+      if(!rowsIn.length) return;                       /* skip empty groups */
+      var open=!!(S.openStatus&&S.openStatus[g.k]);
+      var ctr=el('tr','catgroup statusgroup');ctr.setAttribute('data-sgroup',g.k);
+      var ctd=el('td');ctd.colSpan=totalColsS;
+      ctd.appendChild(el('span','chev',open?'▾':'▸'));
+      ctd.appendChild(document.createTextNode(' '+g.label+' '));
+      ctd.appendChild(el('span','catcount',String(rowsIn.length)));
+      ctr.appendChild(ctd);ctr.onclick=function(){toggleStatusGroup(g.k);};
+      tb.appendChild(ctr);
+      rowsIn.forEach(function(row){
+        var r=buildRow(row,showCols,statusCol);
+        r.classList.add('catchild');r.setAttribute('data-sgkey',g.k);
+        if(!open)r.style.display='none';
+        tb.appendChild(r);
+      });
+    });
+    t.appendChild(tb);$('content').innerHTML=feedNote(S.current);var twS=el('div','tablewrap');twS.appendChild(t);$('content').appendChild(twS);
+    highlightPending();
+    return;
+  }
   if(catCol&&S.rows.length>10){
     if(S.openCatsFor!==S.current){S.openCats={};S.openCatsFor=S.current;}
     var totalCols=showCols.length+(statusCol?1:0)+(S.mode==='full'?1:0);
