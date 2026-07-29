@@ -2596,22 +2596,51 @@
       if(/^https?:\/\//i.test(v)) return {kind:'link',url:v};
       return null;
     }
-    /* Video takes the banner slot. Poster = the uploaded photo when there is
-       one (you control its framing), else YouTube's own thumbnail. */
-    function cfVideoBanner(x){
-      var vd=cfVideo(x.video);
-      if(!vd||vd.kind==='link') return '';
-      var poster=x.img||vd.poster;
-      if(!poster) return '';
-      return '<div class="cf-banner cf-hasvideo" data-embed="'+attr(vd.embed)+'" data-poster="'+attr(poster)+'">'+
-             '<img src="'+attr(poster)+'" alt="'+attr(x.title)+'" loading="lazy">'+
+    /* The video is an extra slide in front of the gallery. Picture 1 doubles
+       as its cover AND still gets its own clean slide, so it only has to be
+       uploaded once. Returns '' when there is no video, and the caller falls
+       through to the existing gallery / single-image paths untouched. */
+    function cfVShell(poster,title){
+      return '<img src="'+attr(poster)+'" alt="'+attr(title)+'" loading="lazy">'+
              '<span class="cf-vtag">\u25B6 VIDEO</span>'+
              '<div class="cf-vplay" onclick="cfPlay(event,this)"><div class="cf-vbtn">'+
              '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"></path></svg>'+
-             '</div></div></div>';
+             '</div></div>';
+    }
+    function cfMedia(x){
+      var vd=cfVideo(x.video);
+      if(!vd||vd.kind==='link') return '';
+      var photos=x.imgs||[];
+      var poster=photos[0]||vd.poster;
+      if(!poster) return '';
+      var vAttrs=' data-embed="'+attr(vd.embed)+'" data-poster="'+attr(poster)+'"';
+      /* video only, nothing to swipe to */
+      if(!photos.length)
+        return '<div class="cf-banner cf-vslide"'+vAttrs+'>'+cfVShell(poster,x.title)+'</div>';
+      var sl='<div class="cf-gslide cf-vslide"'+vAttrs+'>'+cfVShell(poster,x.title)+'</div>';
+      for(var i=0;i<photos.length;i++){
+        sl+='<div class="cf-gslide"><img src="'+attr(photos[i])+'" alt="'+attr(x.title)+
+            '" loading="lazy" data-full="'+attr(photos[i])+'" onclick="cfGOpen(this)"></div>';
+      }
+      var n=photos.length+1;
+      return '<div class="cf-banner cf-gallery"><div class="cf-gtrack" onscroll="cfGScroll(this)">'+sl+'</div>'+
+        '<button type="button" class="cf-garrow prev" aria-label="Previous" onclick="cfGSlide(this,-1)">\u2039</button>'+
+        '<button type="button" class="cf-garrow next" aria-label="Next" onclick="cfGSlide(this,1)">\u203A</button>'+
+        '<div class="cf-gcount"><span class="cf-gidx">1</span> / '+n+'</div></div>';
     }
     /* stopPropagation matters: without it the tap also reaches
        cfOpenLightbox on a cropped photo and the image opens behind. */
+    window.cfDvPhoto=function(img){
+      var wrap=img.parentNode; if(!wrap)return;
+      var nodes=wrap.querySelectorAll('.cf-dvphoto');
+      var list=[],idx=0;
+      for(var i=0;i<nodes.length;i++){
+        list.push(nodes[i].getAttribute('data-full')||nodes[i].src);
+        if(nodes[i]===img)idx=i;
+      }
+      if(!list.length)return;
+      cfLB={list:list,idx:idx}; cfLBShow();
+    };
     window.cfPlay=function(ev,el){
       if(ev){ if(ev.stopPropagation)ev.stopPropagation(); if(ev.preventDefault)ev.preventDefault(); }
       var box=el.parentNode; if(!box)return;
@@ -2622,25 +2651,21 @@
     /* Kill any playing embed — called when the detail panel opens or closes,
        otherwise audio keeps running from a card hidden behind the overlay. */
     window.cfStopVideos=function(){
-      var ns=document.querySelectorAll('.cf-banner.cf-playing');
+      var ns=document.querySelectorAll('.cf-vslide.cf-playing');
       for(var i=0;i<ns.length;i++){
         var b=ns[i],p=b.getAttribute('data-poster')||'';
         b.classList.remove('cf-playing');
-        b.innerHTML='<img src="'+attr(p)+'" alt="" loading="lazy">'+
-          '<span class="cf-vtag">\u25B6 VIDEO</span>'+
-          '<div class="cf-vplay" onclick="cfPlay(event,this)"><div class="cf-vbtn">'+
-          '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"></path></svg>'+
-          '</div></div>';
+        b.innerHTML=cfVShell(p,'');
       }
     };
     window.cfOpenLightbox=function(el){ if(!el||!el.classList.contains('is-cropped'))return; var src=el.getAttribute('data-full'); if(!src)return; cfLB={list:[src],idx:0}; cfLBShow(); };
     window.cfCloseLightbox=function(){ var lb=document.getElementById('cf-lightbox'); if(lb){lb.classList.remove('open');lb.classList.remove('gallery');} var im=document.getElementById('cf-lightbox-img'); if(im)im.removeAttribute('src'); document.body.style.overflow=''; };
     var cfLB={list:[],idx:0};
     function cfLBShow(){var lb=document.getElementById('cf-lightbox'),im=document.getElementById('cf-lightbox-img');if(!lb||!im)return;im.src=cfLB.list[cfLB.idx]||'';var multi=cfLB.list.length>1;lb.classList.toggle('gallery',multi);var c=document.getElementById('cf-lb-count');if(c)c.textContent=multi?(cfLB.idx+1)+' / '+cfLB.list.length:'';lb.classList.add('open');document.body.style.overflow='hidden';}
-    window.cfGOpen=function(imgEl){var g=imgEl.closest?imgEl.closest('.cf-gallery'):null;var nodes=g?g.querySelectorAll('.cf-gslide img'):[imgEl];var list=[],idx=0;for(var i=0;i<nodes.length;i++){list.push(nodes[i].getAttribute('data-full')||nodes[i].src);if(nodes[i]===imgEl)idx=i;}cfLB={list:list,idx:idx};cfLBShow();};
+    window.cfGOpen=function(imgEl){var g=imgEl.closest?imgEl.closest('.cf-gallery'):null;var nodes=g?g.querySelectorAll('.cf-gslide:not(.cf-vslide) img'):[imgEl];var list=[],idx=0;for(var i=0;i<nodes.length;i++){list.push(nodes[i].getAttribute('data-full')||nodes[i].src);if(nodes[i]===imgEl)idx=i;}cfLB={list:list,idx:idx};cfLBShow();};
     window.cfLBNav=function(dir){if(!cfLB.list.length)return;cfLB.idx=(cfLB.idx+dir+cfLB.list.length)%cfLB.list.length;cfLBShow();};
-    window.cfGSlide=function(btn,dir){var g=btn.closest('.cf-gallery');if(!g)return;var tr=g.querySelector('.cf-gtrack');if(!tr)return;var w=tr.clientWidth||1;var nn=tr.children.length;var idx=Math.round(tr.scrollLeft/w)+dir;idx=Math.max(0,Math.min(nn-1,idx));tr.scrollTo({left:idx*w,behavior:'smooth'});var c=g.querySelector('.cf-gidx');if(c)c.textContent=(idx+1);};
-    window.cfGScroll=function(tr){var g=tr.closest&&tr.closest('.cf-gallery');if(!g)return;var w=tr.clientWidth||1;var idx=Math.round(tr.scrollLeft/w);var c=g.querySelector('.cf-gidx');if(c)c.textContent=(idx+1);};
+    window.cfGSlide=function(btn,dir){var g=btn.closest('.cf-gallery');if(!g)return;try{cfStopVideos();}catch(_v){}var tr=g.querySelector('.cf-gtrack');if(!tr)return;var w=tr.clientWidth||1;var nn=tr.children.length;var idx=Math.round(tr.scrollLeft/w)+dir;idx=Math.max(0,Math.min(nn-1,idx));tr.scrollTo({left:idx*w,behavior:'smooth'});var c=g.querySelector('.cf-gidx');if(c)c.textContent=(idx+1);};
+    window.cfGScroll=function(tr){var g=tr.closest&&tr.closest('.cf-gallery');if(!g)return;var w=tr.clientWidth||1;var idx=Math.round(tr.scrollLeft/w);var c=g.querySelector('.cf-gidx');if(c)c.textContent=(idx+1);if(idx>0&&g.querySelector('.cf-vslide.cf-playing')){try{cfStopVideos();}catch(_v){}}};
     window.cfCheckCrop=function(img){ try{ var box=img.parentNode; if(!box)return; var bw=box.clientWidth,bh=box.clientHeight||180,nw=img.naturalWidth,nh=img.naturalHeight; if(!bw||!nw||!nh)return; var scale=Math.max(bw/nw,bh/nh); var vis=(bw/(nw*scale))*(bh/(nh*scale)); if(vis<0.8)box.classList.add('is-cropped'); }catch(e){} };
     document.addEventListener('keydown',function(e){ var lb=document.getElementById('cf-lightbox'); if(!lb||!lb.classList.contains('open'))return; if(e.key==='Escape'||e.key==='Esc'){window.cfCloseLightbox();} else if(e.key==='ArrowRight'){window.cfLBNav(1);} else if(e.key==='ArrowLeft'){window.cfLBNav(-1);} });
     window.cfPassToggle=function(btn){var wrap=(btn.closest?btn.closest('.article-card'):null)||btn.parentNode;var extra=wrap.querySelector('.cf-pass-extra');if(!extra)return;var open=extra.classList.toggle('open');btn.innerHTML=open?'Read less \u2191':'Read more \u2193';};
@@ -2700,7 +2725,7 @@
       }
       var up=x.date?(x.date>=today):true;
       var _imgs=x.imgs||[]; var banner='';
-      var _vb=cfVideoBanner(x);
+      var _vb=cfMedia(x);
       if(_vb){ banner=_vb; }
       else if(_imgs.length>1){
         var _gs=_imgs.map(function(u){return '<div class="cf-gslide"><img src="'+attr(u)+'" alt="'+attr(x.title)+'" loading="lazy" data-full="'+attr(u)+'" onclick="cfGOpen(this)"></div>';}).join('');
@@ -2886,8 +2911,21 @@
     }
     function cfDvMedia(x){
       var imgs=x.imgs||[];
-      var vb=cfVideoBanner(x);
-      if(vb) return vb;
+      var vd=cfVideo(x.video);
+      if(vd&&vd.kind!=='link'){
+        var ph=x.imgs||[];
+        var pst=ph[0]||vd.poster;
+        if(pst){
+          /* video on top, then every photo stacked down the panel */
+          var h='<div class="cf-banner cf-vslide" data-embed="'+attr(vd.embed)+
+                '" data-poster="'+attr(pst)+'">'+cfVShell(pst,x.title)+'</div>';
+          for(var pi=0;pi<ph.length;pi++){
+            h+='<img class="cf-dvphoto" src="'+attr(ph[pi])+'" alt="'+attr(x.title)+
+               '" loading="lazy" data-full="'+attr(ph[pi])+'" onclick="cfDvPhoto(this)">';
+          }
+          return h;
+        }
+      }
       if(imgs.length>1){
         var gs=imgs.map(function(u){return '<div class="cf-gslide"><img src="'+attr(u)+'" alt="'+attr(x.title)+'" loading="lazy" data-full="'+attr(u)+'" onclick="cfGOpen(this)"></div>';}).join('');
         return '<div class="cf-banner cf-gallery"><div class="cf-gtrack" onscroll="cfGScroll(this)">'+gs+'</div>'+
@@ -3026,7 +3064,12 @@
       +'#community-feed .cf-vplay:hover .cf-vbtn{background:#B94218}'
       +'#community-feed .cf-vtag{position:absolute;left:8px;top:8px;font-family:sans-serif;font-size:10.5px;font-weight:700;letter-spacing:.04em;color:#fff;background:rgba(0,0,0,.6);padding:4px 8px;border-radius:5px;pointer-events:none}'
       +'#community-feed .cf-banner iframe{width:100%;height:100%;border:0;display:block}'
-      +'#community-feed .cf-banner.cf-playing .cf-vtag{display:none}'
+      +'#community-feed .cf-vslide.cf-playing .cf-vtag{display:none}'
+      +'#community-feed .cf-gslide iframe{width:100%;height:100%;border:0;display:block}'
+      +'.cf-focus-panel .cf-dvphoto{width:100%;display:block;cursor:zoom-in;border-top:1px solid #e0dbd0}'
+      +'.cf-focus-panel .cf-banner.cf-vslide{width:100%;aspect-ratio:2/1;overflow:hidden;position:relative}'
+      +'.cf-focus-panel .cf-banner.cf-vslide img{width:100%;height:100%;object-fit:cover;display:block}'
+      +'.cf-focus-panel .cf-banner.cf-vslide iframe{width:100%;height:100%;border:0;display:block}'
       +'.cf-dp-on #cf-list .article-headline,.cf-dp-on #cf-cal .article-headline{cursor:pointer}'
       +'.cf-dp-on #cf-list .article-headline:hover,.cf-dp-on #cf-cal .article-headline:hover{color:#B94218}';
       var s=document.createElement('style'); s.textContent=css; document.head.appendChild(s);
