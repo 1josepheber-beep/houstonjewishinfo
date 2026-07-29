@@ -3489,6 +3489,20 @@ window.addEventListener('resize',function(){var m=document.getElementById('hji-j
     side.innerHTML=html;
   }
   window.shSetCat=function(k,el){curCat=k;var s=document.getElementById('sh-side');if(s)s.querySelectorAll('.sh-sidebar-item').forEach(function(n){n.classList.remove('active');});if(el)el.classList.add('active');shRender();};
+  /* Accepts whatever was pasted into the VideoID column: a full YouTube URL
+     in any of its forms (watch?v= / youtu.be / shorts / live / embed /
+     m.youtube, with or without ?si= tracking junk) OR a bare 11-character
+     id, which is what every existing row already holds. Returns '' if it
+     can't find an id, so a bad paste renders no player instead of a dead
+     one. Output is always [A-Za-z0-9_-]{11}, which also makes it safe to
+     drop into the inline onclick below. */
+  function shVideoId(raw){
+    var v=String(raw||'').trim();
+    if(!v) return '';
+    if(/^[A-Za-z0-9_-]{11}$/.test(v)) return v;
+    var m=v.match(/(?:youtube\.com\/(?:watch\?(?:.*&)?v=|shorts\/|embed\/|live\/|v\/)|youtu\.be\/)([A-Za-z0-9_-]{11})/i);
+    return m ? m[1] : '';
+  }
   window.shPlay=function(el,id){el.outerHTML='<iframe width="100%" height="150" style="border:0;display:block;border-radius:6px" src="https://www.youtube.com/embed/'+id+'?autoplay=1" allow="autoplay" allowfullscreen></iframe>';};
   window.shRender=function(){
     var grid=document.getElementById('sh-content');if(!grid)return;
@@ -3503,7 +3517,8 @@ window.addEventListener('resize',function(){var m=document.getElementById('hji-j
       n++;
       var badge=BADGE[k]||'shg-other';var blabel=(LABEL[k]||'More').replace(/^\S+\s/,'');
       var media='';var im=imgs(r.image);
-      if(String(r.videoid||'').trim())media='<div class="shg-media"><div class="shg-play" onclick="shPlay(this,\''+esc(String(r.videoid).trim())+'\')"><span>▶</span></div></div>';
+      var _vid=shVideoId(r.videoid);
+      if(_vid)media='<div class="shg-media"><div class="shg-play" onclick="shPlay(this,\''+_vid+'\')"><span>▶</span></div></div>';
       else if(im.length)media='<div class="shg-media"><img src="'+esc(im[0])+'" alt="'+esc(r.title)+'"></div>';
       var stepsArr=String(r.steps||'').split(/\n|\s*\|\s*/).map(function(x){return x.trim();}).filter(Boolean);
       var steps=stepsArr.length?'<details><summary>▸ Show steps</summary><ol class="shg-steps">'+stepsArr.map(function(x){return '<li>'+esc(x)+'</li>';}).join('')+'</ol></details>':'';
