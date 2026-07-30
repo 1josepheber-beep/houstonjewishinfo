@@ -663,7 +663,20 @@ function enterApp(){
       if(res&&res.ok&&res.total>0){openReview();}
       else{selectInitialCollection();}
     }).catch(function(){selectInitialCollection();});
-    setInterval(function(){checkPending();},60000);
+    /* Poll ONLY while the tab is actually in front. A backgrounded or
+       minimised admin now costs nothing instead of firing every minute
+       for as long as it stays open. Switching back checks immediately. */
+    (function(){
+      var iv=null;
+      function start(){ if(iv)return; iv=setInterval(function(){checkPending();},60000); }
+      function stop(){ if(!iv)return; clearInterval(iv); iv=null; }
+      document.addEventListener('visibilitychange',function(){
+        if(document.hidden){ stop(); }
+        else { checkPending(); start(); }
+      });
+      window.addEventListener('pagehide',stop);
+      if(!document.hidden) start();
+    })();
   } else {
     selectInitialCollection();
   }
