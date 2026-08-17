@@ -1619,12 +1619,40 @@ function toggleCat(cn){
     else if(r.getAttribute('data-catkey')===cn){ r.style.display=open?'':'none'; }
   });
 }
+/* Which columns the list shows. The old rule was "first four in the sheet",
+   which buried the headline behind Image and VideoURL — two long URLs that
+   tell you nothing at a glance. Now the name column always comes first, and
+   media / long-text / bookkeeping columns are pushed to the back so they only
+   appear if there is nothing better to show. */
+function pickListCols(headers,statusCol){
+  var avail=headers.filter(function(h){return h!==statusCol;});
+  if(!avail.length)return [];
+  function isTitle(h){return /^(headline|title|name|business\s*name|position|job\s*title)$/i.test(String(h).trim());}
+  function isLabel(h){return /^(label|category|type|section|tag)s?$/i.test(String(h).trim());}
+  function isDate(h){return /^(date|posted|published|start\s*date|event\s*date)$/i.test(String(h).trim());}
+  function isDull(h){return /(image|img|photo|logo|video|thumb|hechsher|favicon|icon|url|link|flyer|excerpt|description|body|content|details|notes?|message|pageid|slug|uuid)/i.test(String(h));}
+  var title=avail.filter(isTitle)[0];
+  if(!title){ title=avail.filter(function(h){return !isDull(h);})[0] || avail[0]; }
+  var rest=avail.filter(function(h){return h!==title;});
+  var out=[title];
+  ['label','date','good'].forEach(function(kind){
+    rest.forEach(function(h){
+      if(out.indexOf(h)>=0)return;
+      var ok = kind==='label' ? isLabel(h)
+             : kind==='date'  ? isDate(h)
+             : !isDull(h);
+      if(ok)out.push(h);
+    });
+  });
+  rest.forEach(function(h){ if(out.indexOf(h)<0)out.push(h); });
+  return out.slice(0,4);
+}
 function renderTable(){
   if(!S.rows.length){$('content').innerHTML=feedNote(S.current)+'<div class="empty">No entries yet in <b>'+S.current+'</b>.'+(S.mode==='full'?'<br>Use “+ Add new” to create the first one.':'')+'</div>';return;}
   var statusCol=S.headers.find(function(h){return STATUSY.indexOf(h)>=0;});
   var showCols;
   if(S.current==='Comments'){ showCols=['Name','Comment','Date'].filter(function(h){return S.headers.indexOf(h)>=0;}); }
-  else { showCols=S.headers.filter(function(h){return h!==statusCol;}).slice(0,4); }
+  else { showCols=pickListCols(S.headers,statusCol); }
   var t=el('table'),thead=el('thead'),trh=el('tr');
   showCols.forEach(function(h,i){trh.appendChild(el('th',i>1?'hideMobile':null,h));});
   if(statusCol)trh.appendChild(el('th',null,statusCol));
