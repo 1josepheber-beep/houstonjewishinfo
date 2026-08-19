@@ -2557,7 +2557,7 @@
       stories.forEach(function(r){if(!active(r)||!r.headline)return;
         out.push({type:'news',comments:cfAllow(r),_row:r._row,pageid:(r.pageid||''),date:parseDate(r._cells.date),time:'',title:r.headline,cat:r.label||'',org:r.byline||'',loc:'',desc:r.excerpt||'',video:(r.videourl||r.video||''),img:imgList(r.image,STORY_IMG)[0]||'',imgs:imgList(r.image,STORY_IMG),link:r.linkurl||'',linkText:r.linktext||'Read More \u2192',women:false});});
       events.forEach(function(r){if(!active(r)||!r.title)return;
-        out.push({type:'event',comments:cfAllow(r),_row:r._row,date:parseDate(r._cells.date),time:r.time||'',title:r.title,cat:r.category||'Event',org:r.presenter||'',loc:r.location||'',desc:r.description||'',video:(r.videourl||r.video||''),img:imgList(r.imageurl,EVENT_IMG)[0]||'',imgs:imgList(r.imageurl,EVENT_IMG),link:r.ticketurl||'',linkText:(r.buttontext||'More Details'),women:String(r.women||'').toLowerCase().trim()==='yes'});});
+        out.push({type:'event',comments:cfAllow(r),_row:r._row,date:parseDate(r._cells.date),time:r.time||'',title:r.title,cat:r.category||'',org:r.presenter||'',loc:r.location||'',desc:r.description||'',video:(r.videourl||r.video||''),img:imgList(r.imageurl,EVENT_IMG)[0]||'',imgs:imgList(r.imageurl,EVENT_IMG),link:r.ticketurl||'',linkText:(r.buttontext||'More Details'),women:String(r.women||'').toLowerCase().trim()==='yes'});});
       mazals.forEach(function(r){if(!active(r)||!r.name)return;
         out.push({type:'mazal',comments:cfAllow(r),_row:r._row,date:mazalDate(r),time:'',title:r.name,cat:r.type||'',org:'',loc:r.city||'',desc:r.message||'',img:'',imgs:[],link:(r.buttonlink||r.linkurl||''),linkText:(r.buttontext||r.linktext||'More Details'),women:false});});
       (passings||[]).forEach(function(r){if(!active(r)||!r.name)return;
@@ -2685,9 +2685,19 @@
       fundraiser:'cf-lab-fundraiser',event:'cf-lab-event',update:'cf-lab-update',reminder:'cf-lab-reminder'};
     /* Split the Label field on commas and render one badge per label.
        Any label containing "alert" gets the red treatment. Blank = no badges. */
-    function cfLabelTags(raw){
+    function cfLabelTags(raw,type){
       var v=String(raw==null?'':raw).trim();
       if(!v) return '';
+      /* The type chip (EVENT / MAZAL TOV / PASSING) is added automatically, so a
+         Category cell holding that same word would render the chip twice. Drop
+         any label that only repeats the type it is already sitting next to. */
+      if(type&&TYPE[type]){
+        var dup=String(TYPE[type]).toLowerCase().replace(/[^a-z0-9]+/g,'');
+        v=v.split(/\s*,\s*/).filter(function(p){
+          return p.trim().toLowerCase().replace(/[^a-z0-9]+/g,'')!==dup;
+        }).join(', ');
+        if(!v) return '';
+      }
       var parts=v.split(/\s*,\s*/);
       var out='';
       for(var i=0;i<parts.length;i++){
@@ -2746,7 +2756,7 @@
       var typeTag=(x.type==='news')?'':'<span class="cf-tag cf-type-'+x.type+'">'+esc(TYPE[x.type])+'</span>';
       /* Label can hold several values, comma-separated — render one badge each.
          Any label containing "alert" renders red. */
-      var catTag=(x.type!=='mazal')?cfLabelTags(x.cat):'';
+      var catTag=(x.type!=='mazal')?cfLabelTags(x.cat,x.type):'';
       var mi=[];
       if(x.loc)mi.push('<span>\uD83D\uDCCD '+esc(cleanLoc(x.loc))+'</span>');
       if(x.org)mi.push('<span>\u270D\uFE0F '+esc(x.org)+'</span>');
@@ -2955,7 +2965,7 @@
       var dline=x.date?'<span class="cf-dateline">'+(x.type==='passing'?'':'\uD83D\uDCC5 ')+esc(fmtDate(x.date))+(hebFmt(x.date)?' <span class="cf-hebdate">\u00b7 '+esc(hebFmt(x.date))+'</span>':'')+(firstLine(x.time)?' \u00b7 '+esc(firstLine(x.time)):'')+'</span>':'';
       /* Stories: no label = no badge at all (a plain post). Other types always show their tag. */
       var typeTag=(x.type==='news')?'':'<span class="cf-tag cf-type-'+x.type+'">'+esc(TYPE[x.type])+'</span>';
-      var catTag=(x.type!=='mazal')?cfLabelTags(x.cat):'';
+      var catTag=(x.type!=='mazal')?cfLabelTags(x.cat,x.type):'';
       var mzTag=(x.type==='mazal'&&x.cat)?'<span class="cf-tag cf-tag-mz">'+esc(x.cat).toUpperCase()+'</span>':'';
       var media=(x.type==='passing'&&!x.img)?'<div class="cf-banner cf-focus-candle">'+CANDLE_SVG+'</div>':cfDvMedia(x);
       var bdhe=(x.type==='passing')?'<div class="cf-bdhe">Baruch Dayan HaEmes</div>':'';
