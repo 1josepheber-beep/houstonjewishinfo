@@ -180,7 +180,13 @@
   .re-tag.kosher { background: #fff8e6; color: #9a6200; }
   .re-tag.shabbat { background: #f0ebff; color: #6a2a9a; }
   .re-tag.jewish { background: #edf7ed; color: #2a7a2a; }
-  .re-card-desc { font-size: 13px; color: #555; line-height: 1.6; margin-bottom: 10px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  /* The clamp now lives on .clamped, which reDescToggles() adds only when the
+     text actually overflows — so a long description can be opened instead of
+     being cut off at two lines with no way to read the rest. */
+  .re-card-desc { font-size: 13px; color: #555; line-height: 1.6; margin-bottom: 10px; }
+  .re-card-desc.clamped { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .re-desc-more { background: none; border: none; padding: 0; margin: -4px 0 10px; font-family: sans-serif; font-size: 12.5px; font-weight: 700; color: var(--gold); cursor: pointer; }
+  .re-desc-more:hover { text-decoration: underline; }
   .re-card-contact { display: flex; gap: 14px; font-family: sans-serif; font-size: 11px; flex-wrap: wrap; }
     .re-card-foot{ padding-top:10px; margin-top:8px; border-top:1px solid var(--border); }
     .re-share{ display:inline-flex; align-items:center; gap:5px; background:none; border:none; padding:0; cursor:pointer; font-family:sans-serif; font-size:12px; font-weight:700; color:var(--navy); }
@@ -990,6 +996,26 @@ function renderListings(){
   document.getElementById('re-grid').innerHTML=filtered.length===0
     ?'<div class="re-empty"><strong>No listings yet</strong><span>Be the first to post a property for sale or rent!</span></div>'
     :filtered.map(buildCard).join('');
+  reDescToggles();
+}
+
+/* Add a Read more / Show less button to any description that is taller than the
+   two-line clamp. Measured after render, so short descriptions get no button. */
+function reDescToggles(){
+  document.querySelectorAll('.re-card-desc').forEach(function(d){
+    if(d.getAttribute('data-clamp-done'))return;
+    d.setAttribute('data-clamp-done','1');
+    d.classList.add('clamped');
+    if(d.scrollHeight - d.clientHeight < 6) return;   // fits already
+    var b=document.createElement('button');
+    b.type='button'; b.className='re-desc-more'; b.textContent='Read more \u2193';
+    b.onclick=function(ev){
+      if(ev){ev.preventDefault();ev.stopPropagation();}
+      var collapsed=d.classList.toggle('clamped');
+      b.textContent = collapsed ? 'Read more \u2193' : 'Show less \u2191';
+    };
+    if(d.parentNode) d.parentNode.insertBefore(b, d.nextSibling);
+  });
 }
 
 window.reShare=function(ev,id){
