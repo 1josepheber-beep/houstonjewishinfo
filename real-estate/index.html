@@ -276,8 +276,10 @@
     .list-cta { flex-direction: column; text-align: center; }
     .form-row, .form-row-3 { grid-template-columns: 1fr; }
     .modal { padding: 20px 16px; }
-    .re-tabs { overflow-x: auto; -webkit-overflow-scrolling: touch; }
-    .re-tab { white-space: nowrap; font-size: 11px; padding: 8px 14px; }
+    /* Four tabs no longer fit on one phone row, so lay them out 2x2 rather
+       than letting the fourth run off the right edge. */
+    .re-tabs { display: grid; grid-template-columns: 1fr 1fr; overflow: visible; }
+    .re-tab { white-space: nowrap; font-size: 11px; padding: 9px 6px; text-align: center; }
     .payment-methods { flex-direction: column; }
     .nav-bar a { font-size: 9.5px !important; padding: 8px 7px !important; }
   }
@@ -1005,7 +1007,7 @@ window.reOpenShared=function(id){
   var known=false; for(var i=0;i<allListings.length;i++){ if(reId(allListings[i])===id){ known=true; break; } }
   if(!known) return true;
   var sb=document.getElementById('re-search'); if(sb) sb.value='';
-  document.querySelectorAll('.re-filters input[type=checkbox]').forEach(function(el){ el.checked=(el.value==='sale'||el.value==='rent'); });
+  reResetTypeChecks();
   var allTab=null; document.querySelectorAll('.re-tab').forEach(function(t){ if((t.getAttribute('onclick')||'').indexOf("'all'")>-1) allTab=t; });
   if(allTab){ try{ switchTab('all', allTab); }catch(e){ currentTab='all'; renderListings(); } } else { currentTab='all'; renderListings(); }
   setTimeout(function(){
@@ -1024,6 +1026,17 @@ window.reOpenShared=function(id){
 };
 (function(){ var m=(location.hash||'').match(/^#re-(.+)$/); if(!m) return; var id=m[1], n=0; var iv=setInterval(function(){ n++; if((window.reOpenShared&&reOpenShared(id))||n>90){ clearInterval(iv); } },200); })();
 
+/* Feature checkboxes, as opposed to LISTING TYPE checkboxes. Both resets below
+   turn every type ON and every feature OFF. Listing the features (rather than
+   the types) means any type added later is included automatically instead of
+   being silently unchecked — that is what was hiding short-term listings when
+   someone opened a shared link. */
+var RE_FEATURE_VALUES=['kosher','synagogue','pool','garage','jewish'];
+function reResetTypeChecks(){
+  document.querySelectorAll('.re-filters input[type=checkbox]').forEach(function(el){
+    el.checked = RE_FEATURE_VALUES.indexOf(el.value)<0;
+  });
+}
 function switchTab(tab,btn){
   currentTab=tab;
   document.querySelectorAll('.re-tab').forEach(function(b){ b.classList.remove('active'); });
@@ -1032,7 +1045,7 @@ function switchTab(tab,btn){
 }
 
 function resetFilters(){
-  document.querySelectorAll('.re-filters input[type=checkbox]').forEach(function(el){ el.checked=(el.value==='sale'||el.value==='rent'); });
+  reResetTypeChecks();
   document.getElementById('re-search').value='';
   currentTab='all';
   document.querySelectorAll('.re-tab').forEach(function(b){ b.classList.remove('active'); });
