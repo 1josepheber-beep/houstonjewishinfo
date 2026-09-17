@@ -571,10 +571,272 @@ function toast(msg,bad){var t=$('toast');t.textContent=msg;t.className='toast sh
 function alertToast(k){var t=$('toast');t.textContent='🔔 '+k+' new submission'+(k>1?'s':'')+' — tap to review';t.className='toast show';t.style.cursor='pointer';t.onclick=function(){openReview();t.className='toast';};setTimeout(function(){t.className='toast';},6000);}
 
 /* ====================== BACKEND ====================== */
-function api(action, extra){
+/* ============================================================
+   DIRECT SUPABASE LAYER
+   ------------------------------------------------------------
+   Every screen in this admin goes through api(). Until now that
+   meant a round trip to Apps Script for each click — six to
+   thirteen seconds apiece. Reading and writing Supabase straight
+   from the browser takes about a fifth of a second.
+
+   Two actions still go to Apps Script, and have to: uploading an
+   image commits to GitHub, and rebuilding the share pages writes
+   files there too. Both need the GitHub token, which cannot live
+   in a page anyone can view.
+
+   SIGNING IN
+   The anon key below is public by design. It is the signed-in
+   session that permits writing — the security rules allow reads
+   from anyone and writes only from an authenticated user. So the
+   login now signs in to Supabase as well. Set that user's
+   password to the same one you type here and nothing about the
+   login screen changes.
+   ============================================================ */
+
+var SB_URL  = 'https://qoqfrnnropxjpjjfuhhi.supabase.co';
+var SB_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFvcWZybm5yb3B4anBqamZ1aGhpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk2NDAyMTYsImV4cCI6MjEwNTIxNjIxNn0.c4-i7IbCPAzGzIYA-8fWZSa-JNfGKgHvf9UM1HN5GI8';
+
+/* The Supabase user the admin signs in as. */
+var SB_EMAIL = 'info@houstonjewishinfo.com';
+
+var SB = { token: null, refresh: null };
+
+var SB_MAP = {
+  'Hechsherim':{t:'hechsherim',pk:'id',c:[['Name','name','text'],['Image','image','text'],['Authority','authority','text']]},
+  'Resources':{t:'resources',pk:'id',c:[['Label','label','text'],['Sub','sub','text'],['Link','link','text'],['Icon','icon','text'],['Color','color','text'],['Order','sort_order','integer'],['Active','active','text']]},
+  'Comments':{t:'comments',pk:'id',c:[['CommentID','commentid','text'],['Date','date','text'],['PostID','postid','text'],['Comment','comment','text'],['PostType','posttype','text'],['Name','name','text'],['Approved','approved','text']]},
+  'Popups':{t:'popups',pk:'id',c:[['Target','target','text'],['Title','title','text'],['Message','message','text'],['Image','image','text'],['ButtonText','buttontext','text'],['ButtonLink','buttonlink','text'],['ShowFrom','showfrom','date'],['ShowUntil','showuntil','date'],['Repeat','repeat_mode','text'],['Active','active','text']]},
+  'Stories':{t:'stories',pk:'id',c:[['Image','image','text'],['VideoURL','videourl','text'],['Label','label','text'],['Date','date','date'],['Headline','headline','text'],['Excerpt','excerpt','text'],['Byline','byline','text'],['LinkURL','linkurl','text'],['LinkText','linktext','text'],['AllowComments','allowcomments','text'],['Status','status','text'],['PageID','pageid','text']]},
+  'Passings':{t:'passings',pk:'id',c:[['Name','name','text'],['Date','date','date'],['City','city','text'],['Image','image','text'],['Levaya','levaya','text'],['Shiva','shiva','text'],['Message','message','text'],['LinkText','linktext','text'],['LinkURL','linkurl','text'],['AllowComments','allowcomments','text'],['Status','status','text']]},
+  'Events':{t:'events',pk:'id',c:[['Title','title','text'],['Date','date','date'],['Time','time','text'],['Location','location','text'],['Description','description','text'],['Category','category','text'],['VideoURL','videourl','text'],['ImageURL','imageurl','text'],['TicketURL','ticketurl','text'],['ButtonText','buttontext','text'],['Presenter','presenter','text'],['Women','women','text'],['AllowComments','allowcomments','text'],['Status','status','text'],['PageID','pageid','text']]},
+  'RealEstate':{t:'realestate',pk:'id',c:[['Title','title','text'],['Type','type','text'],['Price','price','numeric'],['Address','address','text'],['Bedrooms','bedrooms','numeric'],['Bathrooms','bathrooms','numeric'],['SqFt','sqft','integer'],['Amenities','amenities','text'],['Description','description','text'],['Phone','phone','text'],['Email','email','text'],['Images','images','text'],['Status','status','text']]},
+  'Ads':{t:'ads',pk:'id',c:[['Placement','placement','text'],['Advertiser','advertiser','text'],['ImageURL','imageurl','text'],['LinkURL','linkurl','text'],['Status','status','text']]},
+  'Jobs':{t:'jobs',pk:'id',c:[['Title','title','text'],['Organization','organization','text'],['Type','type','text'],['Category','category','text'],['Status','status','text'],['Phone','phone','text'],['Email','email','text'],['Pay','pay','text'],['Description','description','text'],['ApplyURL','applyurl','text'],['Approved','approved','text']]},
+  'shuls':{t:'shuls',pk:'id',c:[['Name','name','text'],['Denomination','denomination','text'],['Image','image','text'],['Address','address','text'],['Phone','phone','text'],['Rabbi','rabbi','text'],['Website','website','text'],['ServiceTimes','servicetimes','text'],['Nusach','nusach','text'],['Status','status','text']]},
+  'Charities':{t:'charities',pk:'id',c:[['Name','name','text'],['Category','category','text'],['Logo','logo','text'],['Description','description','text'],['Website','website','text'],['Phone','phone','text'],['DonateURL','donateurl','text'],['CardImage','cardimage','text'],['Status','status','text']]},
+  'Education':{t:'education',pk:'id',c:[['Name','name','text'],['Category','category','text'],['Type','type','text'],['Image','image','text'],['Address','address','text'],['Phone','phone','text'],['Email','email','text'],['Head','head','text'],['Description','description','text'],['Website','website','text'],['Tuition','tuition','text'],['Status','status','text']]},
+  'KosherRestaurants':{t:'kosherrestaurants',pk:'id',c:[['Name','name','text'],['Description','description','text'],['Address','address','text'],['Phone','phone','text'],['Email','email','text'],['Website','website','text'],['Hours','hours','text'],['Badge','badge','text'],['Category','category','text'],['Kashrut','kashrut','text'],['Hechsher','hechsher','text'],['CardImage','cardimage','text'],['hide_reviews','hide_reviews','text'],['place_id','place_id','text'],['google_rating','google_rating','numeric'],['google_reviews_count','google_reviews_count','integer'],['google_reviews_updated','google_reviews_updated','timestamptz'],['Status','status','text']]},
+  'Services':{t:'services',pk:'id',c:[['Name','name','text'],['Category','category','text'],['Description','description','text'],['Address','address','text'],['Phone','phone','text'],['Email','email','text'],['Website','website','text'],['LinkText','linktext','text'],['LinkURL','linkurl','text'],['Hours','hours','text'],['Badge','badge','text'],['CardImage','cardimage','text'],['Hechsher','hechsher','text'],['hide_reviews','hide_reviews','text'],['place_id','place_id','text'],['google_rating','google_rating','numeric'],['google_reviews_count','google_reviews_count','integer'],['google_reviews_updated','google_reviews_updated','timestamptz'],['Status','status','text']]},
+  'MazalTov':{t:'mazaltov',pk:'id',c:[['Name','name','text'],['Type','type','text'],['Date','date','text'],['City','city','text'],['Message','message','text'],['LinkText','linktext','text'],['LinkURL','linkurl','text'],['AllowComments','allowcomments','text'],['Status','status','text']]},
+  'mikvahs':{t:'mikvahs',pk:'id',c:[['Name','name','text'],['Address','address','text'],['Phone','phone','text'],['Email','email','text'],['Website','website','text'],['Notes','notes','text'],['Status','status','text']]},
+  'Settings':{t:'settings',pk:'key',c:[['Key','key','text'],['Value','value','text']]},
+  'Activities':{t:'activities',pk:'id',c:[['Name','name','text'],['Category','category','text'],['IndoorOutdoor','indooroutdoor','text'],['URL','url','text'],['Address','address','text'],['Free','is_free','text'],['Hechsher','hechsher','text'],['Status','status','text']]},
+  'Eruv':{t:'eruv',pk:'id',c:[['area','area','text'],['lat','lat','numeric'],['lng','lng','numeric'],['zoom','zoom','numeric']]},
+  'Gemachim':{t:'gemachim',pk:'id',c:[['Name','name','text'],['Category','category','text'],['Lends','lends','text'],['ContactName','contactname','text'],['Phone','phone','text'],['Email','email','text'],['Website','website','text'],['Area','area','text'],['Hours','hours','text'],['Notes','notes','text'],['CardImage','cardimage','text'],['Status','status','text']]},
+  'SelfHelp':{t:'selfhelp',pk:'id',c:[['Title','title','text'],['Category','category','text'],['Summary','summary','text'],['Steps','steps','text'],['Safety','safety','text'],['VideoID','videoid','text'],['LinkURL','linkurl','text'],['LinkText','linktext','text'],['Image','image','text'],['Status','status','text']]}
+};
+
+function sbSpec(name){
+  if(SB_MAP[name]) return SB_MAP[name];
+  var k=Object.keys(SB_MAP);
+  for(var i=0;i<k.length;i++){ if(k[i].toLowerCase()===String(name).toLowerCase()) return SB_MAP[k[i]]; }
+  return null;
+}
+
+function sbHeaders(extra){
+  var h={ apikey:SB_ANON, Authorization:'Bearer '+(SB.token||SB_ANON) };
+  if(extra) for(var p in extra) h[p]=extra[p];
+  return h;
+}
+
+/* A rejected promise would leave a button stuck on "Saving…", so every
+   direct call resolves to the same {ok:false,error} shape the Apps
+   Script backend used to return. */
+function sbSafe(p){
+  return p.catch(function(e){ return { ok:false, error:String((e && e.message) || e) }; });
+}
+
+/* A Supabase session lasts about an hour. The admin is often left open
+   far longer than that, and without this every save would start failing
+   with no explanation once it lapsed. On a 401 we refresh the session
+   once and retry the request; only if that also fails does an error
+   reach the screen. */
+function sbRefresh(){
+  if(!SB.refresh) return Promise.resolve(false);
+  return fetch(SB_URL+'/auth/v1/token?grant_type=refresh_token',{
+    method:'POST',
+    headers:{ apikey:SB_ANON, 'Content-Type':'application/json' },
+    body:JSON.stringify({ refresh_token:SB.refresh })
+  }).then(function(r){ return r.json(); }).then(function(d){
+    if(d && d.access_token){ SB.token=d.access_token; if(d.refresh_token) SB.refresh=d.refresh_token; return true; }
+    return false;
+  }).catch(function(){ return false; });
+}
+
+function sbFetch(path, opts, retried){
+  opts = opts || {};
+  opts.headers = sbHeaders(opts.headers);
+  return fetch(SB_URL+'/rest/v1/'+path, opts).then(function(r){
+    if(r.status===401 && !retried){
+      return sbRefresh().then(function(ok){
+        if(!ok) throw new Error('Session expired — log in again.');
+        return sbFetch(path, { method:opts.method, body:opts.body,
+                               headers:opts.rawHeaders||null }, true);
+      });
+    }
+    return r;
+  });
+}
+
+/* Sign in. Returns true on success. The password is the same one
+   used for the Apps Script calls that remain. */
+function sbLogin(password){
+  return fetch(SB_URL+'/auth/v1/token?grant_type=password',{
+    method:'POST',
+    headers:{ apikey:SB_ANON, 'Content-Type':'application/json' },
+    body:JSON.stringify({ email:SB_EMAIL, password:password })
+  }).then(function(r){ return r.json(); }).then(function(d){
+    if(d && d.access_token){ SB.token=d.access_token; SB.refresh=d.refresh_token||null; return true; }
+    return false;
+  }).catch(function(){ return false; });
+}
+
+/* Blank has to become null: Postgres rejects '' for a date or a
+   number, and a blank is not the same thing as a zero. */
+function sbIn(v,type){
+  if(v===null||v===undefined) return null;
+  var s=String(v).trim();
+  if(s==='') return null;
+  if(type==='date'){
+    var m=s.match(/^(\d{4})-(\d{2})-(\d{2})/);
+    if(m) return m[1]+'-'+m[2]+'-'+m[3];
+    var d=new Date(s);
+    if(isNaN(d.getTime())) return null;
+    var p=function(n){return (n<10?'0':'')+n;};
+    return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate());
+  }
+  if(type==='timestamptz'){ var dt=new Date(s); return isNaN(dt.getTime())?null:dt.toISOString(); }
+  if(type==='numeric'||type==='integer'){
+    var n=parseFloat(s.replace(/[^0-9.\-]/g,''));
+    if(isNaN(n)) return null;
+    return type==='integer'?Math.round(n):n;
+  }
+  if(type==='boolean'){ var t=s.toLowerCase(); return (t==='yes'||t==='true'||t==='on'||t==='1'); }
+  return s;
+}
+function sbOut(v){ return (v===null||v===undefined)?'':String(v); }
+
+function sbRows(spec,recs){
+  return recs.map(function(rec){
+    var o={_row:rec[spec.pk]};
+    for(var i=0;i<spec.c.length;i++) o[spec.c[i][0]]=sbOut(rec[spec.c[i][1]]);
+    return o;
+  });
+}
+
+function sbList(name){
+  var spec=sbSpec(name);
+  return sbFetch(spec.t+'?select=*&order=row_index.asc.nullslast', {})
+    .then(function(r){ if(!r.ok) throw new Error('read '+r.status); return r.json(); })
+    .then(function(recs){
+      return { ok:true, headers:spec.c.map(function(c){return c[0];}), rows:sbRows(spec,recs) };
+    });
+}
+
+function sbToRec(spec,data){
+  var rec={};
+  for(var i=0;i<spec.c.length;i++){
+    var header=spec.c[i][0], col=spec.c[i][1], type=spec.c[i][2];
+    if(data && Object.prototype.hasOwnProperty.call(data,header)) rec[col]=sbIn(data[header],type);
+  }
+  return rec;
+}
+
+function sbNextIndex(spec){
+  return sbFetch(spec.t+'?select=row_index&order=row_index.desc.nullslast&limit=1', {})
+    .then(function(r){ return r.json(); })
+    .then(function(a){ return ((a&&a[0]&&a[0].row_index)?Number(a[0].row_index):1)+1; })
+    .catch(function(){ return 9999; });
+}
+
+function sbCreate(name,data){
+  var spec=sbSpec(name);
+  var rec=sbToRec(spec,data);
+  return sbNextIndex(spec).then(function(ix){
+    rec.row_index=ix;
+    return sbFetch(spec.t,{
+      method:'POST',
+      headers:{ 'Content-Type':'application/json', Prefer:'return=representation' },
+      rawHeaders:{ 'Content-Type':'application/json', Prefer:'return=representation' },
+      body:JSON.stringify([rec])
+    });
+  }).then(function(r){
+    if(!r.ok) return r.text().then(function(t){ throw new Error(t.substring(0,200)); });
+    return r.json();
+  }).then(function(made){
+    return { ok:true, _row:(made&&made[0])?made[0][spec.pk]:null };
+  });
+}
+
+function sbUpdate(name,row,data){
+  var spec=sbSpec(name);
+  var patch=sbToRec(spec,data);
+  if(!Object.keys(patch).length) return Promise.resolve({ok:true});
+  return sbFetch(spec.t+'?'+spec.pk+'=eq.'+encodeURIComponent(row),{
+    method:'PATCH',
+    headers:{ 'Content-Type':'application/json', Prefer:'return=minimal' },
+    rawHeaders:{ 'Content-Type':'application/json', Prefer:'return=minimal' },
+    body:JSON.stringify(patch)
+  }).then(function(r){
+    if(!r.ok) return r.text().then(function(t){ throw new Error(t.substring(0,200)); });
+    return { ok:true };
+  });
+}
+
+function sbDelete(name,row){
+  var spec=sbSpec(name);
+  return sbFetch(spec.t+'?'+spec.pk+'=eq.'+encodeURIComponent(row),{
+    method:'DELETE', headers:{ Prefer:'return=minimal' }, rawHeaders:{ Prefer:'return=minimal' }
+  }).then(function(r){
+    if(!r.ok) return r.text().then(function(t){ throw new Error(t.substring(0,200)); });
+    return { ok:true };
+  });
+}
+
+/* One request instead of one per collection. */
+function sbPending(){
+  return sbFetch('pending_items?select=*&order=collection.asc,row_index.asc', {})
+    .then(function(r){ if(!r.ok) throw new Error('pending '+r.status); return r.json(); })
+    .then(function(recs){
+      var items=[],byTab={};
+      recs.forEach(function(p){
+        items.push({ sheet:p.collection, _row:p.row_id,
+                     label:sbOut(p.label)||'(untitled)', sub:sbOut(p.sub),
+                     approveField:p.approve_field, approveValue:p.approve_value });
+        byTab[p.collection]=(byTab[p.collection]||0)+1;
+      });
+      return { ok:true, total:items.length, items:items, byTab:byTab };
+    });
+}
+
+/* Image upload and share-page rebuild still need the GitHub token,
+   so they keep going through Apps Script. Everything else is direct. */
+var SB_VIA_SCRIPT = { uploadImage:1, rebuildSharePages:1 };
+
+function apiViaScript(action, extra){
   var payload = Object.assign({ action:action, token:S.token }, extra||{});
   return fetch(S.scriptUrl,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(payload)}).then(function(r){return r.json();});
 }
+
+function api(action, extra){
+  extra = extra || {};
+  if(SB_VIA_SCRIPT[action]) return apiViaScript(action, extra);
+  try{
+    if(action==='ping')    return Promise.resolve({ ok:!!SB.token, sheetId:S.sheetId });
+    if(action==='pending') return sbSafe(sbPending());
+    if(action==='list')    return sbSafe(sbList(extra.sheet));
+    if(action==='create')  return sbSafe(sbCreate(extra.sheet, extra.data));
+    if(action==='update')  return sbSafe(sbUpdate(extra.sheet, extra.row, extra.data));
+    if(action==='delete')  return sbSafe(sbDelete(extra.sheet, extra.row));
+  }catch(err){
+    return Promise.resolve({ ok:false, error:String(err && err.message || err) });
+  }
+  /* Anything not handled here still works the old way rather than
+     failing, so an action added later does not silently break. */
+  return apiViaScript(action, extra);
+}
+
+
 function gvizRead(tab){
   var url='https://docs.google.com/spreadsheets/d/'+S.sheetId+'/gviz/tq?tqx=out:json&headers=1&sheet='+encodeURIComponent(tab);
   return fetch(url).then(function(r){return r.text();}).then(function(text){
@@ -606,7 +868,9 @@ function showErr(m){var e=$('loginErr');e.textContent=m;e.style.display='block';
     if(S.scriptUrl){
       $('loginScreen').style.display='none';
       document.body.insertAdjacentHTML('beforeend','<div id="reSplash" style="position:fixed;inset:0;display:grid;place-items:center;font-family:sans-serif;font-size:15px;color:#13294b;background:#f4f6fa;z-index:9999">Reconnecting\u2026</div>');
-      api('ping').then(function(res){
+      sbLogin(S.token).then(function(okAuth){
+        return okAuth ? api('ping') : null;
+      }).then(function(res){
         var sp=$('reSplash'); if(sp)sp.remove();
         if(res&&res.ok){ S.sheetId=res.sheetId||S.sheetId; S.mode='full'; enterApp(); }
         else { forget(); $('loginScreen').style.display=''; }
@@ -623,7 +887,15 @@ $('btnConnect').onclick=function(){
   if(!S.scriptUrl){showErr('Paste your Apps Script /exec URL, or use "Just view my data".');return;}
   if(!S.token){showErr('Enter your password to connect for editing.');return;}
   $('btnConnect').disabled=true;$('btnConnect').textContent='Connecting…';
-  api('ping').then(function(res){
+  sbLogin(S.token).then(function(okAuth){
+    if(!okAuth){
+      $('btnConnect').disabled=false;$('btnConnect').textContent='Log in →';
+      showErr('Could not sign in. Check the password.');
+      return null;
+    }
+    return api('ping');
+  }).then(function(res){
+    if(res===null) return;
     $('btnConnect').disabled=false;$('btnConnect').textContent='Log in →';
     if(!res||!res.ok){showErr((res&&res.error)||'Could not connect. Check the password.');return;}
     S.sheetId=res.sheetId||S.sheetId;S.mode='full';remember();enterApp();
@@ -1640,12 +1912,38 @@ function toggleCat(cn){
     else if(r.getAttribute('data-catkey')===cn){ r.style.display=open?'':'none'; }
   });
 }
+/* Which columns the list shows. The old rule was "first four in the
+   sheet", which buried the headline behind Image and VideoURL — two
+   long URLs that tell you nothing at a glance. The name column now
+   comes first, and media / long-text / bookkeeping columns are pushed
+   to the back so they only appear if there is nothing better. */
+function pickListCols(headers,statusCol){
+  var avail=headers.filter(function(h){return h!==statusCol;});
+  if(!avail.length)return [];
+  function isTitle(h){return /^(headline|title|name|business\s*name|position|job\s*title)$/i.test(String(h).trim());}
+  function isLabel(h){return /^(label|category|type|section|tag)s?$/i.test(String(h).trim());}
+  function isDate(h){return /^(date|posted|published|start\s*date|event\s*date)$/i.test(String(h).trim());}
+  function isDull(h){return /(image|img|photo|logo|video|thumb|hechsher|favicon|icon|url|link|flyer|excerpt|description|body|content|details|notes?|message|pageid|slug|uuid)/i.test(String(h));}
+  var title=avail.filter(isTitle)[0];
+  if(!title){ title=avail.filter(function(h){return !isDull(h);})[0] || avail[0]; }
+  var rest=avail.filter(function(h){return h!==title;});
+  var out=[title];
+  ['label','date','good'].forEach(function(kind){
+    rest.forEach(function(h){
+      if(out.indexOf(h)>=0)return;
+      var ok = kind==='label' ? isLabel(h) : kind==='date' ? isDate(h) : !isDull(h);
+      if(ok)out.push(h);
+    });
+  });
+  rest.forEach(function(h){ if(out.indexOf(h)<0)out.push(h); });
+  return out.slice(0,4);
+}
 function renderTable(){
   if(!S.rows.length){$('content').innerHTML=feedNote(S.current)+'<div class="empty">No entries yet in <b>'+S.current+'</b>.'+(S.mode==='full'?'<br>Use “+ Add new” to create the first one.':'')+'</div>';return;}
   var statusCol=S.headers.find(function(h){return STATUSY.indexOf(h)>=0;});
   var showCols;
   if(S.current==='Comments'){ showCols=['Name','Comment','Date'].filter(function(h){return S.headers.indexOf(h)>=0;}); }
-  else { showCols=S.headers.filter(function(h){return h!==statusCol;}).slice(0,4); }
+  else { showCols=pickListCols(S.headers,statusCol); }
   var t=el('table'),thead=el('thead'),trh=el('tr');
   showCols.forEach(function(h,i){trh.appendChild(el('th',i>1?'hideMobile':null,h));});
   if(statusCol)trh.appendChild(el('th',null,statusCol));
