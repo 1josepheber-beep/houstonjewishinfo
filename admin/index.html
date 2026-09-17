@@ -843,6 +843,119 @@ function apiViaScript(action, extra){
   return fetch(S.scriptUrl,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(payload)}).then(function(r){return r.json();});
 }
 
+/* ============================================================
+   SHRINK IMAGES BEFORE UPLOADING
+   ------------------------------------------------------------
+   A photo straight off a phone is two to four megabytes, and
+   until now that is exactly what went into the repo. A story a
+   week and the site slowly gets heavy again — which is how it
+   got heavy in the first place.
+
+   This resizes and re-encodes in the browser first, so a 3.4 MB
+   photo is committed as roughly 280 KB. Nothing about using the
+   admin changes: same button, same result on the site, and
+   uploads finish quicker because there is far less to send.
+
+   It will not make anything worse. If the re-encoded version is
+   not smaller, or the file is one that must not be touched, the
+   original is uploaded exactly as it was.
+   ============================================================ */
+
+/* How wide an image needs to be, per destination. A feed banner
+   displays about 800px wide, so 1600 covers a high-density screen
+   with nothing wasted. Ads and site banners are designed graphics
+   carrying small text, so they get a higher quality setting than
+   a photograph needs. */
+var HJI_IMG_RULES = [
+  { re:/images\/(stories|events)/,  maxW:1600, q:0.82 },
+  { re:/images\/ads/,               maxW:1600, q:0.90 },
+  { re:/images\/site/,              maxW:1600, q:0.90 },
+  { re:/images\/hechsher/,          maxW:400,  q:0.90 },
+  { re:/images\/(cards|charities|education|synagogues|realestate|passings|logos)/, maxW:1200, q:0.85 }
+];
+function hjiImgRule(folder){
+  var f=String(folder||'');
+  for(var i=0;i<HJI_IMG_RULES.length;i++){ if(HJI_IMG_RULES[i].re.test(f)) return HJI_IMG_RULES[i]; }
+  return { maxW:1200, q:0.85 };
+}
+
+function hjiRawB64(file){
+  return new Promise(function(resolve,reject){
+    var rd=new FileReader();
+    rd.onload=function(){ resolve(String(rd.result).split(',')[1]||''); };
+    rd.onerror=function(){ reject(new Error('Could not read '+(file.name||'file'))); };
+    rd.readAsDataURL(file);
+  });
+}
+
+/* Resolves to { b64, ext, converted, before, after }.
+   ext is what the saved filename must end in — a WebP saved as
+   .jpg would be served with the wrong content type. */
+function hjiPrepImage(file, folder){
+  var origExt=((file.name||'').split('.').pop()||'').toLowerCase();
+  var rule=hjiImgRule(folder);
+
+  function asIs(){
+    return hjiRawB64(file).then(function(b64){
+      return { b64:b64, ext:origExt||'jpg', converted:false, before:file.size, after:file.size };
+    });
+  }
+
+  /* SVG is vector — redrawing it as pixels makes it worse and often
+     larger. An animated GIF would lose its animation. Leave both. */
+  if(/^(svg|gif|ico|bmp)$/.test(origExt)) return asIs();
+  if(!/^image\//.test(file.type||'')) return asIs();
+
+  return new Promise(function(resolve){
+    var url=URL.createObjectURL(file);
+    var img=new Image();
+
+    img.onload=function(){
+      var w=img.naturalWidth, h=img.naturalHeight;
+      if(!w||!h){ URL.revokeObjectURL(url); return resolve(asIs()); }
+
+      var scale=(w>rule.maxW)?(rule.maxW/w):1;
+      var cw=Math.max(1,Math.round(w*scale)), ch=Math.max(1,Math.round(h*scale));
+
+      var cv=document.createElement('canvas'); cv.width=cw; cv.height=ch;
+      var cx=cv.getContext('2d');
+      /* Deliberately no white fill. The canvas starts transparent and
+         WebP keeps an alpha channel, so a logo with a see-through
+         background survives instead of gaining a white box behind it. */
+      cx.imageSmoothingEnabled=true; cx.imageSmoothingQuality='high';
+      cx.drawImage(img,0,0,cw,ch);
+      URL.revokeObjectURL(url);
+
+      cv.toBlob(function(blob){
+        /* Older Safari cannot write WebP. Check what came back rather
+           than trying to guess at the browser. */
+        if(!blob || !blob.size) return resolve(asIs());
+        if(blob.size >= file.size) return resolve(asIs());
+        var rd=new FileReader();
+        rd.onload=function(){
+          resolve({ b64:String(rd.result).split(',')[1]||'', ext:'webp', converted:true,
+                    before:file.size, after:blob.size });
+        };
+        rd.onerror=function(){ resolve(asIs()); };
+        rd.readAsDataURL(blob);
+      }, 'image/webp', rule.q);
+    };
+
+    img.onerror=function(){ URL.revokeObjectURL(url); resolve(asIs()); };
+    img.src=url;
+  });
+}
+
+function hjiSwapExt(name, ext){
+  return String(name||'image').replace(/\.[a-z0-9]+$/i,'') + '.' + ext;
+}
+
+/* " (92% smaller)" for the toast, or nothing if it was left alone. */
+function hjiSaved(p){
+  if(!p || !p.converted || !p.before) return '';
+  return ' (' + Math.round(100*(1-p.after/p.before)) + '% smaller)';
+}
+
 function api(action, extra){
   extra = extra || {};
   if(SB_VIA_SCRIPT[action]) return apiViaScript(action, extra);
@@ -1377,16 +1490,15 @@ function uploadSettingImage(key,file){
   if(f.size>10*1024*1024){toast('Image is larger than 10MB.',true);return;}
   var url=$('set-'+key), prev=$('setimg-'+key);
   var name=(cleanName(f.name)||('img-'+Date.now()))+'';
-  var rd=new FileReader();
-  rd.onload=function(){
-    var b64=((''+rd.result).split(',')[1])||'';
+  toast('Preparing…');
+  hjiPrepImage(f,'images/site').then(function(p){
+    var nm2=p.converted?hjiSwapExt(name,p.ext):name;
     toast('Uploading…');
-    api('uploadImage',{folder:'images/site',name:name,content:b64}).then(function(res){
-      if(res&&res.ok&&res.url){ if(url)url.value=res.url; if(prev){prev.src=res.url;prev.style.display='block';} toast('Uploaded ✓'); }
+    return api('uploadImage',{folder:'images/site',name:nm2,content:p.b64}).then(function(res){
+      if(res&&res.ok&&res.url){ if(url)url.value=res.url; if(prev){prev.src=res.url;prev.style.display='block';} toast('Uploaded ✓'+hjiSaved(p)); }
       else toast((res&&res.error)||'Upload failed.',true);
-    }).catch(function(){ toast('Could not reach the backend.',true); });
-  };
-  rd.readAsDataURL(f);
+    });
+  }).catch(function(){ toast('Could not reach the backend.',true); });
 }
 function buildSettingField(f,cur){
   var box=el('div','setfield');
@@ -1540,16 +1652,15 @@ function uploadAdImage(cid,fileInput){
   if(f.size>10*1024*1024){toast('Image is larger than 10MB.',true);return;}
   var name=cleanName(f.name)||('ad-'+Date.now());
   if(!/\.[a-z0-9]+$/i.test(name))name+='.jpg';
-  var rd=new FileReader();
-  rd.onload=function(){
-    var b64=String(rd.result).split(',')[1]||'';
+  toast('Preparing\u2026');
+  hjiPrepImage(f,'images/ads').then(function(p){
+    var nm2=p.converted?hjiSwapExt(name,p.ext):name;
     toast('Uploading\u2026');
-    api('uploadImage',{folder:'images/ads',name:name,content:b64}).then(function(res){
+    return api('uploadImage',{folder:'images/ads',name:nm2,content:p.b64}).then(function(res){
       if(res&&res.ok&&res.url){ var u=$('adimg-'+cid); if(u)u.value=res.url; var pv=$('adprev-'+cid); if(pv){pv.src=res.url;pv.style.display='block';} toast('Uploaded \u2713'); }
       else toast((res&&res.error)||'Upload failed.',true);
-    }).catch(function(){toast('Could not reach the backend.',true);});
-  };
-  rd.readAsDataURL(f);
+    });
+  }).catch(function(){toast('Could not reach the backend.',true);});
 }
 function adCardEl(area,card,pos){
   var cid=String(++S.adSeq);
@@ -2258,17 +2369,14 @@ function buildMultiImageField(h,val){
       var seq=start+i;
       var name=prefix+((fs.length>1||start>0)?'-'+(seq+1):'')+'.'+ext;
       st.textContent='Uploading '+(i+1)+' of '+fs.length+'\u2026';
-      var rd=new FileReader();
-      rd.onload=function(){
-        var b64=String(rd.result).split(',')[1]||'';
-        api('uploadImage',{folder:sectionImg().folder,name:name,content:b64}).then(function(res){
+      hjiPrepImage(f,sectionImg().folder).then(function(p){
+        var nm2=p.converted?hjiSwapExt(name,p.ext):name;
+        return api('uploadImage',{folder:sectionImg().folder,name:nm2,content:p.b64}).then(function(res){
           if(res&&res.ok&&res.url){list.push(String(res.url).replace(/,/g,'%2C'));ok++;sync();}
           else toast((res&&res.error)||('Upload failed: '+f.name),true);
           i++;step();
-        }).catch(function(){btn.disabled=false;st.textContent='';toast('Could not reach the backend.',true);});
-      };
-      rd.onerror=function(){btn.disabled=false;st.textContent='';toast('Could not read '+f.name,true);};
-      rd.readAsDataURL(f);
+        });
+      }).catch(function(){btn.disabled=false;st.textContent='';toast('Could not read '+f.name,true);});
     })();
   };
   upRow.appendChild(file);upRow.appendChild(nm);upRow.appendChild(btn);upRow.appendChild(st);
@@ -2310,16 +2418,16 @@ function buildSingleImageField(h,val){
     var name=cleanName(nm.value||f.name);
     if(!/\.[a-z0-9]+$/i.test(name))name+='.'+(((f.name.split('.').pop())||'jpg').toLowerCase());
     btn.disabled=true;st.textContent='Uploading\u2026';
-    var rd=new FileReader();
-    rd.onload=function(){
-      var b64=String(rd.result).split(',')[1]||'';
-      api('uploadImage',{folder:sectionImg().folder,name:name,content:b64}).then(function(res){
+    st.textContent='Preparing\u2026';
+    hjiPrepImage(f,sectionImg().folder).then(function(p){
+      var nm2=p.converted?hjiSwapExt(name,p.ext):name;
+      st.textContent='Uploading\u2026';
+      return api('uploadImage',{folder:sectionImg().folder,name:nm2,content:p.b64}).then(function(res){
         btn.disabled=false;
         if(!res||!res.ok){st.textContent='';toast((res&&res.error)||'Upload failed.',true);return;}
-        inp.value=res.url;setPrev(res.url);st.textContent='Uploaded \u2713';toast('Image uploaded \u2713');
-      }).catch(function(){btn.disabled=false;st.textContent='';toast('Could not reach the backend.',true);});
-    };
-    rd.readAsDataURL(f);
+        inp.value=res.url;setPrev(res.url);st.textContent='Uploaded \u2713';toast('Image uploaded \u2713'+hjiSaved(p));
+      });
+    }).catch(function(){btn.disabled=false;st.textContent='';toast('Could not reach the backend.',true);});
   };
   up.appendChild(file);up.appendChild(nm);up.appendChild(btn);up.appendChild(st);
   wrap.appendChild(inp);wrap.appendChild(el('div','imghint','Recommended size: '+imgSizeHint(S.current,h)));wrap.appendChild(prev);wrap.appendChild(up);
