@@ -96,7 +96,8 @@ h1{font-size:26px;line-height:1.25;color:var(--navy);margin:4px 0 8px}
 <script>(function(){
 var POST_ID="tropical-storm-bertha-being-closely-monito-1oxmcdx";
 var POST_TYPE="news";
-var SHEET_ID="1in7Ac7zknqyR9neWKOCAjOAG4jXCIVTJQfU6jJ72CV8";
+var SUPA="https://qoqfrnnropxjpjjfuhhi.supabase.co";
+var ANON="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFvcWZybm5yb3B4anBqamZ1aGhpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk2NDAyMTYsImV4cCI6MjEwNTIxNjIxNn0.c4-i7IbCPAzGzIYA-8fWZSa-JNfGKgHvf9UM1HN5GI8";
 var CM_URL="https://script.google.com/macros/s/AKfycbxD7luOdMRUJVSNkfDVepx8ctumtMcpfOGkVZRkEurv3lHWuCtXIo-dsSQw0pdUwlT_/exec";
 var TITLE="Tropical Storm Bertha Being Closely Monitored";
 document.getElementById("shbtn").onclick=function(){
@@ -116,17 +117,9 @@ document.getElementById("cmbtn").onclick=function(){
 function esc(t){return String(t==null?"":t).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c];});}
 function loadC(){
   var l=document.getElementById("cmlist");l.innerHTML="<div class='cmnote'>Loading…</div>";
-  var u="https://docs.google.com/spreadsheets/d/"+SHEET_ID+"/gviz/tq?tqx=out:json&headers=1&sheet=Comments&cb="+Date.now();
-  fetch(u).then(function(r){return r.text();}).then(function(t){
-    var j=JSON.parse(t.substring(t.indexOf("{"),t.lastIndexOf("}")+1));
-    var cols=(j.table.cols||[]).map(function(c){return (c.label||"").toLowerCase().trim();});
-    var a=[];
-    (j.table.rows||[]).forEach(function(row){
-      var o={};cols.forEach(function(col,i){var c=row.c?row.c[i]:null;o[col]=c?(c.f!=null?String(c.f):(c.v==null?"":String(c.v))):"";});
-      if(String(o.approved||"").toLowerCase().trim()!=="yes")return;
-      if((o.postid||"")!==POST_ID)return;
-      a.push({name:o.name||"Anonymous",comment:o.comment||"",date:o.date||""});
-    });
+  var u=SUPA+"/rest/v1/comments?select=name,comment,date&approved=eq.yes&postid=eq."+encodeURIComponent(POST_ID)+"&order=row_index.asc.nullslast";
+  fetch(u,{headers:{apikey:ANON,Authorization:"Bearer "+ANON}}).then(function(r){return r.json();}).then(function(recs){
+    var a=(recs||[]).map(function(o){return {name:o.name||"Anonymous",comment:o.comment||"",date:o.date||""};});
     if(!a.length){l.innerHTML="<div class='cmnote'>No comments yet — be the first.</div>";return;}
     var o2="";for(var i=0;i<a.length;i++){o2+="<div class='cm'><b>"+esc(a[i].name)+"</b><span>"+esc(a[i].date)+"</span><p>"+esc(a[i].comment)+"</p></div>";}
     l.innerHTML=o2;
