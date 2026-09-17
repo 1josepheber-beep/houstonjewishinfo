@@ -2,7 +2,7 @@
 <html lang="en"><head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>HJI — Sheets vs Supabase comparison (v2)</title>
+<title>HJI — Sheets vs Supabase comparison (v3)</title>
 <style>
   :root{--navy:#143D75;--gold:#c9933a;--rust:#B94218;--border:#e0dbd0;--bg:#f4f2ec;
         --good:#1f8a52;--good-bg:#e7f5ed;--bad:#b42318;--bad-bg:#fdeceb}
@@ -201,14 +201,31 @@ function compare(tab,table,keyField,sheetRows,dbRows){
 
   issues.push('sheet rows: '+sheetRows.length+'   supabase rows: '+dbRows.length);
 
-  var index={};
-  dbRows.forEach(function(r){ index[norm(r[keyField]).toLowerCase()]=r; });
+  /* Two rows can share a name — the same business listed twice, an engagement
+     and then a wedding for the same couple. Keyed by name alone, the second
+     row overwrites the first and every comparison after that lines up the
+     wrong pair. Group by key and consume in order instead, and say plainly
+     when a key is duplicated so it is not mistaken for a data problem. */
+  var index={}, dupes={};
+  dbRows.forEach(function(r){
+    var k=norm(r[keyField]).toLowerCase();
+    (index[k]=index[k]||[]).push(r);
+  });
+  Object.keys(index).forEach(function(k){
+    if(index[k].length>1) dupes[k]=index[k].length;
+  });
+  var dupKeys=Object.keys(dupes);
+  if(dupKeys.length){
+    issues.push('NOTE: '+dupKeys.length+' duplicated '+keyField+' value(s) — rows matched in sheet order:');
+    dupKeys.slice(0,10).forEach(function(k){ issues.push('      "'+k.substring(0,60)+'" x'+dupes[k]); });
+  }
 
   var missing=0, diffs=0, checked=0;
   sheetRows.forEach(function(sr){
     var k=norm(sr[keyField]).toLowerCase();
-    var dr=index[k];
-    if(!dr){ missing++; issues.push('MISSING IN SUPABASE  ['+keyField+'='+k.substring(0,60)+']'); return; }
+    var bucket=index[k];
+    if(!bucket||!bucket.length){ missing++; issues.push('MISSING IN SUPABASE  ['+keyField+'='+k.substring(0,60)+']'); return; }
+    var dr=bucket.shift();
     Object.keys(sr).forEach(function(col){
       if(col==='_cells') return;
       checked++;
