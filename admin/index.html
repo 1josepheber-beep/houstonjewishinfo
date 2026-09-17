@@ -438,7 +438,11 @@ var COLLECTIONS = [ ['Comments','💬 Comments'],
 ];
 var LONG_FIELDS = ['Description','Message','Notes','Excerpt','Program','ServiceTimes','Amenities','Hours','Summary','Steps'];
 var RICH_FIELDS = ['Description','Message','Notes','Summary','About','Excerpt'];
-var STATUSY = ['Status','Approved','AllowComments','hide_reviews','Active','Free','Women'];
+/* Approved comes BEFORE Status on purpose. Jobs has both, and its
+   Status column holds "hiring" or "seeking" — which is a kind of job,
+   not a publish state. Approved is what actually decides whether a job
+   appears on the site, so that is the column to show and act on. */
+var STATUSY = ['Approved','Status','AllowComments','hide_reviews','Active','Free','Women'];
 
 // Official option lists per "Sheet.Column". multi:true = pick several (joined with ", ").
 // Each option is either a string (value=label) or [value,label].
@@ -1904,7 +1908,11 @@ function buildRow(row,showCols,statusCol){
   if(fst&&fst.state==='hidden')tr.className='row-hidden';
   else if(fst&&fst.state==='off')tr.className='row-off';
   else if(!fst){
-    var ak=Object.keys(row).find(function(h){var l=h.toLowerCase();return l==='active'||l==='status'||l==='live'||l==='on';});
+    /* Same reason: a job whose Status says "hiring" is not switched off,
+       it is a job opening. Ask Approved first where there is one. */
+    var keys=Object.keys(row);
+    var ak=keys.find(function(h){return h.toLowerCase()==='approved';}) ||
+           keys.find(function(h){var l=h.toLowerCase();return l==='active'||l==='status'||l==='live'||l==='on';});
     if(ak){var av=String(row[ak]||'').toLowerCase().trim();if(av!==''&&!/^(active|yes|on|true|1|show|live|approved)$/.test(av))tr.className='row-off';}
   }
   showCols.forEach(function(h,i){
