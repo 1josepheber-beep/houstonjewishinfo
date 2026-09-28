@@ -1051,9 +1051,19 @@ function reDescToggles(){
 window.reShare=function(ev,id){
   if(ev){ if(ev.preventDefault)ev.preventDefault(); if(ev.stopPropagation)ev.stopPropagation(); }
   var btn=ev&&(ev.currentTarget||ev.target);
-  var url=location.origin+location.pathname+'#re-'+id;
+  /* Prefer the listing's own page (built by StoryPages.gs) — it carries this
+     property's photo and price, so WhatsApp and Facebook show a real preview.
+     A "#" fragment never reaches the server, which is why the anchor link
+     below could only ever produce the generic site image. The anchor stays as
+     the fallback for a listing whose page has not been generated yet. */
+  var it=null;
+  for(var q=0;q<allListings.length;q++){ if(reId(allListings[q])===id){ it=allListings[q]; break; } }
+  var pid=it&&it.pageid?String(it.pageid).trim():'';
+  var url=pid?(location.origin+'/listing/'+encodeURIComponent(pid)+'/')
+             :(location.origin+location.pathname+'#re-'+id);
+  var shareTitle=(it&&(it.title||it.address))||document.title;
   try{ if(typeof gtag==='function') gtag('event','share_click',{type:'real_estate'}); }catch(e){}
-  if(navigator.share){ navigator.share({title:document.title,url:url}).catch(function(){}); return; }
+  if(navigator.share){ navigator.share({title:shareTitle,text:shareTitle,url:url}).catch(function(){}); return; }
   var flash=function(){ var b=btn&&btn.closest?btn.closest('.re-share'):btn; var lbl=b&&b.querySelector?b.querySelector('.re-share-lbl'):null; if(lbl){ var o=lbl.textContent; lbl.textContent='Copied!'; setTimeout(function(){ lbl.textContent=o; },1600); } };
   if(navigator.clipboard&&navigator.clipboard.writeText){ navigator.clipboard.writeText(url).then(flash).catch(function(){ window.prompt('Copy this link:',url); }); }
   else { window.prompt('Copy this link:',url); }
