@@ -2286,6 +2286,7 @@ function imgSizeHint(coll, field){
   var f=String(field||'').toLowerCase();
   if(coll==='Hechsherim'||/hechsher/.test(f)) return 'square, about 200 \u00d7 200 px \u2014 a transparent PNG works best';
   if(coll==='Stories') return '800 \u00d7 400 px, landscape \u2014 shown as a wide thumbnail';
+  if(coll==='RealEstate') return '1000 \u00d7 750 px, landscape \u2014 all the photos on a listing should be the same shape';
   if(/card/.test(f)) return '1050 \u00d7 600 px, landscape \u2014 business-card shape (1.75:1)';
   if(/flyer/.test(f)) return 'portrait flyer, about 1080 \u00d7 1350 px';
   if(/logo/.test(f)) return 'square-ish, about 400 \u00d7 400 px \u2014 a transparent PNG works best';
@@ -2297,7 +2298,7 @@ function multiImgOK(coll,h){
   var f=String(h||'').toLowerCase();
   if(/logo|hechsher|favicon|icon/.test(f))return false;
   if(!/image|img|photo/.test(f))return false;
-  return coll==='Stories'||coll==='Events'||coll==='Passings';
+  return coll==='Stories'||coll==='Events'||coll==='Passings'||coll==='RealEstate';
 }
 function buildImageField(h,val){
   return multiImgOK(S.current,h)?buildMultiImageField(h,val):buildSingleImageField(h,val);
@@ -2307,7 +2308,10 @@ function buildMultiImageField(h,val){
   var wrap=el('div','mimg');
   var hid=el('input');hid.type='hidden';hid.id='f-'+h;hid.value=list.join(', ');
   wrap.appendChild(hid);
-  wrap.appendChild(el('div','mimg-note','The first image is the COVER \u2014 that\u2019s the one WhatsApp and Facebook show in the link preview. Drag a row, or use \u2191 \u2193, to reorder. Recommended size: '+imgSizeHint(S.current,h)));
+  var coverNote = (S.current==='RealEstate')
+    ? 'The first image is the COVER \u2014 that\u2019s the photo the listing card shows first; the rest become the arrows. Drag a row, or use \u2191 \u2193, to reorder. Recommended size: '
+    : 'The first image is the COVER \u2014 that\u2019s the one WhatsApp and Facebook show in the link preview. Drag a row, or use \u2191 \u2193, to reorder. Recommended size: ';
+  wrap.appendChild(el('div','mimg-note',coverNote+imgSizeHint(S.current,h)));
   var listBox=el('div','mimg-list');wrap.appendChild(listBox);
 
   function sync(){hid.value=list.join(', ');render();}

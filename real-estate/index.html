@@ -117,7 +117,7 @@
   .re-layout { display: grid; grid-template-columns: 220px 1fr; gap: 24px; padding-top: 24px; align-items: start; }
 
   /* ── FILTERS ── */
-  .re-filters { background: var(--white); border: 1px solid var(--border); border-radius: 8px; padding: 16px; position: sticky; top: 20px; }
+  .re-filters { background: var(--white); border: 1px solid var(--border); border-radius: 8px; padding: 16px; }
   .filter-head { font-family: sans-serif; font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--navy); margin-bottom: 14px; padding-bottom: 8px; border-bottom: 2px solid var(--gold); }
   .filter-section-title { font-family: sans-serif; font-size: 10px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; margin-top: 14px; }
   .filter-section-title:first-of-type { margin-top: 0; }
@@ -125,7 +125,19 @@
   .filter-check input { accent-color: var(--navy); cursor: pointer; }
   .filter-reset { width: 100%; margin-top: 14px; font-family: sans-serif; font-size: 11px; font-weight: 700; padding: 8px; border-radius: 4px; background: var(--navy); color: #fff; border: none; cursor: pointer; }
   .filter-reset:hover { background: #163a75; }
-  .re-sidebar { display: flex; flex-direction: column; gap: 16px; }
+  /* The filters and the agent ads travel together. Sticking ONLY the filters
+     made them slide down over the ad underneath, because a sticky element
+     still occupies its place in the flow — the ad never moved out of the way.
+     Sticking the whole column keeps the gap between them intact.
+     max-height + overflow is the safety net: with four ads booked the column
+     can end up taller than the screen, and without it the bottom ads could
+     never be scrolled to. It only scrolls when it has to. */
+  .re-sidebar { display: flex; flex-direction: column; gap: 16px;
+                position: sticky; top: 20px;
+                max-height: calc(100vh - 40px); overflow-y: auto;
+                scrollbar-width: thin; }
+  .re-sidebar::-webkit-scrollbar { width: 6px; }
+  .re-sidebar::-webkit-scrollbar-thumb { background: #d8d2c4; border-radius: 3px; }
   .re-ads-head { font-family: sans-serif; font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--navy); text-align: center; margin-bottom: 4px; padding-bottom: 8px; border-bottom: 2px solid var(--gold); }
   .ad-only-mob { display: none; }
   @media (max-width: 900px){ .ad-only-desk { display: none; } .ad-only-mob { display: block; } }
@@ -264,7 +276,8 @@
   /* ── RESPONSIVE ── */
   @media (max-width: 900px) {
     .re-layout { grid-template-columns: 1fr; gap: 16px; }
-    .re-filters { position: static; display: grid; grid-template-columns: 1fr 1fr; gap: 0 16px; }
+    .re-sidebar { position: static; max-height: none; overflow: visible; }
+    .re-filters { display: grid; grid-template-columns: 1fr 1fr; gap: 0 16px; }
     .filter-section-title { grid-column: 1/-1; }
     .filter-reset { grid-column: 1/-1; }
     /* Match all other pages exactly */
