@@ -917,6 +917,19 @@ function reHash(s){ var h=5381; s=String(s||''); for(var i=0;i<s.length;i++){ h=
 function reId(l){ var t=l&&(l.title||l.address); return (reSlug(t)||'listing')+'-'+reHash(t||''); }
 var RE_SHARE_SVG='<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>';
 function reShareBtn(l){ return '<button type="button" class="re-share" onclick="reShare(event,\''+reId(l)+'\')" aria-label="Share this listing" title="Share">'+RE_SHARE_SVG+'<span class="re-share-lbl">Share</span></button>'; }
+/* Show the price exactly as it was typed. A price entered as plain
+   digits ("399000") — which is what the old numeric column stored and
+   what people type on the public form — is dressed up as $399,000 so
+   it doesn't read like a serial number. Anything with a $, a comma, a
+   "/mo" or any other character is left alone. */
+function rePrice(v){
+  var s=String(v==null?'':v).trim();
+  if(!s) return '';
+  if(!/^\d+(\.\d{1,2})?$/.test(s)) return s;
+  var n=parseFloat(s);
+  if(isNaN(n)) return s;
+  return '$'+n.toLocaleString('en-US',{minimumFractionDigits:(n%1?2:0),maximumFractionDigits:2});
+}
 function buildCard(l){
   var type=(l.type||l.listingtype||'').toLowerCase();
   /* "Short Term Rental" contains the word rent, so short must be tested FIRST
@@ -947,7 +960,7 @@ function buildCard(l){
       '<div class="re-card-top">'+
         '<div class="re-card-type '+typeClass+'">'+typeLabel+'</div>'+
         '<div class="re-card-title">'+(l.title||l.address||'Property')+'</div>'+
-        (l.price?'<div class="re-card-price">'+l.price+'</div>':'')+
+        (l.price?'<div class="re-card-price">'+rePrice(l.price)+'</div>':'')+
         (specs?'<div class="re-card-specs">'+specs+'</div>':'')+
         (tags?'<div class="re-card-tags">'+tags+'</div>':'')+
         (l.description?'<div class="re-card-desc">'+l.description+'</div>':'')+
