@@ -2334,76 +2334,200 @@
     if (s) s.style.display = 'none';
   }
 
-  /* -- Shabbat Times via HebCal API (Houston coordinates) -- */
+  /* -- Shabbat & Yom Tov times via HebCal (Houston) --------------------
+     Houston geonameid, candle lighting 18 min before sunset and havdalah
+     at nightfall / tzeit 8.5°, both matching Chabad.org's method.
+
+     This used to call /shabbat, which returns ONLY the coming Shabbat.
+     That breaks on a Yom Tov week, and Shemini Atzeret 5787 showed all
+     three faults at once:
+       • That week's feed held TWO candle-lighting entries — Friday 6:47pm
+         for Shemini Atzeret and Saturday 7:40pm for Simchat Torah. The
+         old loop kept whichever came LAST, so the strip advertised
+         7:40pm on a Tuesday. Nearly an hour late. That is the one that
+         mattered.
+       • Havdalah is on SUNDAY night when Yom Tov runs into Sunday, which
+         can fall outside the window /shabbat returns — so it came back
+         blank.
+       • There is no weekly parsha on Shemini Atzeret, so no "parashat"
+         item exists at all and the book slot stayed empty.
+
+     So: ask for a two-week range instead, then pick deliberately —
+     the NEXT candle lighting still ahead of us, the FIRST havdalah after
+     that, and the parsha in between. When there is no parsha because it
+     is Yom Tov, name the festival instead of showing nothing.
+     ------------------------------------------------------------------ */
   (function() {
-    // Houston lat/lng, candle lighting 18 min before sunset (matches Chabad),
-    // Havdalah at nightfall / tzeit 8.5° (matches Chabad.org's method, not a fixed offset)
-    var url = 'https://www.hebcal.com/shabbat?cfg=json&geonameid=4699066&b=18&M=on';
+    function ymd(d) {
+      var m = d.getMonth() + 1, day = d.getDate();
+      return d.getFullYear() + '-' + (m < 10 ? '0' : '') + m + '-' + (day < 10 ? '0' : '') + day;
+    }
+    var today = new Date();
+    var later = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 13);
+
+    /* start= moves every day, so a stale copy can never stick for long;
+       cb changes hourly, which also covers the swap from "tonight's
+       lighting" to "next week's" without a hard refresh. */
+    var url = 'https://www.hebcal.com/hebcal?v=1&cfg=json&geonameid=4699066' +
+              '&b=18&M=on&c=on&maj=on&min=off&mod=off&nx=off&s=on' +
+              '&start=' + ymd(today) + '&end=' + ymd(later) +
+              '&cb=' + Math.floor(Date.now() / 3600000);
+
+    /* HebCal sends candle/havdalah times as a full stamp with the Houston
+       offset on it ("2026-10-02T18:47:00-05:00"). Should that ever arrive
+       as a bare date, read the clock time out of the title instead rather
+       than print something wrong. */
+    function whenOf(item) {
+      var raw = String(item && item.date || '');
+      if (raw.indexOf('T') > -1) {
+        var d = new Date(raw);
+        if (!isNaN(d.getTime())) return d;
+      }
+      var day = raw.slice(0, 10).split('-');
+      if (day.length !== 3) return null;
+      var t = String(item.title || '').match(/(\d{1,2}):(\d{2})\s*(am|pm)/i);
+      var hh = 0, mm = 0;
+      if (t) {
+        hh = +t[1] % 12; mm = +t[2];
+        if (/pm/i.test(t[3])) hh += 12;
+      }
+      return new Date(+day[0], +day[1] - 1, +day[2], hh, mm);
+    }
+    /* Calendar day only — for deciding which day a holiday sits on. */
+    function dayOf(item) {
+      var day = String(item && item.date || '').slice(0, 10).split('-');
+      if (day.length !== 3) return null;
+      return new Date(+day[0], +day[1] - 1, +day[2]);
+    }
+
     fetch(url)
       .then(function(r) { return r.json(); })
       .then(function(data) {
-        var candles = null, havdalah = null, parasha = null;
-        data.items.forEach(function(item) {
-          if (item.category === 'candles') candles = item;
-          if (item.category === 'havdalah') havdalah = item;
-          if (item.category === 'parashat') parasha = item;
-        });
+        /* /hebcal answers with a bare array; /shabbat wraps it in .items.
+           Accept either, so this keeps working if the endpoint is changed. */
+        var items = (data && data.items) ? data.items : data;
+        if (!items || !items.length) throw new Error('no items');
 
-        function formatTime(dateStr) {
-          var d = new Date(dateStr);
-          var hours = d.getHours();
-          var mins = d.getMinutes();
+        var now = new Date();
+        var candles = null, havdalah = null, parasha = null, holidays = [];
+
+        /* Work backwards from havdalah. The next havdalah still ahead of us
+           closes off the Shabbat or Yom Tov we are currently in or heading
+           into, and that window is what the whole strip should describe. */
+        for (var j = 0; j < items.length; j++) {
+          if (items[j].category !== 'havdalah') continue;
+          var hw = whenOf(items[j]);
+          if (hw && hw > now) { havdalah = items[j]; havdalah._when = hw; break; }
+        }
+
+        /* Inside that window, the lighting to show is the next one coming
+           up — NOT the last one in the list, which is what used to put
+           Simchat Torah's 7:40pm on screen days before Shemini Atzeret. */
+        for (var i = 0; i < items.length; i++) {
+          if (items[i].category !== 'candles') continue;
+          var w = whenOf(items[i]);
+          if (!w || w <= now) continue;
+          if (havdalah && w > havdalah._when) break;
+          candles = items[i]; candles._when = w; break;
+        }
+        /* Nothing ahead means the candles are already lit — Shabbat
+           afternoon, or Yom Tov between the last lighting and havdalah.
+           Keep showing the lighting that is burning rather than jumping a
+           week ahead and leaving havdalah describing a different Shabbat. */
+        if (!candles) {
+          for (var i2 = 0; i2 < items.length; i2++) {
+            if (items[i2].category !== 'candles') continue;
+            var w2 = whenOf(items[i2]);
+            if (!w2 || w2 > now) continue;
+            if (havdalah && w2 > havdalah._when) continue;
+            candles = items[i2]; candles._when = w2;   // keep the latest past one
+          }
+        }
+        /* The parsha belongs to the Shabbat we just bracketed. */
+        if (candles) {
+          var endDay = havdalah ? dayOf(havdalah) : null;
+          var startDay = dayOf(candles);
+          for (var k = 0; k < items.length; k++) {
+            if (items[k].category !== 'parashat') continue;
+            var pd = dayOf(items[k]);
+            if (!pd || !startDay) continue;
+            if (pd >= startDay && (!endDay || pd <= endDay)) { parasha = items[k]; break; }
+          }
+          /* Yom Tov: no parsha exists, so name the festival(s) instead —
+             only those AFTER candle lighting, or Hoshana Raba (a daytime
+             holiday that is already over by the time the candles are lit)
+             would be listed as the coming yom tov. */
+          if (!parasha && startDay) {
+            for (var m = 0; m < items.length; m++) {
+              if (items[m].category !== 'holiday') continue;
+              var hd = dayOf(items[m]);
+              if (!hd || hd <= startDay) continue;
+              if (endDay && hd > endDay) continue;
+              var t2 = String(items[m].title || '').trim();
+              if (t2 && holidays.indexOf(t2) < 0) holidays.push(t2);
+            }
+          }
+        }
+
+        function formatTime(when) {
+          var hours = when.getHours(), mins = when.getMinutes();
           var ampm = hours >= 12 ? 'PM' : 'AM';
           hours = hours % 12 || 12;
           return hours + ':' + (mins < 10 ? '0' : '') + mins + ' ' + ampm;
         }
-        function formatDate(dateStr) {
-          var d = new Date(dateStr);
+        function formatDate(when) {
           var days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
           var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-          return days[d.getDay()] + ', ' + months[d.getMonth()] + ' ' + d.getDate();
+          return days[when.getDay()] + ', ' + months[when.getMonth()] + ' ' + when.getDate();
         }
-
-        // Populate the strip
-        function setHebrewDate(isoDate, elId) {
-          if (!isoDate) return;
-          var ymd = String(isoDate).slice(0, 10).split('-');
-          if (ymd.length !== 3) return;
-          var cu = 'https://www.hebcal.com/converter?cfg=json&gy=' + (+ymd[0]) + '&gm=' + (+ymd[1]) + '&gd=' + (+ymd[2]) + '&g2h=1';
+        function setText(id, txt) {
+          var el = document.getElementById(id);
+          if (el) el.textContent = txt;
+        }
+        function setHebrewDate(when, elId) {
+          if (!when) return;
+          var cu = 'https://www.hebcal.com/converter?cfg=json&gy=' + when.getFullYear() +
+                   '&gm=' + (when.getMonth() + 1) + '&gd=' + when.getDate() + '&g2h=1';
           fetch(cu).then(function(r){ return r.json(); }).then(function(hd){
             if (!hd || !hd.hebrew) return;
-            var parts = hd.hebrew.replace(/[\u0591-\u05C7]/g, '').split(' ');
+            var parts = hd.hebrew.replace(/[֑-ׇ]/g, '').split(' ');
             if (parts.length >= 3) parts = parts.slice(0, -1);
-            var el = document.getElementById(elId);
-            if (el) el.textContent = parts.join(' ');
+            setText(elId, parts.join(' '));
           }).catch(function(){});
         }
+
         if (candles) {
-          document.getElementById('strip-candles').textContent = formatTime(candles.date);
-          document.getElementById('strip-candles-date').textContent = formatDate(candles.date);
-          setHebrewDate(candles.date, 'strip-candles-hdate');
+          setText('strip-candles', formatTime(candles._when));
+          setText('strip-candles-date', formatDate(candles._when));
+          setHebrewDate(candles._when, 'strip-candles-hdate');
         }
         if (havdalah) {
-          document.getElementById('strip-havdalah').textContent = formatTime(havdalah.date);
-          document.getElementById('strip-havdalah-date').textContent = formatDate(havdalah.date);
-          setHebrewDate(havdalah.date, 'strip-havdalah-hdate');
+          setText('strip-havdalah', formatTime(havdalah._when));
+          setText('strip-havdalah-date', formatDate(havdalah._when));
+          setHebrewDate(havdalah._when, 'strip-havdalah-hdate');
         }
-        if (parasha) {
-          var pEl = document.getElementById('strip-parasha');
-          pEl.textContent = parasha.title;
-          var pHe = parasha.hebrew ? parasha.hebrew.replace(/[\u0591-\u05C7]/g, '') : '';
-          if (pHe) {
-            pEl.appendChild(document.createTextNode(' \u00b7 '));
-            var pSpan = document.createElement('span');
-            pSpan.setAttribute('dir', 'rtl');
-            pSpan.style.cssText = 'unicode-bidi:isolate;';
-            pSpan.textContent = pHe;
-            pEl.appendChild(pSpan);
+
+        var pEl = document.getElementById('strip-parasha');
+        if (pEl) {
+          if (parasha) {
+            pEl.textContent = parasha.title;
+            var pHe = parasha.hebrew ? parasha.hebrew.replace(/[֑-ׇ]/g, '') : '';
+            if (pHe) {
+              pEl.appendChild(document.createTextNode(' · '));
+              var pSpan = document.createElement('span');
+              pSpan.setAttribute('dir', 'rtl');
+              pSpan.style.cssText = 'unicode-bidi:isolate;';
+              pSpan.textContent = pHe;
+              pEl.appendChild(pSpan);
+            }
+          } else if (holidays.length) {
+            pEl.textContent = holidays.join(' · ');
           }
         }
       })
       .catch(function() {
-        document.getElementById('shabbat-loading').textContent = 'Times unavailable';
+        var el = document.getElementById('shabbat-loading');
+        if (el) el.textContent = 'Times unavailable';
       });
   })();
 
